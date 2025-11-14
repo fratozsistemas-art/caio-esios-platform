@@ -25,9 +25,21 @@ Deno.serve(async (req) => {
       }, { status: 404 });
     }
 
-    if (conversation.created_by !== user.email) {
+    // Check ownership - compare both email and id
+    const isOwner = conversation.created_by === user.email || 
+                    conversation.created_by === user.id ||
+                    conversation.user_id === user.email ||
+                    conversation.user_id === user.id;
+
+    if (!isOwner) {
       return Response.json({ 
-        error: 'You can only delete your own conversations'
+        error: 'You can only delete your own conversations',
+        debug: {
+          conversation_created_by: conversation.created_by,
+          conversation_user_id: conversation.user_id,
+          current_user_email: user.email,
+          current_user_id: user.id
+        }
       }, { status: 403 });
     }
 
