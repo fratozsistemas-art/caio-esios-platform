@@ -1,12 +1,10 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import PersonaAvatar from "../personas/PersonaAvatar";
-import { getPersonaCopy } from "../utils/personaCopy";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, User } from "lucide-react";
 
 const PERSONA_CONFIGS = {
   board: { id: 'board', title: 'Board of Directors', decisionFramework: 'Fiduciary duty and long-term value creation' },
@@ -19,22 +17,90 @@ const PERSONA_CONFIGS = {
   esg: { id: 'esg', title: 'ESG Officer', decisionFramework: 'Stakeholder impact and sustainable value creation' }
 };
 
+function PersonaAvatar({ persona, size = "sm" }) {
+  const sizeClasses = {
+    xs: "w-6 h-6 text-xs",
+    sm: "w-8 h-8 text-sm",
+    md: "w-10 h-10 text-base"
+  };
+
+  return (
+    <div className={`${sizeClasses[size]} rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold`}>
+      {persona[0].toUpperCase()}
+    </div>
+  );
+}
+
+function getPersonaCopy(analysis, persona) {
+  const baseInsights = analysis.key_insights || [
+    "Data analysis completed with high confidence",
+    "Strategic opportunities identified",
+    "Risk factors assessed and documented"
+  ];
+
+  const baseActions = [
+    {
+      title: "Review findings with stakeholders",
+      description: "Present analysis results to key decision makers",
+      priority: "high",
+      owner: persona.toUpperCase(),
+      timeline: "1-2 weeks"
+    },
+    {
+      title: "Develop implementation roadmap",
+      description: "Create detailed execution plan based on insights",
+      priority: "medium",
+      owner: "Strategy Team",
+      timeline: "2-4 weeks"
+    },
+    {
+      title: "Monitor key metrics",
+      description: "Track progress and adjust strategy as needed",
+      priority: "medium",
+      owner: "Analytics Team",
+      timeline: "Ongoing"
+    }
+  ];
+
+  return {
+    executiveSummary: `This ${analysis.type} analysis provides comprehensive insights tailored for ${PERSONA_CONFIGS[persona].title} perspective, focusing on ${PERSONA_CONFIGS[persona].decisionFramework.toLowerCase()}.`,
+    keyInsights: baseInsights,
+    strategicImplications: [
+      {
+        title: "Market Positioning",
+        description: "Analysis reveals key competitive advantages and positioning opportunities",
+        impact: "High"
+      },
+      {
+        title: "Resource Allocation",
+        description: "Optimal resource distribution identified for maximum impact",
+        impact: "Medium"
+      },
+      {
+        title: "Risk Management",
+        description: "Critical risk factors identified with mitigation strategies",
+        impact: "Medium"
+      }
+    ],
+    recommendedActions: baseActions
+  };
+}
+
 export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
   const [selectedPersona, setSelectedPersona] = useState('board');
 
   if (!analysis) return null;
 
   const personaConfig = PERSONA_CONFIGS[selectedPersona];
-  const personaCopy = getPersonaCopy(analysis, selectedPersona, analysis.framework_used);
+  const personaCopy = getPersonaCopy(analysis, selectedPersona);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col bg-slate-900 border-white/10">
         <DialogHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-white">{analysis.title}</DialogTitle>
             <div className="flex items-center gap-3">
-              {/* Persona Selector */}
               <Select value={selectedPersona} onValueChange={setSelectedPersona}>
                 <SelectTrigger className="w-64 bg-white/5 border-white/10 text-white">
                   <SelectValue>
@@ -56,7 +122,7 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
                 </SelectContent>
               </Select>
 
-              <Button variant="ghost" size="icon" onClick={onClose} className="text-white">
+              <Button variant="ghost" size="icon" onClick={onClose} className="text-white hover:bg-white/10">
                 <X className="w-5 h-5" />
               </Button>
             </div>
@@ -64,7 +130,6 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-          {/* Persona Context Banner */}
           <div className="bg-white/5 p-4 rounded-lg border-l-4 border-blue-500">
             <div className="flex items-center gap-2 mb-2">
               <PersonaAvatar persona={selectedPersona} size="sm" />
@@ -75,7 +140,6 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
             </p>
           </div>
 
-          {/* Executive Summary */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Executive Summary</CardTitle>
@@ -87,7 +151,6 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
             </CardContent>
           </Card>
 
-          {/* Key Insights */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Key Insights</CardTitle>
@@ -104,7 +167,6 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
             </CardContent>
           </Card>
 
-          {/* Strategic Implications */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Strategic Implications</CardTitle>
@@ -126,7 +188,6 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
             </CardContent>
           </Card>
 
-          {/* Recommended Actions */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Recommended Actions</CardTitle>
@@ -137,8 +198,11 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
                   <div key={idx} className="bg-white/5 p-4 rounded-lg">
                     <div className="flex items-center justify-between mb-2">
                       <h4 className="font-medium text-white">{action.title}</h4>
-                      <Badge variant={action.priority === 'high' ? 'destructive' : 
-                                    action.priority === 'medium' ? 'default' : 'secondary'}>
+                      <Badge className={
+                        action.priority === 'high' ? 'bg-red-500/20 text-red-400' : 
+                        action.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400' : 
+                        'bg-green-500/20 text-green-400'
+                      }>
                         {action.priority}
                       </Badge>
                     </div>
@@ -153,7 +217,6 @@ export default function AnalysisDetailModal({ isOpen, onClose, analysis }) {
             </CardContent>
           </Card>
 
-          {/* Analysis Metadata */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white text-sm">Analysis Details</CardTitle>
