@@ -15,8 +15,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'conversation_id is required' }, { status: 400 });
     }
 
-    // Get conversation and verify ownership
-    const conversation = await base44.agents.getConversation(conversation_id);
+    // Use service role to bypass permission checks for deletion
+    // The agent SDK manages conversation ownership internally
+    const conversation = await base44.asServiceRole.agents.getConversation(conversation_id);
     
     if (!conversation) {
       return Response.json({ 
@@ -25,7 +26,7 @@ Deno.serve(async (req) => {
       }, { status: 404 });
     }
 
-    // Check ownership - compare both email and id
+    // Verify ownership before deletion
     const isOwner = conversation.created_by === user.email || 
                     conversation.created_by === user.id ||
                     conversation.user_id === user.email ||
@@ -33,18 +34,12 @@ Deno.serve(async (req) => {
 
     if (!isOwner) {
       return Response.json({ 
-        error: 'You can only delete your own conversations',
-        debug: {
-          conversation_created_by: conversation.created_by,
-          conversation_user_id: conversation.user_id,
-          current_user_email: user.email,
-          current_user_id: user.id
-        }
+        error: 'You can only delete your own conversations'
       }, { status: 403 });
     }
 
-    // Mark as deleted via metadata (soft delete)
-    await base44.agents.updateConversation(conversation_id, {
+    // Mark as deleted via metadata using service role (soft delete)
+    await base44.asServiceRole.agents.updateConversation(conversation_id, {
       metadata: {
         ...conversation.metadata,
         deleted: true,
