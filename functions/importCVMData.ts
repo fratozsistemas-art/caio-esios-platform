@@ -11,10 +11,7 @@ Deno.serve(async (req) => {
     }
 
     const uri = Deno.env.get('NEO4J_URI');
-    const apiKey = Deno.env.get('NEO4J_API_KEY');
-    const username = Deno.env.get('NEO4J_USER');
-    const password = Deno.env.get('NEO4J_PASSWORD');
-
+    
     if (!uri) {
       return Response.json({ 
         error: 'Neo4j not configured',
@@ -22,26 +19,46 @@ Deno.serve(async (req) => {
       }, { status: 500 });
     }
 
-    // Use Bearer token if available, otherwise fall back to basic auth
-    let auth;
+    // Try API Key authentication first, fallback to basic auth
+    const apiKey = Deno.env.get('NEO4J_CLIENT_SECRET');
+    const username = Deno.env.get('NEO4J_USER');
+    const password = Deno.env.get('NEO4J_PASSWORD');
+
+    let authToken;
+    let authMethod;
+
     if (apiKey) {
-      auth = neo4j.auth.bearer(apiKey);
+      // Use Bearer Token authentication (API Key)
+      authToken = neo4j.auth.bearer(apiKey);
+      authMethod = 'API Key (Bearer Token)';
+      console.log('[Neo4j Import] Using API Key authentication');
     } else if (username && password) {
-      auth = neo4j.auth.basic(username, password);
+      // Fallback to basic authentication
+      authToken = neo4j.auth.basic(username, password);
+      authMethod = 'Basic Auth';
+      console.log('[Neo4j Import] Using Basic authentication');
     } else {
       return Response.json({ 
         error: 'Neo4j authentication not configured',
-        message: 'Please set either NEO4J_API_KEY or (NEO4J_USER and NEO4J_PASSWORD)'
+        message: 'Please set either NEO4J_CLIENT_SECRET (for API Key) or NEO4J_USER + NEO4J_PASSWORD (for Basic Auth)'
       }, { status: 500 });
     }
 
-    const driver = neo4j.driver(uri, auth);
+    console.log(`[Neo4j Import] Connecting to: ${uri} using ${authMethod}`);
+    const driver = neo4j.driver(uri, authToken);
     
     try {
+      // Verify connection
+      await driver.verifyConnectivity();
+      console.log('[Neo4j Import] Connection verified successfully');
+
       const session = driver.session();
       
       try {
+        console.log('[Neo4j Import] Starting data import...');
+
         // Load nodes
+        console.log('[Neo4j Import] Loading nodes from CSV...');
         await session.run(`
           LOAD CSV WITH HEADERS FROM 'file:///kg_nodes_neo4j.csv' AS row
           CALL {
@@ -56,8 +73,10 @@ Deno.serve(async (req) => {
           }
           IN TRANSACTIONS OF 500 ROWS
         `);
+        console.log('[Neo4j Import] Nodes loaded successfully');
 
         // Load edges
+        console.log('[Neo4j Import] Loading relationships from CSV...');
         await session.run(`
           LOAD CSV WITH HEADERS FROM 'file:///kg_edges_neo4j.csv' AS row
           CALL {
@@ -71,11 +90,15 @@ Deno.serve(async (req) => {
           }
           IN TRANSACTIONS OF 500 ROWS
         `);
+        console.log('[Neo4j Import] Relationships loaded successfully');
 
         // Create indexes
+        console.log('[Neo4j Import] Creating indexes...');
         await session.run('CREATE INDEX company_id IF NOT EXISTS FOR (n:Company) ON (n.id)');
         await session.run('CREATE INDEX company_name IF NOT EXISTS FOR (n:Company) ON (n.name)');
+        console.log('[Neo4j Import] Indexes created successfully');
 
+        // Get statistics
         const stats = await session.run(`
           MATCH (n) RETURN count(n) as nodeCount
         `);
@@ -84,21 +107,48 @@ Deno.serve(async (req) => {
           MATCH ()-[r]->() RETURN count(r) as relCount
         `);
 
+        const nodeCount = stats.records[0].get('nodeCount').toNumber();
+        const relCount = relationshipStats.records[0].get('relCount').toNumber();
+
+        console.log(`[Neo4j Import] Import completed: ${nodeCount} nodes, ${relCount} relationships`);
+
         return Response.json({ 
           success: true,
-          nodeCount: stats.records[0].get('nodeCount').toNumber(),
-          relationshipCount: relationshipStats.records[0].get('relCount').toNumber()
+          nodeCount,
+          relationshipCount: relCount,
+          metadata: {
+            authMethod,
+            timestamp: new Date().toISOString()
+          }
         });
       } finally {
         await session.close();
       }
+    } catch (connectionError) {
+      console.error('[Neo4j Import] Connection/Import error:', connectionError);
+      
+      return Response.json({ 
+        error: 'Neo4j import failed',
+        message: connectionError.message,
+        code: connectionError.code,
+        details: {
+          authMethod,
+          uri: uri.replace(/\/\/.*@/, '//***@'),
+          suggestion: connectionError.code === 'Neo.ClientError.Security.Unauthorized' 
+            ? 'Check your authentication credentials (API Key or Username/Password)'
+            : connectionError.code?.includes('Procedure')
+            ? 'Ensure APOC plugin is installed in your Neo4j instance'
+            : 'Verify CSV files are accessible and Neo4j instance is running'
+        }
+      }, { status: 500 });
     } finally {
       await driver.close();
     }
   } catch (error) {
-    console.error('Import error:', error);
+    console.error('[Neo4j Import] Handler error:', error);
     return Response.json({ 
-      error: error.message || 'Import failed'
+      error: 'Import operation failed',
+      message: error.message
     }, { status: 500 });
   }
 });

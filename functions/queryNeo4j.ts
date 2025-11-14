@@ -17,10 +17,7 @@ Deno.serve(async (req) => {
     }
 
     const uri = Deno.env.get('NEO4J_URI');
-    const apiKey = Deno.env.get('NEO4J_API_KEY');
-    const username = Deno.env.get('NEO4J_USER');
-    const password = Deno.env.get('NEO4J_PASSWORD');
-
+    
     if (!uri) {
       return Response.json({ 
         error: 'Neo4j not configured',
@@ -28,25 +25,43 @@ Deno.serve(async (req) => {
       }, { status: 500 });
     }
 
-    // Use Bearer token if available, otherwise fall back to basic auth
-    let auth;
+    // Try API Key authentication first, fallback to basic auth
+    const apiKey = Deno.env.get('NEO4J_CLIENT_SECRET');
+    const username = Deno.env.get('NEO4J_USER');
+    const password = Deno.env.get('NEO4J_PASSWORD');
+
+    let authToken;
+    let authMethod;
+
     if (apiKey) {
-      auth = neo4j.auth.bearer(apiKey);
+      // Use Bearer Token authentication (API Key)
+      authToken = neo4j.auth.bearer(apiKey);
+      authMethod = 'API Key (Bearer Token)';
+      console.log('[Neo4j] Using API Key authentication');
     } else if (username && password) {
-      auth = neo4j.auth.basic(username, password);
+      // Fallback to basic authentication
+      authToken = neo4j.auth.basic(username, password);
+      authMethod = 'Basic Auth';
+      console.log('[Neo4j] Using Basic authentication');
     } else {
       return Response.json({ 
         error: 'Neo4j authentication not configured',
-        message: 'Please set either NEO4J_API_KEY or (NEO4J_USER and NEO4J_PASSWORD)'
+        message: 'Please set either NEO4J_CLIENT_SECRET (for API Key) or NEO4J_USER + NEO4J_PASSWORD (for Basic Auth)'
       }, { status: 500 });
     }
 
-    const driver = neo4j.driver(uri, auth);
+    console.log(`[Neo4j] Connecting to: ${uri} using ${authMethod}`);
+    const driver = neo4j.driver(uri, authToken);
     
     try {
+      // Verify connection
+      await driver.verifyConnectivity();
+      console.log('[Neo4j] Connection verified successfully');
+
       const session = driver.session();
       
       try {
+        console.log(`[Neo4j] Executing query: ${query.substring(0, 100)}...`);
         const result = await session.run(query, params);
         
         const records = result.records.map(record => {
@@ -78,24 +93,47 @@ Deno.serve(async (req) => {
           return obj;
         });
 
+        console.log(`[Neo4j] Query successful, returned ${records.length} records`);
+
         return Response.json({ 
           records,
           summary: {
             counters: result.summary.counters._stats,
             resultAvailableAfter: result.summary.resultAvailableAfter?.toNumber() || 0,
             resultConsumedAfter: result.summary.resultConsumedAfter?.toNumber() || 0
+          },
+          metadata: {
+            authMethod,
+            recordCount: records.length
           }
         });
       } finally {
         await session.close();
       }
+    } catch (connectionError) {
+      console.error('[Neo4j] Connection/Query error:', connectionError);
+      
+      // Detailed error logging
+      return Response.json({ 
+        error: 'Neo4j operation failed',
+        message: connectionError.message,
+        code: connectionError.code,
+        details: {
+          authMethod,
+          uri: uri.replace(/\/\/.*@/, '//***@'), // Mask credentials in URI
+          suggestion: connectionError.code === 'Neo.ClientError.Security.Unauthorized' 
+            ? 'Check your authentication credentials (API Key or Username/Password)'
+            : 'Verify Neo4j instance is running and accessible'
+        }
+      }, { status: 500 });
     } finally {
       await driver.close();
     }
   } catch (error) {
-    console.error('Neo4j query error:', error);
+    console.error('[Neo4j] Handler error:', error);
     return Response.json({ 
-      error: error.message || 'Neo4j query failed'
+      error: 'Neo4j query failed',
+      message: error.message
     }, { status: 500 });
   }
 });
