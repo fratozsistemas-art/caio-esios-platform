@@ -17,17 +17,31 @@ Deno.serve(async (req) => {
     }
 
     const uri = Deno.env.get('NEO4J_URI');
+    const apiKey = Deno.env.get('NEO4J_API_KEY');
     const username = Deno.env.get('NEO4J_USER');
     const password = Deno.env.get('NEO4J_PASSWORD');
 
-    if (!uri || !username || !password) {
+    if (!uri) {
       return Response.json({ 
         error: 'Neo4j not configured',
-        message: 'Please set NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD in environment variables'
+        message: 'Please set NEO4J_URI in environment variables'
       }, { status: 500 });
     }
 
-    const driver = neo4j.driver(uri, neo4j.auth.basic(username, password));
+    // Use Bearer token if available, otherwise fall back to basic auth
+    let auth;
+    if (apiKey) {
+      auth = neo4j.auth.bearer(apiKey);
+    } else if (username && password) {
+      auth = neo4j.auth.basic(username, password);
+    } else {
+      return Response.json({ 
+        error: 'Neo4j authentication not configured',
+        message: 'Please set either NEO4J_API_KEY or (NEO4J_USER and NEO4J_PASSWORD)'
+      }, { status: 500 });
+    }
+
+    const driver = neo4j.driver(uri, auth);
     
     try {
       const session = driver.session();
