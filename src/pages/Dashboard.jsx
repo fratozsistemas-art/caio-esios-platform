@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +13,8 @@ import AnalysisInsightsWidget from "../components/dashboard/AnalysisInsightsWidg
 import KnowledgeGraphWidget from "../components/dashboard/KnowledgeGraphWidget";
 import ActionItemsWidget from "../components/dashboard/ActionItemsWidget";
 import QuickStatsWidget from "../components/dashboard/QuickStatsWidget";
+import ProactiveInsightsWidget from "../components/dashboard/ProactiveInsightsWidget";
+import PredictiveAnalysisWidget from "../components/dashboard/PredictiveAnalysisWidget";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
@@ -242,6 +245,9 @@ export default function Dashboard() {
         {currentLayout.widgets.includes('actions') && (
           <ActionItemsWidget actionItems={actionItems} />
         )}
+
+        <ProactiveInsightsWidget />
+        <PredictiveAnalysisWidget />
       </div>
 
       {/* Role-specific insights */}
