@@ -15,8 +15,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'conversation_id is required' }, { status: 400 });
     }
 
-    // Use service role to bypass permission checks for deletion
-    // The agent SDK manages conversation ownership internally
+    // Use service role to get conversation
     const conversation = await base44.asServiceRole.agents.getConversation(conversation_id);
     
     if (!conversation) {
@@ -39,13 +38,16 @@ Deno.serve(async (req) => {
     }
 
     // Mark as deleted via metadata using service role (soft delete)
+    const currentMetadata = conversation.metadata || {};
+    const updatedMetadata = {
+      ...currentMetadata,
+      deleted: true,
+      deleted_at: new Date().toISOString(),
+      deleted_by: user.email
+    };
+
     await base44.asServiceRole.agents.updateConversation(conversation_id, {
-      metadata: {
-        ...conversation.metadata,
-        deleted: true,
-        deleted_at: new Date().toISOString(),
-        deleted_by: user.email
-      }
+      metadata: updatedMetadata
     });
 
     return Response.json({
@@ -56,9 +58,11 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Delete conversation error:', error);
+    console.error('Error stack:', error.stack);
     return Response.json({ 
       error: 'Failed to delete conversation',
-      details: error.message
+      details: error.message,
+      stack: error.stack
     }, { status: 500 });
   }
 });
