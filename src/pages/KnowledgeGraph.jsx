@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
+import {
   Network, Database, Loader2, CheckCircle, AlertCircle,
   TrendingUp, Building2, Users, Target, Sparkles, Search, Filter,
   ZoomIn, ZoomOut, Maximize2, RefreshCw, Brain
@@ -15,6 +16,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import GraphVisualization from "../components/graph/GraphVisualization";
 import GraphInsights from "../components/graph/GraphInsights";
+import NodeEditor from "../components/graph/NodeEditor";
+import RelationshipEditor from "../components/graph/RelationshipEditor";
+import GraphAlgorithmsPanel from "../components/graph/GraphAlgorithmsPanel";
 
 export default function KnowledgeGraph() {
   const queryClient = useQueryClient();
@@ -110,7 +114,7 @@ export default function KnowledgeGraph() {
   };
 
   const filteredNodes = graphStats?.all_nodes?.filter(node => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       node.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.properties?.name?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedNodeType === "all" || node.node_type === selectedNodeType;
@@ -174,7 +178,7 @@ export default function KnowledgeGraph() {
             Interactive graph database visualization with AI-powered insights
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 flex-wrap">
           <Button
             onClick={() => refetchStats()}
             variant="ghost"
@@ -183,7 +187,9 @@ export default function KnowledgeGraph() {
           >
             <RefreshCw className="w-5 h-5" />
           </Button>
-          
+
+          <GraphAlgorithmsPanel />
+
           {graphStats?.total_nodes > 0 && (
             <Button
               onClick={handleAnalyzeGraph}
@@ -203,6 +209,9 @@ export default function KnowledgeGraph() {
               )}
             </Button>
           )}
+
+          <NodeEditor onSave={() => refetchStats()} />
+          <RelationshipEditor onSave={() => refetchStats()} />
 
           <Button
             onClick={handleBuildGraph}
@@ -250,7 +259,7 @@ export default function KnowledgeGraph() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <GraphInsights 
+            <GraphInsights
               analysis={analyzeGraphMutation.data.data.analysis}
               onNodeHighlight={(nodeName) => setSearchQuery(nodeName)}
             />
@@ -355,7 +364,7 @@ export default function KnowledgeGraph() {
       )}
 
       {(graphStats?.all_nodes?.length || 0) > 0 ? (
-        <GraphVisualization 
+        <GraphVisualization
           nodes={filteredNodes}
           relationships={filteredRelationships}
           searchQuery={searchQuery}
