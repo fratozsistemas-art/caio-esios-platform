@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,8 +44,9 @@ const navSections = [
     ]
   },
   {
-    title: "Admin",
+    title: "Settings",
     items: [
+      { name: 'Integrations', icon: Plug, path: 'Integrations', badge: 'NEW' },
       { name: 'User Management', icon: Users, path: 'UserManagement', adminOnly: true }
     ]
   }
