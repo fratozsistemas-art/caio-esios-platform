@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Crystal, TrendingUp, AlertTriangle, Target, Loader2 } from "lucide-react";
+import { Sparkles, TrendingUp, AlertTriangle, Target, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -45,7 +45,7 @@ export default function PredictiveAnalysisWidget() {
     <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
-          <Crystal className="w-5 h-5 text-purple-400" />
+          <Sparkles className="w-5 h-5 text-purple-400" />
           Predictive Analysis
         </CardTitle>
       </CardHeader>
@@ -53,20 +53,19 @@ export default function PredictiveAnalysisWidget() {
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-              <Crystal className="w-4 h-4 mr-2" />
+              <Sparkles className="w-4 h-4 mr-2" />
               Generate Predictions
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
             <DialogHeader>
               <DialogTitle className="text-white text-xl flex items-center gap-2">
-                <Crystal className="w-6 h-6 text-purple-400" />
+                <Sparkles className="w-6 h-6 text-purple-400" />
                 Predictive Strategic Analysis
               </DialogTitle>
             </DialogHeader>
 
             <div className="space-y-6">
-              {/* Input Form */}
               <div className="space-y-4">
                 <div>
                   <label className="text-sm text-slate-300 mb-2 block">
@@ -102,21 +101,19 @@ export default function PredictiveAnalysisWidget() {
                     </>
                   ) : (
                     <>
-                      <Crystal className="w-4 h-4 mr-2" />
+                      <Sparkles className="w-4 h-4 mr-2" />
                       Generate Predictions
                     </>
                   )}
                 </Button>
               </div>
 
-              {/* Results */}
               {predictions && !isAnalyzing && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="space-y-4"
                 >
-                  {/* Scenarios */}
                   {predictions.scenarios?.length > 0 && (
                     <Card className="bg-white/5 border-white/10">
                       <CardHeader>
@@ -139,7 +136,6 @@ export default function PredictiveAnalysisWidget() {
                     </Card>
                   )}
 
-                  {/* Forecasts */}
                   {predictions.forecasts?.length > 0 && (
                     <Card className="bg-white/5 border-white/10">
                       <CardHeader>
@@ -161,7 +157,6 @@ export default function PredictiveAnalysisWidget() {
                     </Card>
                   )}
 
-                  {/* Risk Forecast */}
                   {predictions.risk_forecast?.length > 0 && (
                     <Card className="bg-white/5 border-white/10">
                       <CardHeader>
@@ -181,7 +176,6 @@ export default function PredictiveAnalysisWidget() {
                     </Card>
                   )}
 
-                  {/* Opportunities */}
                   {predictions.opportunity_windows?.length > 0 && (
                     <Card className="bg-white/5 border-white/10">
                       <CardHeader>
