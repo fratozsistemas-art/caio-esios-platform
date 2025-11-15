@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,14 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
+import {
   Network, Database, Loader2, CheckCircle, AlertCircle,
   TrendingUp, Building2, Users, Target, Sparkles, Search, Filter,
-  ZoomIn, ZoomOut, Maximize2, RefreshCw
+  ZoomIn, ZoomOut, Maximize2, RefreshCw, Brain
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import GraphVisualization from "../components/graph/GraphVisualization";
+import GraphInsights from "../components/graph/GraphInsights"; // New import
 
 export default function KnowledgeGraph() {
   const queryClient = useQueryClient();
@@ -22,6 +24,7 @@ export default function KnowledgeGraph() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNodeType, setSelectedNodeType] = useState("all");
   const [selectedRelType, setSelectedRelType] = useState("all");
+  const [showInsights, setShowInsights] = useState(false); // New state
 
   // ✅ Fetch Graph Stats
   const { data: graphStats, isLoading: statsLoading, refetch: refetchStats } = useQuery({
@@ -51,6 +54,18 @@ export default function KnowledgeGraph() {
       };
     },
     refetchInterval: 10000
+  });
+
+  // New: AI Analysis Mutation
+  const analyzeGraphMutation = useMutation({
+    mutationFn: () => base44.functions.invoke('analyzeKnowledgeGraph'),
+    onSuccess: (response) => {
+      toast.success('AI analysis complete!');
+      setShowInsights(true);
+    },
+    onError: (error) => {
+      toast.error(error.response?.data?.error || 'Analysis failed');
+    }
   });
 
   const buildGraphMutation = useMutation({
@@ -93,9 +108,14 @@ export default function KnowledgeGraph() {
     }
   };
 
+  // New: Handle AI Analysis
+  const handleAnalyzeGraph = async () => {
+    await analyzeGraphMutation.mutateAsync();
+  };
+
   // Filter nodes and relationships
   const filteredNodes = graphStats?.all_nodes?.filter(node => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch = !searchQuery ||
       node.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.properties?.name?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedNodeType === "all" || node.node_type === selectedNodeType;
@@ -158,7 +178,7 @@ export default function KnowledgeGraph() {
             Knowledge Graph
           </h1>
           <p className="text-slate-400">
-            Interactive graph database visualization and management
+            Interactive graph database visualization with AI-powered insights
           </p>
         </div>
         <div className="flex gap-3">
@@ -170,6 +190,28 @@ export default function KnowledgeGraph() {
           >
             <RefreshCw className="w-5 h-5" />
           </Button>
+
+          {/* New: AI Insights Button */}
+          {graphStats?.total_nodes > 0 && (
+            <Button
+              onClick={handleAnalyzeGraph}
+              disabled={analyzeGraphMutation.isPending}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              {analyzeGraphMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Analyzing...
+                </>
+              ) : (
+                <>
+                  <Brain className="w-4 h-4 mr-2" />
+                  AI Insights
+                </>
+              )}
+            </Button>
+          )}
+
           <Button
             onClick={handleBuildGraph}
             disabled={isBuilding}
@@ -208,6 +250,22 @@ export default function KnowledgeGraph() {
           </Button>
         </div>
       </div>
+
+      {/* New: AI Insights Panel */}
+      <AnimatePresence>
+        {showInsights && analyzeGraphMutation.data?.data?.analysis && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          >
+            <GraphInsights
+              analysis={analyzeGraphMutation.data.data.analysis}
+              onNodeHighlight={(nodeName) => setSearchQuery(nodeName)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -309,10 +367,11 @@ export default function KnowledgeGraph() {
 
       {/* ✅ Enhanced Graph Visualization */}
       {(graphStats?.all_nodes?.length || 0) > 0 ? (
-        <GraphVisualization 
+        <GraphVisualization
           nodes={filteredNodes}
           relationships={filteredRelationships}
           searchQuery={searchQuery}
+          highlightedNodes={analyzeGraphMutation.data?.data?.analysis?.highlighted_nodes} {/* New prop */}
         />
       ) : (
         <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
@@ -391,7 +450,7 @@ export default function KnowledgeGraph() {
                           <span className="text-white font-medium">{count} ({percentage}%)</span>
                         </div>
                         <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all"
                             style={{ width: `${percentage}%` }}
                           />
@@ -431,7 +490,7 @@ export default function KnowledgeGraph() {
                           <span className="text-white font-medium">{count} ({percentage}%)</span>
                         </div>
                         <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                          <div 
+                          <div
                             className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all"
                             style={{ width: `${percentage}%` }}
                           />
@@ -459,7 +518,7 @@ export default function KnowledgeGraph() {
           <CardContent className="p-6">
             <div className="space-y-3">
               {filteredNodes.slice(0, 10).map((node, idx) => (
-                <motion.div 
+                <motion.div
                   key={idx}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
