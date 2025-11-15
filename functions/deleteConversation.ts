@@ -15,8 +15,16 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'conversation_id is required' }, { status: 400 });
     }
 
-    // Use service role to get conversation
-    const conversation = await base44.asServiceRole.agents.getConversation(conversation_id);
+    let conversation;
+    try {
+      conversation = await base44.asServiceRole.agents.getConversation(conversation_id);
+    } catch (error) {
+      console.error('Error fetching conversation:', error);
+      return Response.json({ 
+        error: 'Failed to fetch conversation',
+        details: error.message
+      }, { status: 500 });
+    }
     
     if (!conversation) {
       return Response.json({ 
@@ -25,44 +33,57 @@ Deno.serve(async (req) => {
       }, { status: 404 });
     }
 
-    // Verify ownership before deletion
-    const isOwner = conversation.created_by === user.email || 
-                    conversation.created_by === user.id ||
-                    conversation.user_id === user.email ||
-                    conversation.user_id === user.id;
+    // Flexible ownership check
+    const createdBy = conversation.created_by || conversation.user_id || '';
+    const isOwner = createdBy === user.email || 
+                    createdBy === user.id ||
+                    createdBy.includes(user.email);
 
     if (!isOwner) {
+      console.log('Ownership check failed:', {
+        conversation_created_by: conversation.created_by,
+        conversation_user_id: conversation.user_id,
+        user_email: user.email,
+        user_id: user.id
+      });
       return Response.json({ 
         error: 'You can only delete your own conversations'
       }, { status: 403 });
     }
 
     // Mark as deleted via metadata using service role (soft delete)
-    const currentMetadata = conversation.metadata || {};
-    const updatedMetadata = {
-      ...currentMetadata,
-      deleted: true,
-      deleted_at: new Date().toISOString(),
-      deleted_by: user.email
-    };
+    try {
+      const currentMetadata = conversation.metadata || {};
+      const updatedMetadata = {
+        ...currentMetadata,
+        deleted: true,
+        deleted_at: new Date().toISOString(),
+        deleted_by: user.email
+      };
 
-    await base44.asServiceRole.agents.updateConversation(conversation_id, {
-      metadata: updatedMetadata
-    });
+      await base44.asServiceRole.agents.updateConversation(conversation_id, {
+        metadata: updatedMetadata
+      });
 
-    return Response.json({
-      success: true,
-      message: 'Conversation deleted successfully',
-      conversation_id
-    });
+      return Response.json({
+        success: true,
+        message: 'Conversation deleted successfully',
+        conversation_id
+      });
+    } catch (updateError) {
+      console.error('Error updating conversation metadata:', updateError);
+      return Response.json({ 
+        error: 'Failed to update conversation',
+        details: updateError.message
+      }, { status: 500 });
+    }
 
   } catch (error) {
     console.error('Delete conversation error:', error);
     console.error('Error stack:', error.stack);
     return Response.json({ 
       error: 'Failed to delete conversation',
-      details: error.message,
-      stack: error.stack
+      details: error.message
     }, { status: 500 });
   }
 });
