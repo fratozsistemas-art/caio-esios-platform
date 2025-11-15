@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -13,6 +14,7 @@ import AgentPersonaSelector from "../components/chat/AgentPersonaSelector";
 import MessageFeedback from "../components/chat/MessageFeedback";
 import ConversationSummary from "../components/chat/ConversationSummary";
 import ShareDialog from "../components/collaboration/ShareDialog";
+import AnalysisPanel from "../components/chat/AnalysisPanel";
 
 export default function Chat() {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -242,6 +244,7 @@ export default function Chat() {
             <div className="flex items-center gap-3">
               {selectedConversation && (
                 <>
+                  <AnalysisPanel conversationId={selectedConversation.id} />
                   <ShareDialog
                     conversationId={selectedConversation.id}
                     existingShares={selectedConversation.metadata?.shared_with || []}
