@@ -15,6 +15,7 @@ import ActionItemsWidget from "../components/dashboard/ActionItemsWidget";
 import QuickStatsWidget from "../components/dashboard/QuickStatsWidget";
 import ProactiveInsightsWidget from "../components/dashboard/ProactiveInsightsWidget";
 import PredictiveAnalysisWidget from "../components/dashboard/PredictiveAnalysisWidget";
+import CrossPlatformInsightsWidget from "../components/dashboard/CrossPlatformInsightsWidget";
 import { motion } from "framer-motion";
 
 export default function Dashboard() {
@@ -157,23 +158,23 @@ export default function Dashboard() {
   // Role-based layout configurations
   const layoutConfig = {
     admin: {
-      widgets: ['stats', 'conversations', 'insights', 'graph', 'actions'],
+      widgets: ['stats', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
-      widgets: ['stats', 'insights', 'graph', 'conversations'],
+      widgets: ['stats', 'insights', 'graph', 'conversations', 'crossplatform'],
       focus: 'analysis'
     },
     editor: {
-      widgets: ['stats', 'conversations', 'actions', 'insights'],
+      widgets: ['stats', 'conversations', 'actions', 'insights', 'crossplatform'],
       focus: 'content'
     },
     viewer: {
-      widgets: ['stats', 'conversations', 'insights'],
+      widgets: ['stats', 'conversations', 'insights', 'crossplatform'],
       focus: 'consumption'
     },
     default: {
-      widgets: ['stats', 'conversations', 'insights', 'graph', 'actions'],
+      widgets: ['stats', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'balanced'
     }
   };
@@ -244,6 +245,10 @@ export default function Dashboard() {
         
         {currentLayout.widgets.includes('actions') && (
           <ActionItemsWidget actionItems={actionItems} />
+        )}
+
+        {currentLayout.widgets.includes('crossplatform') && (
+          <CrossPlatformInsightsWidget />
         )}
 
         <ProactiveInsightsWidget />
