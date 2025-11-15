@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap } from "lucide-react";
 import { toast } from "sonner";
-import { createPageUrl } from "./utils";
+import { createPageUrl } from "../utils";
 import { Link } from "react-router-dom";
 import ConversationList from "../components/chat/ConversationList";
 import MessageBubble from "../components/chat/MessageBubble";
