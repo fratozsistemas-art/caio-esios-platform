@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
+import { 
   Network, Database, Loader2, CheckCircle, AlertCircle,
   TrendingUp, Building2, Users, Target, Sparkles, Search, Filter,
   ZoomIn, ZoomOut, Maximize2, RefreshCw, Brain
@@ -15,7 +14,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import GraphVisualization from "../components/graph/GraphVisualization";
-import GraphInsights from "../components/graph/GraphInsights"; // New import
+import GraphInsights from "../components/graph/GraphInsights";
 
 export default function KnowledgeGraph() {
   const queryClient = useQueryClient();
@@ -24,9 +23,8 @@ export default function KnowledgeGraph() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedNodeType, setSelectedNodeType] = useState("all");
   const [selectedRelType, setSelectedRelType] = useState("all");
-  const [showInsights, setShowInsights] = useState(false); // New state
+  const [showInsights, setShowInsights] = useState(false);
 
-  // ✅ Fetch Graph Stats
   const { data: graphStats, isLoading: statsLoading, refetch: refetchStats } = useQuery({
     queryKey: ['graphStats'],
     queryFn: async () => {
@@ -56,7 +54,6 @@ export default function KnowledgeGraph() {
     refetchInterval: 10000
   });
 
-  // New: AI Analysis Mutation
   const analyzeGraphMutation = useMutation({
     mutationFn: () => base44.functions.invoke('analyzeKnowledgeGraph'),
     onSuccess: (response) => {
@@ -108,14 +105,12 @@ export default function KnowledgeGraph() {
     }
   };
 
-  // New: Handle AI Analysis
   const handleAnalyzeGraph = async () => {
     await analyzeGraphMutation.mutateAsync();
   };
 
-  // Filter nodes and relationships
   const filteredNodes = graphStats?.all_nodes?.filter(node => {
-    const matchesSearch = !searchQuery ||
+    const matchesSearch = !searchQuery || 
       node.label?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       node.properties?.name?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = selectedNodeType === "all" || node.node_type === selectedNodeType;
@@ -124,7 +119,6 @@ export default function KnowledgeGraph() {
 
   const filteredRelationships = graphStats?.all_relationships?.filter(rel => {
     const matchesType = selectedRelType === "all" || rel.relationship_type === selectedRelType;
-    // Only show relationships where both nodes are in filtered nodes
     const hasFromNode = filteredNodes.some(n => n.id === rel.from_node_id);
     const hasToNode = filteredNodes.some(n => n.id === rel.to_node_id);
     return matchesType && hasFromNode && hasToNode;
@@ -170,7 +164,6 @@ export default function KnowledgeGraph() {
 
   return (
     <div className="p-6 md:p-8 space-y-6">
-      {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
@@ -190,8 +183,7 @@ export default function KnowledgeGraph() {
           >
             <RefreshCw className="w-5 h-5" />
           </Button>
-
-          {/* New: AI Insights Button */}
+          
           {graphStats?.total_nodes > 0 && (
             <Button
               onClick={handleAnalyzeGraph}
@@ -251,7 +243,6 @@ export default function KnowledgeGraph() {
         </div>
       </div>
 
-      {/* New: AI Insights Panel */}
       <AnimatePresence>
         {showInsights && analyzeGraphMutation.data?.data?.analysis && (
           <motion.div
@@ -259,7 +250,7 @@ export default function KnowledgeGraph() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <GraphInsights
+            <GraphInsights 
               analysis={analyzeGraphMutation.data.data.analysis}
               onNodeHighlight={(nodeName) => setSearchQuery(nodeName)}
             />
@@ -267,7 +258,6 @@ export default function KnowledgeGraph() {
         )}
       </AnimatePresence>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {statCards.map((stat, idx) => (
           <motion.div
@@ -298,7 +288,6 @@ export default function KnowledgeGraph() {
         ))}
       </div>
 
-      {/* Filters & Search */}
       {(graphStats?.all_nodes?.length || 0) > 0 && (
         <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
           <CardContent className="p-6">
@@ -365,13 +354,12 @@ export default function KnowledgeGraph() {
         </Card>
       )}
 
-      {/* ✅ Enhanced Graph Visualization */}
       {(graphStats?.all_nodes?.length || 0) > 0 ? (
-        <GraphVisualization
+        <GraphVisualization 
           nodes={filteredNodes}
           relationships={filteredRelationships}
           searchQuery={searchQuery}
-          highlightedNodes={analyzeGraphMutation.data?.data?.analysis?.highlighted_nodes} {/* New prop */}
+          highlightedNodes={analyzeGraphMutation.data?.data?.analysis?.highlighted_nodes}
         />
       ) : (
         <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
@@ -411,144 +399,6 @@ export default function KnowledgeGraph() {
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Node Types Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-          <CardHeader className="border-b border-white/10">
-            <CardTitle className="text-white">Node Types Distribution</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            {statsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-              </div>
-            ) : graphStats?.total_nodes === 0 ? (
-              <div className="text-center py-8">
-                <AlertCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                <p className="text-slate-400 mb-4">Knowledge Graph is empty</p>
-                <Button
-                  onClick={handleBuildGraph}
-                  className="bg-blue-600 hover:bg-blue-700"
-                >
-                  Build Graph Now
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {Object.entries(graphStats?.nodes_by_type || {})
-                  .sort(([,a], [,b]) => b - a)
-                  .map(([type, count]) => {
-                    const percentage = (count / graphStats.total_nodes * 100).toFixed(1);
-                    return (
-                      <div key={type} className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-300 capitalize">{type}</span>
-                          <span className="text-white font-medium">{count} ({percentage}%)</span>
-                        </div>
-                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all"
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Relationship Types */}
-        <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-          <CardHeader className="border-b border-white/10">
-            <CardTitle className="text-white">Relationship Types</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            {statsLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-              </div>
-            ) : graphStats?.total_relationships === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-slate-400">No relationships yet</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {Object.entries(graphStats?.relationships_by_type || {})
-                  .sort(([,a], [,b]) => b - a)
-                  .map(([type, count]) => {
-                    const percentage = (count / graphStats.total_relationships * 100).toFixed(1);
-                    return (
-                      <div key={type} className="space-y-2">
-                        <div className="flex items-center justify-between text-sm">
-                          <span className="text-slate-300">{type}</span>
-                          <span className="text-white font-medium">{count} ({percentage}%)</span>
-                        </div>
-                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-gradient-to-r from-green-500 to-emerald-500 rounded-full transition-all"
-                            style={{ width: `${percentage}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Sample Nodes */}
-      {filteredNodes.length > 0 && (
-        <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
-          <CardHeader className="border-b border-white/10">
-            <CardTitle className="text-white">
-              {searchQuery ? 'Search Results' : 'Sample Nodes'}
-              <span className="text-sm text-slate-400 ml-2 font-normal">
-                (showing {Math.min(10, filteredNodes.length)} of {filteredNodes.length})
-              </span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-3">
-              {filteredNodes.slice(0, 10).map((node, idx) => (
-                <motion.div
-                  key={idx}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="flex items-center justify-between bg-white/5 rounded-lg p-4 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-                >
-                  <div className="flex items-center gap-3">
-                    <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                      {node.node_type}
-                    </Badge>
-                    <span className="text-white font-medium">{node.label}</span>
-                    {node.properties?.industry && (
-                      <span className="text-slate-400 text-sm">• {node.properties.industry}</span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {node.properties?.ticker && (
-                      <Badge variant="outline" className="border-white/20 text-white">
-                        {node.properties.ticker}
-                      </Badge>
-                    )}
-                    {node.properties?.company_size && (
-                      <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
-                        {node.properties.company_size}
-                      </Badge>
-                    )}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
           </CardContent>
         </Card>
       )}
