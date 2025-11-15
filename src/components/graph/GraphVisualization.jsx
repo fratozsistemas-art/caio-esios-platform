@@ -1,328 +1,455 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ZoomIn, ZoomOut, Maximize2, Minimize2, Locate, Info } from "lucide-react";
+import { 
+  ZoomIn, ZoomOut, Maximize2, Network, Search, Filter,
+  Building2, Users, Lightbulb, TrendingUp, X, GitBranch
+} from "lucide-react";
 
-export default function GraphVisualization({ nodes, relationships, searchQuery }) {
-  const containerRef = useRef(null);
+const NODE_COLORS = {
+  company: '#3b82f6',
+  person: '#8b5cf6', 
+  technology: '#10b981',
+  project: '#f59e0b',
+  industry: '#ef4444',
+  topic: '#06b6d4',
+  document: '#6b7280'
+};
+
+const NODE_ICONS = {
+  company: Building2,
+  person: Users,
+  technology: Lightbulb,
+  project: GitBranch,
+  industry: TrendingUp
+};
+
+export default function GraphVisualization({ nodes = [], relationships = [], searchQuery = "", highlightedNodes = [] }) {
+  const svgRef = useRef(null);
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
   const [selectedNode, setSelectedNode] = useState(null);
-  const [zoomLevel, setZoomLevel] = useState(100);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [networkStats, setNetworkStats] = useState({ avgConnections: 0, maxConnections: 0 });
+  const [hoveredNode, setHoveredNode] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState("all");
+  const [showPaths, setShowPaths] = useState(false);
+  const [pathToNode, setPathToNode] = useState(null);
+
+  // Calculate node positions using force-directed layout simulation
+  const [nodePositions, setNodePositions] = useState({});
 
   useEffect(() => {
-    if (!nodes || nodes.length === 0) return;
+    if (nodes.length === 0) return;
 
-    // Calculate network statistics
-    const nodeConnections = {};
-    relationships.forEach(rel => {
-      nodeConnections[rel.from_node_id] = (nodeConnections[rel.from_node_id] || 0) + 1;
-      nodeConnections[rel.to_node_id] = (nodeConnections[rel.to_node_id] || 0) + 1;
+    // Initialize positions
+    const positions = {};
+    const width = 800;
+    const height = 600;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    // Group nodes by type for better layout
+    const nodesByType = {};
+    nodes.forEach(node => {
+      if (!nodesByType[node.node_type]) nodesByType[node.node_type] = [];
+      nodesByType[node.node_type].push(node);
     });
 
-    const connections = Object.values(nodeConnections);
-    const avgConnections = connections.length > 0 
-      ? (connections.reduce((a, b) => a + b, 0) / connections.length).toFixed(1)
-      : 0;
-    const maxConnections = connections.length > 0 ? Math.max(...connections) : 0;
+    // Arrange in circular clusters by type
+    const types = Object.keys(nodesByType);
+    const angleStep = (2 * Math.PI) / types.length;
 
-    setNetworkStats({ avgConnections, maxConnections });
-  }, [nodes, relationships]);
+    types.forEach((type, typeIndex) => {
+      const typeNodes = nodesByType[type];
+      const clusterRadius = 150 + (typeNodes.length * 3);
+      const clusterAngle = angleStep * typeIndex;
+      const clusterX = centerX + Math.cos(clusterAngle) * 200;
+      const clusterY = centerY + Math.sin(clusterAngle) * 200;
 
-  const handleZoomIn = () => {
-    setZoomLevel(prev => Math.min(prev + 20, 200));
+      typeNodes.forEach((node, nodeIndex) => {
+        const nodeAngle = (2 * Math.PI / typeNodes.length) * nodeIndex;
+        positions[node.id] = {
+          x: clusterX + Math.cos(nodeAngle) * clusterRadius,
+          y: clusterY + Math.sin(nodeAngle) * clusterRadius
+        };
+      });
+    });
+
+    setNodePositions(positions);
+  }, [nodes]);
+
+  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 3));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.3));
+  const handleResetZoom = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
+
+  const handleMouseDown = (e) => {
+    if (e.target.tagName === 'circle') return; // Don't drag if clicking node
+    setIsDragging(true);
+    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
   };
 
-  const handleZoomOut = () => {
-    setZoomLevel(prev => Math.max(prev - 20, 50));
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    setPan({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
   };
 
-  const handleResetZoom = () => {
-    setZoomLevel(100);
+  const handleMouseUp = () => setIsDragging(false);
+
+  const handleNodeClick = (node) => {
+    setSelectedNode(node);
+    setPathToNode(null);
   };
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
+  const findPath = (fromNode, toNode) => {
+    if (!fromNode || !toNode) return null;
+    
+    const visited = new Set();
+    const queue = [[fromNode.id]];
+    
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const current = path[path.length - 1];
+      
+      if (current === toNode.id) return path;
+      if (visited.has(current)) continue;
+      visited.add(current);
+      
+      const connectedRels = relationships.filter(r => 
+        r.from_node_id === current || r.to_node_id === current
+      );
+      
+      connectedRels.forEach(rel => {
+        const nextNode = rel.from_node_id === current ? rel.to_node_id : rel.from_node_id;
+        if (!visited.has(nextNode)) {
+          queue.push([...path, nextNode]);
+        }
+      });
+    }
+    
+    return null;
   };
 
-  // Group nodes by type for legend
-  const nodeTypes = [...new Set(nodes.map(n => n.node_type))];
-  const typeColors = {
-    company: "#3b82f6",
-    industry: "#f59e0b",
-    strategy: "#10b981",
-    metric: "#8b5cf6",
-    framework: "#ec4899",
-    outcome: "#06b6d4"
+  const getConnectedNodes = (nodeId) => {
+    const connected = new Set();
+    relationships.forEach(rel => {
+      if (rel.from_node_id === nodeId) connected.add(rel.to_node_id);
+      if (rel.to_node_id === nodeId) connected.add(rel.from_node_id);
+    });
+    return connected;
   };
 
-  // Find most connected nodes
-  const nodeConnectionCount = {};
-  relationships.forEach(rel => {
-    nodeConnectionCount[rel.from_node_id] = (nodeConnectionCount[rel.from_node_id] || 0) + 1;
-    nodeConnectionCount[rel.to_node_id] = (nodeConnectionCount[rel.to_node_id] || 0) + 1;
+  const filteredNodes = nodes.filter(node => {
+    const matchesSearch = !searchTerm || 
+      node.label?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === "all" || node.node_type === filterType;
+    return matchesSearch && matchesType;
   });
 
-  const topNodes = nodes
-    .map(node => ({
-      ...node,
-      connections: nodeConnectionCount[node.id] || 0
-    }))
-    .sort((a, b) => b.connections - a.connections)
-    .slice(0, 5);
+  const isNodeInPath = (nodeId) => {
+    return pathToNode?.includes(nodeId);
+  };
+
+  const isRelInPath = (rel) => {
+    if (!pathToNode || pathToNode.length < 2) return false;
+    for (let i = 0; i < pathToNode.length - 1; i++) {
+      if ((rel.from_node_id === pathToNode[i] && rel.to_node_id === pathToNode[i + 1]) ||
+          (rel.to_node_id === pathToNode[i] && rel.from_node_id === pathToNode[i + 1])) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const connectedToSelected = selectedNode ? getConnectedNodes(selectedNode.id) : new Set();
+
+  const nodeTypes = [...new Set(nodes.map(n => n.node_type))];
 
   return (
-    <Card className={`bg-white/5 border-white/10 backdrop-blur-sm ${isFullscreen ? 'fixed inset-4 z-50' : ''}`}>
+    <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
       <CardHeader className="border-b border-white/10">
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-white flex items-center gap-2">
-              Graph Visualization
-              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                {nodes.length} nodes • {relationships.length} edges
-              </Badge>
-            </CardTitle>
-            <p className="text-sm text-slate-400 mt-1">
-              Avg {networkStats.avgConnections} connections per node • Max {networkStats.maxConnections}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <CardTitle className="text-white flex items-center gap-2">
+            <Network className="w-5 h-5 text-blue-400" />
+            Interactive Graph ({filteredNodes.length} nodes)
+          </CardTitle>
+          
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                placeholder="Search nodes..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 w-48 bg-white/5 border-white/10 text-white placeholder:text-slate-500"
+              />
+            </div>
+            
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm"
+            >
+              <option value="all">All Types</option>
+              {nodeTypes.map(type => (
+                <option key={type} value={type}>{type}</option>
+              ))}
+            </select>
+
             <Button
               variant="ghost"
               size="icon"
               onClick={handleZoomOut}
-              disabled={zoomLevel <= 50}
-              className="text-slate-400 hover:text-white hover:bg-white/10"
+              className="text-white hover:bg-white/10"
             >
               <ZoomOut className="w-4 h-4" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              onClick={handleResetZoom}
-              className="text-slate-400 hover:text-white hover:bg-white/10"
-            >
-              <Locate className="w-4 h-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
               onClick={handleZoomIn}
-              disabled={zoomLevel >= 200}
-              className="text-slate-400 hover:text-white hover:bg-white/10"
+              className="text-white hover:bg-white/10"
             >
               <ZoomIn className="w-4 h-4" />
             </Button>
-            <div className="text-sm text-slate-400 min-w-[60px] text-center">
-              {zoomLevel}%
-            </div>
             <Button
               variant="ghost"
               size="icon"
-              onClick={toggleFullscreen}
-              className="text-slate-400 hover:text-white hover:bg-white/10"
+              onClick={handleResetZoom}
+              className="text-white hover:bg-white/10"
             >
-              {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              <Maximize2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="p-0 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-0">
-          {/* Main Visualization Area */}
+      <CardContent className="p-0">
+        <div className="flex">
+          {/* Graph Canvas */}
           <div 
-            ref={containerRef}
-            className="lg:col-span-3 relative bg-slate-950/50 overflow-hidden"
-            style={{ height: isFullscreen ? 'calc(100vh - 200px)' : '600px' }}
+            className="flex-1 relative overflow-hidden bg-gradient-to-br from-slate-950 to-blue-950"
+            style={{ height: '600px' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
           >
-            {/* Placeholder for actual graph visualization */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center space-y-4 p-8">
-                <div className="relative w-64 h-64 mx-auto">
-                  {/* Simple SVG visualization placeholder */}
-                  <svg viewBox="0 0 200 200" className="w-full h-full">
-                    {/* Draw sample nodes */}
-                    {nodes.slice(0, 15).map((node, idx) => {
-                      const angle = (idx / Math.min(15, nodes.length)) * 2 * Math.PI;
-                      const x = 100 + 70 * Math.cos(angle);
-                      const y = 100 + 70 * Math.sin(angle);
-                      const color = typeColors[node.node_type] || "#64748b";
-                      const connections = nodeConnectionCount[node.id] || 0;
-                      const size = 3 + Math.min(connections * 0.5, 7);
-                      
-                      return (
-                        <g key={idx}>
-                          <circle
-                            cx={x}
-                            cy={y}
-                            r={size}
-                            fill={color}
-                            className="cursor-pointer hover:opacity-80 transition-opacity"
-                            onClick={() => setSelectedNode(node)}
-                          />
-                          {connections > 3 && (
-                            <circle
-                              cx={x}
-                              cy={y}
-                              r={size + 3}
-                              fill="none"
-                              stroke={color}
-                              strokeWidth="0.5"
-                              opacity="0.3"
-                            />
-                          )}
-                        </g>
-                      );
-                    })}
-                    
-                    {/* Draw sample edges */}
-                    {relationships.slice(0, 20).map((rel, idx) => {
-                      const fromIdx = nodes.findIndex(n => n.id === rel.from_node_id);
-                      const toIdx = nodes.findIndex(n => n.id === rel.to_node_id);
-                      if (fromIdx === -1 || toIdx === -1 || fromIdx > 14 || toIdx > 14) return null;
-                      
-                      const fromAngle = (fromIdx / Math.min(15, nodes.length)) * 2 * Math.PI;
-                      const toAngle = (toIdx / Math.min(15, nodes.length)) * 2 * Math.PI;
-                      const x1 = 100 + 70 * Math.cos(fromAngle);
-                      const y1 = 100 + 70 * Math.sin(fromAngle);
-                      const x2 = 100 + 70 * Math.cos(toAngle);
-                      const y2 = 100 + 70 * Math.sin(toAngle);
-                      
-                      return (
-                        <line
-                          key={idx}
-                          x1={x1}
-                          y1={y1}
-                          x2={x2}
-                          y2={y2}
-                          stroke="#475569"
-                          strokeWidth="0.5"
-                          opacity="0.3"
-                        />
-                      );
-                    })}
-                  </svg>
-                </div>
-                
-                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 max-w-md mx-auto">
-                  <div className="flex items-start gap-3">
-                    <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-                    <div className="text-left">
-                      <p className="text-sm text-blue-400 font-medium mb-1">
-                        Interactive Graph Coming Soon
-                      </p>
-                      <p className="text-xs text-slate-400">
-                        This is a simplified preview. Full interactive visualization with force-directed layout, 
-                        zoom, pan, and node details will be available with the vis-network library integration.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <svg
+              ref={svgRef}
+              width="100%"
+              height="100%"
+              style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+            >
+              <g transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}>
+                {/* Relationships */}
+                <g>
+                  {relationships.filter(rel => {
+                    const fromNode = filteredNodes.find(n => n.id === rel.from_node_id);
+                    const toNode = filteredNodes.find(n => n.id === rel.to_node_id);
+                    return fromNode && toNode;
+                  }).map((rel, idx) => {
+                    const from = nodePositions[rel.from_node_id];
+                    const to = nodePositions[rel.to_node_id];
+                    if (!from || !to) return null;
 
-            {/* Zoom level indicator */}
-            <div className="absolute bottom-4 left-4 bg-slate-900/90 rounded-lg px-3 py-2 border border-white/10">
-              <div className="text-xs text-slate-400">
-                Showing {Math.min(15, nodes.length)} of {nodes.length} nodes
-              </div>
+                    const isHighlighted = selectedNode && 
+                      (rel.from_node_id === selectedNode.id || rel.to_node_id === selectedNode.id);
+                    const inPath = isRelInPath(rel);
+
+                    return (
+                      <line
+                        key={idx}
+                        x1={from.x}
+                        y1={from.y}
+                        x2={to.x}
+                        y2={to.y}
+                        stroke={inPath ? '#10b981' : isHighlighted ? '#3b82f6' : '#334155'}
+                        strokeWidth={inPath ? 3 : isHighlighted ? 2 : 1}
+                        strokeOpacity={inPath ? 1 : isHighlighted ? 0.8 : 0.3}
+                      />
+                    );
+                  })}
+                </g>
+
+                {/* Nodes */}
+                <g>
+                  {filteredNodes.map((node) => {
+                    const pos = nodePositions[node.id];
+                    if (!pos) return null;
+
+                    const isSelected = selectedNode?.id === node.id;
+                    const isConnected = connectedToSelected.has(node.id);
+                    const isHovered = hoveredNode?.id === node.id;
+                    const isHighlighted = highlightedNodes?.includes(node.label);
+                    const matchesSearch = searchTerm && node.label?.toLowerCase().includes(searchTerm.toLowerCase());
+                    const inPath = isNodeInPath(node.id);
+
+                    const radius = isSelected ? 12 : matchesSearch || isHighlighted ? 10 : 8;
+                    const opacity = selectedNode && !isSelected && !isConnected ? 0.3 : 1;
+
+                    return (
+                      <g key={node.id}>
+                        <circle
+                          cx={pos.x}
+                          cy={pos.y}
+                          r={radius}
+                          fill={inPath ? '#10b981' : NODE_COLORS[node.node_type] || '#6b7280'}
+                          fillOpacity={opacity}
+                          stroke={isSelected ? '#fff' : matchesSearch ? '#fbbf24' : isHighlighted ? '#a855f7' : 'none'}
+                          strokeWidth={isSelected ? 3 : 2}
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => handleNodeClick(node)}
+                          onMouseEnter={() => setHoveredNode(node)}
+                          onMouseLeave={() => setHoveredNode(null)}
+                        />
+                        {(isSelected || isHovered || matchesSearch) && (
+                          <text
+                            x={pos.x}
+                            y={pos.y - radius - 5}
+                            textAnchor="middle"
+                            fill="white"
+                            fontSize="12"
+                            fontWeight="bold"
+                          >
+                            {node.label}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
+                </g>
+              </g>
+            </svg>
+
+            {/* Zoom indicator */}
+            <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-lg text-white text-sm">
+              Zoom: {Math.round(zoom * 100)}%
             </div>
           </div>
 
-          {/* Right Sidebar - Info Panel */}
-          <div className="bg-slate-900/50 border-l border-white/10 p-6 space-y-6 overflow-y-auto" style={{ maxHeight: isFullscreen ? 'calc(100vh - 200px)' : '600px' }}>
-            {/* Legend */}
-            <div>
-              <h3 className="text-sm font-semibold text-white mb-3">Node Types</h3>
-              <div className="space-y-2">
-                {nodeTypes.map(type => {
-                  const count = nodes.filter(n => n.node_type === type).length;
-                  const color = typeColors[type] || "#64748b";
-                  return (
-                    <div key={type} className="flex items-center justify-between text-sm">
-                      <div className="flex items-center gap-2">
+          {/* Side Panel */}
+          <div className="w-80 border-l border-white/10 bg-slate-900/50 overflow-y-auto" style={{ height: '600px' }}>
+            <div className="p-4 space-y-4">
+              {/* Legend */}
+              <div>
+                <h4 className="text-white font-semibold mb-3 flex items-center gap-2">
+                  <Filter className="w-4 h-4" />
+                  Legend
+                </h4>
+                <div className="space-y-2">
+                  {Object.entries(NODE_COLORS).map(([type, color]) => {
+                    const Icon = NODE_ICONS[type];
+                    const count = nodes.filter(n => n.node_type === type).length;
+                    if (count === 0) return null;
+                    
+                    return (
+                      <div key={type} className="flex items-center gap-2">
                         <div 
-                          className="w-3 h-3 rounded-full"
+                          className="w-3 h-3 rounded-full" 
                           style={{ backgroundColor: color }}
                         />
-                        <span className="text-slate-300 capitalize">{type}</span>
+                        {Icon && <Icon className="w-3 h-3 text-slate-400" />}
+                        <span className="text-sm text-slate-300 capitalize">{type}</span>
+                        <Badge variant="outline" className="ml-auto text-xs border-white/10 text-slate-400">
+                          {count}
+                        </Badge>
                       </div>
-                      <span className="text-slate-500">{count}</span>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* Top Connected Nodes */}
-            <div>
-              <h3 className="text-sm font-semibold text-white mb-3">Most Connected</h3>
-              <div className="space-y-2">
-                {topNodes.map((node, idx) => (
-                  <div 
-                    key={node.id}
-                    className="bg-white/5 rounded-lg p-3 border border-white/10 cursor-pointer hover:bg-white/10 transition-all"
-                    onClick={() => setSelectedNode(node)}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-slate-400">#{idx + 1}</span>
-                      <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
-                        {node.connections} links
+              {/* Selected Node Info */}
+              {selectedNode && (
+                <div className="border-t border-white/10 pt-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <h4 className="text-white font-semibold">Node Details</h4>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSelectedNode(null)}
+                      className="h-6 w-6 text-slate-400 hover:text-white"
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <div className="text-xs text-slate-400 mb-1">Label</div>
+                      <div className="text-white font-medium">{selectedNode.label}</div>
+                    </div>
+                    
+                    <div>
+                      <div className="text-xs text-slate-400 mb-1">Type</div>
+                      <Badge className="bg-white/10 text-white border-white/20 capitalize">
+                        {selectedNode.node_type}
                       </Badge>
                     </div>
-                    <div className="text-sm text-white font-medium truncate">{node.label}</div>
-                    <div className="text-xs text-slate-500 capitalize">{node.node_type}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
 
-            {/* Selected Node Details */}
-            {selectedNode && (
-              <div className="border-t border-white/10 pt-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-sm font-semibold text-white">Selected Node</h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSelectedNode(null)}
-                    className="text-slate-400 hover:text-white h-6 text-xs"
-                  >
-                    Clear
-                  </Button>
-                </div>
-                <div className="bg-white/5 rounded-lg p-4 border border-white/10 space-y-3">
-                  <div>
-                    <div className="text-xs text-slate-500 mb-1">Name</div>
-                    <div className="text-sm text-white font-medium">{selectedNode.label}</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-slate-500 mb-1">Type</div>
-                    <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                      {selectedNode.node_type}
-                    </Badge>
-                  </div>
-                  {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 && (
-                    <div>
-                      <div className="text-xs text-slate-500 mb-2">Properties</div>
-                      <div className="space-y-1">
-                        {Object.entries(selectedNode.properties).map(([key, value]) => (
-                          <div key={key} className="text-xs">
-                            <span className="text-slate-400">{key}:</span>
-                            <span className="text-slate-300 ml-2">{String(value)}</span>
-                          </div>
-                        ))}
+                    {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 && (
+                      <div>
+                        <div className="text-xs text-slate-400 mb-2">Properties</div>
+                        <div className="bg-white/5 rounded-lg p-2 space-y-1">
+                          {Object.entries(selectedNode.properties).slice(0, 5).map(([key, value]) => (
+                            <div key={key} className="text-xs">
+                              <span className="text-slate-400">{key}:</span>{' '}
+                              <span className="text-slate-200">{String(value).slice(0, 50)}</span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
+                    )}
+
+                    <div>
+                      <div className="text-xs text-slate-400 mb-1">Connections</div>
+                      <div className="text-white font-medium">{connectedToSelected.size} nodes</div>
                     </div>
-                  )}
-                  <div>
-                    <div className="text-xs text-slate-500 mb-1">Connections</div>
-                    <div className="text-sm text-white">{nodeConnectionCount[selectedNode.id] || 0}</div>
+
+                    {/* Find Path */}
+                    <div className="pt-3 border-t border-white/10">
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          if (pathToNode) {
+                            setPathToNode(null);
+                          } else {
+                            const firstNode = nodes[0];
+                            const path = findPath(firstNode, selectedNode);
+                            setPathToNode(path);
+                          }
+                        }}
+                        className="w-full bg-blue-600 hover:bg-blue-700"
+                      >
+                        <GitBranch className="w-4 h-4 mr-2" />
+                        {pathToNode ? 'Clear Path' : 'Show Path'}
+                      </Button>
+                      {pathToNode && (
+                        <div className="mt-2 text-xs text-green-400">
+                          Path length: {pathToNode.length} nodes
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Instructions */}
+              {!selectedNode && (
+                <div className="text-xs text-slate-400 space-y-2">
+                  <p><strong className="text-slate-300">Click</strong> a node to view details</p>
+                  <p><strong className="text-slate-300">Drag</strong> canvas to pan</p>
+                  <p><strong className="text-slate-300">Search</strong> to highlight nodes</p>
+                  <p><strong className="text-slate-300">Filter</strong> by node type</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </CardContent>
