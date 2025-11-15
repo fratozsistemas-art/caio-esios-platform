@@ -18,6 +18,7 @@ import KnowledgeManagement from './pages/KnowledgeManagement';
 import UserManagement from './pages/UserManagement';
 import BehavioralIntelligence from './pages/BehavioralIntelligence';
 import CVMGraph from './pages/CVMGraph';
+import Integrations from './pages/Integrations';
 import Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "UserManagement": UserManagement,
     "BehavioralIntelligence": BehavioralIntelligence,
     "CVMGraph": CVMGraph,
+    "Integrations": Integrations,
 }
 
 export const pagesConfig = {
