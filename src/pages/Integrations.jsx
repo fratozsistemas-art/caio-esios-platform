@@ -1,6 +1,7 @@
 import React from "react";
 import DataSourceManager from "../components/integrations/DataSourceManager";
 import AutoGraphBuilder from "../components/integrations/AutoGraphBuilder";
+import CrossPlatformInsights from "../components/insights/CrossPlatformInsights";
 import { Database } from "lucide-react";
 
 export default function Integrations() {
@@ -16,12 +17,16 @@ export default function Integrations() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <DataSourceManager />
-        </div>
-        <div>
-          <AutoGraphBuilder />
+      <div className="space-y-6">
+        <CrossPlatformInsights />
+        
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <DataSourceManager />
+          </div>
+          <div>
+            <AutoGraphBuilder />
+          </div>
         </div>
       </div>
     </div>
