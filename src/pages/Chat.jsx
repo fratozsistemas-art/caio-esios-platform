@@ -15,6 +15,7 @@ import MessageFeedback from "../components/chat/MessageFeedback";
 import ConversationSummary from "../components/chat/ConversationSummary";
 import ShareDialog from "../components/collaboration/ShareDialog";
 import AnalysisPanel from "../components/chat/AnalysisPanel";
+import AIFeatures from "../components/chat/AIFeatures";
 
 export default function Chat() {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -188,6 +189,10 @@ export default function Chat() {
     };
   }, [isResizing]);
 
+  const handleSuggestedPrompt = (prompt) => {
+    setUserInput(prompt);
+  };
+
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950">
       {/* Sidebar */}
@@ -220,176 +225,190 @@ export default function Chat() {
       </div>
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <div className="border-b border-white/10 bg-slate-900/50 backdrop-blur-xl p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden text-white"
-              >
-                <Menu className="w-5 h-5" />
-              </Button>
-              <div>
-                <h2 className="text-white font-semibold">
-                  {selectedConversation?.metadata?.name || "CAIO Strategic Intelligence"}
-                </h2>
-                <p className="text-sm text-slate-400">AI-powered strategic advisor</p>
+      <div className="flex-1 flex flex-col lg:flex-row">
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <div className="border-b border-white/10 bg-slate-900/50 backdrop-blur-xl p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="lg:hidden text-white"
+                >
+                  <Menu className="w-5 h-5" />
+                </Button>
+                <div>
+                  <h2 className="text-white font-semibold">
+                    {selectedConversation?.metadata?.name || "CAIO Strategic Intelligence"}
+                  </h2>
+                  <p className="text-sm text-slate-400">AI-powered strategic advisor</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              {selectedConversation && (
-                <>
-                  <AnalysisPanel conversationId={selectedConversation.id} />
-                  <ShareDialog
-                    conversationId={selectedConversation.id}
-                    existingShares={selectedConversation.metadata?.shared_with || []}
-                  />
-                  {messages.length > 0 && (
-                    <ConversationSummary 
-                      conversation={selectedConversation}
-                      messages={messages}
+              
+              <div className="flex items-center gap-3">
+                {selectedConversation && (
+                  <>
+                    <AnalysisPanel conversationId={selectedConversation.id} />
+                    <ShareDialog
+                      conversationId={selectedConversation.id}
+                      existingShares={selectedConversation.metadata?.shared_with || []}
                     />
-                  )}
-                </>
-              )}
-              <AgentPersonaSelector
-                currentPersona={agentPersona}
-                onPersonaChange={handlePersonaChange}
-              />
+                    {messages.length > 0 && (
+                      <ConversationSummary 
+                        conversation={selectedConversation}
+                        messages={messages}
+                      />
+                    )}
+                  </>
+                )}
+                <AgentPersonaSelector
+                  currentPersona={agentPersona}
+                  onPersonaChange={handlePersonaChange}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {!selectedConversation ? (
-            <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-              <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-                <MessageSquare className="w-10 h-10 text-white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white mb-2">Welcome to CAIO</h3>
-                <p className="text-slate-400 max-w-md">
-                  Your AI-powered strategic intelligence assistant. Start a new conversation or browse Quick Actions.
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleCreateConversation}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Start New Conversation
-                </Button>
-                <Link to={createPageUrl('QuickActions')}>
-                  <Button variant="outline" className="border-white/10 text-white hover:bg-white/10">
-                    <Zap className="w-4 h-4 mr-2" />
-                    Browse Quick Actions
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mx-auto">
-                  <MessageSquare className="w-8 h-8 text-white" />
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {!selectedConversation ? (
+              <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                  <MessageSquare className="w-10 h-10 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-white mb-2">Start the conversation</h3>
-                  <p className="text-slate-400">Ask me anything about strategy, markets, or analysis</p>
+                  <h3 className="text-2xl font-bold text-white mb-2">Welcome to CAIO</h3>
+                  <p className="text-slate-400 max-w-md">
+                    Your AI-powered strategic intelligence assistant. Start a new conversation or browse Quick Actions.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleCreateConversation}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Start New Conversation
+                  </Button>
+                  <Link to={createPageUrl('QuickActions')}>
+                    <Button variant="outline" className="border-white/10 text-white hover:bg-white/10">
+                      <Zap className="w-4 h-4 mr-2" />
+                      Browse Quick Actions
+                    </Button>
+                  </Link>
                 </div>
               </div>
-            </div>
-          ) : (
-            <div className="max-w-4xl mx-auto space-y-6">
-              {messages.map((message, idx) => (
-                <div key={idx}>
-                  <MessageBubble message={message} />
-                  {message.role === 'assistant' && (
-                    <MessageFeedback
-                      conversationId={selectedConversation.id}
-                      messageId={message.id || `msg-${idx}`}
-                    />
-                  )}
+            ) : messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mx-auto">
+                    <MessageSquare className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Start the conversation</h3>
+                    <p className="text-slate-400">Ask me anything about strategy, markets, or analysis</p>
+                  </div>
                 </div>
-              ))}
-              {isSending && (
-                <div className="flex items-center gap-3 text-slate-400">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">CAIO is thinking...</span>
+              </div>
+            ) : (
+              <div className="max-w-4xl mx-auto space-y-6">
+                {messages.map((message, idx) => (
+                  <div key={idx}>
+                    <MessageBubble message={message} />
+                    {message.role === 'assistant' && (
+                      <MessageFeedback
+                        conversationId={selectedConversation.id}
+                        messageId={message.id || `msg-${idx}`}
+                      />
+                    )}
+                  </div>
+                ))}
+                {isSending && (
+                  <div className="flex items-center gap-3 text-slate-400">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-sm">CAIO is thinking...</span>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
+
+          {/* Input Area */}
+          {selectedConversation && (
+            <div className="border-t border-white/10 bg-slate-900/50 backdrop-blur-xl p-4">
+              <div className="max-w-4xl mx-auto">
+                {uploadedFiles.length > 0 && (
+                  <div className="mb-3 flex flex-wrap gap-2">
+                    {uploadedFiles.map((file, idx) => (
+                      <div key={idx} className="flex items-center gap-2 bg-blue-500/20 text-blue-400 px-3 py-1 rounded-lg text-sm border border-blue-500/30">
+                        <Paperclip className="w-3 h-3" />
+                        <span>{file.name}</span>
+                        <button
+                          onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
+                          className="hover:text-blue-300"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                <div className="flex gap-3">
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="border-white/10 text-white hover:bg-white/10"
+                  >
+                    {isUploading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <Paperclip className="w-5 h-5" />
+                    )}
+                  </Button>
+
+                  <Textarea
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Ask CAIO anything..."
+                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-slate-500 resize-none"
+                    rows={1}
+                  />
+
+                  <Button
+                    onClick={handleSendMessage}
+                    disabled={isSending || (!userInput.trim() && uploadedFiles.length === 0)}
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                  >
+                    <Send className="w-5 h-5" />
+                  </Button>
                 </div>
-              )}
-              <div ref={messagesEndRef} />
+              </div>
             </div>
           )}
         </div>
 
-        {/* Input Area */}
-        {selectedConversation && (
-          <div className="border-t border-white/10 bg-slate-900/50 backdrop-blur-xl p-4">
-            <div className="max-w-4xl mx-auto">
-              {uploadedFiles.length > 0 && (
-                <div className="mb-3 flex flex-wrap gap-2">
-                  {uploadedFiles.map((file, idx) => (
-                    <div key={idx} className="flex items-center gap-2 bg-blue-500/20 text-blue-400 px-3 py-1 rounded-lg text-sm border border-blue-500/30">
-                      <Paperclip className="w-3 h-3" />
-                      <span>{file.name}</span>
-                      <button
-                        onClick={() => setUploadedFiles(prev => prev.filter((_, i) => i !== idx))}
-                        className="hover:text-blue-300"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              
-              <div className="flex gap-3">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="border-white/10 text-white hover:bg-white/10"
-                >
-                  {isUploading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Paperclip className="w-5 h-5" />
-                  )}
-                </Button>
-
-                <Textarea
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Ask CAIO anything..."
-                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-slate-500 resize-none"
-                  rows={1}
-                />
-
-                <Button
-                  onClick={handleSendMessage}
-                  disabled={isSending || (!userInput.trim() && uploadedFiles.length === 0)}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
-                >
-                  <Send className="w-5 h-5" />
-                </Button>
-              </div>
+        {/* Right sidebar for AI features */}
+        {selectedConversation && messages.length > 0 && (
+          <div className="lg:w-96 border-t lg:border-t-0 lg:border-l border-white/10 bg-slate-900/50 backdrop-blur-xl overflow-y-auto">
+            <div className="p-4">
+              <AIFeatures 
+                conversationId={selectedConversation.id}
+                onPromptSelect={handleSuggestedPrompt}
+              />
             </div>
           </div>
         )}
