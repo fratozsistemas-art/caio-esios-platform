@@ -12,6 +12,7 @@ import MessageBubble from "../components/chat/MessageBubble";
 import AgentPersonaSelector from "../components/chat/AgentPersonaSelector";
 import MessageFeedback from "../components/chat/MessageFeedback";
 import ConversationSummary from "../components/chat/ConversationSummary";
+import ShareDialog from "../components/collaboration/ShareDialog";
 
 export default function Chat() {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -239,11 +240,19 @@ export default function Chat() {
             </div>
             
             <div className="flex items-center gap-3">
-              {selectedConversation && messages.length > 0 && (
-                <ConversationSummary 
-                  conversation={selectedConversation}
-                  messages={messages}
-                />
+              {selectedConversation && (
+                <>
+                  <ShareDialog
+                    conversationId={selectedConversation.id}
+                    existingShares={selectedConversation.metadata?.shared_with || []}
+                  />
+                  {messages.length > 0 && (
+                    <ConversationSummary 
+                      conversation={selectedConversation}
+                      messages={messages}
+                    />
+                  )}
+                </>
               )}
               <AgentPersonaSelector
                 currentPersona={agentPersona}
