@@ -22,6 +22,7 @@ import Integrations from './pages/Integrations';
 import CompanyDiscovery from './pages/CompanyDiscovery';
 import CompanyProfile from './pages/CompanyProfile';
 import BatchIngestion from './pages/BatchIngestion';
+import TechnicalAudit from './pages/TechnicalAudit';
 import Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "CompanyDiscovery": CompanyDiscovery,
     "CompanyProfile": CompanyProfile,
     "BatchIngestion": BatchIngestion,
+    "TechnicalAudit": TechnicalAudit,
 }
 
 export const pagesConfig = {
