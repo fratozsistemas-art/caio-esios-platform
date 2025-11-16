@@ -18,6 +18,8 @@ import AgentHierarchyVisualizer from "../components/orchestration/AgentHierarchy
 import AgentCommunicationLog from "../components/orchestration/AgentCommunicationLog";
 import { motion } from "framer-motion";
 import { toast } from "react-hot-toast"; // Assuming react-hot-toast is installed and configured
+import RealtimeExecutionGraph from "../components/orchestration/RealtimeExecutionGraph";
+import DebugPanel from "../components/orchestration/DebugPanel";
 
 export default function AgentOrchestration() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -26,6 +28,8 @@ export default function AgentOrchestration() {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [selectedExecution, setSelectedExecution] = useState(null);
   const [agentConfig, setAgentConfig] = useState({ agents: [] });
+  const [selectedAgentId, setSelectedAgentId] = useState(null);
+  const [showDebugMode, setShowDebugMode] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -57,6 +61,11 @@ export default function AgentOrchestration() {
   const successRate = workflows.length > 0
     ? workflows.reduce((sum, w) => sum + (w.success_rate || 0), 0) / workflows.length
     : 0;
+
+  const handleControlAction = (action, agentId) => {
+    console.log(`Control action: ${action} for agent ${agentId}`);
+    toast.success(`${action} action triggered for ${agentId}`);
+  };
 
   return (
     <div className="space-y-6">
@@ -249,7 +258,7 @@ export default function AgentOrchestration() {
               workflow={workflow}
               onSelect={(w) => {
                 setSelectedWorkflow(w);
-                setSelectedExecution(null); // Clear selected execution when a new workflow is selected
+                setSelectedExecution(null);
               }}
               onEdit={(w) => {
                 setSelectedWorkflow(w);
@@ -261,7 +270,7 @@ export default function AgentOrchestration() {
                 if (w.hierarchical_config) {
                   setAgentConfig(w.hierarchical_config);
                 } else {
-                  setAgentConfig({ agents: [] }); // Reset if no config exists
+                  setAgentConfig({ agents: [] });
                 }
               }}
               selected={selectedWorkflow?.id === workflow.id}
@@ -270,36 +279,75 @@ export default function AgentOrchestration() {
         </div>
       )}
 
-      {/* Workflow Visualization */}
+      {/* Enhanced Workflow Visualization with Debug Mode */}
       {selectedWorkflow && !showBuilder && !showHierarchyBuilder && !showExecutionMonitor && (
-        <div className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 space-y-4">
-            <EnhancedWorkflowVisualizer 
-              workflow={selectedWorkflow}
-              execution={selectedExecution}
-              onStepFocus={() => {}} // Focused step logic removed, but prop remains for component compatibility
-            />
-            {selectedWorkflow.hierarchical_config?.agents && selectedWorkflow.hierarchical_config.agents.length > 0 && (
-              <AgentHierarchyVisualizer 
-                agentConfig={selectedWorkflow.hierarchical_config}
-                execution={selectedExecution}
-              />
-            )}
+        <>
+          {/* Debug Mode Toggle */}
+          <div className="flex items-center justify-end gap-2">
+            <Badge className={showDebugMode ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-slate-500/20 text-slate-400 border-slate-500/30'}>
+              {showDebugMode ? 'Debug Mode Active' : 'Debug Mode Off'}
+            </Badge>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setShowDebugMode(!showDebugMode)}
+              className={`${showDebugMode ? 'bg-orange-500/20 border-orange-500/30 text-orange-400' : 'bg-white/5 border-white/10 text-white'} hover:bg-orange-500/30`}
+            >
+              <Activity className="w-4 h-4 mr-2" />
+              {showDebugMode ? 'Exit Debug' : 'Enter Debug'}
+            </Button>
           </div>
-          <div className="space-y-4">
-            <DataFlowVisualizer 
-              workflow={selectedWorkflow}
-              execution={selectedExecution}
-              focusedStep={null} // Focused step logic removed
-            />
-            {selectedExecution?.communication_log && (
-              <AgentCommunicationLog 
-                communicationLog={selectedExecution.communication_log}
-                agentStates={selectedExecution.agent_states}
-              />
-            )}
+
+          <div className={showDebugMode ? "grid grid-cols-2 gap-6" : "grid grid-cols-3 gap-6"}>
+            {/* Main Execution Graph */}
+            <div className={showDebugMode ? "col-span-1 space-y-4" : "col-span-2 space-y-4"}>
+              {selectedExecution ? (
+                <RealtimeExecutionGraph
+                  execution={selectedExecution}
+                  workflow={selectedWorkflow}
+                  onAgentSelect={setSelectedAgentId}
+                  onControlAction={handleControlAction}
+                />
+              ) : (
+                <EnhancedWorkflowVisualizer 
+                  workflow={selectedWorkflow}
+                  execution={selectedExecution}
+                  onStepFocus={() => {}}
+                />
+              )}
+              {selectedWorkflow.hierarchical_config?.agents && selectedWorkflow.hierarchical_config.agents.length > 0 && (
+                <AgentHierarchyVisualizer 
+                  agentConfig={selectedWorkflow.hierarchical_config}
+                  execution={selectedExecution}
+                />
+              )}
+            </div>
+
+            {/* Side Panel - Debug or Standard View */}
+            <div className="col-span-1 space-y-4">
+              {showDebugMode && selectedExecution ? (
+                <DebugPanel
+                  execution={selectedExecution}
+                  selectedAgentId={selectedAgentId}
+                />
+              ) : (
+                <>
+                  <DataFlowVisualizer 
+                    workflow={selectedWorkflow}
+                    execution={selectedExecution}
+                    focusedStep={null}
+                  />
+                  {selectedExecution?.communication_log && (
+                    <AgentCommunicationLog 
+                      communicationLog={selectedExecution.communication_log}
+                      agentStates={selectedExecution.agent_states}
+                    />
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );
