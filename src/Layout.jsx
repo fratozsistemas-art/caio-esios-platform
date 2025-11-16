@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -59,7 +60,8 @@ const navSections = [
     items: [
       { name: 'Hermes Dashboard', icon: Shield, path: 'HermesDashboard', badge: 'NEW' },
       { name: 'Hermes Trust-Broker', icon: Shield, path: 'HermesTrustBroker' },
-      { name: 'Auto-Trigger Rules', icon: Zap, path: 'HermesTriggerManagement' }
+      { name: 'Auto-Trigger Rules', icon: Zap, path: 'HermesTriggerManagement' },
+      { name: 'Support Tickets', icon: Ticket, path: 'SupportTickets', badge: 'NEW' }
     ]
   },
   {

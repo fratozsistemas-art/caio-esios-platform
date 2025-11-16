@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
@@ -99,6 +100,24 @@ Deno.serve(async (req) => {
       });
 
       analysisResults.push(hermesAnalysis);
+
+      // PROACTIVE REMEDIATION: Auto-trigger for critical/high severity issues
+      const criticalIssues = (analysisResult.inconsistencies_detected || [])
+        .filter(i => i.severity === 'critical' || i.severity === 'high');
+
+      if (criticalIssues.length > 0) {
+        for (const issue of criticalIssues) {
+          await base44.functions.invoke('hermesAutoRemediate', {
+            analysis_id: hermesAnalysis.id,
+            entity_type: target_entity_type,
+            entity_id: hermesAnalysis.target_entity_id, // Use the ID saved with the analysis
+            issue_type: issue.type,
+            severity: issue.severity,
+            issue_description: issue.description,
+            recommendation: issue.recommendation
+          });
+        }
+      }
     }
 
     // Calculate overall cognitive health score
@@ -725,7 +744,6 @@ function calculateCognitiveHealth(analyses) {
   
   const avgIntegrity = analyses.reduce((sum, a) => sum + (a.integrity_score || 0), 0) / analyses.length;
   
-  // Penalize for critical issues
   const criticalIssues = analyses.reduce((sum, a) => {
     const critical = (a.inconsistencies_detected || []).filter(i => i.severity === 'critical').length;
     return sum + critical;

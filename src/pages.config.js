@@ -36,6 +36,7 @@ import HermesTriggerManagement from './pages/HermesTriggerManagement';
 import HermesDashboard from './pages/HermesDashboard';
 import WorkflowTemplates from './pages/WorkflowTemplates';
 import AgentPerformance from './pages/AgentPerformance';
+import SupportTickets from './pages/SupportTickets';
 import Layout from './Layout.jsx';
 
 
@@ -78,6 +79,7 @@ export const PAGES = {
     "HermesDashboard": HermesDashboard,
     "WorkflowTemplates": WorkflowTemplates,
     "AgentPerformance": AgentPerformance,
+    "SupportTickets": SupportTickets,
 }
 
 export const pagesConfig = {
