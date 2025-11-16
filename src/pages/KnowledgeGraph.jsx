@@ -4,12 +4,13 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Network, Brain, MessageSquare, Sparkles } from "lucide-react";
+import { Network, Brain, MessageSquare, Database } from "lucide-react";
 import EnhancedInteractiveGraph from "../components/graph/EnhancedInteractiveGraph";
 import GraphAIAssistant from "../components/graph/GraphAIAssistant";
 import RelationshipInferencePanel from "../components/graph/RelationshipInferencePanel";
 import AutoEnrichmentPanel from "../components/graph/AutoEnrichmentPanel";
 import AdvancedGraphControls from "../components/graph/AdvancedGraphControls";
+import DataSourceHub from "../components/integrations/DataSourceHub";
 
 export default function KnowledgeGraph() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -71,7 +72,7 @@ export default function KnowledgeGraph() {
             Knowledge Graph
           </h1>
           <p className="text-slate-400 mt-1">
-            AI-powered entity relationship mapping with advanced visualization
+            Multi-source intelligence with real-time market data & social insights
           </p>
         </div>
         <Button
@@ -81,7 +82,7 @@ export default function KnowledgeGraph() {
             : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
           }
         >
-          {showAIAssistant ? <><Network className="w-4 h-4 mr-2" />Show Graph</> : <><MessageSquare className="w-4 h-4 mr-2" />AI Assistant</>}
+          {showAIAssistant ? <><Network className="w-4 h-4 mr-2" />Graph</> : <><MessageSquare className="w-4 h-4 mr-2" />AI Assistant</>}
         </Button>
       </div>
 
@@ -105,7 +106,7 @@ export default function KnowledgeGraph() {
                 <p className="text-xs text-slate-400">Relationships</p>
                 <p className="text-2xl font-bold text-white">{relationships.length}</p>
               </div>
-              <Sparkles className="w-8 h-8 text-purple-400 opacity-50" />
+              <Network className="w-8 h-8 text-purple-400 opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -128,12 +129,10 @@ export default function KnowledgeGraph() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400">Node Types</p>
-                <p className="text-2xl font-bold text-white">
-                  {new Set(nodes.map(n => n.node_type)).size}
-                </p>
+                <p className="text-xs text-slate-400">Data Sources</p>
+                <p className="text-2xl font-bold text-white">6</p>
               </div>
-              <Network className="w-8 h-8 text-orange-400 opacity-50" />
+              <Database className="w-8 h-8 text-orange-400 opacity-50" />
             </div>
           </CardContent>
         </Card>
@@ -174,28 +173,14 @@ export default function KnowledgeGraph() {
             <>
               <Card className="bg-blue-500/10 border-blue-500/30">
                 <CardContent className="p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <p className="text-lg font-bold text-white">{selectedNode.label}</p>
-                      <Badge className="mt-1 bg-blue-500/20 text-blue-400 border-blue-500/30">
-                        {selectedNode.node_type}
-                      </Badge>
-                    </div>
-                  </div>
-                  {selectedNode.properties && (
-                    <div className="space-y-1 text-sm">
-                      {Object.entries(selectedNode.properties).slice(0, 5).map(([key, value]) => (
-                        <div key={key} className="flex justify-between">
-                          <span className="text-slate-400">{key}:</span>
-                          <span className="text-white font-medium">
-                            {typeof value === 'string' ? value : JSON.stringify(value)}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  <p className="text-lg font-bold text-white">{selectedNode.label}</p>
+                  <Badge className="mt-1 bg-blue-500/20 text-blue-400 border-blue-500/30">
+                    {selectedNode.node_type}
+                  </Badge>
                 </CardContent>
               </Card>
+
+              <DataSourceHub selectedEntity={selectedNode} />
 
               <AutoEnrichmentPanel 
                 selectedNodeId={selectedNode.id} 
