@@ -14,12 +14,19 @@ import EnhancedForceDirectedGraph from "../components/network/EnhancedForceDirec
 import RelationshipSuggestions from "../components/network/RelationshipSuggestions";
 import NetworkInsightsPanel from "../components/network/NetworkInsightsPanel";
 import AutoPopulateDialog from "../components/network/AutoPopulateDialog";
+import GraphViewSelector from "../components/network/GraphViewSelector";
+import GraphTemporalSlider from "../components/network/GraphTemporalSlider";
+import AIGraphSuggestionsPanel from "../components/network/AIGraphSuggestionsPanel";
 
 export default function NetworkMap() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showAutoPopulate, setShowAutoPopulate] = useState(false);
+  const [graphView, setGraphView] = useState('force');
+  const [showTemporal, setShowTemporal] = useState(false);
+  const [temporalDate, setTemporalDate] = useState(new Date());
+  const [isTemporalPlaying, setIsTemporalPlaying] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: nodes = [], isLoading: nodesLoading } = useQuery({
@@ -53,7 +60,12 @@ export default function NetworkMap() {
     }
   });
 
-  const filteredNodes = nodes.filter(node =>
+  // Filtrar por temporal
+  const filteredByTime = showTemporal
+    ? nodes.filter(n => new Date(n.created_date) <= temporalDate)
+    : nodes;
+
+  const filteredNodes = filteredByTime.filter(node =>
     !searchTerm || 
     node.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     node.node_type?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -61,7 +73,9 @@ export default function NetworkMap() {
 
   const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
   const filteredRelationships = relationships.filter(r =>
-    filteredNodeIds.has(r.from_node_id) && filteredNodeIds.has(r.to_node_id)
+    filteredNodeIds.has(r.from_node_id) && 
+    filteredNodeIds.has(r.to_node_id) &&
+    (!showTemporal || new Date(r.created_date) <= temporalDate)
   );
 
   const graphData = {
@@ -79,6 +93,12 @@ export default function NetworkMap() {
     toast.success("Relationship created");
   };
 
+  const minDate = nodes.length > 0 
+    ? nodes.reduce((min, n) => new Date(n.created_date) < min ? new Date(n.created_date) : min, new Date(nodes[0].created_date))
+    : new Date();
+
+  const maxDate = new Date();
+
   const isLoading = nodesLoading || relsLoading;
 
   return (
@@ -95,6 +115,14 @@ export default function NetworkMap() {
           </p>
         </div>
         <div className="flex gap-3">
+          <GraphViewSelector currentView={graphView} onViewChange={setGraphView} />
+          <Button
+            onClick={() => setShowTemporal(!showTemporal)}
+            variant="outline"
+            className="border-white/10 text-white hover:bg-white/10"
+          >
+            {showTemporal ? 'Hide' : 'Show'} Timeline
+          </Button>
           <Button
             onClick={() => setShowAutoPopulate(true)}
             className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
@@ -125,7 +153,7 @@ export default function NetworkMap() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-400">Total Nodes</p>
-                <p className="text-2xl font-bold text-white">{nodes.length}</p>
+                <p className="text-2xl font-bold text-white">{filteredNodes.length}</p>
               </div>
               <Network className="w-8 h-8 text-blue-400 opacity-50" />
             </div>
@@ -137,7 +165,7 @@ export default function NetworkMap() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-400">Relationships</p>
-                <p className="text-2xl font-bold text-white">{relationships.length}</p>
+                <p className="text-2xl font-bold text-white">{filteredRelationships.length}</p>
               </div>
               <GitMerge className="w-8 h-8 text-purple-400 opacity-50" />
             </div>
@@ -150,7 +178,7 @@ export default function NetworkMap() {
               <div>
                 <p className="text-xs text-slate-400">Companies</p>
                 <p className="text-2xl font-bold text-white">
-                  {nodes.filter(n => n.node_type === 'company').length}
+                  {filteredNodes.filter(n => n.node_type === 'company').length}
                 </p>
               </div>
               <Building2 className="w-8 h-8 text-green-400 opacity-50" />
@@ -164,7 +192,7 @@ export default function NetworkMap() {
               <div>
                 <p className="text-xs text-slate-400">Executives</p>
                 <p className="text-2xl font-bold text-white">
-                  {nodes.filter(n => n.node_type === 'executive').length}
+                  {filteredNodes.filter(n => n.node_type === 'executive').length}
                 </p>
               </div>
               <Users className="w-8 h-8 text-orange-400 opacity-50" />
@@ -172,6 +200,18 @@ export default function NetworkMap() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Temporal Slider */}
+      {showTemporal && (
+        <GraphTemporalSlider
+          minDate={minDate}
+          maxDate={maxDate}
+          currentDate={temporalDate}
+          onDateChange={setTemporalDate}
+          onPlayPause={() => setIsTemporalPlaying(!isTemporalPlaying)}
+          isPlaying={isTemporalPlaying}
+        />
+      )}
 
       {/* Search */}
       <div className="relative">
@@ -189,7 +229,7 @@ export default function NetworkMap() {
         <div className="col-span-2">
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
-              <CardTitle className="text-white">Interactive Network Graph</CardTitle>
+              <CardTitle className="text-white">Interactive Network Graph - {graphView} view</CardTitle>
             </CardHeader>
             <CardContent>
               {isLoading ? (
@@ -201,6 +241,7 @@ export default function NetworkMap() {
                   graphData={graphData}
                   onNodeClick={handleNodeClick}
                   selectedNode={selectedNode}
+                  viewMode={graphView}
                 />
               )}
             </CardContent>
@@ -209,6 +250,15 @@ export default function NetworkMap() {
 
         {/* Side Panels */}
         <div className="space-y-6">
+          {/* AI Suggestions */}
+          <AIGraphSuggestionsPanel
+            selectedNodeId={selectedNode?.id}
+            onSuggestionApplied={() => {
+              queryClient.invalidateQueries(['knowledge_graph_nodes']);
+              queryClient.invalidateQueries(['knowledge_graph_relationships']);
+            }}
+          />
+
           {/* Selected Node Info */}
           {selectedNode && (
             <Card className="bg-blue-500/10 border-blue-500/30">
@@ -235,14 +285,6 @@ export default function NetworkMap() {
                     ))}
                   </div>
                 )}
-                <Button
-                  onClick={() => setShowSuggestions(true)}
-                  size="sm"
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Suggest Relationships
-                </Button>
               </CardContent>
             </Card>
           )}
