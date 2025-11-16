@@ -4,10 +4,10 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
+import { 
   LayoutDashboard, MessageSquare, Brain, Network, CheckSquare,
-  TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2 } from
-"lucide-react";
+  TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2
+} from "lucide-react";
 import ConversationHistoryWidget from "../components/dashboard/ConversationHistoryWidget";
 import AnalysisInsightsWidget from "../components/dashboard/AnalysisInsightsWidget";
 import KnowledgeGraphWidget from "../components/dashboard/KnowledgeGraphWidget";
@@ -24,9 +24,9 @@ export default function Dashboard() {
   const [dashboardLayout, setDashboardLayout] = useState('default');
 
   useEffect(() => {
-    base44.auth.me().then(async (u) => {
+    base44.auth.me().then(async u => {
       setUser(u);
-
+      
       // Get user role
       if (u.role === 'admin') {
         setUserRole('admin');
@@ -49,7 +49,7 @@ export default function Dashboard() {
       const allConvs = await base44.agents.listConversations({
         agent_name: "caio_agent"
       });
-      return allConvs.filter((c) => !c.metadata?.deleted);
+      return allConvs.filter(c => !c.metadata?.deleted);
     }
   });
 
@@ -82,13 +82,13 @@ export default function Dashboard() {
   // Aggregate insights from conversations and analyses
   const aggregateInsights = () => {
     const insights = [];
-
+    
     // Extract insights from conversation metadata
-    conversations.forEach((conv) => {
+    conversations.forEach(conv => {
       if (conv.metadata?.analysis_results) {
         const results = conv.metadata.analysis_results;
         if (results.key_insights) {
-          insights.push(...results.key_insights.map((i) => ({
+          insights.push(...results.key_insights.map(i => ({
             ...i,
             type: 'trend',
             source: 'conversation'
@@ -103,10 +103,10 @@ export default function Dashboard() {
   // Extract action items from strategies and analyses
   const extractActionItems = () => {
     const actionItems = [];
-
-    strategies.forEach((strategy) => {
+    
+    strategies.forEach(strategy => {
       if (strategy.action_items) {
-        actionItems.push(...strategy.action_items.map((item) => ({
+        actionItems.push(...strategy.action_items.map(item => ({
           ...item,
           priority: strategy.priority || 'medium',
           source: strategy.title
@@ -122,38 +122,38 @@ export default function Dashboard() {
 
   // Calculate quick stats
   const quickStats = [
-  {
-    icon: MessageSquare,
-    value: conversations.length,
-    label: "Conversations",
-    color: "from-blue-500 to-cyan-500",
-    trend: 12,
-    subtitle: "Active this month"
-  },
-  {
-    icon: Brain,
-    value: insights.length,
-    label: "AI Insights",
-    color: "from-purple-500 to-pink-500",
-    trend: 8,
-    subtitle: "Generated insights"
-  },
-  {
-    icon: Network,
-    value: graphStats?.total_nodes || 0,
-    label: "Graph Entities",
-    color: "from-cyan-500 to-blue-500",
-    subtitle: "In knowledge graph"
-  },
-  {
-    icon: CheckSquare,
-    value: actionItems.filter((i) => !i.completed).length,
-    label: "Action Items",
-    color: "from-green-500 to-emerald-500",
-    trend: -5,
-    subtitle: "Pending tasks"
-  }];
-
+    {
+      icon: MessageSquare,
+      value: conversations.length,
+      label: "Conversations",
+      color: "from-blue-500 to-cyan-500",
+      trend: 12,
+      subtitle: "Active this month"
+    },
+    {
+      icon: Brain,
+      value: insights.length,
+      label: "AI Insights",
+      color: "from-purple-500 to-pink-500",
+      trend: 8,
+      subtitle: "Generated insights"
+    },
+    {
+      icon: Network,
+      value: graphStats?.total_nodes || 0,
+      label: "Graph Entities",
+      color: "from-cyan-500 to-blue-500",
+      subtitle: "In knowledge graph"
+    },
+    {
+      icon: CheckSquare,
+      value: actionItems.filter(i => !i.completed).length,
+      label: "Action Items",
+      color: "from-green-500 to-emerald-500",
+      trend: -5,
+      subtitle: "Pending tasks"
+    }
+  ];
 
   // Role-based layout configurations
   const layoutConfig = {
@@ -187,8 +187,8 @@ export default function Dashboard() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-
+        className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+      >
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
             <LayoutDashboard className="w-10 h-10 text-blue-400" />
@@ -196,11 +196,11 @@ export default function Dashboard() {
           </h1>
           <p className="text-slate-400">
             Welcome back, {user?.full_name || 'User'}
-            {userRole &&
-            <Badge className="ml-2 bg-purple-500/20 text-purple-400 border-purple-500/30">
+            {userRole && (
+              <Badge className="ml-2 bg-purple-500/20 text-purple-400 border-purple-500/30">
                 {userRole}
               </Badge>
-            }
+            )}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -209,15 +209,15 @@ export default function Dashboard() {
             size="icon"
             onClick={() => {
               refetchConversations();
-            }} className="bg-slate-500 text-white text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 w-9 border-white/10 hover:bg-white/10">
-
-
+            }}
+            className="border-white/10 text-white hover:bg-white/10"
+          >
             <RefreshCw className="w-5 h-5" />
           </Button>
           <Button
-            variant="outline" className="bg-slate-500 text-white px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-9 border-white/10 hover:bg-white/10">
-
-
+            variant="outline"
+            className="border-white/10 text-white hover:bg-white/10"
+          >
             <Settings className="w-4 h-4 mr-2" />
             Customize
           </Button>
@@ -225,44 +225,44 @@ export default function Dashboard() {
       </motion.div>
 
       {/* Quick Stats */}
-      {currentLayout.widgets.includes('stats') &&
-      <QuickStatsWidget stats={quickStats} />
-      }
+      {currentLayout.widgets.includes('stats') && (
+        <QuickStatsWidget stats={quickStats} />
+      )}
 
       {/* Main Widgets Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {currentLayout.widgets.includes('conversations') &&
-        <ConversationHistoryWidget conversations={conversations} />
-        }
+        {currentLayout.widgets.includes('conversations') && (
+          <ConversationHistoryWidget conversations={conversations} />
+        )}
         
-        {currentLayout.widgets.includes('insights') &&
-        <AnalysisInsightsWidget insights={insights} />
-        }
+        {currentLayout.widgets.includes('insights') && (
+          <AnalysisInsightsWidget insights={insights} />
+        )}
         
-        {currentLayout.widgets.includes('graph') &&
-        <KnowledgeGraphWidget graphStats={graphStats} />
-        }
+        {currentLayout.widgets.includes('graph') && (
+          <KnowledgeGraphWidget graphStats={graphStats} />
+        )}
         
-        {currentLayout.widgets.includes('actions') &&
-        <ActionItemsWidget actionItems={actionItems} />
-        }
+        {currentLayout.widgets.includes('actions') && (
+          <ActionItemsWidget actionItems={actionItems} />
+        )}
 
-        {currentLayout.widgets.includes('crossplatform') &&
-        <CrossPlatformInsightsWidget />
-        }
+        {currentLayout.widgets.includes('crossplatform') && (
+          <CrossPlatformInsightsWidget />
+        )}
 
         <ProactiveInsightsWidget />
         <PredictiveAnalysisWidget />
       </div>
 
       {/* Role-specific insights */}
-      {userRole === 'admin' &&
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-6">
-
+      {userRole === 'admin' && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30 rounded-xl p-6"
+        >
           <div className="flex items-start gap-3">
             <Sparkles className="w-6 h-6 text-purple-400 flex-shrink-0" />
             <div>
@@ -281,7 +281,7 @@ export default function Dashboard() {
             </div>
           </div>
         </motion.div>
-      }
-    </div>);
-
+      )}
+    </div>
+  );
 }

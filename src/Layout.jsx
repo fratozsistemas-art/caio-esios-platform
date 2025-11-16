@@ -4,10 +4,11 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import GlobalSearch from './components/GlobalSearch';
 
 const navSections = [
   {
@@ -48,14 +49,17 @@ const navSections = [
   {
     title: "AI Workflows",
     items: [
-      { name: 'Agent Orchestration', icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' }
+      { name: 'Agent Orchestration', icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' },
+      { name: 'Workflow Templates', icon: Layers, path: 'WorkflowTemplates', badge: 'NEW' },
+      { name: 'Agent Performance', icon: TrendingUp, path: 'AgentPerformance', badge: 'NEW' }
     ]
   },
   {
     title: "Governance",
     items: [
-      { name: 'Hermes Trust-Broker', icon: Shield, path: 'HermesTrustBroker', badge: 'NEW' },
-      { name: 'Auto-Trigger Rules', icon: Zap, path: 'HermesTriggerManagement', badge: 'NEW' }
+      { name: 'Hermes Dashboard', icon: Shield, path: 'HermesDashboard', badge: 'NEW' },
+      { name: 'Hermes Trust-Broker', icon: Shield, path: 'HermesTrustBroker' },
+      { name: 'Auto-Trigger Rules', icon: Zap, path: 'HermesTriggerManagement' }
     ]
   },
   {
@@ -88,6 +92,7 @@ export default function Layout({ children, currentPageName }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
 
   useEffect(() => {
     base44.auth.me()
@@ -114,6 +119,17 @@ export default function Layout({ children, currentPageName }) {
     setSidebarOpen(false);
   }, [location.pathname]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setShowSearch(true);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   const handleLogout = () => base44.auth.logout();
 
   if (currentPageName === 'Landing') {
@@ -128,14 +144,24 @@ export default function Layout({ children, currentPageName }) {
             <Sparkles className="w-6 h-6 text-blue-400" />
             <span className="text-white font-bold text-lg">CAIO·AI</span>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-white hover:bg-white/10"
-          >
-            {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowSearch(true)}
+              className="text-white hover:bg-white/10"
+            >
+              <Search className="w-5 h-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="text-white hover:bg-white/10"
+            >
+              {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -150,6 +176,14 @@ export default function Layout({ children, currentPageName }) {
               <p className="text-slate-400 text-xs">Strategic Intelligence</p>
             </div>
           </div>
+          <Button
+            onClick={() => setShowSearch(true)}
+            variant="outline"
+            className="w-full mt-4 bg-white/5 border-white/10 text-slate-400 hover:bg-white/10 hover:text-white justify-start"
+          >
+            <Search className="w-4 h-4 mr-2" />
+            Buscar... <kbd className="ml-auto text-xs">⌘K</kbd>
+          </Button>
         </div>
 
         <nav className="flex-1 p-4 space-y-6">
@@ -234,6 +268,8 @@ export default function Layout({ children, currentPageName }) {
           onClick={() => setSidebarOpen(false)}
         />
       )}
+
+      <GlobalSearch open={showSearch} onClose={() => setShowSearch(false)} />
     </div>
   );
 }
