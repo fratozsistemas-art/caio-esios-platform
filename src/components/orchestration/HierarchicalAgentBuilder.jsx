@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { 
   GitMerge, Plus, Trash2, ChevronRight, Settings, 
-  Brain, Workflow, Shield, Zap, Sliders, Wrench, AlertTriangle
+  Brain, Workflow, Shield, Zap, Sliders, Wrench, AlertTriangle, MessageCircle
 } from 'lucide-react';
 
 const AGENT_ROLES = [
@@ -43,6 +44,14 @@ const FALLBACK_STRATEGIES = [
   { value: 'abort', label: 'Abort Workflow', description: 'Stop the entire workflow' }
 ];
 
+const MESSAGE_TYPES = [
+  { value: 'status_update', label: 'Status Update', description: 'Broadcast agent status to peers' },
+  { value: 'data_request', label: 'Data Request', description: 'Request specific data from another agent' },
+  { value: 'task_delegation', label: 'Task Delegation', description: 'Delegate a task to another agent' },
+  { value: 'validation_request', label: 'Validation Request', description: 'Ask validator to check outputs' },
+  { value: 'sync_signal', label: 'Sync Signal', description: 'Synchronization point for parallel agents' }
+];
+
 export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -69,6 +78,12 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
         enabled: true,
         max_retries: 2,
         strategies: ['retry', 'simplified_prompt']
+      },
+      communication_config: {
+        enabled: true,
+        can_send: ['status_update'],
+        can_receive: ['data_request', 'task_delegation'],
+        broadcast_status: true
       }
     };
 
@@ -170,6 +185,20 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
     });
   };
 
+  const toggleMessageType = (messageType, direction) => {
+    const currentMessages = selectedAgent.communication_config?.[direction] || [];
+    const updated = currentMessages.includes(messageType)
+      ? currentMessages.filter(m => m !== messageType)
+      : [...currentMessages, messageType];
+    
+    updateAgent(selectedAgent.id, {
+      communication_config: {
+        ...selectedAgent.communication_config,
+        [direction]: updated
+      }
+    });
+  };
+
   const renderAgentTree = (agents, level = 0) => {
     return agents.map(agent => {
       const roleConfig = AGENT_ROLES.find(r => r.value === agent.role);
@@ -200,6 +229,12 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
                 {agent.tool_config?.enabled_tools?.length > 0 && (
                   <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 text-xs">
                     {agent.tool_config.enabled_tools.length} tools
+                  </Badge>
+                )}
+                {agent.communication_config?.enabled && (
+                  <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30 text-xs">
+                    <MessageCircle className="w-3 h-3 mr-1" />
+                    comm
                   </Badge>
                 )}
               </div>
@@ -516,6 +551,102 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
                       </Select>
                     </div>
                   </div>
+                </div>
+
+                {/* Inter-Agent Communication */}
+                <div className="border-t border-white/10 pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <MessageCircle className="w-4 h-4 text-cyan-400" />
+                      <Label className="text-cyan-400 text-sm font-medium">Inter-Agent Communication</Label>
+                    </div>
+                    <Switch
+                      checked={selectedAgent.communication_config?.enabled ?? true}
+                      onCheckedChange={(checked) => updateAgent(selectedAgent.id, {
+                        communication_config: {
+                          ...selectedAgent.communication_config,
+                          enabled: checked
+                        }
+                      })}
+                    />
+                  </div>
+                  
+                  {selectedAgent.communication_config?.enabled && (
+                    <div className="space-y-3 bg-cyan-500/5 rounded-lg p-3 border border-cyan-500/20">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-slate-400 text-xs">Broadcast Status Updates</Label>
+                        <Switch
+                          checked={selectedAgent.communication_config?.broadcast_status ?? true}
+                          onCheckedChange={(checked) => updateAgent(selectedAgent.id, {
+                            communication_config: {
+                              ...selectedAgent.communication_config,
+                              broadcast_status: checked
+                            }
+                          })}
+                        />
+                      </div>
+
+                      <div>
+                        <Label className="text-slate-400 text-xs mb-2 block">Can Send</Label>
+                        <div className="space-y-1">
+                          {MESSAGE_TYPES.map(msg => {
+                            const isEnabled = selectedAgent.communication_config?.can_send?.includes(msg.value);
+                            return (
+                              <div
+                                key={msg.value}
+                                onClick={() => toggleMessageType(msg.value, 'can_send')}
+                                className={`flex items-start gap-2 p-2 rounded cursor-pointer transition-all ${
+                                  isEnabled 
+                                    ? 'bg-cyan-500/20 border border-cyan-500/30' 
+                                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                                }`}
+                              >
+                                <div className={`w-3 h-3 rounded border-2 flex items-center justify-center mt-0.5 ${
+                                  isEnabled ? 'border-cyan-400 bg-cyan-400' : 'border-slate-500'
+                                }`}>
+                                  {isEnabled && <div className="w-1.5 h-1.5 bg-white rounded-sm" />}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-xs font-medium text-white">{msg.label}</p>
+                                  <p className="text-xs text-slate-400">{msg.description}</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div>
+                        <Label className="text-slate-400 text-xs mb-2 block">Can Receive</Label>
+                        <div className="space-y-1">
+                          {MESSAGE_TYPES.map(msg => {
+                            const isEnabled = selectedAgent.communication_config?.can_receive?.includes(msg.value);
+                            return (
+                              <div
+                                key={msg.value}
+                                onClick={() => toggleMessageType(msg.value, 'can_receive')}
+                                className={`flex items-start gap-2 p-2 rounded cursor-pointer transition-all ${
+                                  isEnabled 
+                                    ? 'bg-cyan-500/20 border border-cyan-500/30' 
+                                    : 'bg-white/5 border border-white/10 hover:bg-white/10'
+                                }`}
+                              >
+                                <div className={`w-3 h-3 rounded border-2 flex items-center justify-center mt-0.5 ${
+                                  isEnabled ? 'border-cyan-400 bg-cyan-400' : 'border-slate-500'
+                                }`}>
+                                  {isEnabled && <div className="w-1.5 h-1.5 bg-white rounded-sm" />}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="text-xs font-medium text-white">{msg.label}</p>
+                                  <p className="text-xs text-slate-400">{msg.description}</p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Fallback Strategy */}

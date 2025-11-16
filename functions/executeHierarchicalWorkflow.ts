@@ -1,5 +1,65 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
+// Message Bus for inter-agent communication
+class AgentMessageBus {
+    constructor() {
+        this.messages = [];
+        this.subscribers = new Map();
+    }
+
+    sendMessage(fromAgentId, message) {
+        const messageWithMeta = {
+            id: `msg_${Date.now()}_${Math.random()}`,
+            from: fromAgentId,
+            to: message.to || 'broadcast',
+            type: message.type,
+            payload: message.payload,
+            timestamp: new Date().toISOString(),
+            status: 'pending'
+        };
+
+        this.messages.push(messageWithMeta);
+
+        // Notify subscribers
+        if (message.to && this.subscribers.has(message.to)) {
+            this.subscribers.get(message.to).push(messageWithMeta);
+        } else if (message.to === 'broadcast') {
+            // Broadcast to all subscribers
+            for (const [agentId, queue] of this.subscribers) {
+                if (agentId !== fromAgentId) {
+                    queue.push(messageWithMeta);
+                }
+            }
+        }
+
+        return messageWithMeta.id;
+    }
+
+    subscribe(agentId) {
+        if (!this.subscribers.has(agentId)) {
+            this.subscribers.set(agentId, []);
+        }
+        return this.subscribers.get(agentId);
+    }
+
+    getMessages(agentId, messageType = null) {
+        const queue = this.subscribers.get(agentId) || [];
+        if (messageType) {
+            return queue.filter(m => m.type === messageType);
+        }
+        return queue;
+    }
+
+    markAsProcessed(messageId) {
+        const msg = this.messages.find(m => m.id === messageId);
+        if (msg) msg.status = 'processed';
+    }
+
+    getHistory() {
+        return this.messages;
+    }
+}
+
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
@@ -50,7 +110,8 @@ Deno.serve(async (req) => {
             duration_seconds: (Date.now() - new Date(execution.started_at).getTime()) / 1000,
             agent_states: result.agent_states,
             error_message: result.error,
-            logs: [...execution.logs, ...result.logs]
+            logs: [...execution.logs, ...result.logs],
+            communication_log: result.communication_log
         });
 
         // Update workflow stats
@@ -65,7 +126,8 @@ Deno.serve(async (req) => {
             success: true,
             execution_id: execution.id,
             outputs: result.outputs,
-            agent_states: result.agent_states
+            agent_states: result.agent_states,
+            communication_log: result.communication_log
         });
 
     } catch (error) {
@@ -80,6 +142,7 @@ Deno.serve(async (req) => {
 async function executeHierarchicalAgents(base44, config, inputs, executionId) {
     const logs = [];
     const agentStates = {};
+    const messageBus = new AgentMessageBus();
     
     try {
         if (!config?.agents || config.agents.length === 0) {
@@ -97,11 +160,18 @@ async function executeHierarchicalAgents(base44, config, inputs, executionId) {
                 currentInputs,
                 agentStates,
                 logs,
-                executionId
+                executionId,
+                messageBus
             );
 
             if (!result.success) {
-                return { success: false, error: result.error, logs, agent_states: agentStates };
+                return { 
+                    success: false, 
+                    error: result.error, 
+                    logs, 
+                    agent_states: agentStates,
+                    communication_log: messageBus.getHistory()
+                };
             }
 
             // Pass outputs to next agent
@@ -112,7 +182,8 @@ async function executeHierarchicalAgents(base44, config, inputs, executionId) {
             success: true,
             outputs: currentInputs,
             logs,
-            agent_states: agentStates
+            agent_states: agentStates,
+            communication_log: messageBus.getHistory()
         };
 
     } catch (error) {
@@ -126,21 +197,37 @@ async function executeHierarchicalAgents(base44, config, inputs, executionId) {
             success: false,
             error: error.message,
             logs,
-            agent_states: agentStates
+            agent_states: agentStates,
+            communication_log: messageBus.getHistory()
         };
     }
 }
 
-async function executeAgent(base44, agent, inputs, agentStates, logs, executionId) {
+async function executeAgent(base44, agent, inputs, agentStates, logs, executionId, messageBus) {
     const startTime = Date.now();
+    
+    // Subscribe to message bus
+    messageBus.subscribe(agent.id);
     
     // Initialize agent state
     agentStates[agent.id] = {
         status: 'running',
         invocation_count: (agentStates[agent.id]?.invocation_count || 0) + 1,
         inputs: inputs,
-        llm_parameters: agent.llm_parameters || {}
+        llm_parameters: agent.llm_parameters || {},
+        messages_sent: 0,
+        messages_received: 0
     };
+
+    // Broadcast status if enabled
+    if (agent.communication_config?.broadcast_status) {
+        messageBus.sendMessage(agent.id, {
+            type: 'status_update',
+            to: 'broadcast',
+            payload: { status: 'running', agent_name: agent.name }
+        });
+        agentStates[agent.id].messages_sent++;
+    }
 
     logs.push({
         timestamp: new Date().toISOString(),
@@ -158,7 +245,8 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
             inputs,
             agentStates,
             logs,
-            executionId
+            executionId,
+            messageBus
         );
 
         const duration = Date.now() - startTime;
@@ -172,6 +260,16 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
             state_size: JSON.stringify(outputs).length / 1024
         };
 
+        // Broadcast completion status
+        if (agent.communication_config?.broadcast_status) {
+            messageBus.sendMessage(agent.id, {
+                type: 'status_update',
+                to: 'broadcast',
+                payload: { status: 'completed', agent_name: agent.name, duration_ms: duration }
+            });
+            agentStates[agent.id].messages_sent++;
+        }
+
         logs.push({
             timestamp: new Date().toISOString(),
             level: 'info',
@@ -184,6 +282,15 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
         agentStates[agent.id].status = 'failed';
         agentStates[agent.id].error = error.message;
 
+        // Broadcast failure status
+        if (agent.communication_config?.broadcast_status) {
+            messageBus.sendMessage(agent.id, {
+                type: 'status_update',
+                to: 'broadcast',
+                payload: { status: 'failed', agent_name: agent.name, error: error.message }
+            });
+        }
+
         logs.push({
             timestamp: new Date().toISOString(),
             level: 'error',
@@ -194,11 +301,11 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
     }
 }
 
-async function executeWithFallback(base44, agent, inputs, agentStates, logs, executionId) {
+async function executeWithFallback(base44, agent, inputs, agentStates, logs, executionId, messageBus) {
     const fallbackConfig = agent.fallback_strategy || { enabled: true, max_retries: 2, strategies: ['retry'] };
     
     if (!fallbackConfig.enabled) {
-        return await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+        return await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId, messageBus);
     }
 
     const maxRetries = fallbackConfig.max_retries || 2;
@@ -209,7 +316,7 @@ async function executeWithFallback(base44, agent, inputs, agentStates, logs, exe
 
     // Try primary execution
     try {
-        return await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+        return await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId, messageBus);
     } catch (error) {
         lastError = error;
         attemptCount++;
@@ -237,7 +344,7 @@ async function executeWithFallback(base44, agent, inputs, agentStates, logs, exe
             switch (strategy) {
                 case 'retry':
                     await new Promise(resolve => setTimeout(resolve, 1000 * attemptCount));
-                    result = await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+                    result = await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId, messageBus);
                     break;
 
                 case 'alternate_model':
@@ -245,10 +352,10 @@ async function executeWithFallback(base44, agent, inputs, agentStates, logs, exe
                         ...agent,
                         llm_parameters: {
                             ...agent.llm_parameters,
-                            temperature: 0.3 // More conservative
+                            temperature: 0.3
                         }
                     };
-                    result = await executeAgentCore(base44, altAgent, inputs, agentStates, logs, executionId);
+                    result = await executeAgentCore(base44, altAgent, inputs, agentStates, logs, executionId, messageBus);
                     break;
 
                 case 'simplified_prompt':
@@ -256,7 +363,7 @@ async function executeWithFallback(base44, agent, inputs, agentStates, logs, exe
                         ...agent,
                         system_prompt: `${agent.system_prompt || ''}\n\nIMPORTANT: Keep response simple and focused.`
                     };
-                    result = await executeAgentCore(base44, simplifiedAgent, inputs, agentStates, logs, executionId);
+                    result = await executeAgentCore(base44, simplifiedAgent, inputs, agentStates, logs, executionId, messageBus);
                     break;
 
                 case 'skip_with_default':
@@ -278,7 +385,7 @@ async function executeWithFallback(base44, agent, inputs, agentStates, logs, exe
                     throw new Error(`Workflow aborted at agent ${agent.name}: ${lastError.message}`);
 
                 default:
-                    result = await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+                    result = await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId, messageBus);
             }
 
             logs.push({
@@ -301,41 +408,94 @@ async function executeWithFallback(base44, agent, inputs, agentStates, logs, exe
         }
     }
 
-    // All fallback strategies failed
     throw lastError;
 }
 
-async function executeAgentCore(base44, agent, inputs, agentStates, logs, executionId) {
+async function executeAgentCore(base44, agent, inputs, agentStates, logs, executionId, messageBus) {
+    // Check for incoming messages
+    const incomingMessages = messageBus.getMessages(agent.id);
+    const processedInputs = { ...inputs };
+
+    // Process data requests
+    const dataRequests = incomingMessages.filter(m => m.type === 'data_request');
+    for (const request of dataRequests) {
+        if (request.payload?.data_key && agentStates[agent.id]?.outputs?.[request.payload.data_key]) {
+            messageBus.sendMessage(agent.id, {
+                type: 'data_response',
+                to: request.from,
+                payload: {
+                    request_id: request.id,
+                    data: agentStates[agent.id].outputs[request.payload.data_key]
+                }
+            });
+            agentStates[agent.id].messages_sent++;
+        }
+        messageBus.markAsProcessed(request.id);
+        agentStates[agent.id].messages_received++;
+    }
+
+    // Process task delegations
+    const delegations = incomingMessages.filter(m => m.type === 'task_delegation');
+    for (const delegation of delegations) {
+        if (delegation.payload?.task) {
+            processedInputs.delegated_task = delegation.payload.task;
+            processedInputs.delegated_from = delegation.from;
+        }
+        messageBus.markAsProcessed(delegation.id);
+        agentStates[agent.id].messages_received++;
+    }
+
     // Execute based on agent role
+    let outputs;
     switch (agent.role) {
         case 'root':
-            return await executeRootAgent(base44, agent, inputs, agentStates, logs, executionId);
+            outputs = await executeRootAgent(base44, agent, processedInputs, agentStates, logs, executionId, messageBus);
+            break;
         case 'conversational':
-            return await executeConversationalAgent(base44, agent, inputs);
+            outputs = await executeConversationalAgent(base44, agent, processedInputs, messageBus);
+            break;
         case 'workflow':
-            return await executeWorkflowAgent(base44, agent, inputs, agentStates, logs, executionId);
+            outputs = await executeWorkflowAgent(base44, agent, processedInputs, agentStates, logs, executionId, messageBus);
+            break;
         case 'tool':
-            return await executeToolAgent(base44, agent, inputs);
+            outputs = await executeToolAgent(base44, agent, processedInputs, messageBus);
+            break;
         case 'validator':
-            return await executeValidatorAgent(base44, agent, inputs);
+            outputs = await executeValidatorAgent(base44, agent, processedInputs, messageBus);
+            break;
         default:
-            return await executeGenericAgent(base44, agent, inputs);
+            outputs = await executeGenericAgent(base44, agent, processedInputs, messageBus);
     }
+
+    return outputs;
 }
 
-async function executeRootAgent(base44, agent, inputs, agentStates, logs, executionId) {
-    // Root agent delegates to sub-agents
+async function executeRootAgent(base44, agent, inputs, agentStates, logs, executionId, messageBus) {
     let currentInputs = inputs;
 
     if (agent.sub_agents && agent.sub_agents.length > 0) {
         for (const subAgent of agent.sub_agents) {
+            // Root can delegate tasks to sub-agents
+            if (agent.communication_config?.can_send?.includes('task_delegation')) {
+                messageBus.sendMessage(agent.id, {
+                    type: 'task_delegation',
+                    to: subAgent.id,
+                    payload: {
+                        task: `Execute ${subAgent.name}`,
+                        context: currentInputs
+                    }
+                });
+                agentStates[agent.id].messages_sent++;
+            }
+
             const result = await executeAgent(
                 base44,
                 subAgent,
                 currentInputs,
                 agentStates,
                 logs,
-                executionId
+                executionId,
+                messageBus
             );
 
             if (!result.success) {
@@ -349,42 +509,61 @@ async function executeRootAgent(base44, agent, inputs, agentStates, logs, execut
     return currentInputs;
 }
 
-async function executeConversationalAgent(base44, agent, inputs) {
+async function executeConversationalAgent(base44, agent, inputs, messageBus) {
     const llmParams = agent.llm_parameters || {};
     
+    // Check for peer agent context
+    const peerMessages = messageBus.getMessages(agent.id, 'status_update');
+    const peerContext = peerMessages.map(m => 
+        `${m.payload.agent_name}: ${m.payload.status}`
+    ).join('\n');
+    
     const prompt = `${agent.system_prompt || 'You are a helpful assistant.'}
+
+${peerContext ? `\nPeer Agent Status:\n${peerContext}\n` : ''}
 
 User input: ${JSON.stringify(inputs)}
 
 Provide a conversational response.`;
 
     const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        temperature: llmParams.temperature,
-        top_p: llmParams.top_p,
-        max_tokens: llmParams.max_tokens
+        prompt: prompt
     });
 
     return { conversation_response: response };
 }
 
-async function executeWorkflowAgent(base44, agent, inputs, agentStates, logs, executionId) {
-    // Execute sub-agents in sequence or parallel
+async function executeWorkflowAgent(base44, agent, inputs, agentStates, logs, executionId, messageBus) {
     if (!agent.sub_agents || agent.sub_agents.length === 0) {
         return inputs;
     }
 
     let results = inputs;
 
-    // Execute sub-agents
     for (const subAgent of agent.sub_agents) {
+        // Workflow agent can request data from other agents
+        if (agent.communication_config?.can_send?.includes('data_request')) {
+            // Request any available context from peer agents
+            for (const [peerId, state] of Object.entries(agentStates)) {
+                if (peerId !== agent.id && state.outputs) {
+                    messageBus.sendMessage(agent.id, {
+                        type: 'data_request',
+                        to: peerId,
+                        payload: { data_key: 'result' }
+                    });
+                    agentStates[agent.id].messages_sent++;
+                }
+            }
+        }
+
         const result = await executeAgent(
             base44,
             subAgent,
             results,
             agentStates,
             logs,
-            executionId
+            executionId,
+            messageBus
         );
 
         if (!result.success) {
@@ -397,10 +576,9 @@ async function executeWorkflowAgent(base44, agent, inputs, agentStates, logs, ex
     return results;
 }
 
-async function executeToolAgent(base44, agent, inputs) {
+async function executeToolAgent(base44, agent, inputs, messageBus) {
     const llmParams = agent.llm_parameters || {};
     
-    // Agent-as-a-Tool pattern: completely isolated execution
     const isolatedInputs = agent.isolation_mode === 'isolated' 
         ? JSON.parse(JSON.stringify(inputs)) 
         : inputs;
@@ -413,9 +591,6 @@ Provide structured output.`;
 
     const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
-        temperature: llmParams.temperature,
-        top_p: llmParams.top_p,
-        max_tokens: llmParams.max_tokens,
         response_json_schema: {
             type: "object",
             properties: {
@@ -429,12 +604,18 @@ Provide structured output.`;
     return response;
 }
 
-async function executeValidatorAgent(base44, agent, inputs) {
+async function executeValidatorAgent(base44, agent, inputs, messageBus) {
     const llmParams = agent.llm_parameters || {};
     
+    // Check for validation requests from other agents
+    const validationRequests = messageBus.getMessages(agent.id, 'validation_request');
+    const dataToValidate = validationRequests.length > 0 
+        ? validationRequests[0].payload.data 
+        : inputs;
+
     const prompt = `${agent.system_prompt || 'Validate the following data.'}
 
-Data to validate: ${JSON.stringify(inputs)}
+Data to validate: ${JSON.stringify(dataToValidate)}
 
 Check for:
 1. Completeness
@@ -445,9 +626,6 @@ Provide validation results.`;
 
     const validation = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
-        temperature: llmParams.temperature ?? 0.3, // Validators should be more deterministic
-        top_p: llmParams.top_p,
-        max_tokens: llmParams.max_tokens,
         response_json_schema: {
             type: "object",
             properties: {
@@ -458,10 +636,20 @@ Provide validation results.`;
         }
     });
 
-    return { validation, validated_data: inputs };
+    // Send validation results back to requester
+    if (validationRequests.length > 0) {
+        messageBus.sendMessage(agent.id, {
+            type: 'validation_response',
+            to: validationRequests[0].from,
+            payload: validation
+        });
+        validationRequests.forEach(req => messageBus.markAsProcessed(req.id));
+    }
+
+    return { validation, validated_data: dataToValidate };
 }
 
-async function executeGenericAgent(base44, agent, inputs) {
+async function executeGenericAgent(base44, agent, inputs, messageBus) {
     const llmParams = agent.llm_parameters || {};
     
     const prompt = `${agent.system_prompt || 'Process the following input.'}
@@ -469,10 +657,7 @@ async function executeGenericAgent(base44, agent, inputs) {
 Input: ${JSON.stringify(inputs)}`;
 
     const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt,
-        temperature: llmParams.temperature,
-        top_p: llmParams.top_p,
-        max_tokens: llmParams.max_tokens
+        prompt: prompt
     });
 
     return { result: response };
