@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap } from "lucide-react";
+import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap, GitMerge } from "lucide-react";
 import { toast } from "sonner";
 import { createPageUrl } from "../utils";
 import { Link } from "react-router-dom";
@@ -16,6 +15,9 @@ import ConversationSummary from "../components/chat/ConversationSummary";
 import ShareDialog from "../components/collaboration/ShareDialog";
 import AnalysisPanel from "../components/chat/AnalysisPanel";
 import AIFeatures from "../components/chat/AIFeatures";
+import AgentOrchestrationPanel from "../components/chat/AgentOrchestrationPanel";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 export default function Chat() {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -28,6 +30,8 @@ export default function Chat() {
   const [sidebarWidth, setSidebarWidth] = useState(320);
   const [isResizing, setIsResizing] = useState(false);
   const [agentPersona, setAgentPersona] = useState('strategic_advisor');
+  const [useOrchestration, setUseOrchestration] = useState(false);
+  const [lastOrchestration, setLastOrchestration] = useState(null);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -83,7 +87,8 @@ export default function Chat() {
         agent_name: "caio_agent",
         metadata: {
           created_at: new Date().toISOString(),
-          persona: agentPersona
+          persona: agentPersona,
+          orchestration_enabled: useOrchestration
         }
       });
       setSelectedConversation(newConv);
@@ -126,13 +131,49 @@ export default function Chat() {
     setIsSending(true);
 
     try {
-      await base44.agents.addMessage(selectedConversation, {
-        role: "user",
-        content: messageContent || "Analyze these files",
-        file_urls: filesToSend.map(f => f.url)
-      });
+      // If orchestration enabled, use orchestration layer
+      if (useOrchestration) {
+        const { data } = await base44.functions.invoke('orchestrateAgents', {
+          user_message: messageContent,
+          conversation_id: selectedConversation.id,
+          conversation_history: messages,
+          user_profile_id: selectedConversation.metadata?.behavioral_profile_id
+        });
+
+        if (data.success) {
+          setLastOrchestration(data.orchestration);
+          
+          // Add orchestrated response to conversation
+          await base44.agents.addMessage(selectedConversation, {
+            role: "user",
+            content: messageContent,
+            file_urls: filesToSend.map(f => f.url)
+          });
+
+          // Add synthesized response
+          await base44.agents.addMessage(selectedConversation, {
+            role: "assistant",
+            content: data.response.content,
+            metadata: {
+              orchestration: data.orchestration,
+              crv_scores: data.response.crv_scores,
+              source_agents: data.response.source_agents
+            }
+          });
+
+          toast.success(`Orchestrated ${data.orchestration.agents_used.length} agents`);
+        }
+      } else {
+        // Standard agent interaction
+        await base44.agents.addMessage(selectedConversation, {
+          role: "user",
+          content: messageContent || "Analyze these files",
+          file_urls: filesToSend.map(f => f.url)
+        });
+      }
     } catch (error) {
       toast.error("Failed to send message");
+      console.error(error);
     } finally {
       setIsSending(false);
     }
@@ -243,11 +284,26 @@ export default function Chat() {
                   <h2 className="text-white font-semibold">
                     {selectedConversation?.metadata?.name || "CAIO Strategic Intelligence"}
                   </h2>
-                  <p className="text-sm text-slate-400">AI-powered strategic advisor</p>
+                  <p className="text-sm text-slate-400">
+                    {useOrchestration ? '🤖 Multi-agent orchestration enabled' : 'AI-powered strategic advisor'}
+                  </p>
                 </div>
               </div>
               
               <div className="flex items-center gap-3">
+                {/* Orchestration Toggle */}
+                <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/10">
+                  <GitMerge className="w-4 h-4 text-purple-400" />
+                  <Label htmlFor="orchestration" className="text-xs text-slate-300 cursor-pointer">
+                    Orchestration
+                  </Label>
+                  <Switch
+                    id="orchestration"
+                    checked={useOrchestration}
+                    onCheckedChange={setUseOrchestration}
+                  />
+                </div>
+
                 {selectedConversation && (
                   <>
                     <AnalysisPanel conversationId={selectedConversation.id} />
@@ -281,7 +337,7 @@ export default function Chat() {
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-2">Welcome to CAIO</h3>
                   <p className="text-slate-400 max-w-md">
-                    Your AI-powered strategic intelligence assistant. Start a new conversation or browse Quick Actions.
+                    Your AI-powered strategic intelligence assistant with multi-agent orchestration.
                   </p>
                 </div>
                 <div className="flex gap-3">
@@ -309,6 +365,11 @@ export default function Chat() {
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-2">Start the conversation</h3>
                     <p className="text-slate-400">Ask me anything about strategy, markets, or analysis</p>
+                    {useOrchestration && (
+                      <p className="text-purple-400 text-sm mt-2">
+                        ⚡ Multi-agent orchestration active
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -323,13 +384,23 @@ export default function Chat() {
                         messageId={message.id || `msg-${idx}`}
                       />
                     )}
+                    {message.metadata?.orchestration && (
+                      <div className="mt-3">
+                        <AgentOrchestrationPanel orchestrationData={message.metadata.orchestration} />
+                      </div>
+                    )}
                   </div>
                 ))}
                 {isSending && (
                   <div className="flex items-center gap-3 text-slate-400">
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-sm">CAIO is thinking...</span>
+                    <span className="text-sm">
+                      {useOrchestration ? 'Orchestrating agents...' : 'CAIO is thinking...'}
+                    </span>
                   </div>
+                )}
+                {lastOrchestration && isSending && (
+                  <AgentOrchestrationPanel orchestrationData={lastOrchestration} />
                 )}
                 <div ref={messagesEndRef} />
               </div>
