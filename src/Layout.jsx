@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
@@ -33,6 +34,7 @@ const navSections = [
     title: "Companies",
     items: [
       { name: 'Company Discovery', icon: Building2, path: 'CompanyDiscovery', badge: 'ESIOS' },
+      { name: 'CVM Ingestion', icon: Database, path: 'CVMIngestion', badge: 'CVM' },
       { name: 'Batch Ingestion', icon: Upload, path: 'BatchIngestion', badge: 'BULK' }
     ]
   },
