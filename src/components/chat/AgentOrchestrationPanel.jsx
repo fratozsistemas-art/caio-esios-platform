@@ -4,7 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
   GitMerge, Zap, CheckCircle, Clock, AlertCircle, 
-  TrendingUp, Brain, Network, ChevronDown, ChevronUp
+  TrendingUp, Brain, Network, ChevronDown, ChevronUp,
+  Users, GitBranch, Layers
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -13,7 +14,7 @@ export default function AgentOrchestrationPanel({ orchestrationData }) {
 
   if (!orchestrationData) return null;
 
-  const { intent, agents_used, execution_mode, total_steps } = orchestrationData;
+  const { intent, agents_used, sub_teams, execution_mode, replanning_events, total_steps, knowledge_entities_used } = orchestrationData;
 
   const getModeColor = (mode) => {
     switch (mode) {
@@ -40,12 +41,24 @@ export default function AgentOrchestrationPanel({ orchestrationData }) {
         <div className="flex items-center justify-between">
           <CardTitle className="text-white text-sm flex items-center gap-2">
             <GitMerge className="w-4 h-4 text-purple-400" />
-            Agent Orchestration
+            Advanced Orchestration
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge className={getModeColor(execution_mode)}>
               {execution_mode}
             </Badge>
+            {sub_teams?.length > 0 && (
+              <Badge className="bg-cyan-500/20 text-cyan-400">
+                <Users className="w-3 h-3 mr-1" />
+                {sub_teams.length} teams
+              </Badge>
+            )}
+            {replanning_events > 0 && (
+              <Badge className="bg-orange-500/20 text-orange-400">
+                <GitBranch className="w-3 h-3 mr-1" />
+                {replanning_events} replanned
+              </Badge>
+            )}
             <Button variant="ghost" size="icon" className="h-6 w-6">
               {expanded ? (
                 <ChevronUp className="w-4 h-4 text-slate-400" />
@@ -67,7 +80,10 @@ export default function AgentOrchestrationPanel({ orchestrationData }) {
             <CardContent className="space-y-4 pt-0">
               {/* Intent Analysis */}
               <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-                <h4 className="text-xs text-slate-400 mb-2">Intent Classification</h4>
+                <h4 className="text-xs text-slate-400 mb-2 flex items-center gap-2">
+                  <Brain className="w-3 h-3" />
+                  Intent Classification
+                </h4>
                 <div className="flex flex-wrap gap-2">
                   <Badge className="bg-blue-500/20 text-blue-400">
                     {intent.primary_intent}
@@ -75,19 +91,78 @@ export default function AgentOrchestrationPanel({ orchestrationData }) {
                   <Badge className={getComplexityColor(intent.complexity)}>
                     {intent.complexity}
                   </Badge>
+                  {intent.decomposable && (
+                    <Badge className="bg-cyan-500/20 text-cyan-400">
+                      decomposable
+                    </Badge>
+                  )}
+                  {intent.parallel_execution_viable && (
+                    <Badge className="bg-green-500/20 text-green-400">
+                      parallel-ready
+                    </Badge>
+                  )}
                   <Badge variant="outline" className="border-white/20 text-slate-300">
                     {intent.stakeholder_level}
                   </Badge>
-                  <Badge variant="outline" className="border-white/20 text-slate-300">
-                    {intent.time_horizon}
-                  </Badge>
                 </div>
+                
+                {intent.secondary_intents?.length > 0 && (
+                  <div className="mt-2">
+                    <span className="text-xs text-slate-500">Secondary: </span>
+                    {intent.secondary_intents.map((si, idx) => (
+                      <Badge key={idx} variant="outline" className="border-white/10 text-slate-400 text-xs ml-1">
+                        {si}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
+
+              {/* Sub-Teams */}
+              {sub_teams?.length > 0 && (
+                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <h4 className="text-xs text-slate-400 mb-2 flex items-center gap-2">
+                    <Users className="w-3 h-3" />
+                    Sub-Teams
+                  </h4>
+                  <div className="space-y-2">
+                    {sub_teams.map((team, idx) => (
+                      <div key={idx} className="bg-white/5 rounded p-2 text-xs">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-white font-medium">{team}</span>
+                          <Badge className="bg-cyan-500/20 text-cyan-400 text-xs">
+                            parallel
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Knowledge Graph Integration */}
+              {knowledge_entities_used > 0 && (
+                <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <h4 className="text-xs text-slate-400 mb-2 flex items-center gap-2">
+                    <Network className="w-3 h-3" />
+                    Knowledge Graph Integration
+                  </h4>
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-purple-500/20 text-purple-400">
+                      {knowledge_entities_used} entities
+                    </Badge>
+                    <span className="text-xs text-slate-400">Enhanced context with structured data</span>
+                  </div>
+                </div>
+              )}
 
               {/* Frameworks & Modules */}
               {(intent.frameworks_needed?.length > 0 || intent.modules_needed?.length > 0) && (
                 <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-                  <h4 className="text-xs text-slate-400 mb-2">Activated Frameworks</h4>
+                  <h4 className="text-xs text-slate-400 mb-2 flex items-center gap-2">
+                    <Layers className="w-3 h-3" />
+                    Activated Frameworks
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {intent.frameworks_needed?.map((fw, idx) => (
                       <Badge key={idx} className="bg-purple-500/20 text-purple-400 text-xs">
@@ -123,7 +198,7 @@ export default function AgentOrchestrationPanel({ orchestrationData }) {
               </div>
 
               {/* Execution Stats */}
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-4 gap-2 text-xs">
                 <div className="bg-white/5 rounded p-2 text-center border border-white/10">
                   <p className="text-slate-400">Agents</p>
                   <p className="text-white font-bold">{total_steps}</p>
@@ -131,6 +206,10 @@ export default function AgentOrchestrationPanel({ orchestrationData }) {
                 <div className="bg-white/5 rounded p-2 text-center border border-white/10">
                   <p className="text-slate-400">Mode</p>
                   <p className="text-white font-bold capitalize">{execution_mode}</p>
+                </div>
+                <div className="bg-white/5 rounded p-2 text-center border border-white/10">
+                  <p className="text-slate-400">Replanned</p>
+                  <p className="text-white font-bold">{replanning_events}</p>
                 </div>
                 <div className="bg-white/5 rounded p-2 text-center border border-white/10">
                   <p className="text-slate-400">Confidence</p>
