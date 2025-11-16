@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, Upload, Database, TrendingUp, Play, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import { Brain, Upload, Database, TrendingUp, Play, CheckCircle, Loader2, AlertCircle, Rocket, Activity, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
 const AGENT_TYPES = [
@@ -39,7 +39,6 @@ export default function AgentTrainingHub({ onClose }) {
     mutationFn: async ({ file, agentType, name }) => {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       
-      // Validate dataset
       const validation = await base44.functions.invoke('validateTrainingDataset', {
         file_url,
         agent_type: agentType
@@ -113,6 +112,10 @@ export default function AgentTrainingHub({ onClose }) {
               <Brain className="w-4 h-4 mr-2" />
               Fine-tuned Models
             </TabsTrigger>
+            <TabsTrigger value="deployments">
+              <Rocket className="w-4 h-4 mr-2" />
+              Deployments
+            </TabsTrigger>
             <TabsTrigger value="benchmarks">
               <TrendingUp className="w-4 h-4 mr-2" />
               Benchmarks
@@ -152,6 +155,10 @@ export default function AgentTrainingHub({ onClose }) {
                 <p className="text-slate-400 text-sm">No fine-tuned models yet</p>
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="deployments" className="space-y-2 mt-4">
+            <DeploymentManagement fineTunedAgents={fineTunedAgents} />
           </TabsContent>
 
           <TabsContent value="benchmarks" className="mt-4">
@@ -279,10 +286,11 @@ function FineTunedModelCard({ model }) {
           <p className="text-xs text-slate-400">{model.base_agent_type} • {model.base_model}</p>
         </div>
         <Badge className={`${
-          model.status === 'completed' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
-          model.status === 'training' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+          model.status === 'deployed' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
+          model.status === 'completed' ? 'bg-blue-500/20 text-blue-400 border-blue-500/30' :
+          model.status === 'training' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
           model.status === 'failed' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-          'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+          'bg-slate-500/20 text-slate-400 border-slate-500/30'
         }`}>
           {model.status}
         </Badge>
@@ -302,15 +310,217 @@ function FineTunedModelCard({ model }) {
       {model.is_active && (
         <Badge className="bg-green-500/20 text-green-400 border-green-500/30 mt-2">
           <CheckCircle className="w-3 h-3 mr-1" />
-          Deployed
+          Active
         </Badge>
       )}
     </div>
   );
 }
 
+function DeploymentManagement({ fineTunedAgents }) {
+  const queryClient = useQueryClient();
+  const [selectedAgent, setSelectedAgent] = useState(null);
+
+  const evaluateMutation = useMutation({
+    mutationFn: async (agentId) => {
+      const { data } = await base44.functions.invoke('evaluateAgentPerformance', {
+        fine_tuned_agent_id: agentId
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(`Evaluation complete: ${data.evaluation.message}`);
+    }
+  });
+
+  const deployMutation = useMutation({
+    mutationFn: async ({ agentId, mode, traffic }) => {
+      const { data } = await base44.functions.invoke('deployAgent', {
+        fine_tuned_agent_id: agentId,
+        deployment_mode: mode,
+        traffic_percentage: traffic
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['fine_tuned_agents']);
+      toast.success('Agent deployed successfully');
+    }
+  });
+
+  const monitorMutation = useMutation({
+    mutationFn: async (agentId) => {
+      const { data } = await base44.functions.invoke('monitorDeployment', {
+        fine_tuned_agent_id: agentId
+      });
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.rolled_back) {
+        toast.error('Agent rolled back due to performance issues');
+        queryClient.invalidateQueries(['fine_tuned_agents']);
+      } else {
+        toast.success('Performance check passed');
+      }
+    }
+  });
+
+  const completedAgents = fineTunedAgents.filter(a => a.status === 'completed' || a.status === 'deployed');
+
+  return (
+    <div className="space-y-4">
+      {completedAgents.map(agent => (
+        <DeploymentCard
+          key={agent.id}
+          agent={agent}
+          onEvaluate={() => evaluateMutation.mutate(agent.id)}
+          onDeploy={(mode, traffic) => deployMutation.mutate({ agentId: agent.id, mode, traffic })}
+          onMonitor={() => monitorMutation.mutate(agent.id)}
+          isEvaluating={evaluateMutation.isPending}
+          isDeploying={deployMutation.isPending}
+          isMonitoring={monitorMutation.isPending}
+          evaluation={evaluateMutation.data?.evaluation}
+          monitoring={monitorMutation.data}
+        />
+      ))}
+      {completedAgents.length === 0 && (
+        <div className="text-center py-8">
+          <Rocket className="w-12 h-12 text-slate-600 mx-auto mb-2" />
+          <p className="text-slate-400 text-sm">No models ready for deployment</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DeploymentCard({ agent, onEvaluate, onDeploy, onMonitor, isEvaluating, isDeploying, isMonitoring, evaluation, monitoring }) {
+  const [deployMode, setDeployMode] = useState('full');
+  const [trafficPercentage, setTrafficPercentage] = useState(100);
+
+  return (
+    <div className="bg-white/5 rounded-lg p-4 border border-white/10">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <p className="text-sm font-medium text-white">{agent.model_name}</p>
+          <p className="text-xs text-slate-400">{agent.base_agent_type}</p>
+        </div>
+        {agent.is_active && (
+          <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+            <Activity className="w-3 h-3 mr-1" />
+            Live
+          </Badge>
+        )}
+      </div>
+
+      {evaluation && (
+        <div className={`rounded-lg p-3 mb-3 ${
+          evaluation.recommendation === 'deploy' ? 'bg-green-500/10 border border-green-500/30' :
+          evaluation.recommendation === 'ab_test' ? 'bg-yellow-500/10 border border-yellow-500/30' :
+          'bg-red-500/10 border border-red-500/30'
+        }`}>
+          <p className="text-xs font-medium text-white mb-1">Evaluation Result</p>
+          <p className="text-xs text-slate-300">{evaluation.message}</p>
+          <div className="flex gap-2 mt-2">
+            {evaluation.checks.map((check, idx) => (
+              <Badge key={idx} className={`text-xs ${
+                check.passed ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+              }`}>
+                {check.name}: {check.passed ? '✓' : '✗'}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {monitoring && (
+        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 mb-3">
+          <p className="text-xs font-medium text-white mb-2">Live Metrics</p>
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <p className="text-slate-400">Success Rate</p>
+              <p className="text-white font-medium">{monitoring.metrics.success_rate.toFixed(1)}%</p>
+            </div>
+            <div>
+              <p className="text-slate-400">Avg Latency</p>
+              <p className="text-white font-medium">{monitoring.metrics.avg_latency_ms.toFixed(0)}ms</p>
+            </div>
+          </div>
+          {monitoring.issues.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {monitoring.issues.map((issue, idx) => (
+                <div key={idx} className="flex items-center gap-2 text-xs text-red-400">
+                  <AlertCircle className="w-3 h-3" />
+                  <span>{issue.metric}: {issue.current.toFixed(2)} (threshold: {issue.threshold})</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          <Select value={deployMode} onValueChange={setDeployMode}>
+            <SelectTrigger className="bg-white/5 border-white/10 text-white">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="full">Full Deployment</SelectItem>
+              <SelectItem value="ab_test">A/B Test</SelectItem>
+            </SelectContent>
+          </Select>
+          {deployMode === 'ab_test' && (
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={trafficPercentage}
+              onChange={(e) => setTrafficPercentage(parseInt(e.target.value))}
+              className="bg-white/5 border-white/10 text-white"
+              placeholder="Traffic %"
+            />
+          )}
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            size="sm"
+            onClick={onEvaluate}
+            disabled={isEvaluating}
+            variant="outline"
+            className="flex-1 bg-white/5 border-white/10"
+          >
+            {isEvaluating ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle className="w-3 h-3 mr-1" />}
+            Evaluate
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => onDeploy(deployMode, trafficPercentage)}
+            disabled={isDeploying || agent.is_active}
+            className="flex-1 bg-green-600 hover:bg-green-700"
+          >
+            {isDeploying ? <Loader2 className="w-3 h-3 animate-spin" /> : <Rocket className="w-3 h-3 mr-1" />}
+            Deploy
+          </Button>
+          {agent.is_active && (
+            <Button
+              size="sm"
+              onClick={onMonitor}
+              disabled={isMonitoring}
+              variant="outline"
+              className="bg-white/5 border-white/10"
+            >
+              {isMonitoring ? <Loader2 className="w-3 h-3 animate-spin" /> : <Activity className="w-3 h-3" />}
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function BenchmarkComparison({ fineTunedAgents }) {
-  const completedModels = fineTunedAgents.filter(m => m.status === 'completed');
+  const completedModels = fineTunedAgents.filter(m => m.status === 'completed' || m.status === 'deployed');
 
   if (completedModels.length === 0) {
     return (
