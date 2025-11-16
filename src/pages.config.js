@@ -19,6 +19,8 @@ import UserManagement from './pages/UserManagement';
 import BehavioralIntelligence from './pages/BehavioralIntelligence';
 import CVMGraph from './pages/CVMGraph';
 import Integrations from './pages/Integrations';
+import CompanyDiscovery from './pages/CompanyDiscovery';
+import CompanyProfile from './pages/CompanyProfile';
 import Layout from './Layout.jsx';
 
 
@@ -44,6 +46,8 @@ export const PAGES = {
     "BehavioralIntelligence": BehavioralIntelligence,
     "CVMGraph": CVMGraph,
     "Integrations": Integrations,
+    "CompanyDiscovery": CompanyDiscovery,
+    "CompanyProfile": CompanyProfile,
 }
 
 export const pagesConfig = {
