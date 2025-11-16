@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   GitMerge, Plus, Play, Eye, Settings, TrendingUp,
-  Activity, Clock, CheckCircle, Workflow, Zap, Network, History // Added History icon
+  Activity, Clock, CheckCircle, Workflow, Zap, Network, History, Brain // Added History icon and Brain icon
 } from "lucide-react";
 import WorkflowBuilder from "../components/orchestration/WorkflowBuilder";
 import WorkflowExecutionMonitor from "../components/orchestration/WorkflowExecutionMonitor";
@@ -22,6 +22,7 @@ import RealtimeExecutionGraph from "../components/orchestration/RealtimeExecutio
 import DebugPanel from "../components/orchestration/DebugPanel";
 import VersionHistory from "../components/orchestration/VersionHistory"; // New import
 import VersionCompare from "../components/orchestration/VersionCompare"; // New import
+import AgentTrainingHub from "../components/orchestration/AgentTrainingHub"; // New import
 
 export default function AgentOrchestration() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -34,6 +35,7 @@ export default function AgentOrchestration() {
   const [showDebugMode, setShowDebugMode] = useState(false);
   const [compareVersions, setCompareVersions] = useState(null); // New state
   const [showVersionHistory, setShowVersionHistory] = useState(false); // New state
+  const [showTrainingHub, setShowTrainingHub] = useState(false); // New state
 
   const queryClient = useQueryClient();
 
@@ -92,6 +94,16 @@ export default function AgentOrchestration() {
           </p>
         </div>
         <div className="flex gap-2">
+          <Button
+            onClick={() => setShowTrainingHub(!showTrainingHub)}
+            className={showTrainingHub
+              ? "bg-purple-600 hover:bg-purple-700"
+              : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+            }
+          >
+            <Brain className="w-4 h-4 mr-2" />
+            {showTrainingHub ? 'Hide' : 'AI Training'}
+          </Button>
           {selectedWorkflow && ( // New button for version history
             <Button
               onClick={() => setShowVersionHistory(!showVersionHistory)}
@@ -188,6 +200,18 @@ export default function AgentOrchestration() {
         </Card>
       </div>
 
+      {/* Training Hub */}
+      {showTrainingHub && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          className="overflow-hidden"
+        >
+          <AgentTrainingHub onClose={() => setShowTrainingHub(false)} />
+        </motion.div>
+      )}
+
       {/* Hierarchy Builder */}
       {showHierarchyBuilder && (
         <motion.div
@@ -258,7 +282,7 @@ export default function AgentOrchestration() {
       )}
 
       {/* Workflows List */}
-      {!showBuilder && !showHierarchyBuilder && !showExecutionMonitor && (
+      {!showBuilder && !showHierarchyBuilder && !showExecutionMonitor && !showTrainingHub && (
         <div className="grid grid-cols-1 gap-4">
           <h2 className="text-xl font-bold text-white">Configured Workflows</h2>
           {workflows.length === 0 && (
@@ -303,7 +327,7 @@ export default function AgentOrchestration() {
       )}
 
       {/* Enhanced Workflow Visualization with Debug Mode & Version Control */}
-      {selectedWorkflow && !showBuilder && !showHierarchyBuilder && !showExecutionMonitor && (
+      {selectedWorkflow && !showBuilder && !showHierarchyBuilder && !showExecutionMonitor && !showTrainingHub && (
         <>
           {/* Compare Versions Dialog */}
           {compareVersions && (
