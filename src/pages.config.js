@@ -33,6 +33,9 @@ import AgentOrchestration from './pages/AgentOrchestration';
 import CVMIngestion from './pages/CVMIngestion';
 import HermesTrustBroker from './pages/HermesTrustBroker';
 import HermesTriggerManagement from './pages/HermesTriggerManagement';
+import HermesDashboard from './pages/HermesDashboard';
+import WorkflowTemplates from './pages/WorkflowTemplates';
+import AgentPerformance from './pages/AgentPerformance';
 import Layout from './Layout.jsx';
 
 
@@ -72,6 +75,9 @@ export const PAGES = {
     "CVMIngestion": CVMIngestion,
     "HermesTrustBroker": HermesTrustBroker,
     "HermesTriggerManagement": HermesTriggerManagement,
+    "HermesDashboard": HermesDashboard,
+    "WorkflowTemplates": WorkflowTemplates,
+    "AgentPerformance": AgentPerformance,
 }
 
 export const pagesConfig = {
