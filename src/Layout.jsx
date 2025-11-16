@@ -24,6 +24,8 @@ const navSections = [
       { name: 'Behavioral Intelligence', icon: Brain, path: 'BehavioralIntelligence', badge: 'NEW' },
       { name: 'Knowledge Management', icon: BookOpen, path: 'KnowledgeManagement' },
       { name: 'Knowledge Graph', icon: Network, path: 'KnowledgeGraph' },
+      { name: 'Network Map', icon: Network, path: 'NetworkMap', badge: 'AI' },
+      { name: 'Agent Memory', icon: Brain, path: 'AgentMemory', badge: 'NEW' },
       { name: 'CVM Graph', icon: Database, path: 'CVMGraph', badge: 'Neo4j' }
     ]
   },

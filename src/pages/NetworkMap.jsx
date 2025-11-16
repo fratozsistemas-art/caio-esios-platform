@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   Network, Sparkles, TrendingUp, Users, Building2, 
-  Loader2, Search, Plus, Play
+  Loader2, Search, Plus, Play, GitMerge
 } from "lucide-react";
 import { toast } from "sonner";
 import EnhancedForceDirectedGraph from "../components/network/EnhancedForceDirectedGraph";

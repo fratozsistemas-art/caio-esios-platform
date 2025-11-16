@@ -24,6 +24,7 @@ import CompanyProfile from './pages/CompanyProfile';
 import BatchIngestion from './pages/BatchIngestion';
 import TechnicalAudit from './pages/TechnicalAudit';
 import NetworkMap from './pages/NetworkMap';
+import AgentMemory from './pages/AgentMemory';
 import Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "BatchIngestion": BatchIngestion,
     "TechnicalAudit": TechnicalAudit,
     "NetworkMap": NetworkMap,
+    "AgentMemory": AgentMemory,
 }
 
 export const pagesConfig = {
