@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -12,6 +13,8 @@ import WorkflowBuilder from "../components/orchestration/WorkflowBuilder";
 import WorkflowExecutionMonitor from "../components/orchestration/WorkflowExecutionMonitor";
 import EnhancedWorkflowVisualizer from "../components/orchestration/EnhancedWorkflowVisualizer";
 import DataFlowVisualizer from "../components/orchestration/DataFlowVisualizer";
+import HierarchicalAgentBuilder from "../components/orchestration/HierarchicalAgentBuilder";
+import AgentHierarchyVisualizer from "../components/orchestration/AgentHierarchyVisualizer";
 
 export default function AgentOrchestration() {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
@@ -19,6 +22,7 @@ export default function AgentOrchestration() {
   const [showMonitor, setShowMonitor] = useState(false);
   const [selectedExecution, setSelectedExecution] = useState(null);
   const [focusedStep, setFocusedStep] = useState(null);
+  const [showHierarchicalBuilder, setShowHierarchicalBuilder] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: workflows = [] } = useQuery({
@@ -50,7 +54,7 @@ export default function AgentOrchestration() {
             Agent Orchestration Dashboard
           </h1>
           <p className="text-slate-400 mt-1">
-            Multi-step AI workflows with explainable data flow
+            Hierarchical multi-agent workflows with state isolation
           </p>
         </div>
         <div className="flex gap-3">
@@ -60,7 +64,15 @@ export default function AgentOrchestration() {
             className="bg-white/5 border-white/10 text-white hover:bg-white/10"
           >
             <Activity className="w-4 h-4 mr-2" />
-            Monitor Executions
+            Monitor
+          </Button>
+          <Button
+            onClick={() => setShowHierarchicalBuilder(!showHierarchicalBuilder)}
+            variant="outline"
+            className="bg-white/5 border-white/10 text-white hover:bg-white/10"
+          >
+            <GitMerge className="w-4 h-4 mr-2" />
+            Hierarchical
           </Button>
           <Button
             onClick={() => setShowBuilder(true)}
@@ -126,7 +138,38 @@ export default function AgentOrchestration() {
         </Card>
       </div>
 
-      {showMonitor ? (
+      {showHierarchicalBuilder ? (
+        <Card className="bg-white/5 border-white/10">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white">Hierarchical Agent Configuration</CardTitle>
+              <Button
+                variant="ghost"
+                onClick={() => setShowHierarchicalBuilder(false)}
+                className="text-slate-400"
+              >
+                ✕
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <HierarchicalAgentBuilder
+              agentConfig={selectedWorkflow?.hierarchical_config || { agents: [] }}
+              onChange={(config) => {
+                if (selectedWorkflow) {
+                  // Update workflow in cache
+                  queryClient.setQueryData(['agent_workflows'], (old) =>
+                    old.map(w => w.id === selectedWorkflow.id 
+                      ? { ...w, hierarchical_config: config }
+                      : w
+                    )
+                  );
+                }
+              }}
+            />
+          </CardContent>
+        </Card>
+      ) : showMonitor ? (
         <WorkflowExecutionMonitor 
           executions={executions}
           onClose={() => setShowMonitor(false)}
@@ -164,6 +207,10 @@ export default function AgentOrchestration() {
                       setSelectedWorkflow(workflow);
                       setShowBuilder(true);
                     }}
+                    onConfigureHierarchy={() => {
+                      setSelectedWorkflow(workflow);
+                      setShowHierarchicalBuilder(true);
+                    }}
                   />
                 ))}
                 {workflows.length === 0 && (
@@ -182,6 +229,13 @@ export default function AgentOrchestration() {
                 )}
               </CardContent>
             </Card>
+
+            {selectedWorkflow?.hierarchical_config && (
+              <AgentHierarchyVisualizer
+                agentConfig={selectedWorkflow.hierarchical_config}
+                execution={currentExecution}
+              />
+            )}
 
             {selectedWorkflow && currentExecution && (
               <DataFlowVisualizer 
@@ -205,7 +259,7 @@ export default function AgentOrchestration() {
   );
 }
 
-function WorkflowCard({ workflow, onView, onEdit }) {
+function WorkflowCard({ workflow, onView, onEdit, onConfigureHierarchy }) {
   const [executing, setExecuting] = useState(false);
   const queryClient = useQueryClient();
 
@@ -275,6 +329,15 @@ function WorkflowCard({ workflow, onView, onEdit }) {
         >
           <Eye className="w-3 h-3 mr-1" />
           View
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onConfigureHierarchy}
+          className="flex-1 text-purple-400 hover:text-purple-300"
+        >
+          <GitMerge className="w-3 h-3 mr-1" />
+          Agents
         </Button>
         <Button
           size="sm"
