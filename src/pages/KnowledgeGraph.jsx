@@ -8,13 +8,14 @@ import { Network, Brain, MessageSquare, Sparkles } from "lucide-react";
 import InteractiveGraphVisualization from "../components/graph/InteractiveGraphVisualization";
 import GraphAIAssistant from "../components/graph/GraphAIAssistant";
 import RelationshipInferencePanel from "../components/graph/RelationshipInferencePanel";
+import AutoEnrichmentPanel from "../components/graph/AutoEnrichmentPanel";
 
 export default function KnowledgeGraph() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: nodes = [], isLoading: nodesLoading } = useQuery({
+  const { data: nodes = [], isLoading: nodesLoading, refetch: refetchNodes } = useQuery({
     queryKey: ['knowledge_graph_nodes'],
     queryFn: () => base44.entities.KnowledgeGraphNode.list()
   });
@@ -53,6 +54,10 @@ export default function KnowledgeGraph() {
     }
   };
 
+  const handleEnrichmentRefresh = () => {
+    refetchNodes();
+  };
+
   const isLoading = nodesLoading || relsLoading;
 
   return (
@@ -65,7 +70,7 @@ export default function KnowledgeGraph() {
             Knowledge Graph
           </h1>
           <p className="text-slate-400 mt-1">
-            AI-powered entity relationship mapping with intelligent inference
+            AI-powered entity relationship mapping with intelligent inference & auto-enrichment
           </p>
         </div>
         <div className="flex gap-3">
@@ -192,6 +197,14 @@ export default function KnowledgeGraph() {
                 )}
               </CardContent>
             </Card>
+          )}
+
+          {/* Auto Enrichment */}
+          {selectedNode && (
+            <AutoEnrichmentPanel 
+              selectedNodeId={selectedNode.id} 
+              onRefresh={handleEnrichmentRefresh}
+            />
           )}
 
           {/* Relationship Inference */}
