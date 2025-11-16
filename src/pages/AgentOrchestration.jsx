@@ -6,19 +6,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { 
   GitMerge, Plus, Play, Eye, Settings, TrendingUp, 
-  Activity, Clock, CheckCircle, AlertCircle
+  Activity, Clock, CheckCircle
 } from "lucide-react";
 import WorkflowBuilder from "../components/orchestration/WorkflowBuilder";
 import WorkflowExecutionMonitor from "../components/orchestration/WorkflowExecutionMonitor";
-import WorkflowFlowVisualizer from "../components/orchestration/WorkflowFlowVisualizer";
+import EnhancedWorkflowVisualizer from "../components/orchestration/EnhancedWorkflowVisualizer";
 
 export default function AgentOrchestration() {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [showBuilder, setShowBuilder] = useState(false);
   const [showMonitor, setShowMonitor] = useState(false);
+  const [selectedExecution, setSelectedExecution] = useState(null);
   const queryClient = useQueryClient();
 
-  const { data: workflows = [], isLoading } = useQuery({
+  const { data: workflows = [] } = useQuery({
     queryKey: ['agent_workflows'],
     queryFn: () => base44.entities.AgentWorkflow.list()
   });
@@ -36,7 +37,6 @@ export default function AgentOrchestration() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
@@ -44,7 +44,7 @@ export default function AgentOrchestration() {
             Agent Orchestration Dashboard
           </h1>
           <p className="text-slate-400 mt-1">
-            Define, configure, and monitor multi-step AI workflows
+            Define, configure, and monitor multi-step AI workflows with enhanced visualization
           </p>
         </div>
         <div className="flex gap-3">
@@ -66,7 +66,6 @@ export default function AgentOrchestration() {
         </div>
       </div>
 
-      {/* Stats */}
       <div className="grid grid-cols-4 gap-4">
         <Card className="bg-white/5 border-white/10">
           <CardContent className="p-4">
@@ -121,7 +120,6 @@ export default function AgentOrchestration() {
         </Card>
       </div>
 
-      {/* Main Content */}
       {showMonitor ? (
         <WorkflowExecutionMonitor 
           executions={executions}
@@ -142,7 +140,6 @@ export default function AgentOrchestration() {
         />
       ) : (
         <div className="grid grid-cols-2 gap-6">
-          {/* Workflows List */}
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Configured Workflows</CardTitle>
@@ -152,7 +149,10 @@ export default function AgentOrchestration() {
                 <WorkflowCard 
                   key={workflow.id}
                   workflow={workflow}
-                  onView={() => setSelectedWorkflow(workflow)}
+                  onView={(exec) => {
+                    setSelectedWorkflow(workflow);
+                    setSelectedExecution(exec);
+                  }}
                   onEdit={() => {
                     setSelectedWorkflow(workflow);
                     setShowBuilder(true);
@@ -176,9 +176,11 @@ export default function AgentOrchestration() {
             </CardContent>
           </Card>
 
-          {/* Workflow Visualizer */}
           {selectedWorkflow && (
-            <WorkflowFlowVisualizer workflow={selectedWorkflow} />
+            <EnhancedWorkflowVisualizer 
+              workflow={selectedWorkflow} 
+              execution={selectedExecution}
+            />
           )}
         </div>
       )}
@@ -198,8 +200,10 @@ function WorkflowCard({ workflow, onView, onEdit }) {
       });
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries(['workflow_executions']);
+      const execution = data.execution_id;
+      onView(execution);
       setExecuting(false);
     }
   });
@@ -250,7 +254,7 @@ function WorkflowCard({ workflow, onView, onEdit }) {
         <Button
           size="sm"
           variant="ghost"
-          onClick={onView}
+          onClick={() => onView(null)}
           className="flex-1 text-slate-400 hover:text-white"
         >
           <Eye className="w-3 h-3 mr-1" />
