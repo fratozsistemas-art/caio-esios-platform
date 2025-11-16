@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -7,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
   GitMerge, Plus, Play, Eye, Settings, TrendingUp,
-  Activity, Clock, CheckCircle, Workflow, Zap, Network, History, Brain // Added History icon and Brain icon
+  Activity, Clock, CheckCircle, Workflow, Zap, Network, History, Brain, Shield
 } from "lucide-react";
 import WorkflowBuilder from "../components/orchestration/WorkflowBuilder";
 import WorkflowExecutionMonitor from "../components/orchestration/WorkflowExecutionMonitor";
@@ -17,12 +16,14 @@ import HierarchicalAgentBuilder from "../components/orchestration/HierarchicalAg
 import AgentHierarchyVisualizer from "../components/orchestration/AgentHierarchyVisualizer";
 import AgentCommunicationLog from "../components/orchestration/AgentCommunicationLog";
 import { motion } from "framer-motion";
-import { toast } from "react-hot-toast"; // Assuming react-hot-toast is installed and configured
+import { toast } from "react-hot-toast";
 import RealtimeExecutionGraph from "../components/orchestration/RealtimeExecutionGraph";
 import DebugPanel from "../components/orchestration/DebugPanel";
-import VersionHistory from "../components/orchestration/VersionHistory"; // New import
-import VersionCompare from "../components/orchestration/VersionCompare"; // New import
-import AgentTrainingHub from "../components/orchestration/AgentTrainingHub"; // New import
+import VersionHistory from "../components/orchestration/VersionHistory";
+import VersionCompare from "../components/orchestration/VersionCompare";
+import AgentTrainingHub from "../components/orchestration/AgentTrainingHub";
+import HermesAnalyzeButton from "../components/hermes/HermesAnalyzeButton";
+import HermesInsightBadge from "../components/hermes/HermesInsightBadge";
 
 export default function AgentOrchestration() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -33,9 +34,9 @@ export default function AgentOrchestration() {
   const [agentConfig, setAgentConfig] = useState({ agents: [] });
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [showDebugMode, setShowDebugMode] = useState(false);
-  const [compareVersions, setCompareVersions] = useState(null); // New state
-  const [showVersionHistory, setShowVersionHistory] = useState(false); // New state
-  const [showTrainingHub, setShowTrainingHub] = useState(false); // New state
+  const [compareVersions, setCompareVersions] = useState(null);
+  const [showVersionHistory, setShowVersionHistory] = useState(false);
+  const [showTrainingHub, setShowTrainingHub] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -61,8 +62,8 @@ export default function AgentOrchestration() {
     }
   });
 
-  const activeWorkflows = workflows.filter(w => w.status === 'active'); // Keep for potential future use or dashboard consistency
-  const runningExecutions = executions.filter(e => e.status === 'running'); // Keep for potential future use or dashboard consistency
+  const activeWorkflows = workflows.filter(w => w.status === 'active');
+  const runningExecutions = executions.filter(e => e.status === 'running');
 
   const successRate = workflows.length > 0
     ? workflows.reduce((sum, w) => sum + (w.success_rate || 0), 0) / workflows.length
@@ -73,7 +74,7 @@ export default function AgentOrchestration() {
     toast.success(`${action} action triggered for ${agentId}`);
   };
 
-  const handleVersionRevert = (workflowSnapshot) => { // New function
+  const handleVersionRevert = (workflowSnapshot) => {
     setSelectedWorkflow(workflowSnapshot);
     setAgentConfig(workflowSnapshot.hierarchical_config || { agents: [] });
     queryClient.invalidateQueries(['agent_workflows']);
@@ -104,7 +105,7 @@ export default function AgentOrchestration() {
             <Brain className="w-4 h-4 mr-2" />
             {showTrainingHub ? 'Hide' : 'AI Training'}
           </Button>
-          {selectedWorkflow && ( // New button for version history
+          {selectedWorkflow && (
             <Button
               onClick={() => setShowVersionHistory(!showVersionHistory)}
               className={showVersionHistory
@@ -254,13 +255,13 @@ export default function AgentOrchestration() {
           <WorkflowBuilder onSave={() => {
             setShowBuilder(false);
             refetchWorkflows();
-            setSelectedWorkflow(null); // Clear selected workflow if a new one is saved
+            setSelectedWorkflow(null);
           }}
           onClose={() => {
             setShowBuilder(false);
             setSelectedWorkflow(null);
           }}
-          workflow={selectedWorkflow} // Pass selected workflow for editing
+          workflow={selectedWorkflow}
           />
         </motion.div>
       )}
@@ -339,6 +340,12 @@ export default function AgentOrchestration() {
           )}
 
           <div className="flex items-center justify-end gap-2">
+            <HermesInsightBadge
+              hermesIntegrityScore={selectedWorkflow.hermes_integrity_score}
+              hermesCriticalIssues={selectedWorkflow.hermes_critical_issues}
+              hermesStatus={selectedWorkflow.hermes_status}
+              lastHermesAnalysis={selectedWorkflow.last_hermes_analysis}
+            />
             <Badge className={showDebugMode ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-slate-500/20 text-slate-400 border-slate-500/30'}>
               {showDebugMode ? 'Debug Mode Active' : 'Debug Mode Off'}
             </Badge>
@@ -426,7 +433,7 @@ function WorkflowCard({ workflow, onSelect, onEdit, onConfigureHierarchy, select
     mutationFn: async (workflowId) => {
       const { data } = await base44.functions.invoke('executeHierarchicalWorkflow', {
         workflow_id: workflowId,
-        inputs: { test: true } // Example input
+        inputs: { test: true }
       });
       return data;
     },
@@ -446,7 +453,7 @@ function WorkflowCard({ workflow, onSelect, onEdit, onConfigureHierarchy, select
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex-1" onClick={() => onSelect(workflow)}>
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 mb-2 flex-wrap">
               <h3 className="text-lg font-bold text-white">{workflow.name}</h3>
               <Badge className={`${
                 workflow.status === 'active' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
@@ -455,6 +462,12 @@ function WorkflowCard({ workflow, onSelect, onEdit, onConfigureHierarchy, select
               }`}>
                 {workflow.status}
               </Badge>
+              <HermesInsightBadge
+                hermesIntegrityScore={workflow.hermes_integrity_score}
+                hermesCriticalIssues={workflow.hermes_critical_issues}
+                hermesStatus={workflow.hermes_status}
+                lastHermesAnalysis={workflow.last_hermes_analysis}
+              />
             </div>
             <p className="text-sm text-slate-400 mb-3">{workflow.description}</p>
             <div className="flex gap-4">
@@ -475,6 +488,13 @@ function WorkflowCard({ workflow, onSelect, onEdit, onConfigureHierarchy, select
             </div>
           </div>
           <div className="flex gap-2">
+            <HermesAnalyzeButton
+              entityType="workflow"
+              entityId={workflow.id}
+              onComplete={() => queryClient.invalidateQueries(['agent_workflows'])}
+              variant="outline"
+              size="sm"
+            />
             <Button
               size="sm"
               variant="outline"

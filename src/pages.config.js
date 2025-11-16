@@ -32,6 +32,7 @@ import IntegrationHealth from './pages/IntegrationHealth';
 import AgentOrchestration from './pages/AgentOrchestration';
 import CVMIngestion from './pages/CVMIngestion';
 import HermesTrustBroker from './pages/HermesTrustBroker';
+import HermesTriggerManagement from './pages/HermesTriggerManagement';
 import Layout from './Layout.jsx';
 
 
@@ -70,6 +71,7 @@ export const PAGES = {
     "AgentOrchestration": AgentOrchestration,
     "CVMIngestion": CVMIngestion,
     "HermesTrustBroker": HermesTrustBroker,
+    "HermesTriggerManagement": HermesTriggerManagement,
 }
 
 export const pagesConfig = {

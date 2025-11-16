@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +49,13 @@ const navSections = [
     title: "AI Workflows",
     items: [
       { name: 'Agent Orchestration', icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' }
+    ]
+  },
+  {
+    title: "Governance",
+    items: [
+      { name: 'Hermes Trust-Broker', icon: Shield, path: 'HermesTrustBroker', badge: 'NEW' },
+      { name: 'Auto-Trigger Rules', icon: Zap, path: 'HermesTriggerManagement', badge: 'NEW' }
     ]
   },
   {
