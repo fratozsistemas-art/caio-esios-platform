@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -42,6 +42,12 @@ const navSections = [
       { name: 'TSI Projects', icon: Brain, path: 'TSIProject', badge: 'v6.0' },
       { name: 'File Analyzer', icon: FileText, path: 'FileAnalyzer' },
       { name: 'Tech Intelligence', icon: Code, path: 'TechIntelligence' }
+    ]
+  },
+  {
+    title: "AI Workflows",
+    items: [
+      { name: 'Agent Orchestration', icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' }
     ]
   },
   {
