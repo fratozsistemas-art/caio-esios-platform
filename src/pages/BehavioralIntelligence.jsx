@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,15 +9,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Users, TrendingUp, CheckCircle, AlertCircle, Clock, 
-  Target, Brain, Search, Plus, Sparkles, BarChart3,
-  LineChart, GitCompare, Award
+  Target, Brain, Search, Filter, Plus, Sparkles, BarChart3,
+  LineChart, GitCompare, Award, Zap
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import PatternEvolutionChart from "@/components/behavioral/PatternEvolutionChart";
 import ClientComparison from "@/components/behavioral/ClientComparison";
 import ArchetypeAnalytics from "@/components/behavioral/ArchetypeAnalytics";
+import PredictiveInsights from "@/components/behavioral/PredictiveInsights";
 
 export default function BehavioralIntelligence() {
   const queryClient = useQueryClient();
@@ -25,6 +27,7 @@ export default function BehavioralIntelligence() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterStage, setFilterStage] = useState("all");
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [predictions, setPredictions] = useState(null);
 
   // Fetch behavioral profiles
   const { data: profiles = [], isLoading: profilesLoading } = useQuery({
@@ -47,6 +50,16 @@ export default function BehavioralIntelligence() {
     initialData: [],
   });
 
+  // Prediction mutation
+  const predictMutation = useMutation({
+    mutationFn: (profileId) => base44.functions.invoke('predictClientNeeds', { profile_id: profileId }),
+    onSuccess: (response) => {
+      setPredictions(response.data.predictions);
+      toast.success('Predictions generated!');
+    },
+    onError: () => toast.error('Failed to generate predictions')
+  });
+
   // Filter profiles
   const filteredProfiles = profiles.filter(profile => {
     const matchesSearch = !searchQuery || 
@@ -66,7 +79,13 @@ export default function BehavioralIntelligence() {
     avgConfidence: profiles.length > 0 
       ? Math.round(profiles.reduce((sum, p) => sum + (p.overall_confidence || 50), 0) / profiles.length)
       : 0,
-    totalEngagements: profiles.reduce((sum, p) => sum + (p.total_engagements || 0), 0)
+    totalEngagements: profiles.reduce((sum, p) => sum + (p.total_engagements || 0), 0),
+    highRisk: profiles.filter(p => {
+      const daysSince = p.last_engagement_date 
+        ? Math.floor((Date.now() - new Date(p.last_engagement_date)) / (1000 * 60 * 60 * 24))
+        : 999;
+      return daysSince > 180 || (p.overall_confidence || 50) < 60;
+    }).length
   };
 
   // Status configuration
@@ -93,10 +112,20 @@ export default function BehavioralIntelligence() {
     return Math.floor((Date.now() - new Date(dateString)) / (1000 * 60 * 60 * 24));
   };
 
+  const isHighRisk = (profile) => {
+    const daysSince = getDaysSince(profile.last_engagement_date);
+    return (daysSince && daysSince > 180) || (profile.overall_confidence || 50) < 60;
+  };
+
   // Get engagements for selected profile
   const selectedProfileEngagements = selectedProfile 
     ? allEngagements.filter(e => e.behavioral_profile_id === selectedProfile.id)
     : [];
+
+  const handlePredictNeeds = (profile) => {
+    setSelectedProfile(profile);
+    predictMutation.mutate(profile.id);
+  };
 
   return (
     <div className="p-6 md:p-8 space-y-6">
@@ -108,7 +137,7 @@ export default function BehavioralIntelligence() {
             Behavioral Intelligence
           </h1>
           <p className="text-slate-400">
-            Client behavioral profiles with longitudinal confidence tracking
+            Client behavioral profiles with predictive analytics & proactive alerts
           </p>
         </div>
         <Link to={createPageUrl("Chat")}>
@@ -120,7 +149,7 @@ export default function BehavioralIntelligence() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card className="bg-white/5 border-white/10">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -170,14 +199,30 @@ export default function BehavioralIntelligence() {
             </div>
           </CardContent>
         </Card>
+
+        <Card className="bg-red-500/10 border-red-500/30">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-red-400 mb-1">High Risk</p>
+                <p className="text-3xl font-bold text-white">{stats.highRisk}</p>
+              </div>
+              <AlertCircle className="w-10 h-10 text-red-400" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Tabs for different views */}
       <Tabs defaultValue="profiles" className="w-full">
-        <TabsList className="bg-white/5 border-white/10 grid w-full grid-cols-4">
+        <TabsList className="bg-white/5 border-white/10 grid w-full grid-cols-5">
           <TabsTrigger value="profiles" className="data-[state=active]:bg-blue-500/20">
             <Users className="w-4 h-4 mr-2" />
             Profiles
+          </TabsTrigger>
+          <TabsTrigger value="predictions" className="data-[state=active]:bg-blue-500/20">
+            <Zap className="w-4 h-4 mr-2" />
+            Predictions
           </TabsTrigger>
           <TabsTrigger value="evolution" className="data-[state=active]:bg-blue-500/20">
             <LineChart className="w-4 h-4 mr-2" />
@@ -303,6 +348,7 @@ export default function BehavioralIntelligence() {
                     const status = statusConfig[profile.archetype_validation_status] || statusConfig.HYPOTHESIS;
                     const StatusIcon = status.icon;
                     const daysSinceLastEngagement = getDaysSince(profile.last_engagement_date);
+                    const highRisk = isHighRisk(profile);
 
                     return (
                       <motion.div
@@ -312,14 +358,22 @@ export default function BehavioralIntelligence() {
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ delay: idx * 0.05 }}
                       >
-                        <Card className="bg-white/5 border-white/10 hover:bg-white/10 transition-all group">
+                        <Card className={`bg-white/5 border-white/10 hover:bg-white/10 transition-all group ${
+                          highRisk ? 'border-l-4 border-l-red-500' : ''
+                        }`}>
                           <CardContent className="p-6">
                             <div className="flex items-start justify-between gap-4">
                               {/* Left: Client Info */}
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-3 mb-3">
-                                  <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center flex-shrink-0">
-                                    <Users className="w-6 h-6 text-white" />
+                                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${
+                                    highRisk ? 'from-red-500 to-orange-500' : 'from-blue-500 to-purple-500'
+                                  } flex items-center justify-center flex-shrink-0`}>
+                                    {highRisk ? (
+                                      <AlertCircle className="w-6 h-6 text-white" />
+                                    ) : (
+                                      <Users className="w-6 h-6 text-white" />
+                                    )}
                                   </div>
                                   <div className="flex-1 min-w-0">
                                     <h3 className="text-lg font-semibold text-white truncate">
@@ -346,6 +400,11 @@ export default function BehavioralIntelligence() {
                                   {profile.primary_archetype_id && (
                                     <Badge className="bg-blue-500/20 text-blue-400">
                                       {getArchetypeName(profile.primary_archetype_id)}
+                                    </Badge>
+                                  )}
+                                  {highRisk && (
+                                    <Badge className="bg-red-500/20 text-red-400 border-red-500/30 animate-pulse">
+                                      HIGH RISK
                                     </Badge>
                                   )}
                                 </div>
@@ -376,11 +435,17 @@ export default function BehavioralIntelligence() {
                                   </div>
                                 </div>
 
-                                {/* Alerts */}
+                                {/* Risk Alerts */}
                                 {daysSinceLastEngagement > 180 && (
-                                  <div className="mt-4 flex items-center gap-2 text-xs text-yellow-400">
+                                  <div className="mt-4 flex items-center gap-2 text-xs text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/30">
                                     <AlertCircle className="w-4 h-4" />
-                                    Pattern drift risk - Re-validation recommended
+                                    🚨 Pattern drift risk - Re-engagement critical
+                                  </div>
+                                )}
+                                {(profile.overall_confidence || 50) < 60 && profile.total_engagements >= 2 && (
+                                  <div className="mt-4 flex items-center gap-2 text-xs text-yellow-400 bg-yellow-500/10 p-3 rounded-lg border border-yellow-500/30">
+                                    <AlertCircle className="w-4 h-4" />
+                                    ⚠️ Low confidence - Archetype validation needed
                                   </div>
                                 )}
                               </div>
@@ -390,17 +455,23 @@ export default function BehavioralIntelligence() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => setSelectedProfile(profile)}
-                                  className="border-white/20 text-white hover:bg-white/5"
+                                  onClick={() => handlePredictNeeds(profile)}
+                                  disabled={predictMutation.isPending}
+                                  className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
                                 >
-                                  View Evolution
+                                  {predictMutation.isPending ? (
+                                    <div className="w-4 h-4 animate-spin rounded-full border-2 border-purple-400 border-t-transparent" />
+                                  ) : (
+                                    <Zap className="w-4 h-4" />
+                                  )}
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  className="border-blue-500/30 text-blue-400 hover:bg-blue-500/10"
+                                  onClick={() => setSelectedProfile(profile)}
+                                  className="border-white/20 text-white hover:bg-white/5"
                                 >
-                                  New Engagement
+                                  View
                                 </Button>
                               </div>
                             </div>
@@ -413,6 +484,33 @@ export default function BehavioralIntelligence() {
               </div>
             )}
           </div>
+        </TabsContent>
+
+        {/* Predictions Tab */}
+        <TabsContent value="predictions" className="space-y-6">
+          {selectedProfile && predictions ? (
+            <div className="space-y-4">
+              <Card className="bg-white/5 border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white">
+                    Predictions for {selectedProfile.client_name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <PredictiveInsights predictions={predictions} />
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            <Card className="bg-white/5 border-white/10">
+              <CardContent className="p-8 text-center">
+                <Sparkles className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                <p className="text-slate-400 mb-4">
+                  Select a client profile and click the ⚡ button to generate predictive insights
+                </p>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* Evolution Tab */}
