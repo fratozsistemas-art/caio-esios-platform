@@ -29,6 +29,7 @@ import SystemHealth from './pages/SystemHealth';
 import Analytics from './pages/Analytics';
 import Notifications from './pages/Notifications';
 import IntegrationHealth from './pages/IntegrationHealth';
+import AgentOrchestration from './pages/AgentOrchestration';
 import Layout from './Layout.jsx';
 
 
@@ -64,6 +65,7 @@ export const PAGES = {
     "Analytics": Analytics,
     "Notifications": Notifications,
     "IntegrationHealth": IntegrationHealth,
+    "AgentOrchestration": AgentOrchestration,
 }
 
 export const pagesConfig = {
