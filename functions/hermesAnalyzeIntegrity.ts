@@ -18,7 +18,11 @@ Deno.serve(async (req) => {
         'strategy': 'Strategy',
         'analysis': 'Analysis',
         'workspace': 'Workspace',
-        'document': 'Document'
+        'document': 'Document',
+        'tsi_project': 'TSIProject',
+        'workflow': 'AgentWorkflow',
+        'agent_workflow': 'AgentWorkflow',
+        'enrichment_suggestion': 'EnrichmentSuggestion'
       };
       
       const entityName = entityMap[target_entity_type];
@@ -44,22 +48,22 @@ Deno.serve(async (req) => {
 
       switch (analysisType) {
         case 'narrative_integrity':
-          analysisResult = await analyzeNarrativeIntegrity(targetEntity, base44);
+          analysisResult = await analyzeNarrativeIntegrity(targetEntity, target_entity_type, base44);
           break;
         case 'board_management_gap':
-          analysisResult = await analyzeBoardManagementGaps(targetEntity, base44);
+          analysisResult = await analyzeBoardManagementGaps(targetEntity, target_entity_type, base44);
           break;
         case 'silo_reconciliation':
-          analysisResult = await analyzeSilos(targetEntity, base44);
+          analysisResult = await analyzeSilos(targetEntity, target_entity_type, base44);
           break;
         case 'tension_analysis':
-          analysisResult = await analyzeTensions(targetEntity, base44);
+          analysisResult = await analyzeTensions(targetEntity, target_entity_type, base44);
           break;
         case 'coherence_check':
-          analysisResult = await checkCoherence(targetEntity, base44);
+          analysisResult = await checkCoherence(targetEntity, target_entity_type, base44);
           break;
         case 'reasoning_audit':
-          analysisResult = await auditReasoning(targetEntity, base44);
+          analysisResult = await auditReasoning(targetEntity, target_entity_type, base44);
           break;
         default:
           continue;
@@ -101,12 +105,12 @@ Deno.serve(async (req) => {
   }
 });
 
-async function analyzeNarrativeIntegrity(entity, base44) {
-  const prompt = `Você é o Hermes, o trust-broker cognitivo. Analise a integridade narrativa deste documento/estratégia:
+async function analyzeNarrativeIntegrity(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, o trust-broker cognitivo. Analise a integridade narrativa deste ${entityType}:
 
-Título: ${entity.title || entity.name}
-Descrição: ${entity.description || ''}
-Conteúdo: ${JSON.stringify(entity)}
+${contextPrompt}
 
 Detecte:
 1. Inconsistências lógicas
@@ -114,6 +118,7 @@ Detecte:
 3. Lacunas de informação
 4. Manipulação ou distorção de dados
 5. Greenwashing ou claims não verificáveis
+6. Desalinhamento entre objetivos declarados e ações/métricas
 
 Retorne sua análise estruturada.`;
 
@@ -147,10 +152,12 @@ Retorne sua análise estruturada.`;
   return response;
 }
 
-async function analyzeBoardManagementGaps(entity, base44) {
-  const prompt = `Você é o Hermes, mediador entre Board e Management. Analise este documento e identifique gaps de informação que podem causar assimetria entre conselho e gestão:
+async function analyzeBoardManagementGaps(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, mediador entre Board e Management. Analise este ${entityType} e identifique gaps de informação que podem causar assimetria entre conselho e gestão:
 
-Conteúdo: ${JSON.stringify(entity)}
+${contextPrompt}
 
 Identifique:
 1. Informação técnica que precisa de tradução executiva
@@ -158,6 +165,10 @@ Identifique:
 3. Desalinhamento de linguagem (técnica vs. fiduciária)
 4. Contexto faltante para decisões estratégicas
 5. Métricas de risco não evidenciadas
+6. Timeline misalignment (curto vs. longo prazo)
+
+Para ${entityType} específico, considere:
+${getEntitySpecificGuidance(entityType, 'board_management')}
 
 Retorne sua análise.`;
 
@@ -190,16 +201,22 @@ Retorne sua análise.`;
   return response;
 }
 
-async function analyzeSilos(entity, base44) {
-  const prompt = `Você é o Hermes, reconciliador de silos. Analise fragmentação de informação:
+async function analyzeSilos(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, reconciliador de silos. Analise fragmentação de informação em ${entityType}:
 
-Conteúdo: ${JSON.stringify(entity)}
+${contextPrompt}
 
 Detecte:
 1. Silos de informação (dados isolados)
 2. Narrativas conflitantes entre fontes
 3. Dados duplicados ou inconsistentes
 4. Oportunidades de unificação
+5. Dependências não documentadas
+
+Para ${entityType}, foque em:
+${getEntitySpecificGuidance(entityType, 'silos')}
 
 Retorne estratégias de reconciliação.`;
 
@@ -232,16 +249,22 @@ Retorne estratégias de reconciliação.`;
   return response;
 }
 
-async function analyzeTensions(entity, base44) {
-  const prompt = `Você é o Hermes, analista de tensões organizacionais. Mapeie conflitos e desalinhamentos:
+async function analyzeTensions(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, analista de tensões organizacionais. Mapeie conflitos e desalinhamentos em ${entityType}:
 
-Conteúdo: ${JSON.stringify(entity)}
+${contextPrompt}
 
 Identifique:
 1. Desalinhamentos estratégicos
 2. Conflitos de objetivos
 3. Prioridades incompatíveis
 4. Tensões dialéticas não resolvidas
+5. Conflitos de recursos ou timeline
+
+Para ${entityType}:
+${getEntitySpecificGuidance(entityType, 'tensions')}
 
 Mapeie stakeholders envolvidos e severidade.`;
 
@@ -274,16 +297,22 @@ Mapeie stakeholders envolvidos e severidade.`;
   return response;
 }
 
-async function checkCoherence(entity, base44) {
-  const prompt = `Você é o Hermes, validador de coerência lógica. Verifique consistência lógica:
+async function checkCoherence(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, validador de coerência lógica. Verifique consistência lógica em ${entityType}:
 
-Conteúdo: ${JSON.stringify(entity)}
+${contextPrompt}
 
 Valide:
 1. Consistência lógica entre premissas e conclusões
 2. Suporte factual para claims
 3. Coerência temporal (passado-presente-futuro)
 4. Alinhamento entre objetivos e ações propostas
+5. Consistência de métricas e KPIs
+
+Para ${entityType}:
+${getEntitySpecificGuidance(entityType, 'coherence')}
 
 Retorne verificação de coerência.`;
 
@@ -317,10 +346,12 @@ Retorne verificação de coerência.`;
   return response;
 }
 
-async function auditReasoning(entity, base44) {
-  const prompt = `Você é o Hermes, auditor de raciocínio. Rastreie decisões até premissas originais:
+async function auditReasoning(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, auditor de raciocínio. Rastreie decisões até premissas originais em ${entityType}:
 
-Conteúdo: ${JSON.stringify(entity)}
+${contextPrompt}
 
 Crie trilha de auditoria mostrando:
 1. Premissas fundamentais
@@ -328,6 +359,9 @@ Crie trilha de auditoria mostrando:
 3. Conclusões derivadas
 4. Níveis de confiança em cada inferência
 5. Fontes de dados para cada premissa
+
+Para ${entityType}:
+${getEntitySpecificGuidance(entityType, 'reasoning')}
 
 Retorne trilha completa de raciocínio.`;
 
@@ -359,6 +393,83 @@ Retorne trilha completa de raciocínio.`;
   });
 
   return response;
+}
+
+function getEntityContextPrompt(entity, entityType) {
+  const commonFields = `
+ID: ${entity.id}
+Criado em: ${entity.created_date}
+Criado por: ${entity.created_by}
+`;
+
+  switch (entityType) {
+    case 'tsi_project':
+      return `${commonFields}
+Título: ${entity.title || 'N/A'}
+Tipo de Missão: ${entity.mission?.type || 'N/A'}
+Objetivo: ${entity.mission?.primary_objective || 'N/A'}
+Target: ${entity.target?.company_name || 'N/A'}
+Status: ${entity.status || 'N/A'}
+Confidence Score: ${entity.confidence_score || 'N/A'}
+Resultados: ${JSON.stringify(entity.analysis_results || {})}`;
+
+    case 'workflow':
+    case 'agent_workflow':
+      return `${commonFields}
+Nome: ${entity.name}
+Tipo: ${entity.workflow_type}
+Descrição: ${entity.description || 'N/A'}
+Modo de Execução: ${entity.execution_mode}
+Status: ${entity.status}
+Taxa de Sucesso: ${entity.success_rate || 0}%
+Execuções: ${entity.execution_count || 0}
+Passos: ${JSON.stringify(entity.steps || [])}`;
+
+    case 'enrichment_suggestion':
+      return `${commonFields}
+Entidade Tipo: ${entity.entity_type}
+Entidade Label: ${entity.entity_label}
+Tipo de Sugestão: ${entity.suggestion_type}
+Fonte de Dados: ${entity.data_source}
+Dados Sugeridos: ${JSON.stringify(entity.suggested_data || {})}
+Dados Atuais: ${JSON.stringify(entity.current_data || {})}
+Confidence Score: ${entity.confidence_score}
+Raciocínio: ${entity.reasoning}`;
+
+    default:
+      return `${commonFields}
+Título/Nome: ${entity.title || entity.name || 'N/A'}
+Descrição: ${entity.description || 'N/A'}
+Conteúdo Completo: ${JSON.stringify(entity)}`;
+  }
+}
+
+function getEntitySpecificGuidance(entityType, analysisType) {
+  const guidelines = {
+    tsi_project: {
+      board_management: 'Verifique se objetivos estratégicos estão traduzidos em linguagem fiduciária. Identifique se há contexto de mercado suficiente para decisões do Board.',
+      silos: 'Detecte se dados de diferentes fases TSI (contexto, competitivo, tech, financeiro) estão integrados ou fragmentados.',
+      tensions: 'Mapeie conflitos entre diferentes fases do projeto ou entre objetivos de curto e longo prazo.',
+      coherence: 'Valide coerência entre missão, constraints, preferências e resultados de análise.',
+      reasoning: 'Rastreie a lógica desde a configuração inicial até as recomendações finais, incluindo todas as fases CAIO TSI+ executadas.'
+    },
+    workflow: {
+      board_management: 'Verifique se outputs do workflow são adequados para apresentação executiva. Identifique necessidade de síntese adicional.',
+      silos: 'Detecte se diferentes passos do workflow estão compartilhando dados adequadamente ou criando silos de informação.',
+      tensions: 'Identifique conflitos entre agentes ou dependências não resolvidas entre passos.',
+      coherence: 'Valide consistência entre input_schema, output_schema e step results.',
+      reasoning: 'Trace o fluxo de dados através dos passos, documentando transformações e decisões de cada agente.'
+    },
+    enrichment_suggestion: {
+      board_management: 'Avalie se a sugestão tem impacto estratégico que deveria ser comunicado ao Board.',
+      silos: 'Verifique se a sugestão está considerando dados de todas as fontes relevantes ou apenas de um silo.',
+      tensions: 'Identifique potenciais conflitos entre dados sugeridos e dados existentes.',
+      coherence: 'Valide se dados sugeridos são coerentes com o contexto da entidade e outras informações conhecidas.',
+      reasoning: 'Documente a lógica que levou à sugestão, incluindo fontes de dados e evidências de suporte.'
+    }
+  };
+
+  return guidelines[entityType]?.[analysisType] || 'Aplique análise padrão para este tipo de entidade.';
 }
 
 function calculateCognitiveHealth(analyses) {

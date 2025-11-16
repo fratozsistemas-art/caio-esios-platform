@@ -85,6 +85,9 @@ export default function IntegrityAnalysisPanel({ hermesAnalyses, onSelectEntity 
                   <SelectItem value="analysis">Análise</SelectItem>
                   <SelectItem value="workspace">Workspace</SelectItem>
                   <SelectItem value="document">Documento</SelectItem>
+                  <SelectItem value="tsi_project">TSI Project</SelectItem>
+                  <SelectItem value="workflow">Workflow de Agentes</SelectItem>
+                  <SelectItem value="enrichment_suggestion">Sugestão de Enriquecimento</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -189,11 +192,59 @@ export default function IntegrityAnalysisPanel({ hermesAnalyses, onSelectEntity 
                   <p className="text-xs font-medium text-slate-300">Gaps Board-Management:</p>
                   {analysis.board_management_gaps.slice(0, 2).map((gap, idx) => (
                     <div key={idx} className="p-2 rounded bg-purple-500/10 border border-purple-500/30">
-                      <p className="text-xs font-medium text-white">{gap.gap_type.replace(/_/g, ' ')}</p>
+                      <p className="text-xs font-medium text-white">{gap.gap_type?.replace(/_/g, ' ')}</p>
                       <p className="text-xs text-slate-400 mt-1">{gap.description}</p>
                       <p className="text-xs text-cyan-400 mt-1">→ {gap.suggested_bridge}</p>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* Silos */}
+              {analysis.silos_detected && analysis.silos_detected.length > 0 && (
+                <div className="space-y-2 mt-3">
+                  <p className="text-xs font-medium text-slate-300">Silos Detectados:</p>
+                  {analysis.silos_detected.slice(0, 2).map((silo, idx) => (
+                    <div key={idx} className="p-2 rounded bg-orange-500/10 border border-orange-500/30">
+                      <p className="text-xs font-medium text-white">{silo.silo_name}</p>
+                      <p className="text-xs text-slate-400 mt-1">{silo.reconciliation_strategy}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Tensions */}
+              {analysis.organizational_tensions && analysis.organizational_tensions.length > 0 && (
+                <div className="space-y-2 mt-3">
+                  <p className="text-xs font-medium text-slate-300">Tensões Organizacionais:</p>
+                  {analysis.organizational_tensions.slice(0, 2).map((tension, idx) => (
+                    <div key={idx} className="p-2 rounded bg-red-500/10 border border-red-500/30">
+                      <p className="text-xs font-medium text-white">{tension.tension_type?.replace(/_/g, ' ')}</p>
+                      <p className="text-xs text-slate-400 mt-1">{tension.description}</p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Severidade: {Math.round(tension.severity || 0)}%
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Reasoning Trail */}
+              {analysis.reasoning_trail && analysis.reasoning_trail.length > 0 && (
+                <div className="space-y-2 mt-3">
+                  <p className="text-xs font-medium text-slate-300">Trilha de Raciocínio:</p>
+                  <div className="space-y-2">
+                    {analysis.reasoning_trail.slice(0, 3).map((step, idx) => (
+                      <div key={idx} className="p-2 rounded bg-blue-500/10 border border-blue-500/30">
+                        <p className="text-xs font-medium text-white">Passo {idx + 1}: {step.step}</p>
+                        <p className="text-xs text-slate-400 mt-1">Premissa: {step.premise}</p>
+                        <p className="text-xs text-slate-400">Conclusão: {step.conclusion}</p>
+                        <p className="text-xs text-cyan-400 mt-1">
+                          Confiança: {Math.round(step.confidence || 0)}%
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
 
