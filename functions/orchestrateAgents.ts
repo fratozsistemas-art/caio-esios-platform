@@ -1,7 +1,8 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 /**
- * ADVANCED AGENT ORCHESTRATION LAYER v2.0
+ * ADVANCED AGENT ORCHESTRATION LAYER v2.1
  * 
  * Features:
  * - Adaptive routing with alternative path proposals
@@ -9,6 +10,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
  * - Structured context passing with Knowledge Graph integration
  * - Dynamic re-planning based on intermediate results
  * - Multi-substrate intelligence synthesis
+ * - PERSISTENT MEMORY for long-term learning and context retention
  */
 
 Deno.serve(async (req) => {
@@ -26,7 +28,8 @@ Deno.serve(async (req) => {
             conversation_history = [],
             user_profile_id = null,
             force_agent = null,
-            enable_replanning = true
+            enable_replanning = true,
+            use_memory = true
         } = await req.json();
 
         if (!user_message) {
@@ -42,26 +45,56 @@ Deno.serve(async (req) => {
         // STEP 3: Knowledge Graph Deep Query with relationship traversal
         const knowledgeContext = await getKnowledgeGraphContext(intentAnalysis, userContext, base44);
 
-        // STEP 4: Advanced Execution Planning with sub-teams
+        // STEP 4: RETRIEVE AGENT MEMORIES for long-term context
+        const agentMemories = use_memory ? await retrieveRelevantMemories(
+            intentAnalysis,
+            user.email,
+            knowledgeContext,
+            base44
+        ) : { memories: [], summary: '' };
+
+        // STEP 5: Advanced Execution Planning with sub-teams
         const executionPlan = await createAdvancedExecutionPlan(
             intentAnalysis,
             userContext,
             knowledgeContext,
+            agentMemories,
             force_agent
         );
 
-        // STEP 5: Execute with adaptive routing and re-planning
+        // STEP 6: Execute with adaptive routing and re-planning
         const results = await executeAdaptiveOrchestration(
             executionPlan, 
             user_message, 
             conversation_id, 
             knowledgeContext,
+            agentMemories,
             enable_replanning,
             base44
         );
 
-        // STEP 6: Multi-substrate synthesis
-        const finalResponse = await synthesizeMultiSubstrate(results, intentAnalysis, knowledgeContext, base44);
+        // STEP 7: Multi-substrate synthesis
+        const finalResponse = await synthesizeMultiSubstrate(
+            results, 
+            intentAnalysis, 
+            knowledgeContext, 
+            agentMemories,
+            base44
+        );
+
+        // STEP 8: STORE NEW MEMORIES for future learning
+        if (use_memory && results.some(r => r.success)) {
+            await storeInteractionMemories(
+                executionPlan,
+                results,
+                user_message,
+                finalResponse,
+                conversation_id,
+                intentAnalysis,
+                knowledgeContext,
+                base44
+            );
+        }
 
         return Response.json({
             success: true,
@@ -72,7 +105,8 @@ Deno.serve(async (req) => {
                 execution_mode: executionPlan.mode,
                 replanning_events: results.filter(r => r.replanned).length,
                 total_steps: results.length,
-                knowledge_entities_used: knowledgeContext.entities?.length || 0
+                knowledge_entities_used: knowledgeContext.entities?.length || 0,
+                memories_retrieved: agentMemories.memories?.length || 0
             },
             response: finalResponse,
             metadata: {
@@ -85,7 +119,8 @@ Deno.serve(async (req) => {
                     replanned: r.replanned,
                     alternative_proposed: r.alternative_proposed
                 })),
-                knowledge_graph_impact: knowledgeContext.impact_score
+                knowledge_graph_impact: knowledgeContext.impact_score,
+                memory_context: agentMemories.summary
             }
         });
 
@@ -272,8 +307,37 @@ async function getKnowledgeGraphContext(intentAnalysis, userContext, base44) {
     return context;
 }
 
+// NEW: Retrieve relevant agent memories
+async function retrieveRelevantMemories(intentAnalysis, userEmail, knowledgeContext, base44) {
+    try {
+        const primaryAgent = selectPrimaryAgent(intentAnalysis.primary_intent);
+        
+        const { data } = await base44.functions.invoke('retrieveAgentMemory', {
+            agent_name: primaryAgent,
+            query: intentAnalysis.primary_intent,
+            intent: intentAnalysis.primary_intent,
+            user_email: userEmail,
+            entities: knowledgeContext.entities?.map(e => e.label) || [],
+            frameworks: intentAnalysis.frameworks_needed || [],
+            memory_types: ['insight', 'pattern', 'strategy', 'success'],
+            max_results: 15,
+            min_relevance: 50
+        });
+
+        // Ensure data is not null/undefined and has required properties
+        if (data && data.memories && data.summary) {
+            return data;
+        }
+        return { memories: [], summary: '' };
+
+    } catch (error) {
+        console.error('Memory retrieval error:', error);
+        return { memories: [], summary: '' };
+    }
+}
+
 // Advanced execution planning with sub-teams
-async function createAdvancedExecutionPlan(intentAnalysis, userContext, knowledgeContext, forceAgent) {
+async function createAdvancedExecutionPlan(intentAnalysis, userContext, knowledgeContext, agentMemories, forceAgent) {
     const plan = {
         mode: intentAnalysis.execution_mode || 'sequential',
         agents: [],
@@ -338,7 +402,7 @@ async function createAdvancedExecutionPlan(intentAnalysis, userContext, knowledg
         });
     }
 
-    // Enhanced context flow with structured data
+    // Enhanced context flow with structured data and memories
     plan.context_flow = {
         knowledge_graph: {
             entities: knowledgeContext.entities.map(e => ({
@@ -370,6 +434,14 @@ async function createAdvancedExecutionPlan(intentAnalysis, userContext, knowledg
                 roi_estimate: s.roi_estimate
             }))
         },
+        agent_memories: {
+            summary: agentMemories.summary,
+            key_learnings: agentMemories.memories?.slice(0, 5).map(m => ({
+                type: m.memory_type,
+                content: m.content ? m.content.substring(0, 200) : '', // Ensure content is not null
+                relevance: m.computed_score || m.relevance_score
+            })) || []
+        },
         frameworks: intentAnalysis.frameworks_needed || [],
         modules: intentAnalysis.modules_needed || []
     };
@@ -378,13 +450,14 @@ async function createAdvancedExecutionPlan(intentAnalysis, userContext, knowledg
 }
 
 // Adaptive execution with re-planning capability
-async function executeAdaptiveOrchestration(plan, userMessage, conversationId, knowledgeContext, enableReplanning, base44) {
+async function executeAdaptiveOrchestration(plan, userMessage, conversationId, knowledgeContext, agentMemories, enableReplanning, base44) {
     const results = [];
     let contextAccumulator = {
         user_message: userMessage,
         knowledge_graph: plan.context_flow.knowledge_graph,
         user_profile: plan.context_flow.user_profile,
-        historical_context: plan.context_flow.historical_context
+        historical_context: plan.context_flow.historical_context,
+        agent_memories: plan.context_flow.agent_memories // Pass memories to context accumulator
     };
 
     // Execute sub-teams in parallel if present
@@ -504,6 +577,7 @@ async function executeAgentWithAdaptiveRouting(agentConfig, context, conversatio
             content: agentPrompt
         });
 
+        // Add a small delay to simulate processing and avoid rate limits if any
         await new Promise(resolve => setTimeout(resolve, 2000));
 
         const updatedConv = await base44.agents.getConversation(conversation.id);
@@ -530,6 +604,7 @@ async function executeAgentWithAdaptiveRouting(agentConfig, context, conversatio
         };
 
     } catch (error) {
+        console.error(`Error executing agent ${agentConfig.agent_name}:`, error);
         return {
             agent_name: agentConfig.agent_name,
             role: agentConfig.role,
@@ -583,6 +658,19 @@ function buildEnhancedAgentPrompt(agentConfig, context) {
         }
     }
 
+    // AGENT MEMORIES Integration
+    if (context.agent_memories?.summary) {
+        prompt += `\nAgent Long-Term Memory:\n`;
+        prompt += `${context.agent_memories.summary}\n`;
+        
+        if (context.agent_memories.key_learnings?.length > 0) {
+            prompt += `\nKey Learnings from Past:\n`;
+            context.agent_memories.key_learnings.forEach((learning, i) => {
+                prompt += `${i + 1}. [${learning.type}] ${learning.content}\n`;
+            });
+        }
+    }
+
     // User Profile Adaptation
     if (context.user_profile) {
         prompt += `\nUser Profile:\n`;
@@ -628,7 +716,7 @@ function buildEnhancedAgentPrompt(agentConfig, context) {
 }
 
 // Multi-substrate synthesis
-async function synthesizeMultiSubstrate(agentResults, intentAnalysis, knowledgeContext, base44) {
+async function synthesizeMultiSubstrate(agentResults, intentAnalysis, knowledgeContext, agentMemories, base44) {
     const successfulResults = agentResults.filter(r => r.success);
 
     if (successfulResults.length === 0) {
@@ -648,7 +736,7 @@ async function synthesizeMultiSubstrate(agentResults, intentAnalysis, knowledgeC
         };
     }
 
-    const synthesisPrompt = `Multi-substrate intelligence synthesis integrating Knowledge Graph, agent collaboration, and strategic frameworks.
+    const synthesisPrompt = `Multi-substrate intelligence synthesis integrating Knowledge Graph, agent collaboration, persistent memories, and strategic frameworks.
 
 AGENT OUTPUTS:
 ${successfulResults.map((r, i) => `
@@ -662,12 +750,16 @@ KNOWLEDGE GRAPH CONTEXT:
 - Relationships: ${knowledgeContext.relationships?.length || 0}
 - Impact Score: ${knowledgeContext.impact_score}/100
 
+AGENT MEMORIES:
+${agentMemories.summary || 'No relevant memories retrieved for this interaction.'}
+
 Return structured synthesis:
 {
   "executive_summary": "2-3 sentences",
   "key_insights": ["insight 1", "insight 2"],
   "cross_agent_patterns": ["pattern 1"],
   "knowledge_graph_integration": ["how KG data enhanced analysis"],
+  "memory_informed_insights": ["insights informed by past learnings"],
   "strategic_recommendations": [
     {"action": "recommendation", "priority": "high", "framework": "ABRA", "confidence": 85}
   ],
@@ -688,6 +780,7 @@ Return structured synthesis:
                 key_insights: { type: "array", items: { type: "string" } },
                 cross_agent_patterns: { type: "array", items: { type: "string" } },
                 knowledge_graph_integration: { type: "array", items: { type: "string" } },
+                memory_informed_insights: { type: "array", items: { type: "string" } },
                 strategic_recommendations: {
                     type: "array",
                     items: {
@@ -716,6 +809,14 @@ Return structured synthesis:
         content += `### 💡 Key Insights\n`;
         synthesis.key_insights.forEach((insight, i) => {
             content += `${i + 1}. ${insight}\n`;
+        });
+        content += `\n`;
+    }
+
+    if (synthesis.memory_informed_insights?.length > 0) {
+        content += `### 🧠 Memory-Informed Intelligence\n`;
+        synthesis.memory_informed_insights.forEach(item => {
+            content += `- ${item}\n`;
         });
         content += `\n`;
     }
@@ -760,9 +861,9 @@ Return structured synthesis:
     }
 
     content += `\n---\n`;
-    content += `*Multi-substrate synthesis from ${successfulResults.length} agents`;
+    content += `*Multi-substrate synthesis from ${successfulResults.length} agents with ${agentMemories.memories?.length || 0} memories`;
     if (knowledgeContext.entities?.length > 0) {
-        content += ` with ${knowledgeContext.entities.length} KG entities`;
+        content += ` and ${knowledgeContext.entities.length} KG entities`;
     }
     content += `*`;
 
@@ -777,6 +878,35 @@ Return structured synthesis:
         source_agents: successfulResults.map(r => r.agent_name),
         synthesis
     };
+}
+
+// NEW: Store interaction memories
+async function storeInteractionMemories(executionPlan, results, userMessage, finalResponse, conversationId, intentAnalysis, knowledgeContext, base44) {
+    try {
+        for (const agentConfig of executionPlan.agents) {
+            const agentResult = results.find(r => r.agent_name === agentConfig.agent_name && r.success);
+            
+            if (agentResult) {
+                // Determine a suitable agent name for memory storage.
+                // For sub-team agents, we might store memory under the sub-team's primary agent or the individual agent.
+                // For simplicity, using the agent_name from the execution plan.
+                const memoryAgentName = agentConfig.agent_name;
+
+                await base44.functions.invoke('storeAgentMemory', {
+                    agent_name: memoryAgentName,
+                    conversation_id: conversationId,
+                    user_message: userMessage,
+                    agent_response: agentResult.output,
+                    intent_analysis: intentAnalysis,
+                    knowledge_context: knowledgeContext,
+                    outcome_quality: finalResponse.confidence > 80 ? 'high' : 'moderate',
+                    extract_learnings: true // Instruct memory system to extract key learnings
+                });
+            }
+        }
+    } catch (error) {
+        console.error('Memory storage error:', error);
+    }
 }
 
 // Helper functions
@@ -794,6 +924,23 @@ function selectAgentsForTask(subTask, intentAnalysis) {
     }
     
     return agents;
+}
+
+function selectPrimaryAgent(intent) {
+    const mapping = {
+        market_analysis: 'm1_market_context',
+        competitive_intel: 'm2_competitive_intel',
+        financial_modeling: 'm4_financial_model',
+        tech_assessment: 'm3_tech_innovation',
+        strategic_planning: 'm5_strategic_synthesis',
+        fundraising: 'm9_funding_intelligence',
+        behavioral_analysis: 'caio_master',
+        risk_assessment: 'metamodel_abr',
+        ma_evaluation: 'm5_strategic_synthesis', // or m4_financial_model
+        general_query: 'caio_agent'
+    };
+    
+    return mapping[intent] || 'caio_agent';
 }
 
 function analyzeEngagementPatterns(engagements) {
