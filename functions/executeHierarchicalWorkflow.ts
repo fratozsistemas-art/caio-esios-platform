@@ -138,38 +138,28 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
     agentStates[agent.id] = {
         status: 'running',
         invocation_count: (agentStates[agent.id]?.invocation_count || 0) + 1,
-        inputs: inputs
+        inputs: inputs,
+        llm_parameters: agent.llm_parameters || {}
     };
 
     logs.push({
         timestamp: new Date().toISOString(),
         level: 'info',
-        message: `Executing agent: ${agent.name} (${agent.role})`
+        message: `Executing agent: ${agent.name} (${agent.role}) with temp=${agent.llm_parameters?.temperature ?? 0.7}`
     });
 
     try {
         let outputs;
 
-        // Execute based on agent role
-        switch (agent.role) {
-            case 'root':
-                outputs = await executeRootAgent(base44, agent, inputs, agentStates, logs, executionId);
-                break;
-            case 'conversational':
-                outputs = await executeConversationalAgent(base44, agent, inputs);
-                break;
-            case 'workflow':
-                outputs = await executeWorkflowAgent(base44, agent, inputs, agentStates, logs, executionId);
-                break;
-            case 'tool':
-                outputs = await executeToolAgent(base44, agent, inputs);
-                break;
-            case 'validator':
-                outputs = await executeValidatorAgent(base44, agent, inputs);
-                break;
-            default:
-                outputs = await executeGenericAgent(base44, agent, inputs);
-        }
+        // Execute based on agent role with fallback support
+        outputs = await executeWithFallback(
+            base44,
+            agent,
+            inputs,
+            agentStates,
+            logs,
+            executionId
+        );
 
         const duration = Date.now() - startTime;
 
@@ -204,6 +194,135 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
     }
 }
 
+async function executeWithFallback(base44, agent, inputs, agentStates, logs, executionId) {
+    const fallbackConfig = agent.fallback_strategy || { enabled: true, max_retries: 2, strategies: ['retry'] };
+    
+    if (!fallbackConfig.enabled) {
+        return await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+    }
+
+    const maxRetries = fallbackConfig.max_retries || 2;
+    const strategies = fallbackConfig.strategies || ['retry', 'simplified_prompt'];
+    
+    let lastError;
+    let attemptCount = 0;
+
+    // Try primary execution
+    try {
+        return await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+    } catch (error) {
+        lastError = error;
+        attemptCount++;
+        
+        logs.push({
+            timestamp: new Date().toISOString(),
+            level: 'warning',
+            message: `Agent ${agent.name} initial execution failed, trying fallback strategies`
+        });
+    }
+
+    // Execute fallback strategies
+    for (const strategy of strategies) {
+        if (attemptCount >= maxRetries) break;
+
+        try {
+            logs.push({
+                timestamp: new Date().toISOString(),
+                level: 'info',
+                message: `Attempting fallback strategy: ${strategy}`
+            });
+
+            let result;
+
+            switch (strategy) {
+                case 'retry':
+                    await new Promise(resolve => setTimeout(resolve, 1000 * attemptCount));
+                    result = await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+                    break;
+
+                case 'alternate_model':
+                    const altAgent = {
+                        ...agent,
+                        llm_parameters: {
+                            ...agent.llm_parameters,
+                            temperature: 0.3 // More conservative
+                        }
+                    };
+                    result = await executeAgentCore(base44, altAgent, inputs, agentStates, logs, executionId);
+                    break;
+
+                case 'simplified_prompt':
+                    const simplifiedAgent = {
+                        ...agent,
+                        system_prompt: `${agent.system_prompt || ''}\n\nIMPORTANT: Keep response simple and focused.`
+                    };
+                    result = await executeAgentCore(base44, simplifiedAgent, inputs, agentStates, logs, executionId);
+                    break;
+
+                case 'skip_with_default':
+                    logs.push({
+                        timestamp: new Date().toISOString(),
+                        level: 'warning',
+                        message: `Using default values for agent ${agent.name}`
+                    });
+                    return { 
+                        result: 'Skipped with default',
+                        fallback_used: true,
+                        original_error: lastError.message 
+                    };
+
+                case 'escalate':
+                    throw new Error(`Agent ${agent.name} escalated error: ${lastError.message}`);
+
+                case 'abort':
+                    throw new Error(`Workflow aborted at agent ${agent.name}: ${lastError.message}`);
+
+                default:
+                    result = await executeAgentCore(base44, agent, inputs, agentStates, logs, executionId);
+            }
+
+            logs.push({
+                timestamp: new Date().toISOString(),
+                level: 'info',
+                message: `Fallback strategy '${strategy}' succeeded`
+            });
+
+            return result;
+
+        } catch (error) {
+            lastError = error;
+            attemptCount++;
+            
+            logs.push({
+                timestamp: new Date().toISOString(),
+                level: 'warning',
+                message: `Fallback strategy '${strategy}' failed: ${error.message}`
+            });
+        }
+    }
+
+    // All fallback strategies failed
+    throw lastError;
+}
+
+async function executeAgentCore(base44, agent, inputs, agentStates, logs, executionId) {
+    // Execute based on agent role
+    switch (agent.role) {
+        case 'root':
+            return await executeRootAgent(base44, agent, inputs, agentStates, logs, executionId);
+        case 'conversational':
+            return await executeConversationalAgent(base44, agent, inputs);
+        case 'workflow':
+            return await executeWorkflowAgent(base44, agent, inputs, agentStates, logs, executionId);
+        case 'tool':
+            return await executeToolAgent(base44, agent, inputs);
+        case 'validator':
+            return await executeValidatorAgent(base44, agent, inputs);
+        default:
+            return await executeGenericAgent(base44, agent, inputs);
+    }
+}
+
 async function executeRootAgent(base44, agent, inputs, agentStates, logs, executionId) {
     // Root agent delegates to sub-agents
     let currentInputs = inputs;
@@ -231,6 +350,8 @@ async function executeRootAgent(base44, agent, inputs, agentStates, logs, execut
 }
 
 async function executeConversationalAgent(base44, agent, inputs) {
+    const llmParams = agent.llm_parameters || {};
+    
     const prompt = `${agent.system_prompt || 'You are a helpful assistant.'}
 
 User input: ${JSON.stringify(inputs)}
@@ -238,7 +359,10 @@ User input: ${JSON.stringify(inputs)}
 Provide a conversational response.`;
 
     const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt
+        prompt: prompt,
+        temperature: llmParams.temperature,
+        top_p: llmParams.top_p,
+        max_tokens: llmParams.max_tokens
     });
 
     return { conversation_response: response };
@@ -274,6 +398,8 @@ async function executeWorkflowAgent(base44, agent, inputs, agentStates, logs, ex
 }
 
 async function executeToolAgent(base44, agent, inputs) {
+    const llmParams = agent.llm_parameters || {};
+    
     // Agent-as-a-Tool pattern: completely isolated execution
     const isolatedInputs = agent.isolation_mode === 'isolated' 
         ? JSON.parse(JSON.stringify(inputs)) 
@@ -287,6 +413,9 @@ Provide structured output.`;
 
     const response = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
+        temperature: llmParams.temperature,
+        top_p: llmParams.top_p,
+        max_tokens: llmParams.max_tokens,
         response_json_schema: {
             type: "object",
             properties: {
@@ -301,6 +430,8 @@ Provide structured output.`;
 }
 
 async function executeValidatorAgent(base44, agent, inputs) {
+    const llmParams = agent.llm_parameters || {};
+    
     const prompt = `${agent.system_prompt || 'Validate the following data.'}
 
 Data to validate: ${JSON.stringify(inputs)}
@@ -314,6 +445,9 @@ Provide validation results.`;
 
     const validation = await base44.integrations.Core.InvokeLLM({
         prompt: prompt,
+        temperature: llmParams.temperature ?? 0.3, // Validators should be more deterministic
+        top_p: llmParams.top_p,
+        max_tokens: llmParams.max_tokens,
         response_json_schema: {
             type: "object",
             properties: {
@@ -328,12 +462,17 @@ Provide validation results.`;
 }
 
 async function executeGenericAgent(base44, agent, inputs) {
+    const llmParams = agent.llm_parameters || {};
+    
     const prompt = `${agent.system_prompt || 'Process the following input.'}
 
 Input: ${JSON.stringify(inputs)}`;
 
     const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt
+        prompt: prompt,
+        temperature: llmParams.temperature,
+        top_p: llmParams.top_p,
+        max_tokens: llmParams.max_tokens
     });
 
     return { result: response };
