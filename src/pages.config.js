@@ -30,6 +30,7 @@ import Analytics from './pages/Analytics';
 import Notifications from './pages/Notifications';
 import IntegrationHealth from './pages/IntegrationHealth';
 import AgentOrchestration from './pages/AgentOrchestration';
+import CVMIngestion from './pages/CVMIngestion';
 import Layout from './Layout.jsx';
 
 
@@ -66,6 +67,7 @@ export const PAGES = {
     "Notifications": Notifications,
     "IntegrationHealth": IntegrationHealth,
     "AgentOrchestration": AgentOrchestration,
+    "CVMIngestion": CVMIngestion,
 }
 
 export const pagesConfig = {
