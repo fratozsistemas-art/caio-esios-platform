@@ -33,8 +33,8 @@ export default function ProactiveInsightsWidget() {
         user_email: user.email,
         is_read: false
       });
-      return notifs.sort((a, b) => 
-        new Date(b.created_date) - new Date(a.created_date)
+      return notifs.sort((a, b) =>
+      new Date(b.created_date) - new Date(a.created_date)
       ).slice(0, 5);
     },
     refetchInterval: 30000 // Refresh every 30 seconds
@@ -73,55 +73,55 @@ export default function ProactiveInsightsWidget() {
             Proactive Insights
           </CardTitle>
           <div className="flex items-center gap-2">
-            {notifications.length > 0 && (
-              <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
+            {notifications.length > 0 &&
+            <Badge className="bg-red-500/20 text-red-400 border-red-500/30">
                 {notifications.length} new
               </Badge>
-            )}
+            }
             <Button
               variant="ghost"
               size="icon"
               onClick={handleRunMonitoring}
               disabled={isAnalyzing}
-              className="h-8 w-8 text-slate-400 hover:text-white"
-            >
-              {isAnalyzing ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <RefreshCw className="w-4 h-4" />
-              )}
+              className="h-8 w-8 text-slate-400 hover:text-white">
+
+              {isAnalyzing ?
+              <Loader2 className="w-4 h-4 animate-spin" /> :
+
+              <RefreshCw className="w-4 h-4" />
+              }
             </Button>
           </div>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
-        {notifications.length === 0 ? (
-          <div className="text-center py-6">
+        {notifications.length === 0 ?
+        <div className="text-center py-6">
             <Brain className="w-12 h-12 text-slate-600 mx-auto mb-3" />
             <p className="text-sm text-slate-400 mb-3">No alerts. All systems monitored.</p>
             <Button
-              onClick={handleRunMonitoring}
-              disabled={isAnalyzing}
-              size="sm"
-              variant="outline"
-              className="border-white/10 text-white"
-            >
+            onClick={handleRunMonitoring}
+            disabled={isAnalyzing}
+            size="sm"
+            variant="outline" className="bg-[#000000bg-blue-600 hover:bg-blue-700] text-white px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 border-white/10">
+
+
               {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
             </Button>
-          </div>
-        ) : (
-          <div className="space-y-2">
+          </div> :
+
+        <div className="space-y-2">
             {notifications.map((notif, idx) => {
-              const Icon = ALERT_ICONS[notif.type] || Bell;
-              return (
-                <motion.div
-                  key={notif.id}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.05 }}
-                  className="bg-white/5 rounded-lg p-3 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
-                  onClick={() => markAsRead(notif.id)}
-                >
+            const Icon = ALERT_ICONS[notif.type] || Bell;
+            return (
+              <motion.div
+                key={notif.id}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="bg-white/5 rounded-lg p-3 border border-white/10 hover:bg-white/10 transition-all cursor-pointer"
+                onClick={() => markAsRead(notif.id)}>
+
                   <div className="flex items-start gap-3">
                     <div className={`w-8 h-8 rounded-lg bg-gradient-to-br from-yellow-500 to-orange-500 flex items-center justify-center flex-shrink-0`}>
                       <Icon className="w-4 h-4 text-white" />
@@ -138,19 +138,19 @@ export default function ProactiveInsightsWidget() {
                       <div className="text-xs text-slate-400 line-clamp-2 mb-2">
                         {notif.message}
                       </div>
-                      {notif.data_snapshot?.recommendation && (
-                        <div className="text-xs text-blue-400 line-clamp-1">
+                      {notif.data_snapshot?.recommendation &&
+                    <div className="text-xs text-blue-400 line-clamp-1">
                           → {notif.data_snapshot.recommendation}
                         </div>
-                      )}
+                    }
                     </div>
                   </div>
-                </motion.div>
-              );
-            })}
+                </motion.div>);
+
+          })}
           </div>
-        )}
+        }
       </CardContent>
-    </Card>
-  );
+    </Card>);
+
 }
