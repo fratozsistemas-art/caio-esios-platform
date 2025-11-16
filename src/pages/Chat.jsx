@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap, GitMerge } from "lucide-react";
+import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap, GitMerge, Activity } from "lucide-react";
 import { toast } from "sonner";
 import { createPageUrl } from "../utils";
 import { Link } from "react-router-dom";
@@ -16,6 +16,7 @@ import ShareDialog from "../components/collaboration/ShareDialog";
 import AnalysisPanel from "../components/chat/AnalysisPanel";
 import AIFeatures from "../components/chat/AIFeatures";
 import AgentOrchestrationPanel from "../components/chat/AgentOrchestrationPanel";
+import OrchestrationDashboard from "../components/orchestration/OrchestrationDashboard";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 
@@ -32,6 +33,8 @@ export default function Chat() {
   const [agentPersona, setAgentPersona] = useState('strategic_advisor');
   const [useOrchestration, setUseOrchestration] = useState(false);
   const [lastOrchestration, setLastOrchestration] = useState(null);
+  const [showOrchestrationDashboard, setShowOrchestrationDashboard] = useState(false);
+  const [activeOrchestration, setActiveOrchestration] = useState(null);
   
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -131,8 +134,10 @@ export default function Chat() {
     setIsSending(true);
 
     try {
-      // If orchestration enabled, use orchestration layer
       if (useOrchestration) {
+        // Show dashboard for orchestration
+        setShowOrchestrationDashboard(true);
+        
         const { data } = await base44.functions.invoke('orchestrateAgents', {
           user_message: messageContent,
           conversation_id: selectedConversation.id,
@@ -142,15 +147,14 @@ export default function Chat() {
 
         if (data.success) {
           setLastOrchestration(data.orchestration);
+          setActiveOrchestration(data.orchestration);
           
-          // Add orchestrated response to conversation
           await base44.agents.addMessage(selectedConversation, {
             role: "user",
             content: messageContent,
             file_urls: filesToSend.map(f => f.url)
           });
 
-          // Add synthesized response
           await base44.agents.addMessage(selectedConversation, {
             role: "assistant",
             content: data.response.content,
@@ -162,9 +166,14 @@ export default function Chat() {
           });
 
           toast.success(`Orchestrated ${data.orchestration.agents_used.length} agents`);
+          
+          // Close dashboard after completion
+          setTimeout(() => {
+            setShowOrchestrationDashboard(false);
+            setActiveOrchestration(null);
+          }, 3000);
         }
       } else {
-        // Standard agent interaction
         await base44.agents.addMessage(selectedConversation, {
           role: "user",
           content: messageContent || "Analyze these files",
@@ -174,6 +183,8 @@ export default function Chat() {
     } catch (error) {
       toast.error("Failed to send message");
       console.error(error);
+      setShowOrchestrationDashboard(false);
+      setActiveOrchestration(null);
     } finally {
       setIsSending(false);
     }
@@ -201,6 +212,12 @@ export default function Chat() {
       
       toast.success(`Switched to ${newPersona.replace('_', ' ')} persona`);
     }
+  };
+
+  const handleOrchestrationIntervention = (intervention) => {
+    console.log('Intervention requested:', intervention);
+    toast.info(`Intervention applied: ${intervention.action}`);
+    // In production, this would send the intervention to the backend
   };
 
   const startResize = (e) => {
@@ -236,6 +253,19 @@ export default function Chat() {
 
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950">
+      {/* Orchestration Dashboard Overlay */}
+      {showOrchestrationDashboard && activeOrchestration && (
+        <OrchestrationDashboard
+          orchestrationData={activeOrchestration}
+          isActive={isSending}
+          onClose={() => {
+            setShowOrchestrationDashboard(false);
+            setActiveOrchestration(null);
+          }}
+          onIntervene={handleOrchestrationIntervention}
+        />
+      )}
+
       {/* Sidebar */}
       <div 
         className={`${sidebarOpen ? 'block' : 'hidden'} lg:block border-r border-white/10 bg-slate-900/50 backdrop-blur-xl flex flex-col relative`}
@@ -303,6 +333,22 @@ export default function Chat() {
                     onCheckedChange={setUseOrchestration}
                   />
                 </div>
+
+                {/* Dashboard Toggle */}
+                {lastOrchestration && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setActiveOrchestration(lastOrchestration);
+                      setShowOrchestrationDashboard(true);
+                    }}
+                    className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+                  >
+                    <Activity className="w-4 h-4 mr-2" />
+                    View Dashboard
+                  </Button>
+                )}
 
                 {selectedConversation && (
                   <>
