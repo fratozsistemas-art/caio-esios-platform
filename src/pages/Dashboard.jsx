@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   LayoutDashboard, MessageSquare, Brain, Network, CheckSquare,
-  TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2
+  TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2, Shield, Layers, Search
 } from "lucide-react";
 import ConversationHistoryWidget from "../components/dashboard/ConversationHistoryWidget";
 import AnalysisInsightsWidget from "../components/dashboard/AnalysisInsightsWidget";
@@ -17,6 +16,8 @@ import ProactiveInsightsWidget from "../components/dashboard/ProactiveInsightsWi
 import PredictiveAnalysisWidget from "../components/dashboard/PredictiveAnalysisWidget";
 import CrossPlatformInsightsWidget from "../components/dashboard/CrossPlatformInsightsWidget";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "../utils";
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -27,7 +28,6 @@ export default function Dashboard() {
     base44.auth.me().then(async u => {
       setUser(u);
       
-      // Get user role
       if (u.role === 'admin') {
         setUserRole('admin');
       } else {
@@ -42,7 +42,6 @@ export default function Dashboard() {
     });
   }, []);
 
-  // Fetch conversations
   const { data: conversations = [], refetch: refetchConversations } = useQuery({
     queryKey: ['conversations'],
     queryFn: async () => {
@@ -53,7 +52,6 @@ export default function Dashboard() {
     }
   });
 
-  // Fetch knowledge graph stats
   const { data: graphStats } = useQuery({
     queryKey: ['graphStats'],
     queryFn: async () => {
@@ -73,17 +71,27 @@ export default function Dashboard() {
     }
   });
 
-  // Fetch strategies for action items
   const { data: strategies = [] } = useQuery({
     queryKey: ['strategies'],
     queryFn: () => base44.entities.Strategy.list()
   });
 
-  // Aggregate insights from conversations and analyses
+  const { data: hermesStats } = useQuery({
+    queryKey: ['hermes_dashboard_stats'],
+    queryFn: async () => {
+      const analyses = await base44.entities.HermesAnalysis.list('-created_date', 10);
+      const avgIntegrity = analyses.length > 0 
+        ? analyses.reduce((sum, a) => sum + (a.integrity_score || 0), 0) / analyses.length 
+        : 0;
+      const criticalIssues = analyses.reduce((sum, a) => 
+        sum + (a.inconsistencies_detected || []).filter(i => i.severity === 'critical').length, 0
+      );
+      return { avgIntegrity, criticalIssues, analysesCount: analyses.length };
+    }
+  });
+
   const aggregateInsights = () => {
     const insights = [];
-    
-    // Extract insights from conversation metadata
     conversations.forEach(conv => {
       if (conv.metadata?.analysis_results) {
         const results = conv.metadata.analysis_results;
@@ -96,14 +104,11 @@ export default function Dashboard() {
         }
       }
     });
-
     return insights;
   };
 
-  // Extract action items from strategies and analyses
   const extractActionItems = () => {
     const actionItems = [];
-    
     strategies.forEach(strategy => {
       if (strategy.action_items) {
         actionItems.push(...strategy.action_items.map(item => ({
@@ -113,14 +118,12 @@ export default function Dashboard() {
         })));
       }
     });
-
     return actionItems;
   };
 
   const insights = aggregateInsights();
   const actionItems = extractActionItems();
 
-  // Calculate quick stats
   const quickStats = [
     {
       icon: MessageSquare,
@@ -155,7 +158,6 @@ export default function Dashboard() {
     }
   ];
 
-  // Role-based layout configurations
   const layoutConfig = {
     admin: {
       widgets: ['stats', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
@@ -183,7 +185,6 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 md:p-8 space-y-6">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -207,9 +208,7 @@ export default function Dashboard() {
           <Button
             variant="outline"
             size="icon"
-            onClick={() => {
-              refetchConversations();
-            }}
+            onClick={() => refetchConversations()}
             className="border-white/10 text-white hover:bg-white/10"
           >
             <RefreshCw className="w-5 h-5" />
@@ -224,12 +223,89 @@ export default function Dashboard() {
         </div>
       </motion.div>
 
-      {/* Quick Stats */}
+      {/* New Features Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border border-purple-500/30 rounded-xl p-4"
+      >
+        <div className="flex items-center gap-3 flex-wrap">
+          <Sparkles className="w-5 h-5 text-purple-400" />
+          <p className="text-white font-medium">Novas funcionalidades disponíveis:</p>
+          <div className="flex gap-2 flex-wrap">
+            <Link to={createPageUrl('HermesDashboard')}>
+              <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30 cursor-pointer hover:bg-cyan-500/30">
+                <Shield className="w-3 h-3 mr-1" />
+                Hermes Dashboard
+              </Badge>
+            </Link>
+            <Link to={createPageUrl('WorkflowTemplates')}>
+              <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 cursor-pointer hover:bg-purple-500/30">
+                <Layers className="w-3 h-3 mr-1" />
+                Workflow Templates
+              </Badge>
+            </Link>
+            <Link to={createPageUrl('AgentPerformance')}>
+              <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30 cursor-pointer hover:bg-blue-500/30">
+                <TrendingUp className="w-3 h-3 mr-1" />
+                Agent Analytics
+              </Badge>
+            </Link>
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 cursor-pointer hover:bg-green-500/30">
+              <Search className="w-3 h-3 mr-1" />
+              Global Search (⌘K)
+            </Badge>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Hermes Quick Status */}
+      {hermesStats && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="grid grid-cols-3 gap-4"
+        >
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Hermes Integrity</p>
+                <p className="text-2xl font-bold text-white">{Math.round(hermesStats.avgIntegrity)}%</p>
+              </div>
+              <Shield className={`w-8 h-8 ${hermesStats.avgIntegrity >= 80 ? 'text-green-400' : 'text-yellow-400'} opacity-50`} />
+            </div>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Critical Issues</p>
+                <p className="text-2xl font-bold text-white">{hermesStats.criticalIssues}</p>
+              </div>
+              <Badge className={hermesStats.criticalIssues > 0 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}>
+                {hermesStats.criticalIssues > 0 ? 'Action Required' : 'Healthy'}
+              </Badge>
+            </div>
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Analyses</p>
+                <p className="text-2xl font-bold text-white">{hermesStats.analysesCount}</p>
+              </div>
+              <Link to={createPageUrl('HermesDashboard')}>
+                <Button size="sm" variant="ghost" className="text-cyan-400 hover:text-cyan-300">
+                  View Details
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {currentLayout.widgets.includes('stats') && (
         <QuickStatsWidget stats={quickStats} />
       )}
 
-      {/* Main Widgets Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {currentLayout.widgets.includes('conversations') && (
           <ConversationHistoryWidget conversations={conversations} />
@@ -255,7 +331,6 @@ export default function Dashboard() {
         <PredictiveAnalysisWidget />
       </div>
 
-      {/* Role-specific insights */}
       {userRole === 'admin' && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
