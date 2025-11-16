@@ -5,9 +5,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  GitMerge, Plus, Play, Eye, Settings, TrendingUp, 
-  Activity, Clock, CheckCircle, Workflow, Zap, Network
+import {
+  GitMerge, Plus, Play, Eye, Settings, TrendingUp,
+  Activity, Clock, CheckCircle, Workflow, Zap, Network, History // Added History icon
 } from "lucide-react";
 import WorkflowBuilder from "../components/orchestration/WorkflowBuilder";
 import WorkflowExecutionMonitor from "../components/orchestration/WorkflowExecutionMonitor";
@@ -20,6 +20,8 @@ import { motion } from "framer-motion";
 import { toast } from "react-hot-toast"; // Assuming react-hot-toast is installed and configured
 import RealtimeExecutionGraph from "../components/orchestration/RealtimeExecutionGraph";
 import DebugPanel from "../components/orchestration/DebugPanel";
+import VersionHistory from "../components/orchestration/VersionHistory"; // New import
+import VersionCompare from "../components/orchestration/VersionCompare"; // New import
 
 export default function AgentOrchestration() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -30,6 +32,8 @@ export default function AgentOrchestration() {
   const [agentConfig, setAgentConfig] = useState({ agents: [] });
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [showDebugMode, setShowDebugMode] = useState(false);
+  const [compareVersions, setCompareVersions] = useState(null); // New state
+  const [showVersionHistory, setShowVersionHistory] = useState(false); // New state
 
   const queryClient = useQueryClient();
 
@@ -67,6 +71,13 @@ export default function AgentOrchestration() {
     toast.success(`${action} action triggered for ${agentId}`);
   };
 
+  const handleVersionRevert = (workflowSnapshot) => { // New function
+    setSelectedWorkflow(workflowSnapshot);
+    setAgentConfig(workflowSnapshot.hierarchical_config || { agents: [] });
+    queryClient.invalidateQueries(['agent_workflows']);
+    toast.success(`Workflow reverted to version ${workflowSnapshot.version_number || workflowSnapshot.id}`);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -81,10 +92,22 @@ export default function AgentOrchestration() {
           </p>
         </div>
         <div className="flex gap-2">
+          {selectedWorkflow && ( // New button for version history
+            <Button
+              onClick={() => setShowVersionHistory(!showVersionHistory)}
+              className={showVersionHistory
+                ? "bg-blue-600 hover:bg-blue-700"
+                : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+              }
+            >
+              <History className="w-4 h-4 mr-2" />
+              {showVersionHistory ? 'Hide' : 'Show'} Versions
+            </Button>
+          )}
           <Button
             onClick={() => setShowHierarchyBuilder(!showHierarchyBuilder)}
-            className={showHierarchyBuilder 
-              ? "bg-purple-600 hover:bg-purple-700" 
+            className={showHierarchyBuilder
+              ? "bg-purple-600 hover:bg-purple-700"
               : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
             }
           >
@@ -93,8 +116,8 @@ export default function AgentOrchestration() {
           </Button>
           <Button
             onClick={() => setShowBuilder(!showBuilder)}
-            className={showBuilder 
-              ? "bg-blue-600 hover:bg-blue-700" 
+            className={showBuilder
+              ? "bg-blue-600 hover:bg-blue-700"
               : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
             }
           >
@@ -187,7 +210,7 @@ export default function AgentOrchestration() {
               </div>
             </CardHeader>
             <CardContent>
-              <HierarchicalAgentBuilder 
+              <HierarchicalAgentBuilder
                 agentConfig={agentConfig}
                 onChange={setAgentConfig}
               />
@@ -208,7 +231,7 @@ export default function AgentOrchestration() {
             setShowBuilder(false);
             refetchWorkflows();
             setSelectedWorkflow(null); // Clear selected workflow if a new one is saved
-          }} 
+          }}
           onClose={() => {
             setShowBuilder(false);
             setSelectedWorkflow(null);
@@ -217,7 +240,7 @@ export default function AgentOrchestration() {
           />
         </motion.div>
       )}
-      
+
       {/* Execution Monitor */}
       {showExecutionMonitor && (
         <motion.div
@@ -226,7 +249,7 @@ export default function AgentOrchestration() {
           exit={{ opacity: 0, height: 0 }}
           className="overflow-hidden"
         >
-          <WorkflowExecutionMonitor 
+          <WorkflowExecutionMonitor
             executions={executions}
             onClose={() => setShowExecutionMonitor(false)}
             onSelectExecution={setSelectedExecution}
@@ -253,8 +276,8 @@ export default function AgentOrchestration() {
             </div>
           )}
           {workflows.map(workflow => (
-            <WorkflowCard 
-              key={workflow.id} 
+            <WorkflowCard
+              key={workflow.id}
               workflow={workflow}
               onSelect={(w) => {
                 setSelectedWorkflow(w);
@@ -279,10 +302,18 @@ export default function AgentOrchestration() {
         </div>
       )}
 
-      {/* Enhanced Workflow Visualization with Debug Mode */}
+      {/* Enhanced Workflow Visualization with Debug Mode & Version Control */}
       {selectedWorkflow && !showBuilder && !showHierarchyBuilder && !showExecutionMonitor && (
         <>
-          {/* Debug Mode Toggle */}
+          {/* Compare Versions Dialog */}
+          {compareVersions && (
+            <VersionCompare
+              version1={compareVersions[0]}
+              version2={compareVersions[1]}
+              onClose={() => setCompareVersions(null)}
+            />
+          )}
+
           <div className="flex items-center justify-end gap-2">
             <Badge className={showDebugMode ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-slate-500/20 text-slate-400 border-slate-500/30'}>
               {showDebugMode ? 'Debug Mode Active' : 'Debug Mode Off'}
@@ -298,9 +329,20 @@ export default function AgentOrchestration() {
             </Button>
           </div>
 
-          <div className={showDebugMode ? "grid grid-cols-2 gap-6" : "grid grid-cols-3 gap-6"}>
+          <div className={showVersionHistory ? "grid grid-cols-3 gap-6" : (showDebugMode ? "grid grid-cols-2 gap-6" : "grid grid-cols-3 gap-6")}>
+            {/* Version History Panel */}
+            {showVersionHistory && (
+              <div className="space-y-4">
+                <VersionHistory
+                  workflow={selectedWorkflow}
+                  onRevert={handleVersionRevert}
+                  onCompare={(v1, v2) => setCompareVersions([v1, v2])}
+                />
+              </div>
+            )}
+
             {/* Main Execution Graph */}
-            <div className={showDebugMode ? "col-span-1 space-y-4" : "col-span-2 space-y-4"}>
+            <div className={showVersionHistory ? "col-span-1 space-y-4" : (showDebugMode ? "col-span-1 space-y-4" : "col-span-2 space-y-4")}>
               {selectedExecution ? (
                 <RealtimeExecutionGraph
                   execution={selectedExecution}
@@ -309,14 +351,14 @@ export default function AgentOrchestration() {
                   onControlAction={handleControlAction}
                 />
               ) : (
-                <EnhancedWorkflowVisualizer 
+                <EnhancedWorkflowVisualizer
                   workflow={selectedWorkflow}
                   execution={selectedExecution}
-                  onStepFocus={() => {}}
+                  onStepFocus={() => { }}
                 />
               )}
               {selectedWorkflow.hierarchical_config?.agents && selectedWorkflow.hierarchical_config.agents.length > 0 && (
-                <AgentHierarchyVisualizer 
+                <AgentHierarchyVisualizer
                   agentConfig={selectedWorkflow.hierarchical_config}
                   execution={selectedExecution}
                 />
@@ -324,7 +366,7 @@ export default function AgentOrchestration() {
             </div>
 
             {/* Side Panel - Debug or Standard View */}
-            <div className="col-span-1 space-y-4">
+            <div className={showVersionHistory ? "col-span-1 space-y-4" : (showDebugMode ? "col-span-1 space-y-4" : "space-y-4")}>
               {showDebugMode && selectedExecution ? (
                 <DebugPanel
                   execution={selectedExecution}
@@ -332,13 +374,13 @@ export default function AgentOrchestration() {
                 />
               ) : (
                 <>
-                  <DataFlowVisualizer 
+                  <DataFlowVisualizer
                     workflow={selectedWorkflow}
                     execution={selectedExecution}
                     focusedStep={null}
                   />
                   {selectedExecution?.communication_log && (
-                    <AgentCommunicationLog 
+                    <AgentCommunicationLog
                       communicationLog={selectedExecution.communication_log}
                       agentStates={selectedExecution.agent_states}
                     />
@@ -374,7 +416,7 @@ function WorkflowCard({ workflow, onSelect, onEdit, onConfigureHierarchy, select
   });
 
   return (
-    <Card 
+    <Card
       className={`bg-white/5 border ${selected ? 'border-purple-500' : 'border-white/10'} hover:bg-white/10 transition-all cursor-pointer`}
     >
       <CardContent className="p-4">
@@ -384,8 +426,8 @@ function WorkflowCard({ workflow, onSelect, onEdit, onConfigureHierarchy, select
               <h3 className="text-lg font-bold text-white">{workflow.name}</h3>
               <Badge className={`${
                 workflow.status === 'active' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
-                workflow.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-                'bg-slate-500/20 text-slate-400 border-slate-500/30'
+                  workflow.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
+                    'bg-slate-500/20 text-slate-400 border-slate-500/30'
               }`}>
                 {workflow.status}
               </Badge>
