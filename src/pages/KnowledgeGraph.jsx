@@ -11,6 +11,7 @@ import RelationshipInferencePanel from "../components/graph/RelationshipInferenc
 import AutoEnrichmentPanel from "../components/graph/AutoEnrichmentPanel";
 import AdvancedGraphControls from "../components/graph/AdvancedGraphControls";
 import DataSourceHub from "../components/integrations/DataSourceHub";
+import ExplainabilityPanel from "../components/graph/ExplainabilityPanel";
 
 export default function KnowledgeGraph() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -18,6 +19,7 @@ export default function KnowledgeGraph() {
   const [filters, setFilters] = useState({ nodeTypes: [], relationshipTypes: [] });
   const [clustering, setClustering] = useState(false);
   const [focusMode, setFocusMode] = useState(false);
+  const [selectedInference, setSelectedInference] = useState(null);
 
   const { data: nodes = [], isLoading: nodesLoading, refetch: refetchNodes } = useQuery({
     queryKey: ['knowledge_graph_nodes'],
@@ -72,7 +74,7 @@ export default function KnowledgeGraph() {
             Knowledge Graph
           </h1>
           <p className="text-slate-400 mt-1">
-            Multi-source intelligence with real-time market data & social insights
+            Multi-source intelligence with explainable AI insights
           </p>
         </div>
         <Button
@@ -157,7 +159,7 @@ export default function KnowledgeGraph() {
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 max-h-[800px] overflow-y-auto">
           <AdvancedGraphControls
             filters={filters}
             onFilterChange={setFilters}
@@ -180,6 +182,10 @@ export default function KnowledgeGraph() {
                 </CardContent>
               </Card>
 
+              {selectedInference && (
+                <ExplainabilityPanel inference={selectedInference} />
+              )}
+
               <DataSourceHub selectedEntity={selectedNode} />
 
               <AutoEnrichmentPanel 
@@ -187,7 +193,10 @@ export default function KnowledgeGraph() {
                 onRefresh={refetchNodes}
               />
 
-              <RelationshipInferencePanel selectedNodeId={selectedNode.id} />
+              <RelationshipInferencePanel 
+                selectedNodeId={selectedNode.id}
+                onInferenceSelect={setSelectedInference}
+              />
             </>
           )}
         </div>

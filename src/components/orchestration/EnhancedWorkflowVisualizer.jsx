@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -46,7 +47,7 @@ const AGENT_CONFIG = {
   }
 };
 
-export default function EnhancedWorkflowVisualizer({ workflow, execution }) {
+export default function EnhancedWorkflowVisualizer({ workflow, execution, onStepFocus }) {
   const [expandedSteps, setExpandedSteps] = useState(new Set());
 
   if (!workflow) return null;
@@ -161,7 +162,10 @@ export default function EnhancedWorkflowVisualizer({ workflow, execution }) {
                         status === 'running' ? 'border-blue-500/30 bg-blue-500/5' :
                         'border-white/10'
                       }`}
-                      onClick={() => toggleStep(step.id)}
+                      onClick={() => {
+                        toggleStep(step.id);
+                        onStepFocus?.(step.id);
+                      }}
                     >
                       <div className="p-4">
                         <div className="flex items-start justify-between">

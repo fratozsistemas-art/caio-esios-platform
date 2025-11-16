@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -6,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Brain, Plus, Loader2, CheckCircle, AlertCircle, 
-  TrendingUp, Network, GitBranch 
+  TrendingUp, Network, GitBranch, Lightbulb
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -19,7 +20,7 @@ const INFERENCE_METHODS = {
   transitive: { icon: GitBranch, color: 'text-cyan-400', label: 'Transitive' }
 };
 
-export default function RelationshipInferencePanel({ selectedNodeId }) {
+export default function RelationshipInferencePanel({ selectedNodeId, onInferenceSelect }) {
   const [inferenceDepth, setInferenceDepth] = useState('standard');
   const queryClient = useQueryClient();
 
@@ -96,7 +97,7 @@ export default function RelationshipInferencePanel({ selectedNodeId }) {
             AI Relationship Inference
           </div>
           <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
-            {inference.inferred_relationships.length} found
+            {inference?.inferred_relationships?.length || 0} found
           </Badge>
         </CardTitle>
       </CardHeader>
@@ -120,8 +121,8 @@ export default function RelationshipInferencePanel({ selectedNodeId }) {
         {/* Inferred Relationships */}
         <div className="space-y-2">
           <h4 className="text-xs font-medium text-slate-400">Inferred Connections</h4>
-          {inference.inferred_relationships
-            .filter(rel => rel.can_create)
+          {inference?.inferred_relationships
+            ?.filter(rel => rel.can_create)
             .sort((a, b) => b.confidence - a.confidence)
             .slice(0, 8)
             .map((rel, idx) => {
@@ -153,15 +154,25 @@ export default function RelationshipInferencePanel({ selectedNodeId }) {
                       }`}>
                         {Math.round(rel.confidence * 100)}%
                       </Badge>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => createRelationshipMutation.mutate(rel)}
-                        disabled={createRelationshipMutation.isPending}
-                        className="h-7 w-7 text-green-400 hover:text-green-300 hover:bg-green-500/10"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </Button>
+                      <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => onInferenceSelect?.(rel)}
+                          className="h-7 w-7 text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                        >
+                          <Lightbulb className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => createRelationshipMutation.mutate(rel)}
+                          disabled={createRelationshipMutation.isPending}
+                          className="h-7 w-7 text-green-400 hover:text-green-300 hover:bg-green-500/10"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
 

@@ -11,12 +11,14 @@ import {
 import WorkflowBuilder from "../components/orchestration/WorkflowBuilder";
 import WorkflowExecutionMonitor from "../components/orchestration/WorkflowExecutionMonitor";
 import EnhancedWorkflowVisualizer from "../components/orchestration/EnhancedWorkflowVisualizer";
+import DataFlowVisualizer from "../components/orchestration/DataFlowVisualizer";
 
 export default function AgentOrchestration() {
   const [selectedWorkflow, setSelectedWorkflow] = useState(null);
   const [showBuilder, setShowBuilder] = useState(false);
   const [showMonitor, setShowMonitor] = useState(false);
   const [selectedExecution, setSelectedExecution] = useState(null);
+  const [focusedStep, setFocusedStep] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: workflows = [] } = useQuery({
@@ -35,6 +37,10 @@ export default function AgentOrchestration() {
   const activeWorkflows = workflows.filter(w => w.status === 'active');
   const runningExecutions = executions.filter(e => e.status === 'running');
 
+  const currentExecution = selectedExecution 
+    ? executions.find(e => e.id === selectedExecution)
+    : null;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -44,7 +50,7 @@ export default function AgentOrchestration() {
             Agent Orchestration Dashboard
           </h1>
           <p className="text-slate-400 mt-1">
-            Define, configure, and monitor multi-step AI workflows with enhanced visualization
+            Multi-step AI workflows with explainable data flow
           </p>
         </div>
         <div className="flex gap-3">
@@ -140,46 +146,57 @@ export default function AgentOrchestration() {
         />
       ) : (
         <div className="grid grid-cols-2 gap-6">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Configured Workflows</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {workflows.map((workflow) => (
-                <WorkflowCard 
-                  key={workflow.id}
-                  workflow={workflow}
-                  onView={(exec) => {
-                    setSelectedWorkflow(workflow);
-                    setSelectedExecution(exec);
-                  }}
-                  onEdit={() => {
-                    setSelectedWorkflow(workflow);
-                    setShowBuilder(true);
-                  }}
-                />
-              ))}
-              {workflows.length === 0 && (
-                <div className="text-center py-12">
-                  <GitMerge className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-                  <p className="text-slate-400 text-sm">No workflows configured yet</p>
-                  <Button
-                    onClick={() => setShowBuilder(true)}
-                    size="sm"
-                    className="mt-4 bg-purple-600 hover:bg-purple-700"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Your First Workflow
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <div className="space-y-6">
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white">Configured Workflows</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {workflows.map((workflow) => (
+                  <WorkflowCard 
+                    key={workflow.id}
+                    workflow={workflow}
+                    onView={(exec) => {
+                      setSelectedWorkflow(workflow);
+                      setSelectedExecution(exec);
+                    }}
+                    onEdit={() => {
+                      setSelectedWorkflow(workflow);
+                      setShowBuilder(true);
+                    }}
+                  />
+                ))}
+                {workflows.length === 0 && (
+                  <div className="text-center py-12">
+                    <GitMerge className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                    <p className="text-slate-400 text-sm">No workflows configured yet</p>
+                    <Button
+                      onClick={() => setShowBuilder(true)}
+                      size="sm"
+                      className="mt-4 bg-purple-600 hover:bg-purple-700"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      Create Your First Workflow
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {selectedWorkflow && currentExecution && (
+              <DataFlowVisualizer 
+                workflow={selectedWorkflow}
+                execution={currentExecution}
+                focusedStep={focusedStep}
+              />
+            )}
+          </div>
 
           {selectedWorkflow && (
             <EnhancedWorkflowVisualizer 
               workflow={selectedWorkflow} 
-              execution={selectedExecution}
+              execution={currentExecution}
+              onStepFocus={setFocusedStep}
             />
           )}
         </div>
@@ -202,8 +219,7 @@ function WorkflowCard({ workflow, onView, onEdit }) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries(['workflow_executions']);
-      const execution = data.execution_id;
-      onView(execution);
+      onView(data.execution_id);
       setExecuting(false);
     }
   });
