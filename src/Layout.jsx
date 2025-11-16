@@ -109,7 +109,7 @@ export default function Layout({ children, currentPageName }) {
             variant="ghost"
             size="icon"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="text-white"
+            className="text-white hover:bg-white/10"
           >
             {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </Button>
@@ -190,7 +190,7 @@ export default function Layout({ children, currentPageName }) {
               onClick={handleLogout}
               variant="outline"
               size="sm"
-              className="w-full border-white/10 text-slate-300 hover:bg-white/5"
+              className="w-full bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500"
             >
               <LogOut className="w-4 h-4 mr-2" />
               Sign Out

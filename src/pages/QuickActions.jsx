@@ -1,4 +1,7 @@
-import { useState } from "react";
+
+import React, { useState } from "react";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -290,7 +293,7 @@ export default function QuickActions() {
         <Button
           variant={selectedCategory === "all" ? "default" : "outline"}
           onClick={() => setSelectedCategory("all")}
-          className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white/5 border-white/20 text-white hover:bg-white/10"}
+          className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500"}
         >
           All
         </Button>
@@ -299,7 +302,7 @@ export default function QuickActions() {
             key={cat.id}
             variant={selectedCategory === cat.id ? "default" : "outline"}
             onClick={() => setSelectedCategory(cat.id)}
-            className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-white/5 border-white/20 text-white hover:bg-white/10"}
+            className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500"}
           >
             {cat.label}
           </Button>
