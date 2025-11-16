@@ -25,6 +25,9 @@ import BatchIngestion from './pages/BatchIngestion';
 import TechnicalAudit from './pages/TechnicalAudit';
 import NetworkMap from './pages/NetworkMap';
 import AgentMemory from './pages/AgentMemory';
+import SystemHealth from './pages/SystemHealth';
+import Analytics from './pages/Analytics';
+import Notifications from './pages/Notifications';
 import Layout from './Layout.jsx';
 
 
@@ -56,6 +59,9 @@ export const PAGES = {
     "TechnicalAudit": TechnicalAudit,
     "NetworkMap": NetworkMap,
     "AgentMemory": AgentMemory,
+    "SystemHealth": SystemHealth,
+    "Analytics": Analytics,
+    "Notifications": Notifications,
 }
 
 export const pagesConfig = {

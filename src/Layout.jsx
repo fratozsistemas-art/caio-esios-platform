@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -49,6 +49,14 @@ const navSections = [
     items: [
       { name: 'Workspaces', icon: Briefcase, path: 'Workspaces' },
       { name: 'Strategies', icon: Target, path: 'Strategies' }
+    ]
+  },
+  {
+    title: "Monitoring",
+    items: [
+      { name: 'Analytics', icon: BarChart3, path: 'Analytics', badge: 'NEW' },
+      { name: 'Notifications', icon: Bell, path: 'Notifications' },
+      { name: 'System Health', icon: Activity, path: 'SystemHealth', badge: 'NEW' }
     ]
   },
   {
@@ -116,7 +124,7 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
 
-      <aside className={`fixed top-0 left-0 h-screen w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 z-40 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <aside className={`fixed top-0 left-0 h-screen w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
@@ -129,7 +137,7 @@ export default function Layout({ children, currentPageName }) {
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-4 space-y-6">
+        <nav className="flex-1 p-4 space-y-6">
           {navSections.map((section, idx) => {
             const items = section.items.filter(item => {
               if (item.adminOnly) {
