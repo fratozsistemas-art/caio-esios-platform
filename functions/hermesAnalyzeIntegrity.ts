@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { target_entity_type, target_entity_id, analysis_types } = await req.json();
+    const { target_entity_type, target_entity_id, analysis_types, conversation_data } = await req.json();
 
     // Fetch target entity
     let targetEntity;
@@ -22,19 +22,30 @@ Deno.serve(async (req) => {
         'tsi_project': 'TSIProject',
         'workflow': 'AgentWorkflow',
         'agent_workflow': 'AgentWorkflow',
-        'enrichment_suggestion': 'EnrichmentSuggestion'
+        'enrichment_suggestion': 'EnrichmentSuggestion',
+        'workflow_execution': 'WorkflowExecution',
+        'knowledge_item': 'KnowledgeItem'
       };
       
       const entityName = entityMap[target_entity_type];
-      if (!entityName) {
-        return Response.json({ error: 'Invalid entity type' }, { status: 400 });
-      }
+      
+      // Special handling for conversations (not a standard entity)
+      if (target_entity_type === 'conversation') {
+        if (!conversation_data) {
+          return Response.json({ error: 'Conversation data required' }, { status: 400 });
+        }
+        targetEntity = conversation_data;
+      } else {
+        if (!entityName) {
+          return Response.json({ error: 'Invalid entity type' }, { status: 400 });
+        }
 
-      const entities = await base44.entities[entityName].filter({ id: target_entity_id });
-      targetEntity = entities[0];
+        const entities = await base44.entities[entityName].filter({ id: target_entity_id });
+        targetEntity = entities[0];
 
-      if (!targetEntity) {
-        return Response.json({ error: 'Entity not found' }, { status: 404 });
+        if (!targetEntity) {
+          return Response.json({ error: 'Entity not found' }, { status: 404 });
+        }
       }
     } catch (error) {
       return Response.json({ error: `Failed to fetch entity: ${error.message}` }, { status: 500 });
@@ -65,15 +76,24 @@ Deno.serve(async (req) => {
         case 'reasoning_audit':
           analysisResult = await auditReasoning(targetEntity, target_entity_type, base44);
           break;
+        case 'sentiment_consistency':
+          analysisResult = await analyzeSentimentConsistency(targetEntity, target_entity_type, base44);
+          break;
+        case 'task_coherence':
+          analysisResult = await analyzeTaskCoherence(targetEntity, target_entity_type, base44);
+          break;
+        case 'conversation_quality':
+          analysisResult = await analyzeConversationQuality(targetEntity, target_entity_type, base44);
+          break;
         default:
           continue;
       }
 
-      // Store analysis in database
+      // Store analysis in database (skip for conversation if no ID)
       const hermesAnalysis = await base44.entities.HermesAnalysis.create({
         analysis_type: analysisType,
         target_entity_type,
-        target_entity_id,
+        target_entity_id: target_entity_id || 'conversation_' + Date.now(),
         ...analysisResult,
         status: 'completed'
       });
@@ -88,7 +108,7 @@ Deno.serve(async (req) => {
     await base44.entities.CognitiveHealthMetric.create({
       metric_type: 'decision_quality',
       scope: target_entity_type,
-      scope_id: target_entity_id,
+      scope_id: target_entity_id || 'conversation_session',
       current_score: cognitiveHealthScore,
       trend: 'stable',
       measured_at: new Date().toISOString()
@@ -395,11 +415,185 @@ Retorne trilha completa de raciocínio.`;
   return response;
 }
 
+async function analyzeSentimentConsistency(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, analista de consistência emocional. Analise sentimento e tom em ${entityType}:
+
+${contextPrompt}
+
+Para conversas/interações, analise:
+1. Sentimento geral (positivo, neutro, negativo, misto)
+2. Consistência de sentimento ao longo do tempo
+3. Mudanças abruptas de tom e seus gatilhos
+4. Alinhamento entre sentimento e conteúdo factual
+5. Indicadores de frustração, confusão ou satisfação
+
+Retorne análise de sentimento estruturada.`;
+
+  const response = await base44.integrations.Core.InvokeLLM({
+    prompt,
+    response_json_schema: {
+      type: "object",
+      properties: {
+        integrity_score: { type: "number" },
+        sentiment_analysis: {
+          type: "object",
+          properties: {
+            overall_sentiment: { type: "string" },
+            sentiment_consistency: { type: "number" },
+            tone_shifts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  timestamp: { type: "string" },
+                  from_tone: { type: "string" },
+                  to_tone: { type: "string" },
+                  trigger: { type: "string" }
+                }
+              }
+            }
+          }
+        },
+        recommendations: {
+          type: "array",
+          items: { type: "string" }
+        }
+      }
+    }
+  });
+
+  return response;
+}
+
+async function analyzeTaskCoherence(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, analista de coerência de execução. Analise coerência de tarefas/execução em ${entityType}:
+
+${contextPrompt}
+
+Avalie:
+1. Coerência entre status reportado e progresso real
+2. Validade de dependências entre tarefas/passos
+3. Alinhamento entre recursos alocados e necessários
+4. Realismo de timeline baseado em histórico
+5. Consistência de métricas de progresso
+6. Bloqueadores não documentados
+
+Retorne métricas de coerência.`;
+
+  const response = await base44.integrations.Core.InvokeLLM({
+    prompt,
+    response_json_schema: {
+      type: "object",
+      properties: {
+        integrity_score: { type: "number" },
+        task_coherence_metrics: {
+          type: "object",
+          properties: {
+            completion_coherence: { type: "number" },
+            dependency_validity: { type: "number" },
+            resource_alignment: { type: "number" },
+            timeline_realism: { type: "number" }
+          }
+        },
+        inconsistencies_detected: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              type: { type: "string" },
+              description: { type: "string" },
+              severity: { type: "string" },
+              evidence: { type: "array", items: { type: "string" } },
+              recommendation: { type: "string" }
+            }
+          }
+        },
+        recommendations: {
+          type: "array",
+          items: { type: "string" }
+        }
+      }
+    }
+  });
+
+  return response;
+}
+
+async function analyzeConversationQuality(entity, entityType, base44) {
+  const contextPrompt = getEntityContextPrompt(entity, entityType);
+  
+  const prompt = `Você é o Hermes, auditor de qualidade conversacional. Analise qualidade de conversa:
+
+${contextPrompt}
+
+Avalie:
+1. Clareza e objetividade das mensagens
+2. Resolução de dúvidas e follow-through
+3. Consistência de informações fornecidas
+4. Detecção de mal-entendidos ou loops
+5. Qualidade das respostas do agente
+6. Satisfação implícita do usuário
+
+Retorne análise de qualidade conversacional.`;
+
+  const response = await base44.integrations.Core.InvokeLLM({
+    prompt,
+    response_json_schema: {
+      type: "object",
+      properties: {
+        integrity_score: { type: "number" },
+        sentiment_analysis: {
+          type: "object",
+          properties: {
+            overall_sentiment: { type: "string" },
+            sentiment_consistency: { type: "number" },
+            tone_shifts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  timestamp: { type: "string" },
+                  from_tone: { type: "string" },
+                  to_tone: { type: "string" },
+                  trigger: { type: "string" }
+                }
+              }
+            }
+          }
+        },
+        inconsistencies_detected: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              type: { type: "string" },
+              description: { type: "string" },
+              severity: { type: "string" },
+              evidence: { type: "array", items: { type: "string" } },
+              recommendation: { type: "string" }
+            }
+          }
+        },
+        recommendations: {
+          type: "array",
+          items: { type: "string" }
+        }
+      }
+    }
+  });
+
+  return response;
+}
+
 function getEntityContextPrompt(entity, entityType) {
   const commonFields = `
-ID: ${entity.id}
-Criado em: ${entity.created_date}
-Criado por: ${entity.created_by}
+ID: ${entity.id || 'N/A'}
+Criado em: ${entity.created_date || 'N/A'}
+Criado por: ${entity.created_by || 'N/A'}
 `;
 
   switch (entityType) {
@@ -409,8 +603,10 @@ Título: ${entity.title || 'N/A'}
 Tipo de Missão: ${entity.mission?.type || 'N/A'}
 Objetivo: ${entity.mission?.primary_objective || 'N/A'}
 Target: ${entity.target?.company_name || 'N/A'}
+Constraints: ${JSON.stringify(entity.constraints || {})}
 Status: ${entity.status || 'N/A'}
 Confidence Score: ${entity.confidence_score || 'N/A'}
+Fases CAIO TSI+: ${JSON.stringify(entity.caio_tsi_phases || {})}
 Resultados: ${JSON.stringify(entity.analysis_results || {})}`;
 
     case 'workflow':
@@ -423,7 +619,28 @@ Modo de Execução: ${entity.execution_mode}
 Status: ${entity.status}
 Taxa de Sucesso: ${entity.success_rate || 0}%
 Execuções: ${entity.execution_count || 0}
-Passos: ${JSON.stringify(entity.steps || [])}`;
+Duração Média: ${entity.avg_duration_seconds || 'N/A'}s
+Passos: ${JSON.stringify(entity.steps || [])}
+Config Hierárquica: ${JSON.stringify(entity.hierarchical_config || {})}`;
+
+    case 'workflow_execution':
+      return `${commonFields}
+Workflow: ${entity.workflow_name}
+Status: ${entity.status}
+Passo Atual: ${entity.current_step || 'N/A'}
+Passos Completados: ${(entity.completed_steps || []).length}
+Inputs: ${JSON.stringify(entity.inputs || {})}
+Outputs: ${JSON.stringify(entity.outputs || {})}
+Resultados dos Passos: ${JSON.stringify(entity.step_results || {})}
+Duração: ${entity.duration_seconds || 'N/A'}s
+Erro: ${entity.error_message || 'Nenhum'}
+Logs: ${JSON.stringify((entity.logs || []).slice(-5))}`;
+
+    case 'conversation':
+      return `${commonFields}
+Mensagens: ${JSON.stringify(entity.messages || [])}
+Metadata: ${JSON.stringify(entity.metadata || {})}
+Agente: ${entity.agent_name || 'N/A'}`;
 
     case 'enrichment_suggestion':
       return `${commonFields}
@@ -434,7 +651,17 @@ Fonte de Dados: ${entity.data_source}
 Dados Sugeridos: ${JSON.stringify(entity.suggested_data || {})}
 Dados Atuais: ${JSON.stringify(entity.current_data || {})}
 Confidence Score: ${entity.confidence_score}
-Raciocínio: ${entity.reasoning}`;
+Raciocínio: ${entity.reasoning}
+Evidências: ${JSON.stringify(entity.supporting_evidence || [])}`;
+
+    case 'knowledge_item':
+      return `${commonFields}
+Título: ${entity.title}
+Tipo: ${entity.type}
+Framework: ${entity.framework}
+Resumo: ${entity.summary || 'N/A'}
+Insights Chave: ${JSON.stringify(entity.key_insights || [])}
+Itens de Ação: ${JSON.stringify(entity.action_items || [])}`;
 
     default:
       return `${commonFields}
@@ -460,12 +687,33 @@ function getEntitySpecificGuidance(entityType, analysisType) {
       coherence: 'Valide consistência entre input_schema, output_schema e step results.',
       reasoning: 'Trace o fluxo de dados através dos passos, documentando transformações e decisões de cada agente.'
     },
+    workflow_execution: {
+      board_management: 'Avalie se resultados de execução estão prontos para reporting executivo ou precisam de síntese adicional.',
+      silos: 'Verifique se logs e resultados estão fragmentados ou se há visão unificada da execução.',
+      tensions: 'Identifique passos que falharam ou estão bloqueados, mapeando dependências problemáticas.',
+      coherence: 'Valide coerência entre status reportado, passos completados e outputs gerados.',
+      reasoning: 'Documente a sequência lógica de execução, decisões de cada passo e propagação de dados.'
+    },
+    conversation: {
+      board_management: 'Identifique se a conversa contém insights estratégicos que deveriam ser escalados para o Board.',
+      silos: 'Detecte se informações fornecidas são consistentes com dados do Knowledge Graph ou se há desconexão.',
+      tensions: 'Identifique frustrações, mal-entendidos ou expectativas não atendidas na conversa.',
+      coherence: 'Valide consistência de informações fornecidas ao longo da conversa.',
+      reasoning: 'Trace a lógica das respostas do agente, validando se recomendações são fundamentadas.'
+    },
     enrichment_suggestion: {
       board_management: 'Avalie se a sugestão tem impacto estratégico que deveria ser comunicado ao Board.',
       silos: 'Verifique se a sugestão está considerando dados de todas as fontes relevantes ou apenas de um silo.',
       tensions: 'Identifique potenciais conflitos entre dados sugeridos e dados existentes.',
       coherence: 'Valide se dados sugeridos são coerentes com o contexto da entidade e outras informações conhecidas.',
       reasoning: 'Documente a lógica que levou à sugestão, incluindo fontes de dados e evidências de suporte.'
+    },
+    knowledge_item: {
+      board_management: 'Verifique se o conteúdo está formatado adequadamente para consumo executivo.',
+      silos: 'Detecte se o item está conectado a outros conhecimentos relacionados ou isolado.',
+      tensions: 'Identifique conflitos entre insights ou action items contraditórios.',
+      coherence: 'Valide alinhamento entre framework, insights e ações propostas.',
+      reasoning: 'Trace a lógica dos insights até as fontes de dados originais.'
     }
   };
 
