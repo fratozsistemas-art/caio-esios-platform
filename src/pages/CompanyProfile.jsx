@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import EnrichmentPanel from "../components/company/EnrichmentPanel";
 
 export default function CompanyProfile() {
   const [companyId, setCompanyId] = useState(null);
@@ -133,6 +134,9 @@ export default function CompanyProfile() {
           </Button>
         </div>
       </div>
+
+      {/* AI Enrichment Panel */}
+      <EnrichmentPanel companyId={companyId} companyName={company.legal_name} />
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
