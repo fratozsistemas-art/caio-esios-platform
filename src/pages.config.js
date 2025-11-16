@@ -28,6 +28,7 @@ import AgentMemory from './pages/AgentMemory';
 import SystemHealth from './pages/SystemHealth';
 import Analytics from './pages/Analytics';
 import Notifications from './pages/Notifications';
+import IntegrationHealth from './pages/IntegrationHealth';
 import Layout from './Layout.jsx';
 
 
@@ -62,6 +63,7 @@ export const PAGES = {
     "SystemHealth": SystemHealth,
     "Analytics": Analytics,
     "Notifications": Notifications,
+    "IntegrationHealth": IntegrationHealth,
 }
 
 export const pagesConfig = {
