@@ -1,200 +1,205 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Network, Loader2, RefreshCw, Database, TrendingUp,
-  BarChart3, Sparkles, GitMerge
-} from "lucide-react";
-import { toast } from "sonner";
-import { motion } from "framer-motion";
+import { Network, Brain, MessageSquare, Sparkles } from "lucide-react";
 import InteractiveGraphVisualization from "../components/graph/InteractiveGraphVisualization";
-import GraphInsights from "../components/graph/GraphInsights";
+import GraphAIAssistant from "../components/graph/GraphAIAssistant";
+import RelationshipInferencePanel from "../components/graph/RelationshipInferencePanel";
 
 export default function KnowledgeGraph() {
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
   const queryClient = useQueryClient();
-  const [activeTab, setActiveTab] = useState('visualization');
 
-  // Query para estatísticas do grafo
-  const { data: graphStats, isLoading: statsLoading } = useQuery({
-    queryKey: ['graphStats'],
-    queryFn: async () => {
-      const nodes = await base44.entities.KnowledgeGraphNode.list();
-      const relationships = await base44.entities.KnowledgeGraphRelationship.list();
-      
-      const nodesByType = {};
-      nodes.forEach(node => {
-        nodesByType[node.type] = (nodesByType[node.type] || 0) + 1;
-      });
-
-      const relsByType = {};
-      relationships.forEach(rel => {
-        relsByType[rel.type] = (relsByType[rel.type] || 0) + 1;
-      });
-
-      return {
-        total_nodes: nodes.length,
-        total_relationships: relationships.length,
-        nodes_by_type: nodesByType,
-        relationships_by_type: relsByType,
-        avg_connections: nodes.length > 0 ? (relationships.length * 2 / nodes.length).toFixed(2) : 0
-      };
-    },
-    refetchInterval: 30000
+  const { data: nodes = [], isLoading: nodesLoading } = useQuery({
+    queryKey: ['knowledge_graph_nodes'],
+    queryFn: () => base44.entities.KnowledgeGraphNode.list()
   });
 
-  // Query para nós e relacionamentos
-  const { data: graphData, isLoading: graphLoading } = useQuery({
-    queryKey: ['graphData'],
-    queryFn: async () => {
-      const nodes = await base44.entities.KnowledgeGraphNode.list();
-      const relationships = await base44.entities.KnowledgeGraphRelationship.list();
-      return { nodes, relationships };
+  const { data: relationships = [], isLoading: relsLoading } = useQuery({
+    queryKey: ['knowledge_graph_relationships'],
+    queryFn: () => base44.entities.KnowledgeGraphRelationship.list()
+  });
+
+  const graphData = {
+    nodes: nodes.map(n => ({
+      id: n.id,
+      label: n.label,
+      node_type: n.node_type,
+      properties: n.properties
+    })),
+    edges: relationships.map(r => ({
+      id: r.id,
+      from: r.from_node_id,
+      to: r.to_node_id,
+      type: r.relationship_type,
+      properties: r.properties
+    }))
+  };
+
+  const handleNodeClick = (nodeId) => {
+    const node = nodes.find(n => n.id === nodeId);
+    setSelectedNode(node);
+  };
+
+  const handleEntityClick = (nodeId) => {
+    const node = nodes.find(n => n.id === nodeId);
+    if (node) {
+      setSelectedNode(node);
+      setShowAIAssistant(false);
     }
-  });
+  };
 
-  // Mutation para build do grafo
-  const buildGraphMutation = useMutation({
-    mutationFn: () => base44.functions.invoke('buildKnowledgeGraph'),
-    onSuccess: () => {
-      toast.success('Knowledge Graph construído com sucesso!');
-      queryClient.invalidateQueries(['graphStats']);
-      queryClient.invalidateQueries(['graphData']);
-    },
-    onError: () => toast.error('Erro ao construir o grafo')
-  });
-
-  // Mutation para análise AI
-  const analyzeGraphMutation = useMutation({
-    mutationFn: () => base44.functions.invoke('analyzeKnowledgeGraph'),
-    onSuccess: (response) => {
-      toast.success('Análise AI concluída!');
-      queryClient.invalidateQueries(['graphInsights']);
-    },
-    onError: () => toast.error('Erro na análise AI')
-  });
+  const isLoading = nodesLoading || relsLoading;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-            <Network className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-bold text-white">Knowledge Graph</h1>
-            <p className="text-slate-400">Visualização interativa e inteligência de relacionamentos</p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <Network className="w-8 h-8 text-blue-400" />
+            Knowledge Graph
+          </h1>
+          <p className="text-slate-400 mt-1">
+            AI-powered entity relationship mapping with intelligent inference
+          </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <Button
-            onClick={() => buildGraphMutation.mutate()}
-            disabled={buildGraphMutation.isPending}
-            variant="outline"
-            className="border-white/10 text-white hover:bg-white/5"
+            onClick={() => setShowAIAssistant(!showAIAssistant)}
+            className={showAIAssistant 
+              ? "bg-purple-600 hover:bg-purple-700" 
+              : "bg-white/5 border border-white/10 text-white hover:bg-white/10"
+            }
           >
-            {buildGraphMutation.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+            {showAIAssistant ? (
+              <>
+                <Network className="w-4 h-4 mr-2" />
+                Show Graph
+              </>
             ) : (
-              <RefreshCw className="w-4 h-4" />
+              <>
+                <MessageSquare className="w-4 h-4 mr-2" />
+                AI Assistant
+              </>
             )}
-          </Button>
-          <Button
-            onClick={() => analyzeGraphMutation.mutate()}
-            disabled={analyzeGraphMutation.isPending}
-            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-          >
-            {analyzeGraphMutation.isPending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Sparkles className="w-4 h-4 mr-2" />
-            )}
-            Análise AI
           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      {graphStats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {[
-            { icon: Database, label: 'Total de Nós', value: graphStats.total_nodes, color: 'from-blue-500 to-cyan-500' },
-            { icon: GitMerge, label: 'Relacionamentos', value: graphStats.total_relationships, color: 'from-green-500 to-emerald-500' },
-            { icon: BarChart3, label: 'Tipos de Nós', value: Object.keys(graphStats.nodes_by_type).length, color: 'from-purple-500 to-pink-500' },
-            { icon: TrendingUp, label: 'Conexões Médias', value: graphStats.avg_connections, color: 'from-orange-500 to-red-500' }
-          ].map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="bg-white/5 border-white/10">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-slate-400 mb-1">{stat.label}</p>
-                        <p className="text-2xl font-bold text-white">{stat.value}</p>
-                      </div>
-                      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
-      )}
+      {/* Stats */}
+      <div className="grid grid-cols-4 gap-4">
+        <Card className="bg-white/5 border-white/10">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Total Entities</p>
+                <p className="text-2xl font-bold text-white">{nodes.length}</p>
+              </div>
+              <Network className="w-8 h-8 text-blue-400 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-white/5 border-white/10">
-          <TabsTrigger value="visualization">Visualização Interativa</TabsTrigger>
-          <TabsTrigger value="insights">Insights AI</TabsTrigger>
-        </TabsList>
+        <Card className="bg-white/5 border-white/10">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Relationships</p>
+                <p className="text-2xl font-bold text-white">{relationships.length}</p>
+              </div>
+              <Sparkles className="w-8 h-8 text-purple-400 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
 
-        <TabsContent value="visualization" className="mt-6">
-          {graphLoading ? (
-            <Card className="bg-white/5 border-white/10">
-              <CardContent className="py-12 text-center">
-                <Loader2 className="w-8 h-8 animate-spin text-blue-400 mx-auto mb-3" />
-                <p className="text-slate-400">Carregando grafo...</p>
-              </CardContent>
-            </Card>
-          ) : graphData && graphData.nodes.length > 0 ? (
-            <InteractiveGraphVisualization
-              nodes={graphData.nodes}
-              relationships={graphData.relationships}
-            />
-          ) : (
-            <Card className="bg-white/5 border-white/10">
-              <CardContent className="py-12 text-center">
-                <Network className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                <h3 className="text-white font-semibold mb-2">Knowledge Graph Vazio</h3>
-                <p className="text-slate-400 text-sm mb-6">
-                  Construa o grafo para começar a visualizar relacionamentos entre entidades
+        <Card className="bg-white/5 border-white/10">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">AI Inferred</p>
+                <p className="text-2xl font-bold text-white">
+                  {relationships.filter(r => r.properties?.ai_inferred).length}
                 </p>
-                <Button onClick={() => buildGraphMutation.mutate()} className="bg-blue-600 hover:bg-blue-700">
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Construir Knowledge Graph
-                </Button>
+              </div>
+              <Brain className="w-8 h-8 text-green-400 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white/5 border-white/10">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-slate-400">Node Types</p>
+                <p className="text-2xl font-bold text-white">
+                  {new Set(nodes.map(n => n.node_type)).size}
+                </p>
+              </div>
+              <Network className="w-8 h-8 text-orange-400 opacity-50" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content */}
+      <div className="grid grid-cols-3 gap-6">
+        {/* Graph or AI Assistant */}
+        <div className="col-span-2">
+          {showAIAssistant ? (
+            <div className="h-[600px]">
+              <GraphAIAssistant onEntityClick={handleEntityClick} />
+            </div>
+          ) : (
+            <InteractiveGraphVisualization
+              graphData={graphData}
+              onNodeClick={handleNodeClick}
+              selectedNode={selectedNode}
+              loading={isLoading}
+            />
+          )}
+        </div>
+
+        {/* Side Panels */}
+        <div className="space-y-6">
+          {/* Selected Node */}
+          {selectedNode && (
+            <Card className="bg-blue-500/10 border-blue-500/30">
+              <CardContent className="p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-lg font-bold text-white">{selectedNode.label}</p>
+                    <Badge className="mt-1 bg-blue-500/20 text-blue-400 border-blue-500/30">
+                      {selectedNode.node_type}
+                    </Badge>
+                  </div>
+                </div>
+                {selectedNode.properties && (
+                  <div className="space-y-1 text-sm">
+                    {Object.entries(selectedNode.properties).slice(0, 5).map(([key, value]) => (
+                      <div key={key} className="flex justify-between">
+                        <span className="text-slate-400">{key}:</span>
+                        <span className="text-white font-medium">
+                          {typeof value === 'string' ? value : JSON.stringify(value)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           )}
-        </TabsContent>
 
-        <TabsContent value="insights" className="mt-6">
-          <GraphInsights />
-        </TabsContent>
-      </Tabs>
+          {/* Relationship Inference */}
+          {selectedNode && (
+            <RelationshipInferencePanel selectedNodeId={selectedNode.id} />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
