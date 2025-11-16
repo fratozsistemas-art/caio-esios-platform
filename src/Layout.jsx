@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +30,8 @@ const navSections = [
   {
     title: "Companies",
     items: [
-      { name: 'Company Discovery', icon: Building2, path: 'CompanyDiscovery', badge: 'ESIOS' }
+      { name: 'Company Discovery', icon: Building2, path: 'CompanyDiscovery', badge: 'ESIOS' },
+      { name: 'Batch Ingestion', icon: Upload, path: 'BatchIngestion', badge: 'BULK' }
     ]
   },
   {

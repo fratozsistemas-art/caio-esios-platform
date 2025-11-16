@@ -21,6 +21,7 @@ import CVMGraph from './pages/CVMGraph';
 import Integrations from './pages/Integrations';
 import CompanyDiscovery from './pages/CompanyDiscovery';
 import CompanyProfile from './pages/CompanyProfile';
+import BatchIngestion from './pages/BatchIngestion';
 import Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "Integrations": Integrations,
     "CompanyDiscovery": CompanyDiscovery,
     "CompanyProfile": CompanyProfile,
+    "BatchIngestion": BatchIngestion,
 }
 
 export const pagesConfig = {
