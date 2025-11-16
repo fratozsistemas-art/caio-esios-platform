@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -185,10 +185,10 @@ export default function InteractiveGraphVisualization({ nodes, relationships }) 
       <CardHeader className="border-b border-white/10">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-white font-semibold text-lg flex items-center gap-2">
+            <CardTitle className="text-white text-lg flex items-center gap-2">
               <Network className="w-5 h-5 text-blue-400" />
               Interactive Knowledge Graph
-            </h3>
+            </CardTitle>
             <p className="text-xs text-slate-400 mt-1">
               {filteredNodes.length} nodes, {filteredRelationships.length} relationships
             </p>
@@ -311,7 +311,6 @@ export default function InteractiveGraphVisualization({ nodes, relationships }) 
                 const isHovered = hoveredNode?.id === node.id;
                 const isExpanded = expandedNodes.has(node.id);
                 const radius = isSelected ? 16 : isHovered ? 14 : 12;
-                const IconComponent = config.icon;
 
                 return (
                   <g
