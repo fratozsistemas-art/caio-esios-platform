@@ -31,6 +31,7 @@ import Notifications from './pages/Notifications';
 import IntegrationHealth from './pages/IntegrationHealth';
 import AgentOrchestration from './pages/AgentOrchestration';
 import CVMIngestion from './pages/CVMIngestion';
+import HermesTrustBroker from './pages/HermesTrustBroker';
 import Layout from './Layout.jsx';
 
 
@@ -68,6 +69,7 @@ export const PAGES = {
     "IntegrationHealth": IntegrationHealth,
     "AgentOrchestration": AgentOrchestration,
     "CVMIngestion": CVMIngestion,
+    "HermesTrustBroker": HermesTrustBroker,
 }
 
 export const pagesConfig = {
