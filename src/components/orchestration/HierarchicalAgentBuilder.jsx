@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { 
   GitMerge, Plus, Trash2, ChevronRight, Settings, 
-  Brain, Workflow, Shield, Zap, Sliders, Wrench, AlertTriangle, MessageCircle
+  Brain, Workflow, Shield, Zap, Sliders, Wrench, AlertTriangle, MessageCircle,
+  BarChart, Code, ShieldAlert
 } from 'lucide-react';
 
 const AGENT_ROLES = [
@@ -18,7 +18,10 @@ const AGENT_ROLES = [
   { value: 'conversational', label: 'Conversational Agent', icon: Brain, description: 'Handles user interaction and onboarding' },
   { value: 'workflow', label: 'Workflow Agent', icon: Workflow, description: 'Executes structured multi-step processes' },
   { value: 'tool', label: 'Tool Agent', icon: Zap, description: 'Isolated agent wrapped as a tool' },
-  { value: 'validator', label: 'Validator Agent', icon: Shield, description: 'Validates outputs and ensures quality' }
+  { value: 'validator', label: 'Validator Agent', icon: Shield, description: 'Validates outputs and ensures quality' },
+  { value: 'data_analyst', label: 'Data Analyst Agent', icon: BarChart, description: 'Processes and visualizes data for insights' },
+  { value: 'code_generation', label: 'Code Generation Agent', icon: Code, description: 'Generates scripts, queries, or code snippets' },
+  { value: 'security', label: 'Security Agent', icon: ShieldAlert, description: 'Monitors workflows for vulnerabilities and risks' }
 ];
 
 const ISOLATION_MODES = [
@@ -51,6 +54,25 @@ const MESSAGE_TYPES = [
   { value: 'validation_request', label: 'Validation Request', description: 'Ask validator to check outputs' },
   { value: 'sync_signal', label: 'Sync Signal', description: 'Synchronization point for parallel agents' }
 ];
+
+const ROLE_DEFAULTS = {
+  data_analyst: {
+    llm_parameters: { temperature: 0.5, top_p: 0.85, max_tokens: 3000 },
+    tool_config: { enabled_tools: ['knowledge_graph', 'entity_crud'], tool_choice: 'auto' },
+    communication_config: { enabled: true, can_send: ['status_update', 'data_request'], can_receive: ['data_request', 'task_delegation'], broadcast_status: true }
+  },
+  code_generation: {
+    llm_parameters: { temperature: 0.2, top_p: 0.8, max_tokens: 4000 },
+    tool_config: { enabled_tools: ['entity_crud'], tool_choice: 'required' },
+    communication_config: { enabled: true, can_send: ['status_update', 'validation_request'], can_receive: ['task_delegation'], broadcast_status: true }
+  },
+  security: {
+    llm_parameters: { temperature: 0.1, top_p: 0.7, max_tokens: 2000 },
+    tool_config: { enabled_tools: [], tool_choice: 'none' },
+    communication_config: { enabled: true, can_send: ['status_update'], can_receive: ['validation_request'], broadcast_status: true },
+    fallback_strategy: { enabled: true, max_retries: 1, strategies: ['abort'], timeout_seconds: 30 }
+  }
+};
 
 export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
   const [selectedAgent, setSelectedAgent] = useState(null);
@@ -122,6 +144,18 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
     const updateInTree = (agents) => {
       return agents.map(agent => {
         if (agent.id === agentId) {
+          // Apply role-based defaults if role is changing
+          if (updates.role && updates.role !== agent.role && ROLE_DEFAULTS[updates.role]) {
+            const defaults = ROLE_DEFAULTS[updates.role];
+            return { 
+              ...agent, 
+              ...updates,
+              llm_parameters: defaults.llm_parameters,
+              tool_config: defaults.tool_config,
+              communication_config: defaults.communication_config,
+              fallback_strategy: defaults.fallback_strategy || agent.fallback_strategy
+            };
+          }
           return { ...agent, ...updates };
         }
         if (agent.sub_agents) {
@@ -219,7 +253,7 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
               <p className="text-sm font-medium text-white">
                 {agent.name || 'Unnamed Agent'}
               </p>
-              <div className="flex gap-2 mt-1">
+              <div className="flex gap-2 mt-1 flex-wrap">
                 <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
                   {roleConfig?.label}
                 </Badge>
@@ -401,6 +435,51 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
                 className="bg-white/5 border-white/10 text-white mt-1 h-24"
               />
             </div>
+
+            {/* Role-specific info banners */}
+            {selectedAgent.role === 'data_analyst' && (
+              <div className="bg-blue-500/10 border border-blue-500/30 rounded p-3">
+                <p className="text-xs text-blue-400 font-medium mb-1">
+                  Data Analyst Agent
+                </p>
+                <p className="text-xs text-slate-300">
+                  Optimized for data processing with moderate creativity. Can access Knowledge Graph and Entity operations by default.
+                </p>
+              </div>
+            )}
+
+            {selectedAgent.role === 'code_generation' && (
+              <div className="bg-green-500/10 border border-green-500/30 rounded p-3">
+                <p className="text-xs text-green-400 font-medium mb-1">
+                  Code Generation Agent
+                </p>
+                <p className="text-xs text-slate-300">
+                  Low temperature for deterministic code output. Tool calling required for safety and validation.
+                </p>
+              </div>
+            )}
+
+            {selectedAgent.role === 'security' && (
+              <div className="bg-red-500/10 border border-red-500/30 rounded p-3">
+                <p className="text-xs text-red-400 font-medium mb-1">
+                  Security Agent
+                </p>
+                <p className="text-xs text-slate-300">
+                  Very low temperature for precise vulnerability detection. Minimal fallback retries - aborts on critical issues.
+                </p>
+              </div>
+            )}
+
+            {selectedAgent.role === 'tool' && (
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded p-3">
+                <p className="text-xs text-amber-400 font-medium mb-1">
+                  Agent-as-a-Tool Pattern
+                </p>
+                <p className="text-xs text-slate-300">
+                  This agent will be wrapped as a tool with isolated state. Perfect for loop iterations.
+                </p>
+              </div>
+            )}
 
             {/* Advanced Configuration */}
             {showAdvanced && (
@@ -736,17 +815,6 @@ export default function HierarchicalAgentBuilder({ agentConfig, onChange }) {
                   )}
                 </div>
               </>
-            )}
-
-            {selectedAgent.role === 'tool' && (
-              <div className="bg-amber-500/10 border border-amber-500/30 rounded p-3">
-                <p className="text-xs text-amber-400 font-medium mb-1">
-                  Agent-as-a-Tool Pattern
-                </p>
-                <p className="text-xs text-slate-300">
-                  This agent will be wrapped as a tool with isolated state. Perfect for loop iterations.
-                </p>
-              </div>
             )}
           </CardContent>
         </Card>

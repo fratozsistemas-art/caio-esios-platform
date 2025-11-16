@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 // Message Bus for inter-agent communication
@@ -26,7 +27,7 @@ class AgentMessageBus {
         } else if (message.to === 'broadcast') {
             // Broadcast to all subscribers
             for (const [agentId, queue] of this.subscribers) {
-                if (agentId !== fromAgentId) {
+                if (agentId !== fromAgentId) { // Don't send message back to sender in broadcast
                     queue.push(messageWithMeta);
                 }
             }
@@ -289,6 +290,7 @@ async function executeAgent(base44, agent, inputs, agentStates, logs, executionI
                 to: 'broadcast',
                 payload: { status: 'failed', agent_name: agent.name, error: error.message }
             });
+            agentStates[agent.id].messages_sent++;
         }
 
         logs.push({
@@ -463,6 +465,15 @@ async function executeAgentCore(base44, agent, inputs, agentStates, logs, execut
         case 'validator':
             outputs = await executeValidatorAgent(base44, agent, processedInputs, messageBus);
             break;
+        case 'data_analyst':
+            outputs = await executeDataAnalystAgent(base44, agent, processedInputs, agentStates, messageBus);
+            break;
+        case 'code_generation':
+            outputs = await executeCodeGenerationAgent(base44, agent, processedInputs, messageBus);
+            break;
+        case 'security':
+            outputs = await executeSecurityAgent(base44, agent, processedInputs, agentStates, messageBus, logs);
+            break;
         default:
             outputs = await executeGenericAgent(base44, agent, processedInputs, messageBus);
     }
@@ -527,7 +538,8 @@ User input: ${JSON.stringify(inputs)}
 Provide a conversational response.`;
 
     const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt
+        prompt: prompt,
+        ...llmParams
     });
 
     return { conversation_response: response };
@@ -545,11 +557,11 @@ async function executeWorkflowAgent(base44, agent, inputs, agentStates, logs, ex
         if (agent.communication_config?.can_send?.includes('data_request')) {
             // Request any available context from peer agents
             for (const [peerId, state] of Object.entries(agentStates)) {
-                if (peerId !== agent.id && state.outputs) {
+                if (peerId !== agent.id && state.outputs && state.status === 'completed') {
                     messageBus.sendMessage(agent.id, {
                         type: 'data_request',
                         to: peerId,
-                        payload: { data_key: 'result' }
+                        payload: { data_key: 'result' } // Assuming 'result' is a common output key
                     });
                     agentStates[agent.id].messages_sent++;
                 }
@@ -598,7 +610,8 @@ Provide structured output.`;
                 confidence: { type: "number" },
                 data: { type: "object" }
             }
-        }
+        },
+        ...llmParams
     });
 
     return response;
@@ -633,7 +646,8 @@ Provide validation results.`;
                 issues: { type: "array", items: { type: "string" } },
                 confidence: { type: "number" }
             }
-        }
+        },
+        ...llmParams
     });
 
     // Send validation results back to requester
@@ -643,6 +657,7 @@ Provide validation results.`;
             to: validationRequests[0].from,
             payload: validation
         });
+        agentStates[agent.id].messages_sent++;
         validationRequests.forEach(req => messageBus.markAsProcessed(req.id));
     }
 
@@ -657,8 +672,210 @@ async function executeGenericAgent(base44, agent, inputs, messageBus) {
 Input: ${JSON.stringify(inputs)}`;
 
     const response = await base44.integrations.Core.InvokeLLM({
-        prompt: prompt
+        prompt: prompt,
+        ...llmParams
     });
 
     return { result: response };
+}
+
+async function executeDataAnalystAgent(base44, agent, inputs, agentStates, messageBus) {
+    const llmParams = agent.llm_parameters || {};
+    
+    // Request additional context from other agents if needed
+    if (agent.communication_config?.can_send?.includes('data_request')) {
+        for (const [peerId, state] of Object.entries(agentStates)) {
+            if (peerId !== agent.id && state.outputs && state.status === 'completed') {
+                messageBus.sendMessage(agent.id, {
+                    type: 'data_request',
+                    to: peerId,
+                    payload: { data_key: 'result' }
+                });
+                agentStates[agent.id].messages_sent++;
+            }
+        }
+    }
+
+    const prompt = `${agent.system_prompt || 'You are a data analyst. Analyze the provided data and extract insights.'}
+
+Data to analyze: ${JSON.stringify(inputs)}
+
+Your tasks:
+1. Identify key patterns and trends
+2. Calculate relevant metrics
+3. Suggest visualizations
+4. Provide actionable insights
+
+Format your response as structured data.`;
+
+    const analysis = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        response_json_schema: {
+            type: "object",
+            properties: {
+                patterns: { type: "array", items: { type: "string" } },
+                metrics: { type: "object" },
+                visualizations: { type: "array", items: { 
+                    type: "object",
+                    properties: {
+                        type: { type: "string" },
+                        data: { type: "object" },
+                        title: { type: "string" }
+                    }
+                }},
+                insights: { type: "array", items: { type: "string" } },
+                recommendations: { type: "array", items: { type: "string" } }
+            }
+        },
+        ...llmParams
+    });
+
+    return {
+        analysis_results: analysis,
+        data_processed: true,
+        agent_type: 'data_analyst'
+    };
+}
+
+async function executeCodeGenerationAgent(base44, agent, inputs, messageBus) {
+    const llmParams = agent.llm_parameters || {};
+    
+    const prompt = `${agent.system_prompt || 'You are a code generation specialist. Generate clean, efficient code based on requirements.'}
+
+Requirements: ${JSON.stringify(inputs)}
+
+Generate code following these guidelines:
+1. Write clean, well-commented code
+2. Include error handling
+3. Follow best practices
+4. Provide usage examples
+
+Output the code with explanations.`;
+
+    const codeGeneration = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        response_json_schema: {
+            type: "object",
+            properties: {
+                code: { type: "string" },
+                language: { type: "string" },
+                explanation: { type: "string" },
+                usage_example: { type: "string" },
+                dependencies: { type: "array", items: { type: "string" } },
+                security_notes: { type: "array", items: { type: "string" } }
+            }
+        },
+        ...llmParams
+    });
+
+    // Send validation request to security agent if configured
+    if (agent.communication_config?.can_send?.includes('validation_request')) {
+        messageBus.sendMessage(agent.id, {
+            type: 'validation_request',
+            to: 'broadcast', // Broadcast for any security agent to pick up
+            payload: {
+                data: {
+                    code: codeGeneration.code,
+                    language: codeGeneration.language
+                },
+                validation_type: 'code_security_scan'
+            }
+        });
+        // Note: we don't increment messages_sent on current agentStates here
+        // as the actual processing of this message happens asynchronously
+        // in another agent. The intent is for the security agent to receive it.
+    }
+
+    return {
+        generated_code: codeGeneration,
+        agent_type: 'code_generation'
+    };
+}
+
+async function executeSecurityAgent(base44, agent, inputs, agentStates, messageBus, logs) {
+    const llmParams = agent.llm_parameters || {};
+    
+    // Collect all agent states for security analysis
+    const workflowContext = {
+        inputs: inputs,
+        agent_states: Object.entries(agentStates).map(([id, state]) => ({
+            agent_id: id,
+            status: state.status,
+            outputs: state.outputs, // Include outputs for more context
+            has_errors: !!state.error
+        })),
+        messages: messageBus.getHistory() // Full communication log for analysis
+    };
+
+    const prompt = `${agent.system_prompt || 'You are a security specialist. Monitor workflows for vulnerabilities, risks, and policy violations.'}
+
+Workflow Context: ${JSON.stringify(workflowContext)}
+
+Analyze for:
+1. Data leakage risks
+2. Injection vulnerabilities
+3. Unauthorized access attempts
+4. Suspicious patterns
+5. Policy violations
+6. Code quality issues (if code is present)
+
+Provide security assessment.`;
+
+    const securityAssessment = await base44.integrations.Core.InvokeLLM({
+        prompt: prompt,
+        response_json_schema: {
+            type: "object",
+            properties: {
+                risk_level: { type: "string", enum: ["low", "medium", "high", "critical"] },
+                vulnerabilities: { type: "array", items: { 
+                    type: "object",
+                    properties: {
+                        type: { type: "string" },
+                        severity: { type: "string" },
+                        description: { type: "string" },
+                        recommendation: { type: "string" }
+                    },
+                    required: ["type", "severity", "description"]
+                }},
+                is_safe: { type: "boolean" },
+                alerts: { type: "array", items: { type: "string" } },
+                recommendations: { type: "array", items: { type: "string" } }
+            },
+            required: ["risk_level", "is_safe"]
+        },
+        ...llmParams
+    });
+
+    // Broadcast critical security alerts
+    if (securityAssessment.risk_level === 'critical' || !securityAssessment.is_safe) {
+        messageBus.sendMessage(agent.id, {
+            type: 'status_update',
+            to: 'broadcast',
+            payload: {
+                alert_type: 'security_critical',
+                risk_level: securityAssessment.risk_level,
+                vulnerabilities: securityAssessment.vulnerabilities,
+                is_safe: securityAssessment.is_safe,
+                source_agent: agent.id
+            }
+        });
+        agentStates[agent.id].messages_sent++;
+
+        logs.push({
+            timestamp: new Date().toISOString(),
+            level: 'error',
+            message: `SECURITY ALERT: ${securityAssessment.risk_level} risk detected - ${securityAssessment.alerts.join(', ')}`
+        });
+
+        // Abort if critical and configured
+        if (agent.fallback_strategy?.strategies?.includes('abort') && (securityAssessment.risk_level === 'critical' || !securityAssessment.is_safe)) {
+            throw new Error(`Security Agent detected critical issue, aborting workflow: ${securityAssessment.alerts[0] || 'Unknown security threat.'}`);
+        }
+    }
+
+    return {
+        security_assessment: securityAssessment,
+        agent_type: 'security',
+        workflow_safe: securityAssessment.is_safe
+    };
 }
