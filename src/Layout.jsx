@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -26,6 +25,12 @@ const navSections = [
       { name: 'Knowledge Management', icon: BookOpen, path: 'KnowledgeManagement' },
       { name: 'Knowledge Graph', icon: Network, path: 'KnowledgeGraph' },
       { name: 'CVM Graph', icon: Database, path: 'CVMGraph', badge: 'Neo4j' }
+    ]
+  },
+  {
+    title: "Companies",
+    items: [
+      { name: 'Company Discovery', icon: Building2, path: 'CompanyDiscovery', badge: 'ESIOS' }
     ]
   },
   {
