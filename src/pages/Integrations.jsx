@@ -6,6 +6,7 @@ import NetworkingInsights from "../components/networking/NetworkingInsights";
 import IntegrationManagementPanel from "../components/integrations/IntegrationManagementPanel";
 import RAGDocumentSearch from "../components/integrations/RAGDocumentSearch";
 import SocialMediaConnector from "../components/integrations/SocialMediaConnector";
+import AutoEnrichment from "../components/integrations/AutoEnrichment";
 import { Database } from "lucide-react";
 
 export default function Integrations() {
@@ -22,6 +23,9 @@ export default function Integrations() {
       </div>
 
       <div className="space-y-6">
+        {/* Auto Enrichment */}
+        <AutoEnrichment />
+
         {/* RAG Document Search */}
         <RAGDocumentSearch />
 

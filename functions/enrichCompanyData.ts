@@ -11,231 +11,207 @@ Deno.serve(async (req) => {
 
         const { company_id } = await req.json();
 
-        if (!company_id) {
-            return Response.json({ error: 'company_id is required' }, { status: 400 });
-        }
+        // Buscar empresa
+        const companies = company_id 
+            ? await base44.asServiceRole.entities.Company.filter({ id: company_id })
+            : await base44.asServiceRole.entities.Company.list();
 
-        // Get company data
-        const companies = await base44.entities.Company.filter({ id: company_id });
         if (!companies || companies.length === 0) {
-            return Response.json({ error: 'Company not found' }, { status: 404 });
+            return Response.json({ error: 'No companies found' }, { status: 404 });
         }
 
-        const company = companies[0];
-        const enrichmentResults = {
+        const results = {
+            processed: 0,
             executives_found: 0,
             partnerships_found: 0,
-            linkedin_updated: false,
+            linkedin_profiles_linked: 0,
             errors: []
         };
 
-        // Step 1: Extract key personnel from CVM documents
-        try {
-            const personnelPrompt = `
-                Analyze the following company information and extract key personnel:
-                Company: ${company.legal_name} (${company.trade_name || 'N/A'})
-                CNPJ: ${company.cnpj || 'N/A'}
-                Industry: ${company.industry || 'N/A'}
-                Partners from QSA: ${JSON.stringify(company.partners || [])}
+        for (const company of companies) {
+            try {
+                // 1. EXTRAIR EXECUTIVOS DE DOCUMENTOS CVM
+                const executivesPrompt = `
+Busque informações sobre a empresa ${company.legal_name} (CNPJ: ${company.cnpj || 'N/A'}) em documentos da CVM, press releases e filings públicos.
 
-                Based on this information, identify key executives (CEO, CFO, CTO, Directors, etc.).
-                For each executive found, return their full name, role, and any other details.
+Extraia:
+- Nome completo dos principais executivos (CEO, CFO, CTO, Diretores, Conselheiros)
+- Cargo/função atual
+- Informações de background (se disponíveis)
 
-                IMPORTANT: Return ONLY a JSON array, no markdown, no explanation.
-                Format: [{"full_name": "Name", "role": "Position", "source": "QSA" or "Public filings"}]
-            `;
+Retorne apenas executivos confirmados em fontes oficiais.
+`;
 
-            const personnelResponse = await base44.integrations.Core.InvokeLLM({
-                prompt: personnelPrompt,
-                add_context_from_internet: true,
-                response_json_schema: {
-                    type: "object",
-                    properties: {
-                        executives: {
-                            type: "array",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    full_name: { type: "string" },
-                                    role: { type: "string" },
-                                    source: { type: "string" }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            const executives = personnelResponse.executives || [];
-            
-            // Create or update Person entities
-            for (const exec of executives) {
-                try {
-                    // Check if person already exists
-                    const existingPersons = await base44.entities.Person.filter({
-                        full_name: exec.full_name,
-                        company_id: company.id
-                    });
-
-                    if (existingPersons.length === 0) {
-                        await base44.entities.Person.create({
-                            full_name: exec.full_name,
-                            role: exec.role,
-                            company_id: company.id,
-                            background: {
-                                source: exec.source
-                            }
-                        });
-                        enrichmentResults.executives_found++;
-                    }
-                } catch (error) {
-                    enrichmentResults.errors.push(`Failed to create person ${exec.full_name}: ${error.message}`);
-                }
-            }
-        } catch (error) {
-            enrichmentResults.errors.push(`Personnel extraction failed: ${error.message}`);
-        }
-
-        // Step 2: Identify strategic partnerships from news
-        try {
-            const partnershipPrompt = `
-                Search for recent news and press releases about strategic partnerships involving the company:
-                ${company.legal_name} (${company.trade_name || ''})
-                CNPJ: ${company.cnpj}
-                Industry: ${company.industry}
-
-                Find partnerships, acquisitions, joint ventures, strategic alliances, supplier/customer relationships.
-                
-                IMPORTANT: Return ONLY a JSON object, no markdown, no explanation.
-                Format: {
-                    "partnerships": [
-                        {
-                            "partner_company_name": "Company Name",
-                            "relationship_type": "partner|supplier|customer|investor|subsidiary",
-                            "description": "Brief description",
-                            "source": "News URL or source"
-                        }
-                    ]
-                }
-            `;
-
-            const partnershipResponse = await base44.integrations.Core.InvokeLLM({
-                prompt: partnershipPrompt,
-                add_context_from_internet: true,
-                response_json_schema: {
-                    type: "object",
-                    properties: {
-                        partnerships: {
-                            type: "array",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    partner_company_name: { type: "string" },
-                                    relationship_type: { type: "string" },
-                                    description: { type: "string" },
-                                    source: { type: "string" }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-
-            const partnerships = partnershipResponse.partnerships || [];
-
-            // Create CompanyRelationship entities
-            for (const partnership of partnerships) {
-                try {
-                    // Try to find or create target company
-                    let targetCompanies = await base44.entities.Company.filter({
-                        legal_name: partnership.partner_company_name
-                    });
-
-                    let targetCompanyId;
-                    if (targetCompanies.length === 0) {
-                        // Create minimal company record
-                        const newCompany = await base44.entities.Company.create({
-                            legal_name: partnership.partner_company_name,
-                            data_sources: ['news_extraction']
-                        });
-                        targetCompanyId = newCompany.id;
-                    } else {
-                        targetCompanyId = targetCompanies[0].id;
-                    }
-
-                    // Check if relationship already exists
-                    const existingRels = await base44.entities.CompanyRelationship.filter({
-                        source_company_id: company.id,
-                        target_company_id: targetCompanyId
-                    });
-
-                    if (existingRels.length === 0) {
-                        await base44.entities.CompanyRelationship.create({
-                            source_company_id: company.id,
-                            target_company_id: targetCompanyId,
-                            relationship_type: partnership.relationship_type,
-                            description: partnership.description,
-                            source: partnership.source,
-                            validated: false,
-                            strength: 50
-                        });
-                        enrichmentResults.partnerships_found++;
-                    }
-                } catch (error) {
-                    enrichmentResults.errors.push(`Failed to create partnership with ${partnership.partner_company_name}: ${error.message}`);
-                }
-            }
-        } catch (error) {
-            enrichmentResults.errors.push(`Partnership extraction failed: ${error.message}`);
-        }
-
-        // Step 3: Link company website to LinkedIn profile
-        try {
-            if (company.website) {
-                const linkedinPrompt = `
-                    Find the official LinkedIn company profile URL for:
-                    Company: ${company.legal_name}
-                    Website: ${company.website}
-                    Industry: ${company.industry || 'N/A'}
-
-                    IMPORTANT: Return ONLY a JSON object with the LinkedIn URL, no markdown, no explanation.
-                    Format: {"linkedin_url": "https://linkedin.com/company/..." or null if not found}
-                `;
-
-                const linkedinResponse = await base44.integrations.Core.InvokeLLM({
-                    prompt: linkedinPrompt,
+                const executivesResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+                    prompt: executivesPrompt,
                     add_context_from_internet: true,
                     response_json_schema: {
                         type: "object",
                         properties: {
-                            linkedin_url: { type: "string" }
+                            executives: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        full_name: { type: "string" },
+                                        role: { type: "string" },
+                                        background: { type: "string" }
+                                    }
+                                }
+                            }
                         }
                     }
                 });
 
-                if (linkedinResponse.linkedin_url && linkedinResponse.linkedin_url !== company.linkedin_url) {
-                    await base44.entities.Company.update(company.id, {
-                        linkedin_url: linkedinResponse.linkedin_url
-                    });
-                    enrichmentResults.linkedin_updated = true;
+                // Criar/atualizar entidades Person
+                if (executivesResponse.executives && executivesResponse.executives.length > 0) {
+                    for (const exec of executivesResponse.executives) {
+                        // Verificar se já existe
+                        const existing = await base44.asServiceRole.entities.Person.filter({
+                            company_id: company.id,
+                            full_name: exec.full_name
+                        });
+
+                        if (existing.length === 0) {
+                            await base44.asServiceRole.entities.Person.create({
+                                full_name: exec.full_name,
+                                role: exec.role,
+                                company_id: company.id,
+                                background: exec.background ? {
+                                    notes: exec.background
+                                } : undefined
+                            });
+                            results.executives_found++;
+                        }
+                    }
                 }
+
+                // 2. IDENTIFICAR PARCERIAS ESTRATÉGICAS
+                const partnershipsPrompt = `
+Busque notícias recentes (últimos 12 meses) sobre ${company.legal_name}.
+
+Identifique:
+- Parcerias estratégicas anunciadas
+- Nome da empresa parceira
+- Tipo de parceria (fornecedor, cliente, investidor, joint venture, etc.)
+- Descrição breve da parceria
+
+Apenas parcerias confirmadas em fontes confiáveis.
+`;
+
+                const partnershipsResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+                    prompt: partnershipsPrompt,
+                    add_context_from_internet: true,
+                    response_json_schema: {
+                        type: "object",
+                        properties: {
+                            partnerships: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        partner_name: { type: "string" },
+                                        relationship_type: { 
+                                            type: "string",
+                                            enum: ["partner", "supplier", "customer", "investor", "acquirer"]
+                                        },
+                                        description: { type: "string" }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+                // Criar relationships
+                if (partnershipsResponse.partnerships && partnershipsResponse.partnerships.length > 0) {
+                    for (const partnership of partnershipsResponse.partnerships) {
+                        // Buscar ou criar empresa parceira
+                        let partnerCompanies = await base44.asServiceRole.entities.Company.filter({
+                            legal_name: partnership.partner_name
+                        });
+
+                        let partnerId;
+                        if (partnerCompanies.length === 0) {
+                            // Criar stub da empresa parceira
+                            const newPartner = await base44.asServiceRole.entities.Company.create({
+                                legal_name: partnership.partner_name,
+                                status: 'active'
+                            });
+                            partnerId = newPartner.id;
+                        } else {
+                            partnerId = partnerCompanies[0].id;
+                        }
+
+                        // Verificar se relacionamento já existe
+                        const existingRel = await base44.asServiceRole.entities.CompanyRelationship.filter({
+                            source_company_id: company.id,
+                            target_company_id: partnerId
+                        });
+
+                        if (existingRel.length === 0) {
+                            await base44.asServiceRole.entities.CompanyRelationship.create({
+                                source_company_id: company.id,
+                                target_company_id: partnerId,
+                                relationship_type: partnership.relationship_type,
+                                description: partnership.description,
+                                strength: 70,
+                                validated: true,
+                                source: 'ai_news_extraction'
+                            });
+                            results.partnerships_found++;
+                        }
+                    }
+                }
+
+                // 3. VINCULAR A PERFIS DO LINKEDIN
+                if (company.website) {
+                    const linkedinPrompt = `
+Encontre o perfil oficial do LinkedIn da empresa ${company.legal_name}.
+Website oficial: ${company.website}
+
+Retorne apenas se tiver certeza que é o perfil correto.
+`;
+
+                    const linkedinResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
+                        prompt: linkedinPrompt,
+                        add_context_from_internet: true,
+                        response_json_schema: {
+                            type: "object",
+                            properties: {
+                                linkedin_url: { type: "string" },
+                                found: { type: "boolean" }
+                            }
+                        }
+                    });
+
+                    if (linkedinResponse.found && linkedinResponse.linkedin_url && !company.linkedin_url) {
+                        await base44.asServiceRole.entities.Company.update(company.id, {
+                            linkedin_url: linkedinResponse.linkedin_url
+                        });
+                        results.linkedin_profiles_linked++;
+                    }
+                }
+
+                results.processed++;
+
+            } catch (error) {
+                results.errors.push({
+                    company_name: company.legal_name,
+                    error: error.message
+                });
             }
-        } catch (error) {
-            enrichmentResults.errors.push(`LinkedIn linking failed: ${error.message}`);
         }
 
         return Response.json({
             success: true,
-            company_name: company.legal_name,
-            enrichment_results: enrichmentResults,
-            message: `Enrichment complete: ${enrichmentResults.executives_found} executives, ${enrichmentResults.partnerships_found} partnerships found`
+            results
         });
 
     } catch (error) {
-        console.error('Enrichment error:', error);
         return Response.json({ 
             error: error.message,
-            details: error.stack 
+            details: 'Failed to enrich company data'
         }, { status: 500 });
     }
 });
