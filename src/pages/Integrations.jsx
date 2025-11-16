@@ -6,7 +6,7 @@ import NetworkingInsights from "../components/networking/NetworkingInsights";
 import IntegrationManagementPanel from "../components/integrations/IntegrationManagementPanel";
 import RAGDocumentSearch from "../components/integrations/RAGDocumentSearch";
 import SocialMediaConnector from "../components/integrations/SocialMediaConnector";
-import AutoEnrichment from "../components/integrations/AutoEnrichment";
+import ExternalDataHub from "../components/integrations/ExternalDataHub";
 import { Database } from "lucide-react";
 
 export default function Integrations() {
@@ -18,13 +18,13 @@ export default function Integrations() {
         </div>
         <div>
           <h1 className="text-3xl font-bold text-white">Integrations</h1>
-          <p className="text-slate-400">Conecte fontes de dados, analise documentos e gerencie integrações</p>
+          <p className="text-slate-400">Connect external data sources for strategic intelligence</p>
         </div>
       </div>
 
       <div className="space-y-6">
-        {/* Auto Enrichment */}
-        <AutoEnrichment />
+        {/* External Data Hub - Financial, News, Social */}
+        <ExternalDataHub />
 
         {/* RAG Document Search */}
         <RAGDocumentSearch />
