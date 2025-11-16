@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -56,7 +56,8 @@ const navSections = [
     items: [
       { name: 'Analytics', icon: BarChart3, path: 'Analytics', badge: 'NEW' },
       { name: 'Notifications', icon: Bell, path: 'Notifications' },
-      { name: 'System Health', icon: Activity, path: 'SystemHealth', badge: 'NEW' }
+      { name: 'System Health', icon: Activity, path: 'SystemHealth', badge: 'NEW' },
+      { name: 'Integration Health', icon: HeartPulse, path: 'IntegrationHealth', badge: 'NEW' }
     ]
   },
   {
