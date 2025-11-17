@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -19,6 +20,7 @@ import AgentOrchestrationPanel from "../components/chat/AgentOrchestrationPanel"
 import OrchestrationDashboard from "../components/orchestration/OrchestrationDashboard";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import ModelSelector from "../components/chat/ModelSelector";
 
 export default function Chat() {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -35,6 +37,7 @@ export default function Chat() {
   const [lastOrchestration, setLastOrchestration] = useState(null);
   const [showOrchestrationDashboard, setShowOrchestrationDashboard] = useState(false);
   const [activeOrchestration, setActiveOrchestration] = useState(null);
+  const [selectedModel, setSelectedModel] = useState('standard');
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -91,7 +94,8 @@ export default function Chat() {
         metadata: {
           created_at: new Date().toISOString(),
           persona: agentPersona,
-          orchestration_enabled: useOrchestration
+          orchestration_enabled: useOrchestration,
+          selected_model: selectedModel
         }
       });
       setSelectedConversation(newConv);
@@ -141,7 +145,8 @@ export default function Chat() {
           user_message: messageContent,
           conversation_id: selectedConversation.id,
           conversation_history: messages,
-          user_profile_id: selectedConversation.metadata?.behavioral_profile_id
+          user_profile_id: selectedConversation.metadata?.behavioral_profile_id,
+          selected_model: selectedModel
         });
 
         if (data.success) {
@@ -160,7 +165,8 @@ export default function Chat() {
             metadata: {
               orchestration: data.orchestration,
               crv_scores: data.response.crv_scores,
-              source_agents: data.response.source_agents
+              source_agents: data.response.source_agents,
+              model_used: selectedModel
             }
           });
 
@@ -175,7 +181,10 @@ export default function Chat() {
         await base44.agents.addMessage(selectedConversation, {
           role: "user",
           content: messageContent || "Analyze these files",
-          file_urls: filesToSend.map((f) => f.url)
+          file_urls: filesToSend.map((f) => f.url),
+          metadata: {
+            selected_model: selectedModel
+          }
         });
       }
     } catch (error) {
@@ -309,6 +318,11 @@ export default function Chat() {
               </div>
               
               <div className="flex items-center gap-3">
+                <ModelSelector 
+                  selectedModel={selectedModel}
+                  onModelChange={setSelectedModel}
+                />
+
                 <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/10">
                   <GitMerge className="w-4 h-4 text-purple-400" />
                   <Label htmlFor="orchestration" className="text-xs text-slate-300 cursor-pointer">
