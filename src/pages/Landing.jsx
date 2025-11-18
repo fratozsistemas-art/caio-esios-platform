@@ -660,12 +660,55 @@ export default function Landing() {
 
           {/* Grid com card destaque e cards menores */}
           <div className="grid gap-4 md:grid-cols-4 auto-rows-[minmax(0,1fr)] mb-10">
+            {tsiModules.slice(0, 4).map((module) => {
+              const Icon = module.icon;
+              const isActive = activeModule === module.id;
+              return (
+                <motion.div
+                  key={module.id}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => setActiveModule(module.id)}
+                  className="col-span-4 md:col-span-1 cursor-pointer"
+                >
+                  <Card
+                    className={`h-full transition-all duration-300 ${
+                      isActive
+                        ? "bg-gradient-to-br from-cyan-500/20 to-yellow-400/20 border-cyan-300/60 shadow-lg shadow-cyan-400/25"
+                        : "bg-white/5 border-white/10 hover:bg-white/10"
+                    }`}
+                  >
+                    <CardContent className="p-4 h-full flex flex-col md:flex-row gap-4">
+                      <div className="flex flex-col items-center md:items-start gap-2 md:w-2/5">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center">
+                          <Icon className="w-5 h-5 text-slate-950" />
+                        </div>
+                        <Badge className="bg-white/10 text-white text-[10px]">
+                          {module.id}
+                        </Badge>
+                        <span className="text-[11px] text-slate-300 text-center md:text-left">
+                          {module.tag}
+                        </span>
+                      </div>
+                      <div className="flex-1 text-left">
+                        <h3 className="font-semibold text-white text-sm mb-1">
+                          {module.name}
+                        </h3>
+                        <p className="text-xs text-slate-200 leading-relaxed">
+                          {module.description}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+
             {featuredModule && (
               <motion.div
                 key={featuredModule.id}
                 whileHover={{ scale: 1.01 }}
                 onClick={() => setActiveModule(featuredModule.id)}
-                className="col-span-4 md:col-span-3 cursor-pointer"
+                className="col-span-4 md:col-span-2 cursor-pointer"
               >
                 <Card
                   className={`h-full transition-all duration-300 ${
@@ -717,7 +760,7 @@ export default function Landing() {
               </motion.div>
             )}
 
-            {otherModules.map((module) => {
+            {tsiModules.slice(6).map((module) => {
               const Icon = module.icon;
               const isActive = activeModule === module.id;
               return (
