@@ -20,6 +20,7 @@ import PatternEvolutionChart from "@/components/behavioral/PatternEvolutionChart
 import ClientComparison from "@/components/behavioral/ClientComparison";
 import ArchetypeAnalytics from "@/components/behavioral/ArchetypeAnalytics";
 import PredictiveInsights from "@/components/behavioral/PredictiveInsights";
+import ArchetypeMatchingResults from "@/components/behavioral/ArchetypeMatchingResults";
 
 export default function BehavioralIntelligence() {
   const queryClient = useQueryClient();
@@ -122,9 +123,42 @@ export default function BehavioralIntelligence() {
     ? allEngagements.filter(e => e.behavioral_profile_id === selectedProfile.id)
     : [];
 
+  // Enhanced archetype matching mutation
+  const archetypeMatchMutation = useMutation({
+    mutationFn: (profileId) => base44.functions.invoke('enhancedArchetypeMatching', { profile_id: profileId }),
+    onSuccess: (response) => {
+      setSelectedProfile(profiles.find(p => p.id === response.data.profile_id));
+      setPredictions(response.data);
+      toast.success('Archetype analysis complete!');
+    },
+    onError: () => toast.error('Failed to analyze archetype')
+  });
+
   const handlePredictNeeds = (profile) => {
     setSelectedProfile(profile);
     predictMutation.mutate(profile.id);
+  };
+
+  const handleAnalyzeArchetype = (profile) => {
+    setSelectedProfile(profile);
+    archetypeMatchMutation.mutate(profile.id);
+  };
+
+  const handleApplyMatch = async (matchData) => {
+    if (!selectedProfile || !matchData) return;
+    
+    try {
+      await base44.entities.BehavioralProfile.update(selectedProfile.id, {
+        primary_archetype_id: matchData.archetype_identifier,
+        archetype_confidence: Math.round(matchData.score),
+        archetype_validation_status: matchData.score >= 80 ? 'VALIDATED' : matchData.score >= 65 ? 'EMERGING' : 'HYPOTHESIS'
+      });
+      
+      queryClient.invalidateQueries(['behavioralProfiles']);
+      toast.success('Archetype match applied to profile!');
+    } catch (error) {
+      toast.error('Failed to update profile');
+    }
   };
 
   return (
@@ -455,6 +489,20 @@ export default function BehavioralIntelligence() {
                                 <Button
                                   variant="outline"
                                   size="sm"
+                                  onClick={() => handleAnalyzeArchetype(profile)}
+                                  disabled={archetypeMatchMutation.isPending}
+                                  className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                                  title="Enhanced Archetype Matching"
+                                >
+                                  {archetypeMatchMutation.isPending ? (
+                                    <div className="w-4 h-4 animate-spin rounded-full border-2 border-cyan-400 border-t-transparent" />
+                                  ) : (
+                                    <Brain className="w-4 h-4" />
+                                  )}
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
                                   onClick={() => handlePredictNeeds(profile)}
                                   disabled={predictMutation.isPending}
                                   className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
@@ -490,23 +538,30 @@ export default function BehavioralIntelligence() {
         <TabsContent value="predictions" className="space-y-6">
           {selectedProfile && predictions ? (
             <div className="space-y-4">
-              <Card className="bg-white/5 border-white/10">
-                <CardHeader>
-                  <CardTitle className="text-white">
-                    Predictions for {selectedProfile.client_name}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <PredictiveInsights predictions={predictions} />
-                </CardContent>
-              </Card>
+              {predictions.primary_match ? (
+                <ArchetypeMatchingResults 
+                  matchingData={predictions} 
+                  onApplyMatch={handleApplyMatch}
+                />
+              ) : (
+                <Card className="bg-white/5 border-white/10">
+                  <CardHeader>
+                    <CardTitle className="text-white">
+                      Predictions for {selectedProfile.client_name}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <PredictiveInsights predictions={predictions} />
+                  </CardContent>
+                </Card>
+              )}
             </div>
           ) : (
             <Card className="bg-white/5 border-white/10">
               <CardContent className="p-8 text-center">
                 <Sparkles className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                 <p className="text-slate-400 mb-4">
-                  Select a client profile and click the ⚡ button to generate predictive insights
+                  Click <Brain className="w-4 h-4 inline text-cyan-400" /> for enhanced archetype matching or <Zap className="w-4 h-4 inline text-purple-400" /> for predictive insights
                 </p>
               </CardContent>
             </Card>
