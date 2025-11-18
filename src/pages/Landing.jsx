@@ -156,6 +156,20 @@ export default function Landing() {
       description: 'Investor mapping, fundraising strategy, valuation benchmarks',
       icon: TrendingUp,
       color: 'from-violet-500 to-purple-500'
+    },
+    {
+      id: 'M10',
+      name: 'Behavioral Intelligence',
+      description: 'Client archetype detection, engagement patterns, predictive needs analysis',
+      icon: Users,
+      color: 'from-cyan-500 to-teal-500'
+    },
+    {
+      id: 'M11',
+      name: 'Hermes Trust-Broker',
+      description: 'Cognitive integrity, narrative coherence, board-management mediation',
+      icon: Shield,
+      color: 'from-emerald-500 to-green-500'
     }
   ];
 
@@ -299,7 +313,7 @@ export default function Landing() {
       features: [
         "Unlimited conversations with CAIO",
         "All 48+ Quick Actions",
-        "TSI+ Methodology (9 modules)",
+        "TSI+ Methodology (11 modules)",
         "Strategic analysis reports",
         "Investment memos & frameworks",
         "ROI calculators",
@@ -470,7 +484,7 @@ export default function Landing() {
             {/* Stats Bar - Enhanced */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
               {[
-                { icon: Layers, label: '9 Analytical Modules', value: 'TSI v6.0+', color: 'blue' },
+                { icon: Layers, label: '11 Analytical Modules', value: 'TSI v6.0+', color: 'blue' },
                 { icon: Network, label: 'Strategic Connections', value: '10K+', color: 'purple' },
                 { icon: Zap, label: 'Faster than Consultants', value: '95%', color: 'green' },
                 { icon: DollarSign, label: 'Avg. Annual Savings', value: '$180K', color: 'orange' }
@@ -508,10 +522,10 @@ export default function Landing() {
               🎯 TSI v6.0+ Methodology
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              9-Module Strategic Intelligence System
+              11-Module Strategic Intelligence System
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              Unlike ChatGPT or Claude, CAIO uses a proprietary <span className="text-blue-400 font-semibold">9-module analytical framework</span> designed for strategic decision-making
+              Unlike ChatGPT or Claude, CAIO uses a proprietary <span className="text-blue-400 font-semibold">11-module analytical framework</span> covering strategy, intelligence, and governance
             </p>
           </div>
 
