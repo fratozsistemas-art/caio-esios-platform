@@ -41,7 +41,7 @@ export default function ConversationList({
   const deleteSingleMutation = useMutation({
     mutationFn: async (conversationId) => {
       const conv = conversations.find(c => c.id === conversationId);
-      await base44.asServiceRole.agents.updateConversation(conversationId, {
+      await base44.agents.updateConversation(conversationId, {
         metadata: {
           ...conv.metadata,
           deleted: true,
@@ -53,6 +53,10 @@ export default function ConversationList({
       queryClient.invalidateQueries(['conversations']);
       onDeleteConversation?.();
       toast.success("Conversa deletada");
+    },
+    onError: (error) => {
+      console.error('Erro ao deletar conversa:', error);
+      toast.error("Falha ao deletar conversa");
     }
   });
 
@@ -133,8 +137,12 @@ export default function ConversationList({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
-                    onClick={() => deleteSingleMutation.mutate(conv.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteSingleMutation.mutate(conv.id);
+                    }}
                     className="text-red-400"
+                    disabled={deleteSingleMutation.isPending}
                   >
                     <Trash2 className="w-4 h-4 mr-2" />
                     Deletar
