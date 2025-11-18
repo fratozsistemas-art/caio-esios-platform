@@ -198,7 +198,7 @@ export default function BehavioralIntelligence() {
           </p>
         </div>
         <Link to={createPageUrl("Chat")}>
-          <Button className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+          <Button className="bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
             <Plus className="w-4 h-4 mr-2" />
             New Client Profile
           </Button>
@@ -391,7 +391,7 @@ export default function BehavioralIntelligence() {
                       : 'No client profiles yet'}
                   </p>
                   <Link to={createPageUrl("Chat")}>
-                    <Button className="bg-blue-600 hover:bg-blue-700">
+                    <Button className="bg-cyan-600 hover:bg-cyan-700">
                       <Plus className="w-4 h-4 mr-2" />
                       Create First Profile
                     </Button>

@@ -139,7 +139,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950">
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-white/10">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
@@ -220,12 +220,12 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         key={item.path}
                         to={createPageUrl(item.path)}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'text-slate-300 hover:bg-white/5 hover:text-white border border-transparent'}`}
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-300 hover:bg-white/5 hover:text-white border border-transparent'}`}
                       >
                         <Icon className="w-5 h-5 flex-shrink-0" />
                         <span className="text-sm font-medium flex-1 truncate">{item.name}</span>
                         {item.badge && (
-                          <Badge className="text-xs bg-blue-500/20 text-blue-400 border-blue-500/30">
+                          <Badge className="text-xs bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
                             {item.badge}
                           </Badge>
                         )}
@@ -241,7 +241,7 @@ export default function Layout({ children, currentPageName }) {
         {user && (
           <div className="p-4 border-t border-white/10">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-yellow-500 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">
                   {user.full_name?.charAt(0) || 'U'}
                 </span>

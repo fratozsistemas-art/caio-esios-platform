@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
@@ -258,7 +257,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
       {showOrchestrationDashboard && activeOrchestration &&
       <OrchestrationDashboard
         orchestrationData={activeOrchestration}
@@ -277,7 +276,7 @@ export default function Chat() {
         <div className="p-4 border-b border-white/10">
           <Button
             onClick={handleCreateConversation}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+            className="w-full bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
             <Plus className="w-4 h-4 mr-2" />
             New Conversation
           </Button>
@@ -371,7 +370,7 @@ export default function Chat() {
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {!selectedConversation ?
             <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-yellow-500 flex items-center justify-center">
                   <MessageSquare className="w-10 h-10 text-white" />
                 </div>
                 <div>
@@ -383,7 +382,7 @@ export default function Chat() {
                 <div className="flex gap-3">
                   <Button
                   onClick={handleCreateConversation}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                  className="bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
                     <Plus className="w-4 h-4 mr-2" />
                     Start New Conversation
                   </Button>
@@ -398,7 +397,7 @@ export default function Chat() {
             messages.length === 0 ?
             <div className="flex items-center justify-center h-full">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-yellow-500 flex items-center justify-center mx-auto">
                     <MessageSquare className="w-8 h-8 text-white" />
                   </div>
                   <div>
@@ -494,7 +493,7 @@ export default function Chat() {
                   <Button
                   onClick={handleSendMessage}
                   disabled={isSending || !userInput.trim() && uploadedFiles.length === 0}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600">
+                  className="bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
                     <Send className="w-5 h-5" />
                   </Button>
                 </div>
