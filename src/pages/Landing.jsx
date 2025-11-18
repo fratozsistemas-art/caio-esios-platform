@@ -1,6 +1,5 @@
-
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -9,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Brain, Zap, Shield, TrendingUp, ArrowRight, CheckCircle,
-  X, Mail, Target, BarChart,
+  X, Sparkles, Mail, Target, BarChart, Users, Clock,
   DollarSign, Rocket, FileText, Play, MessageSquare,
-  Network, Layers, Code, Globe, Star, Award, Lightbulb, Search
+  Network, Layers, Activity, Code, Globe, Lock,
+  ChevronRight, Star, Award, Lightbulb, Search
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
@@ -379,12 +379,14 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-blue-500/50">
-                <Brain className="w-6 h-6 text-white" />
-              </div>
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+                alt="CAIO·AI" 
+                className="w-12 h-12 object-contain"
+              />
               <div>
-                <div className="text-xl font-bold text-white">CAIO·AI Platform</div>
-                <div className="text-[10px] text-blue-300 font-medium">Powered by TSI v6.0+ Methodology</div>
+                <div className="text-xl font-bold text-white">CAIO·AI</div>
+                <div className="text-[10px] text-cyan-400 font-medium">powered by FRATOZ</div>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-8">
@@ -432,17 +434,16 @@ export default function Landing() {
 
             {/* Main Headline */}
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Stop Guessing.<br />
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-                Start Strategizing.
+              Raising the bar on<br />
+              <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-yellow-400 bg-clip-text text-transparent">
+                Strategic Dialogue
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed">
-              The only AI platform with <span className="text-blue-400 font-semibold">9-module strategic analysis framework</span>,
-              Knowledge Graph intelligence, and real-time brand monitoring.
+              ESIOS CAIO·AI — your <span className="text-cyan-400 font-semibold">unwavering executive peer</span>.
               <br className="hidden md:block" />
-              <span className="text-purple-400 font-semibold">McKinsey-grade insights</span> in minutes, not weeks.
+              Multi-agent orchestration, behavioral intelligence, and strategic frameworks that evolve with you.
             </p>
 
             {/* Primary CTAs */}
@@ -1036,9 +1037,11 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center shadow-lg">
-                  <Brain className="w-5 h-5 text-white" />
-                </div>
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+                  alt="CAIO·AI" 
+                  className="w-8 h-8 object-contain"
+                />
                 <div className="text-lg font-bold text-white">CAIO·AI</div>
               </div>
               <p className="text-sm text-slate-300">

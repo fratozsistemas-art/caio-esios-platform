@@ -143,7 +143,11 @@ export default function Layout({ children, currentPageName }) {
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-white/10">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
-            <Sparkles className="w-6 h-6 text-blue-400" />
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+              alt="CAIO·AI" 
+              className="w-6 h-6 object-contain"
+            />
             <span className="text-white font-bold text-lg">CAIO·AI</span>
           </div>
           <div className="flex items-center gap-2">
@@ -170,9 +174,11 @@ export default function Layout({ children, currentPageName }) {
       <aside className={`fixed top-0 left-0 h-screen w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+              alt="CAIO·AI" 
+              className="w-10 h-10 object-contain"
+            />
             <div>
               <h1 className="text-white font-bold text-lg">CAIO·AI</h1>
               <p className="text-slate-400 text-xs">Strategic Intelligence</p>
