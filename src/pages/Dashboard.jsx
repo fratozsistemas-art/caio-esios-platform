@@ -15,6 +15,11 @@ import QuickStatsWidget from "../components/dashboard/QuickStatsWidget";
 import ProactiveInsightsWidget from "../components/dashboard/ProactiveInsightsWidget";
 import PredictiveAnalysisWidget from "../components/dashboard/PredictiveAnalysisWidget";
 import CrossPlatformInsightsWidget from "../components/dashboard/CrossPlatformInsightsWidget";
+import UserEngagementChart from "../components/dashboard/UserEngagementChart";
+import ROIProjectionChart from "../components/dashboard/ROIProjectionChart";
+import FeatureAdoptionChart from "../components/dashboard/FeatureAdoptionChart";
+import RealTimeMetrics from "../components/dashboard/RealTimeMetrics";
+import DashboardCustomizer from "../components/dashboard/DashboardCustomizer";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -22,7 +27,13 @@ import { createPageUrl } from "../utils";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [dashboardLayout, setDashboardLayout] = useState('default');
+  const [dashboardLayout, setDashboardLayout] = useState(() => {
+    const saved = localStorage.getItem('dashboard_layout');
+    return saved ? JSON.parse(saved) : ['realtime', 'stats', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
+  });
+  const [engagementData, setEngagementData] = useState([]);
+  const [roiData, setRoiData] = useState([]);
+  const [adoptionData, setAdoptionData] = useState([]);
 
   useEffect(() => {
     base44.auth.me().then(async u => {
