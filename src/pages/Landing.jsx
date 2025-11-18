@@ -31,7 +31,7 @@ import {
   detailedUseCases,
   testimonials,
   plans
-} from "../constants/landing";
+} from "../components/landing";
 
 export default function Landing() {
   const navigate = useNavigate();
