@@ -760,7 +760,7 @@ export default function Landing() {
               </motion.div>
             )}
 
-            {tsiModules.slice(6).map((module) => {
+            {tsiModules.slice(5).map((module) => {
               const Icon = module.icon;
               const isActive = activeModule === module.id;
               return (
