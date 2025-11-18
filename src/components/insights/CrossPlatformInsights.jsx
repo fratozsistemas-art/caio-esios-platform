@@ -176,11 +176,11 @@ export default function CrossPlatformInsights() {
                         <div className="text-white font-medium text-sm mb-1">{topic.topic}</div>
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-slate-400">{topic.mention_count} mentions</span>
-                          <Badge className={
-                            topic.sentiment === 'positive' ? 'bg-green-500/20 text-green-400' :
-                            topic.sentiment === 'negative' ? 'bg-red-500/20 text-red-400' :
-                            'bg-gray-500/20 text-gray-400'
-                          } className="text-xs">
+                          <Badge className={`text-xs ${
+                          topic.sentiment === 'positive' ? 'bg-green-500/20 text-green-400' :
+                          topic.sentiment === 'negative' ? 'bg-red-500/20 text-red-400' :
+                          'bg-gray-500/20 text-gray-400'
+                          }`}>
                             {topic.sentiment}
                           </Badge>
                         </div>
