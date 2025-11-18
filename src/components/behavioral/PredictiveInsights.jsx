@@ -206,11 +206,11 @@ export default function PredictiveInsights({ predictions, onActionClick }) {
               <p className="text-xs text-slate-400">
                 vs {satisfaction_trend.historical_avg} historical avg
               </p>
-              <Badge className={
+              <Badge className={`mt-2 ${
                 satisfaction_trend.trend === 'IMPROVING' ? 'bg-green-500/20 text-green-400' :
                 satisfaction_trend.trend === 'DECLINING' ? 'bg-red-500/20 text-red-400' :
                 'bg-slate-500/20 text-slate-400'
-              } className="mt-2">
+              }`}>
                 {satisfaction_trend.trend}
               </Badge>
             </CardContent>
