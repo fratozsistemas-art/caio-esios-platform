@@ -1,100 +1,146 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Settings2, GripVertical, Eye, EyeOff } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import React, { useState } from "react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Settings, Grip } from "lucide-react";
+import { motion, Reorder } from "framer-motion";
+import { toast } from "sonner";
 
 const AVAILABLE_WIDGETS = [
-  { id: 'quick_stats', label: 'Quick Stats', category: 'overview', defaultVisible: true },
-  { id: 'conversation_history', label: 'Recent Conversations', category: 'activity', defaultVisible: true },
-  { id: 'analysis_insights', label: 'Analysis Insights', category: 'intelligence', defaultVisible: true },
-  { id: 'knowledge_graph', label: 'Knowledge Graph', category: 'intelligence', defaultVisible: true },
-  { id: 'action_items', label: 'Action Items', category: 'tasks', defaultVisible: true },
-  { id: 'proactive_insights', label: 'Proactive Insights', category: 'intelligence', defaultVisible: true },
-  { id: 'predictive_analysis', label: 'Predictive Analysis', category: 'intelligence', defaultVisible: false },
-  { id: 'cross_platform', label: 'Cross-Platform Insights', category: 'intelligence', defaultVisible: false },
-  { id: 'performance', label: 'System Performance', category: 'monitoring', defaultVisible: false },
-  { id: 'notifications', label: 'Notifications', category: 'activity', defaultVisible: true }
+  { id: 'realtime', label: 'Real-Time Metrics', description: 'Live user activity and performance' },
+  { id: 'engagement', label: 'User Engagement', description: 'Session data and trends' },
+  { id: 'roi', label: 'ROI Projection', description: 'Financial performance tracking' },
+  { id: 'adoption', label: 'Feature Adoption', description: 'Feature usage statistics' },
+  { id: 'stats', label: 'Quick Stats', description: 'Key performance indicators' },
+  { id: 'conversations', label: 'Recent Conversations', description: 'Latest chat activity' },
+  { id: 'insights', label: 'Analysis Insights', description: 'AI-generated insights' },
+  { id: 'graph', label: 'Knowledge Graph', description: 'Entity relationships' },
+  { id: 'actions', label: 'Action Items', description: 'Pending tasks' },
+  { id: 'crossplatform', label: 'Cross-Platform', description: 'Multi-source intelligence' },
+  { id: 'proactive', label: 'Proactive Insights', description: 'Predictive analytics' },
+  { id: 'predictive', label: 'Predictive Analysis', description: 'Future projections' }
 ];
 
-export default function DashboardCustomizer({ widgetConfig, onConfigChange }) {
+export default function DashboardCustomizer({ currentLayout, onLayoutChange }) {
   const [open, setOpen] = useState(false);
-  const [localConfig, setLocalConfig] = useState(widgetConfig || AVAILABLE_WIDGETS.map(w => ({ 
-    id: w.id, 
-    visible: w.defaultVisible, 
-    order: AVAILABLE_WIDGETS.indexOf(w) 
-  })));
+  const [selectedWidgets, setSelectedWidgets] = useState(currentLayout || []);
+  const [widgetOrder, setWidgetOrder] = useState(
+    selectedWidgets.map(id => AVAILABLE_WIDGETS.find(w => w.id === id)).filter(Boolean)
+  );
 
-  const toggleWidget = (widgetId) => {
-    setLocalConfig(prev => 
-      prev.map(w => w.id === widgetId ? { ...w, visible: !w.visible } : w)
+  const handleToggleWidget = (widgetId) => {
+    const isSelected = selectedWidgets.includes(widgetId);
+    const newSelected = isSelected
+      ? selectedWidgets.filter(id => id !== widgetId)
+      : [...selectedWidgets, widgetId];
+    
+    setSelectedWidgets(newSelected);
+    setWidgetOrder(
+      newSelected.map(id => AVAILABLE_WIDGETS.find(w => w.id === id)).filter(Boolean)
     );
   };
 
   const handleSave = () => {
-    onConfigChange(localConfig);
+    const orderedIds = widgetOrder.map(w => w.id);
+    onLayoutChange(orderedIds);
+    localStorage.setItem('dashboard_layout', JSON.stringify(orderedIds));
+    toast.success('Dashboard layout saved!');
     setOpen(false);
   };
 
-  const groupedWidgets = AVAILABLE_WIDGETS.reduce((acc, widget) => {
-    if (!acc[widget.category]) acc[widget.category] = [];
-    acc[widget.category].push(widget);
-    return acc;
-  }, {});
+  const handleReset = () => {
+    const defaultLayout = ['realtime', 'stats', 'engagement', 'roi', 'adoption', 'conversations'];
+    setSelectedWidgets(defaultLayout);
+    setWidgetOrder(
+      defaultLayout.map(id => AVAILABLE_WIDGETS.find(w => w.id === id)).filter(Boolean)
+    );
+    toast.info('Layout reset to default');
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="bg-white/5 border-white/10 text-white hover:bg-white/10">
-          <Settings2 className="w-4 h-4 mr-2" />
-          Customize Dashboard
+        <Button variant="outline" className="border-white/10 text-white hover:bg-white/10">
+          <Settings className="w-4 h-4 mr-2" />
+          Customize
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-slate-900 border-slate-700 max-w-2xl">
+      <DialogContent className="bg-slate-900 border-white/10 text-white max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-white">Dashboard Customization</DialogTitle>
+          <DialogTitle className="text-white">Customize Dashboard</DialogTitle>
         </DialogHeader>
-        <div className="space-y-6 max-h-[60vh] overflow-y-auto">
-          {Object.entries(groupedWidgets).map(([category, widgets]) => (
-            <div key={category}>
-              <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
-                {category}
-              </h3>
-              <div className="space-y-2">
-                {widgets.map((widget) => {
-                  const config = localConfig.find(c => c.id === widget.id);
-                  return (
-                    <div
-                      key={widget.id}
-                      className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:bg-white/10 transition-colors"
-                    >
-                      <GripVertical className="w-4 h-4 text-slate-500 cursor-move" />
-                      <Checkbox
-                        checked={config?.visible}
-                        onCheckedChange={() => toggleWidget(widget.id)}
-                        className="border-white/20"
-                      />
-                      <span className="flex-1 text-white text-sm">{widget.label}</span>
-                      {config?.visible ? (
-                        <Eye className="w-4 h-4 text-green-400" />
-                      ) : (
-                        <EyeOff className="w-4 h-4 text-slate-500" />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+        
+        <div className="space-y-6">
+          {/* Widget Selection */}
+          <div>
+            <h3 className="text-sm font-semibold text-slate-300 mb-3">Select Widgets</h3>
+            <div className="grid grid-cols-2 gap-3 max-h-60 overflow-y-auto">
+              {AVAILABLE_WIDGETS.map(widget => (
+                <div
+                  key={widget.id}
+                  className={`flex items-start gap-3 p-3 rounded-lg border transition-all cursor-pointer ${
+                    selectedWidgets.includes(widget.id)
+                      ? 'bg-blue-500/10 border-blue-500/30'
+                      : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  }`}
+                  onClick={() => handleToggleWidget(widget.id)}
+                >
+                  <Checkbox
+                    checked={selectedWidgets.includes(widget.id)}
+                    onCheckedChange={() => handleToggleWidget(widget.id)}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white">{widget.label}</p>
+                    <p className="text-xs text-slate-400">{widget.description}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
-            Save Changes
-          </Button>
+          </div>
+
+          {/* Widget Ordering */}
+          {widgetOrder.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-slate-300 mb-3">Arrange Order</h3>
+              <Reorder.Group
+                axis="y"
+                values={widgetOrder}
+                onReorder={setWidgetOrder}
+                className="space-y-2"
+              >
+                {widgetOrder.map((widget) => (
+                  <Reorder.Item key={widget.id} value={widget}>
+                    <motion.div
+                      className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10 cursor-move hover:bg-white/10"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <Grip className="w-4 h-4 text-slate-400" />
+                      <div>
+                        <p className="text-sm font-medium text-white">{widget.label}</p>
+                        <p className="text-xs text-slate-400">{widget.description}</p>
+                      </div>
+                    </motion.div>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-between pt-4 border-t border-white/10">
+            <Button variant="outline" onClick={handleReset} className="border-white/10">
+              Reset to Default
+            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setOpen(false)} className="border-white/10">
+                Cancel
+              </Button>
+              <Button onClick={handleSave} className="bg-blue-600 hover:bg-blue-700">
+                Save Layout
+              </Button>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

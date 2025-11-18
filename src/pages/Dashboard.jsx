@@ -90,6 +90,68 @@ export default function Dashboard() {
     }
   });
 
+  // Generate mock analytics data (replace with real data)
+  useEffect(() => {
+    const generateEngagementData = () => {
+      const data = [];
+      const today = new Date();
+      for (let i = 13; i >= 0; i--) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - i);
+        data.push({
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          sessions: Math.floor(Math.random() * 50) + 20 + (i < 7 ? 10 : 0),
+          users: Math.floor(Math.random() * 30) + 10,
+          duration: Math.floor(Math.random() * 15) + 10
+        });
+      }
+      return data;
+    };
+
+    const generateROIData = () => {
+      const data = [];
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+      let actualROI = 15;
+      let projectedROI = 20;
+      
+      months.forEach((month, idx) => {
+        actualROI += Math.random() * 15;
+        projectedROI += Math.random() * 20 + 5;
+        data.push({
+          month,
+          actual_roi: Math.round(actualROI),
+          projected_roi: Math.round(projectedROI),
+          investment: 10000 * (idx + 1),
+          returns: Math.round(10000 * (idx + 1) * (actualROI / 100)),
+          payback_months: Math.max(12 - idx * 2, 3)
+        });
+      });
+      return data;
+    };
+
+    const generateAdoptionData = () => {
+      return [
+        { feature: 'Chat', adoption_rate: 85, active_users: 124 },
+        { feature: 'TSI Analysis', adoption_rate: 72, active_users: 98 },
+        { feature: 'Knowledge Graph', adoption_rate: 68, active_users: 87 },
+        { feature: 'Workflows', adoption_rate: 54, active_users: 71 },
+        { feature: 'Hermes', adoption_rate: 45, active_users: 59 }
+      ];
+    };
+
+    setEngagementData(generateEngagementData());
+    setRoiData(generateROIData());
+    setAdoptionData(generateAdoptionData());
+
+    // Refresh data every 30 seconds
+    const interval = setInterval(() => {
+      setEngagementData(generateEngagementData());
+      refetchConversations();
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const aggregateInsights = () => {
     const insights = [];
     conversations.forEach(conv => {
@@ -123,6 +185,37 @@ export default function Dashboard() {
 
   const insights = aggregateInsights();
   const actionItems = extractActionItems();
+
+  const renderWidget = (widgetId) => {
+    switch (widgetId) {
+      case 'realtime':
+        return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
+      case 'stats':
+        return <QuickStatsWidget key={widgetId} stats={quickStats} />;
+      case 'engagement':
+        return <UserEngagementChart key={widgetId} data={engagementData} />;
+      case 'roi':
+        return <ROIProjectionChart key={widgetId} data={roiData} />;
+      case 'adoption':
+        return <FeatureAdoptionChart key={widgetId} data={adoptionData} />;
+      case 'conversations':
+        return <ConversationHistoryWidget key={widgetId} conversations={conversations} />;
+      case 'insights':
+        return <AnalysisInsightsWidget key={widgetId} insights={insights} />;
+      case 'graph':
+        return <KnowledgeGraphWidget key={widgetId} graphStats={graphStats} />;
+      case 'actions':
+        return <ActionItemsWidget key={widgetId} actionItems={actionItems} />;
+      case 'crossplatform':
+        return <CrossPlatformInsightsWidget key={widgetId} />;
+      case 'proactive':
+        return <ProactiveInsightsWidget key={widgetId} />;
+      case 'predictive':
+        return <PredictiveAnalysisWidget key={widgetId} />;
+      default:
+        return null;
+    }
+  };
 
   const quickStats = [
     {
@@ -213,13 +306,10 @@ export default function Dashboard() {
           >
             <RefreshCw className="w-5 h-5" />
           </Button>
-          <Button
-            variant="outline"
-            className="border-white/10 text-white hover:bg-white/10"
-          >
-            <Settings className="w-4 h-4 mr-2" />
-            Customize
-          </Button>
+          <DashboardCustomizer 
+            currentLayout={dashboardLayout}
+            onLayoutChange={setDashboardLayout}
+          />
         </div>
       </motion.div>
 
@@ -302,33 +392,9 @@ export default function Dashboard() {
         </motion.div>
       )}
 
-      {currentLayout.widgets.includes('stats') && (
-        <QuickStatsWidget stats={quickStats} />
-      )}
-
+      {/* Dynamic Dashboard Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {currentLayout.widgets.includes('conversations') && (
-          <ConversationHistoryWidget conversations={conversations} />
-        )}
-        
-        {currentLayout.widgets.includes('insights') && (
-          <AnalysisInsightsWidget insights={insights} />
-        )}
-        
-        {currentLayout.widgets.includes('graph') && (
-          <KnowledgeGraphWidget graphStats={graphStats} />
-        )}
-        
-        {currentLayout.widgets.includes('actions') && (
-          <ActionItemsWidget actionItems={actionItems} />
-        )}
-
-        {currentLayout.widgets.includes('crossplatform') && (
-          <CrossPlatformInsightsWidget />
-        )}
-
-        <ProactiveInsightsWidget />
-        <PredictiveAnalysisWidget />
+        {dashboardLayout.map((widgetId) => renderWidget(widgetId))}
       </div>
 
       {userRole === 'admin' && (
