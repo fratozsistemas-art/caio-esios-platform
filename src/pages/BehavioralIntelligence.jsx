@@ -21,6 +21,7 @@ import ClientComparison from "@/components/behavioral/ClientComparison";
 import ArchetypeAnalytics from "@/components/behavioral/ArchetypeAnalytics";
 import PredictiveInsights from "@/components/behavioral/PredictiveInsights";
 import ArchetypeMatchingResults from "@/components/behavioral/ArchetypeMatchingResults";
+import ProfileDetailView from "@/components/behavioral/ProfileDetailView";
 
 export default function BehavioralIntelligence() {
   const queryClient = useQueryClient();
@@ -29,6 +30,7 @@ export default function BehavioralIntelligence() {
   const [filterStage, setFilterStage] = useState("all");
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [predictions, setPredictions] = useState(null);
+  const [showDetailView, setShowDetailView] = useState(false);
 
   // Fetch behavioral profiles
   const { data: profiles = [], isLoading: profilesLoading } = useQuery({
@@ -144,6 +146,11 @@ export default function BehavioralIntelligence() {
     archetypeMatchMutation.mutate(profile.id);
   };
 
+  const handleViewProfile = (profile) => {
+    setSelectedProfile(profile);
+    setShowDetailView(true);
+  };
+
   const handleApplyMatch = async (matchData) => {
     if (!selectedProfile || !matchData) return;
     
@@ -161,8 +168,24 @@ export default function BehavioralIntelligence() {
     }
   };
 
+  // Get current archetype details
+  const currentArchetype = selectedProfile?.primary_archetype_id 
+    ? archetypes.find(a => a.archetype_id === selectedProfile.primary_archetype_id)
+    : null;
+
   return (
     <div className="p-6 md:p-8 space-y-6">
+      {/* Profile Detail View Modal */}
+      {showDetailView && selectedProfile && (
+        <ProfileDetailView
+          profile={selectedProfile}
+          archetype={currentArchetype}
+          matchingData={predictions}
+          engagements={selectedProfileEngagements}
+          onClose={() => setShowDetailView(false)}
+          onApplyMatch={handleApplyMatch}
+        />
+      )}
       {/* Header */}
       <div className="flex justify-between items-start">
         <div>
@@ -516,7 +539,7 @@ export default function BehavioralIntelligence() {
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => setSelectedProfile(profile)}
+                                  onClick={() => handleViewProfile(profile)}
                                   className="border-white/20 text-white hover:bg-white/5"
                                 >
                                   View
