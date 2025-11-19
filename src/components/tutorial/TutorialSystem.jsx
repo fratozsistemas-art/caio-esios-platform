@@ -118,18 +118,35 @@ export const TutorialOverlay = ({ tutorial }) => {
   React.useEffect(() => {
     if (!tutorial || currentTutorial !== tutorial.id) return;
     
-    if (step?.targetSelector) {
-      const element = document.querySelector(step.targetSelector);
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        setTargetRect(rect);
-        
-        // Scroll into view
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const updateTargetPosition = () => {
+      if (step?.targetSelector) {
+        const element = document.querySelector(step.targetSelector);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          setTargetRect(rect);
+          
+          // Scroll into view with delay for animation
+          setTimeout(() => {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+          }, 100);
+        } else {
+          setTargetRect(null);
+        }
+      } else {
+        setTargetRect(null);
       }
-    } else {
-      setTargetRect(null);
-    }
+    };
+
+    updateTargetPosition();
+
+    // Update position on window resize and scroll
+    window.addEventListener('resize', updateTargetPosition);
+    window.addEventListener('scroll', updateTargetPosition, true);
+
+    return () => {
+      window.removeEventListener('resize', updateTargetPosition);
+      window.removeEventListener('scroll', updateTargetPosition, true);
+    };
   }, [currentStep, step?.targetSelector, tutorial, currentTutorial]);
 
   if (!tutorial || currentTutorial !== tutorial.id || !step) return null;
@@ -140,15 +157,30 @@ export const TutorialOverlay = ({ tutorial }) => {
     
     const margin = 20;
     const tooltipWidth = 400;
-    const tooltipHeight = 300;
+    const tooltipHeight = 350; // Increased for better spacing
 
-    // Position below target by default
+    // Try positioning below first
     let top = targetRect.bottom + margin;
     let left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+    let placement = 'bottom';
 
     // If too close to bottom, position above
-    if (top + tooltipHeight > window.innerHeight) {
+    if (top + tooltipHeight > window.innerHeight - margin) {
       top = targetRect.top - tooltipHeight - margin;
+      placement = 'top';
+      
+      // If also too close to top, position to the side
+      if (top < margin) {
+        top = targetRect.top;
+        // Position to right if there's space
+        if (targetRect.right + tooltipWidth + margin < window.innerWidth) {
+          left = targetRect.right + margin;
+          placement = 'right';
+        } else {
+          left = targetRect.left - tooltipWidth - margin;
+          placement = 'left';
+        }
+      }
     }
 
     // Ensure tooltip stays within viewport horizontally
@@ -157,7 +189,13 @@ export const TutorialOverlay = ({ tutorial }) => {
       left = window.innerWidth - tooltipWidth - margin;
     }
 
-    return { top: `${top}px`, left: `${left}px` };
+    // Ensure tooltip stays within viewport vertically
+    if (top < margin) top = margin;
+    if (top + tooltipHeight > window.innerHeight - margin) {
+      top = window.innerHeight - tooltipHeight - margin;
+    }
+
+    return { top: `${top}px`, left: `${left}px`, placement };
   };
 
   return (
@@ -201,10 +239,12 @@ export const TutorialOverlay = ({ tutorial }) => {
 
         {/* Tutorial Card */}
         <motion.div
+          key={currentStep}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.9 }}
-          className="absolute"
+          transition={{ duration: 0.2 }}
+          className="absolute pointer-events-auto"
           style={getTooltipPosition()}
         >
           <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-cyan-500/30 shadow-2xl w-[400px]">

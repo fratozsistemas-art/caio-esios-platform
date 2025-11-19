@@ -15,10 +15,10 @@ export const TUTORIALS = {
         icon: Brain,
       },
       {
-        title: 'Dashboard Central',
+        title: 'Widgets do Dashboard',
         content: 'Aqui você vê todas as suas métricas em tempo real, conversas recentes, insights gerados e ações pendentes.',
         icon: TrendingUp,
-        targetSelector: '.grid.grid-cols-1.lg\\:grid-cols-2',
+        targetSelector: '[class*="grid"][class*="gap-6"]',
       },
       {
         title: 'Menu de Navegação',
@@ -30,7 +30,7 @@ export const TUTORIALS = {
         title: 'Busca Global',
         content: 'Pressione ⌘K (ou Ctrl+K) a qualquer momento para buscar conversas, análises, empresas e documentos instantaneamente.',
         icon: Search,
-        targetSelector: 'button[class*="justify-start"]',
+        targetSelector: '.p-6.border-b button',
       },
     ],
   },
