@@ -244,14 +244,14 @@ export default function Landing() {
             <h1 className="text-6xl md:text-8xl font-heading font-bold text-white mb-8 leading-tight" style={{ letterSpacing: '0.02em' }}>
               CAIO·AI
             </h1>
-            <h2 className="text-3xl md:text-5xl font-heading text-transparent bg-clip-text bg-gradient-neural mb-8">
+            <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-8 drop-shadow-[0_0_20px_rgba(10,180,255,0.3)]">
               Inteligência que Cria Tração
             </h2>
 
-            <p className="text-xl md:text-2xl font-body text-caio-off-white mb-12 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-2xl md:text-3xl font-body text-white mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
               Plataforma integrada de análise, decisão e execução baseada no TSI.
               <br className="hidden md:block" />
-              Arquitetura modular que conecta <span className="text-caio-blue font-semibold">inteligência humana</span> com <span className="text-caio-gold font-semibold">capacidade computacional</span>.
+              Arquitetura modular que conecta <span className="text-caio-blue font-bold drop-shadow-[0_0_10px_rgba(10,180,255,0.5)]">inteligência humana</span> com <span className="text-caio-gold font-bold drop-shadow-[0_0_10px_rgba(255,196,58,0.5)]">capacidade computacional</span>.
             </p>
 
             {/* Primary CTAs */}
@@ -345,12 +345,12 @@ export default function Landing() {
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-caio-blue/5 to-transparent" />
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-heading font-bold text-white mb-6">
+            <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 drop-shadow-[0_0_30px_rgba(10,180,255,0.3)]">
               Por que CAIO·AI?
             </h2>
-            <p className="text-xl font-body text-caio-off-white max-w-4xl mx-auto leading-relaxed">
-              Não é mais um chatbot. É uma arquitetura de <span className="text-caio-blue font-semibold">inteligência estratégica</span> que{" "}
-              <span className="text-caio-gold font-semibold">cria tração real</span> nos seus objetivos de negócio.
+            <p className="text-2xl md:text-3xl font-body text-white max-w-4xl mx-auto leading-relaxed font-medium">
+              Não é mais um chatbot. É uma arquitetura de <span className="text-caio-blue font-bold">inteligência estratégica</span> que{" "}
+              <span className="text-caio-gold font-bold">cria tração real</span> nos seus objetivos de negócio.
             </p>
           </div>
 
@@ -382,13 +382,13 @@ export default function Landing() {
                 transition={{ duration: 0.6, delay: idx * 0.2 }}
                 viewport={{ once: true }}
               >
-                <Card className="bg-caio-graphite/30 border-caio-blue/20 backdrop-blur-sm h-full hover:border-caio-gold/40 transition-all duration-300 hover:shadow-glow-blue">
-                  <CardContent className="p-8 text-center">
-                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mx-auto mb-6 shadow-neon-blue`}>
-                      <item.icon className="w-10 h-10 text-white" />
+                <Card className="bg-caio-graphite/50 border-caio-blue/30 backdrop-blur-sm h-full hover:border-caio-gold/60 transition-all duration-300 hover:shadow-glow-blue">
+                  <CardContent className="p-10 text-center">
+                    <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mx-auto mb-6 shadow-neon-blue`}>
+                      <item.icon className="w-12 h-12 text-white" />
                     </div>
-                    <h3 className="text-2xl font-heading font-bold text-white mb-4">{item.title}</h3>
-                    <p className="font-body text-caio-off-white/80 leading-relaxed">{item.description}</p>
+                    <h3 className="text-3xl font-heading font-bold text-white mb-6">{item.title}</h3>
+                    <p className="text-lg font-body text-white leading-relaxed">{item.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -407,191 +407,89 @@ export default function Landing() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <Badge className="bg-caio-blue/20 text-caio-blue border-caio-blue/40 mb-6 px-6 py-2 text-base font-body">
+            <Badge className="bg-caio-blue/30 text-white border-caio-blue/60 mb-8 px-8 py-3 text-lg font-body font-semibold shadow-neon-blue">
               TSI v9.3 · Sistema de 11 Módulos
             </Badge>
-            <h2 className="text-5xl md:text-6xl font-heading font-bold text-white mb-6">
+            <h2 className="text-6xl md:text-7xl font-heading font-bold text-white mb-8 drop-shadow-[0_0_30px_rgba(10,180,255,0.3)]">
               Inteligência Estratégica<br />de Nível Institucional
             </h2>
-            <p className="text-xl font-body text-caio-off-white max-w-3xl mx-auto leading-relaxed">
+            <p className="text-2xl md:text-3xl font-body text-white max-w-4xl mx-auto leading-relaxed font-medium">
               Diferente de modelos genéricos, CAIO opera sobre um{" "}
-              <span className="text-caio-blue font-semibold">sistema modular de 11 blocos TSI</span>{" "}
+              <span className="text-caio-blue font-bold">sistema modular de 11 blocos TSI</span>{" "}
               que cobre contexto, finanças, tecnologia, execução, capital e governança cognitiva.
             </p>
           </div>
 
-          {/* Grid com card destaque e cards menores */}
-          <div className="grid gap-4 md:grid-cols-4 auto-rows-[minmax(0,1fr)] mb-10">
-            {tsiModules.slice(0, 4).map((module) => {
+          {/* Grid com módulos TSI */}
+          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 mb-16">
+            {tsiModules.map((module) => {
               const Icon = module.icon;
               const isActive = activeModule === module.id;
               return (
                 <motion.div
                   key={module.id}
-                  whileHover={{ scale: 1.02 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.05, y: -5 }}
                   onClick={() => setActiveModule(module.id)}
-                  className="col-span-4 md:col-span-1 cursor-pointer"
+                  className="cursor-pointer"
                 >
                   <Card
                     className={`h-full transition-all duration-300 ${
                       isActive
-                        ? "bg-gradient-to-br from-cyan-500/20 to-yellow-400/20 border-cyan-300/60 shadow-lg shadow-cyan-400/25"
-                        : "bg-white/5 border-white/10 hover:bg-white/10"
+                        ? "bg-gradient-to-br from-caio-blue/30 to-caio-gold/30 border-caio-gold/60 shadow-glow-gold"
+                        : "bg-caio-graphite/50 border-caio-blue/30 hover:border-caio-gold/40 hover:shadow-neon-blue"
                     }`}
                   >
-                    <CardContent className="p-4 h-full flex flex-col md:flex-row gap-4">
-                      <div className="flex flex-col items-center md:items-start gap-2 md:w-2/5">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-slate-950" />
-                        </div>
-                        <Badge className="bg-white/10 text-white text-[10px]">
-                          {module.id}
-                        </Badge>
-                        <span className="text-[11px] text-slate-300 text-center md:text-left">
-                          {module.tag}
-                        </span>
+                    <CardContent className="p-6 text-center">
+                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-caio-blue to-caio-gold flex items-center justify-center mx-auto mb-4 shadow-neon-blue">
+                        <Icon className="w-8 h-8 text-white" />
                       </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="font-semibold text-white text-sm mb-1">
-                          {module.name}
-                        </h3>
-                        <p className="text-xs text-slate-200 leading-relaxed">
-                          {module.description}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
-
-            {featuredModule && (
-              <motion.div
-                key={featuredModule.id}
-                whileHover={{ scale: 1.01 }}
-                onClick={() => setActiveModule(featuredModule.id)}
-                className="col-span-4 md:col-span-2 cursor-pointer"
-              >
-                <Card
-                  className={`h-full transition-all duration-300 ${
-                    activeModule === featuredModule.id
-                      ? "bg-gradient-to-br from-[#00D4FF]/25 via-[#00A8CC]/15 to-[#FFB800]/20 border-[#00D4FF]/60 shadow-xl shadow-[#00D4FF]/30"
-                      : "bg-white/5 border-white/10 hover:bg-white/10"
-                  }`}
-                >
-                  <CardContent className="p-6 h-full flex flex-col md:flex-row gap-5">
-                    <div className="flex flex-col items-center md:items-start gap-3 md:w-1/4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center">
-                        <featuredModule.icon className="w-7 h-7 text-[#0A1628]" />
-                      </div>
-                      <Badge className="bg-white/10 text-white text-xs">
-                        Core Module · {featuredModule.id}
+                      <Badge className="bg-caio-blue/30 text-white border-caio-blue/50 text-xs mb-3 font-mono font-bold">
+                        {module.id}
                       </Badge>
-                      <span className="text-xs text-slate-300">
-                        {featuredModule.tag}
-                      </span>
-                    </div>
-                    <div className="flex-1 flex flex-col justify-between text-left">
-                      <div>
-                        <h3 className="text-xl font-bold text-white mb-2">
-                          {featuredModule.name}
-                        </h3>
-                        <p className="text-sm text-slate-200 mb-4">
-                          {featuredModule.description}
-                        </p>
-                      </div>
-                      <div className="grid md:grid-cols-3 gap-3 text-xs text-slate-200">
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-emerald-300" />
-                          <span>Integra todos os outros módulos</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-emerald-300" />
-                          <span>Gera opções estratégicas comparáveis</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <CheckCircle className="w-4 h-4 text-emerald-300" />
-                          <span>
-                            Alinha narrativa executiva, conselho e capital
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            )}
-
-            {tsiModules.slice(5).map((module) => {
-              const Icon = module.icon;
-              const isActive = activeModule === module.id;
-              return (
-                <motion.div
-                  key={module.id}
-                  whileHover={{ scale: 1.02 }}
-                  onClick={() => setActiveModule(module.id)}
-                  className="col-span-4 md:col-span-1 cursor-pointer"
-                >
-                  <Card
-                    className={`h-full transition-all duration-300 ${
-                      isActive
-                        ? "bg-gradient-to-br from-cyan-500/20 to-yellow-400/20 border-cyan-300/60 shadow-lg shadow-cyan-400/25"
-                        : "bg-white/5 border-white/10 hover:bg-white/10"
-                    }`}
-                  >
-                    <CardContent className="p-4 h-full flex flex-col md:flex-row gap-4">
-                      <div className="flex flex-col items-center md:items-start gap-2 md:w-2/5">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center">
-                          <Icon className="w-5 h-5 text-slate-950" />
-                        </div>
-                        <Badge className="bg-white/10 text-white text-[10px]">
-                          {module.id}
-                        </Badge>
-                        <span className="text-[11px] text-slate-300 text-center md:text-left">
-                          {module.tag}
-                        </span>
-                      </div>
-                      <div className="flex-1 text-left">
-                        <h3 className="font-semibold text-white text-sm mb-1">
-                          {module.name}
-                        </h3>
-                        <p className="text-xs text-slate-200 leading-relaxed">
-                          {module.description}
-                        </p>
-                      </div>
+                      <h3 className="font-heading font-bold text-white text-lg mb-2">
+                        {module.name}
+                      </h3>
+                      <p className="text-sm font-body text-white/90 leading-relaxed mb-2">
+                        {module.description}
+                      </p>
+                      <p className="text-xs font-body text-caio-gold/80 font-medium">
+                        {module.tag}
+                      </p>
                     </CardContent>
                   </Card>
                 </motion.div>
               );
             })}
+
+
           </div>
 
           {/* Methodology Benefits */}
-          <div className="grid md:grid-cols-3 gap-8 mt-12">
+          <div className="grid md:grid-cols-3 gap-8 mt-16">
             {[
               {
                 icon: CheckCircle,
                 title: "Cobertura Completa",
                 description:
                   "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
-                bgClass: "bg-[#00D4FF]/20",
-                iconClass: "text-[#00D4FF]",
+                gradient: "from-caio-blue to-caio-blue-medium",
               },
               {
                 icon: Zap,
                 title: "Modo Especialista Modular",
                 description:
                   "Rode apenas o módulo que interessa (M1–M11) sem perder coerência com a arquitetura TSI.",
-                bgClass: "bg-[#FFB800]/20",
-                iconClass: "text-[#FFB800]",
+                gradient: "from-caio-gold to-caio-gold-dark",
               },
               {
                 icon: Target,
                 title: "Depth-Level Architecture",
                 description:
                   "Saídas adaptadas para Board, C-Suite, VPs, gestores e analistas, com o mesmo núcleo analítico.",
-                bgClass: "bg-[#00D4FF]/20",
-                iconClass: "text-[#00D4FF]",
+                gradient: "from-caio-blue-medium to-caio-gold",
               },
             ].map((benefit, i) => {
               const Icon = benefit.icon;
@@ -603,19 +501,17 @@ export default function Landing() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full">
-                    <CardContent className="p-6">
+                  <Card className="bg-caio-graphite/50 border-caio-blue/30 backdrop-blur-sm h-full hover:border-caio-gold/50 hover:shadow-neon-blue transition-all duration-300">
+                    <CardContent className="p-8">
                       <div
-                        className={`w-12 h-12 rounded-xl ${benefit.bgClass} flex items-center justify-center mb-4`}
+                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-6 shadow-neon-blue`}
                       >
-                        <Icon
-                          className={`w-6 h-6 ${benefit.iconClass}`}
-                        />
+                        <Icon className="w-8 h-8 text-white" />
                       </div>
-                      <h3 className="text-lg font-bold text-white mb-2">
+                      <h3 className="text-2xl font-heading font-bold text-white mb-4">
                         {benefit.title}
                       </h3>
-                      <p className="text-slate-300 text-sm leading-relaxed">
+                      <p className="text-white text-base font-body leading-relaxed">
                         {benefit.description}
                       </p>
                     </CardContent>
