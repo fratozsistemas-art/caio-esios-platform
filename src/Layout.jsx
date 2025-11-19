@@ -298,5 +298,6 @@ export default function Layout({ children, currentPageName }) {
 
       <GlobalSearch open={showSearch} onClose={() => setShowSearch(false)} />
     </div>
+    </TutorialProvider>
   );
 }
