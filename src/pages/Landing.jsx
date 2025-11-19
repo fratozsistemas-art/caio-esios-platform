@@ -29,6 +29,7 @@ import PricingCard from "../components/pricing/PricingCard";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
 import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
 import PreHomeAnimation from "../components/landing/PreHomeAnimation";
+import PricingSection from "../components/landing/PricingSection";
 import {
   tsiModules,
   advancedCapabilities,
@@ -1071,31 +1072,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section
-        id="pricing"
-        className="py-20 md:py-32 bg-white/5 backdrop-blur-sm"
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Simple, Transparent Pricing
-            </h2>
-            <p className="text-xl text-slate-200 max-w-3xl mx-auto mb-8">
-              14-day free trial. No credit card required. Cancel anytime.
-            </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00D4FF]/20 border border-[#00D4FF]/40 text-[#00E5FF] text-sm font-medium shadow-lg">
-              <CheckCircle className="w-4 h-4" />
-              30-Day Money-Back Guarantee
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            {plans.slice(0, 3).map((plan, i) => (
-              <PricingCard key={i} plan={plan} index={i} />
-            ))}
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* Final CTA */}
       <section className="py-20 md:py-32 bg-gradient-to-br from-[#00D4FF]/10 via-[#00A8CC]/10 to-transparent">
