@@ -609,7 +609,7 @@ export default function Landing() {
               📊 Feature Comparison
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              CAIO vs ChatGPT vs Claude vs Consultants
+              CAIO vs LLMs vs Reasoning Models vs Consultants
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
               A velocidade da IA combinada com metodologia TSI de 11 módulos e governança de decisão.
@@ -617,22 +617,41 @@ export default function Landing() {
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left">
+            <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-white/20">
-                  <th className="p-4 text-slate-400 font-semibold">Feature</th>
-                  <th className="p-4 text-center">
+                  <th className="p-3 text-slate-400 font-semibold text-left">Feature</th>
+                  <th className="p-3 text-center">
                     <div className="flex flex-col items-center">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-2">
-                        <Brain className="w-6 h-6 text-[#0A1628]" />
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-1">
+                        <Brain className="w-5 h-5 text-[#0A1628]" />
                       </div>
-                      <span className="text-white font-semibold">CAIO</span>
+                      <span className="text-white font-semibold text-xs">CAIO</span>
                     </div>
                   </th>
-                  <th className="p-4 text-center text-slate-400">ChatGPT</th>
-                  <th className="p-4 text-center text-slate-400">Claude</th>
-                  <th className="p-4 text-center text-slate-400">
-                    Consultants
+                  <th className="p-3 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="text-slate-400 font-semibold text-xs">LLMs</span>
+                      <span className="text-slate-500 text-[10px]">(GPT-4, Claude)</span>
+                    </div>
+                  </th>
+                  <th className="p-3 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="text-slate-400 font-semibold text-xs">Reasoning</span>
+                      <span className="text-slate-500 text-[10px]">(o1, o3)</span>
+                    </div>
+                  </th>
+                  <th className="p-3 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="text-slate-400 font-semibold text-xs">Individual</span>
+                      <span className="text-slate-500 text-[10px]">Consultants</span>
+                    </div>
+                  </th>
+                  <th className="p-3 text-center">
+                    <div className="flex flex-col items-center">
+                      <span className="text-slate-400 font-semibold text-xs">Boutique</span>
+                      <span className="text-slate-500 text-[10px]">Consultancies</span>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -642,56 +661,69 @@ export default function Landing() {
                     key={i}
                     className="border-b border-white/10 hover:bg-white/5 transition-colors"
                   >
-                    <td className="p-4 text-slate-300 font-medium">
+                    <td className="p-3 text-slate-300 font-medium text-xs">
                       {row.feature}
                     </td>
-                    <td className="p-4 text-center">
+                    <td className="p-3 text-center">
                       {typeof row.caio === "boolean" ? (
                         row.caio ? (
-                          <CheckCircle className="w-6 h-6 text-emerald-300 mx-auto" />
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
-                          <X className="w-6 h-6 text-slate-600 mx-auto" />
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="text-white font-semibold">
+                        <span className="text-white font-semibold text-xs">
                           {row.caio}
                         </span>
                       )}
                     </td>
-                    <td className="p-4 text-center">
-                      {typeof row.chatgpt === "boolean" ? (
-                        row.chatgpt ? (
-                          <CheckCircle className="w-6 h-6 text-emerald-300 mx-auto" />
+                    <td className="p-3 text-center">
+                      {typeof row.llms === "boolean" ? (
+                        row.llms ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
-                          <X className="w-6 h-6 text-slate-600 mx-auto" />
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="text-slate-400">
-                          {row.chatgpt}
+                        <span className="text-slate-400 text-xs">
+                          {row.llms}
                         </span>
                       )}
                     </td>
-                    <td className="p-4 text-center">
-                      {typeof row.claude === "boolean" ? (
-                        row.claude ? (
-                          <CheckCircle className="w-6 h-6 text-emerald-300 mx-auto" />
+                    <td className="p-3 text-center">
+                      {typeof row.reasoning === "boolean" ? (
+                        row.reasoning ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
-                          <X className="w-6 h-6 text-slate-600 mx-auto" />
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="text-slate-400">{row.claude}</span>
+                        <span className="text-slate-400 text-xs">{row.reasoning}</span>
                       )}
                     </td>
-                    <td className="p-4 text-center">
-                      {typeof row.consultants === "boolean" ? (
-                        row.consultants ? (
-                          <CheckCircle className="w-6 h-6 text-emerald-300 mx-auto" />
+                    <td className="p-3 text-center">
+                      {typeof row.individual === "boolean" ? (
+                        row.individual ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
-                          <X className="w-6 h-6 text-slate-600 mx-auto" />
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
                       ) : (
-                        <span className="text-slate-400">
-                          {row.consultants}
+                        <span className="text-slate-400 text-xs">
+                          {row.individual}
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-3 text-center">
+                      {typeof row.boutique === "boolean" ? (
+                        row.boutique ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-slate-400 text-xs">
+                          {row.boutique}
                         </span>
                       )}
                     </td>
@@ -717,18 +749,17 @@ export default function Landing() {
                 modelo SaaS
               </span>
             </p>
-            <Button
-              size="lg"
-              onClick={() =>
-                document
-                  .getElementById("pricing")
-                  ?.scrollIntoView({ behavior: "smooth" })
+            <AccessRequestForm 
+              trigger={
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold"
+                >
+                  Start Free Trial
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
               }
-              className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold"
-            >
-              Start Free Trial
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            />
           </div>
         </div>
       </section>
