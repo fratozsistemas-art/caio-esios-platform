@@ -1,41 +1,17 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
 import { motion } from "framer-motion";
+import AccessRequestForm from "../landing/AccessRequestForm";
 
 export default function PricingCard({ plan, index }) {
   const [billingCycle, setBillingCycle] = useState("monthly");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckout = async () => {
-    if (plan.isEnterprise || plan.isCustom) {
-      // For Enterprise/Custom, open Calendly or contact form
-      window.open('https://calendly.com/your-booking-link', '_blank');
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const priceId = billingCycle === "monthly" 
-        ? plan.priceIds.monthly 
-        : plan.priceIds.annual;
-
-      const { data } = await base44.functions.invoke('createCheckout', {
-        priceId,
-        plan: plan.name.toLowerCase(),
-        billingCycle
-      });
-
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      alert('Error starting checkout. Please try again.');
-    }
-    setIsLoading(false);
+    // All plans now redirect to access request form
+    return;
   };
 
   return (
@@ -102,21 +78,16 @@ export default function PricingCard({ plan, index }) {
             )}
           </div>
 
-          <Button
-            size="lg"
-            onClick={handleCheckout}
-            disabled={isLoading}
-            className={`w-full mb-6 ${plan.popular ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600' : 'bg-white/10 hover:bg-white/20 text-white'}`}
-          >
-            {isLoading ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Loading...
-              </>
-            ) : (
-              plan.cta
-            )}
-          </Button>
+          <AccessRequestForm 
+            trigger={
+              <Button
+                size="lg"
+                className={`w-full mb-6 ${plan.popular ? 'bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628]' : 'bg-white/10 hover:bg-white/20 text-white border border-[#00D4FF]/30'}`}
+              >
+                {plan.cta}
+              </Button>
+            }
+          />
 
           <ul className="space-y-3">
             {plan.features.map((feature, idx) => (
