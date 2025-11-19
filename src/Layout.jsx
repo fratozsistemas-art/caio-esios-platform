@@ -99,6 +99,19 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     base44.auth.me()
       .then(async u => {
+        // Verify if user is pre-registered
+        const allUsers = await base44.entities.User.list();
+        const isPreRegistered = allUsers.some(registeredUser => 
+          registeredUser.email.toLowerCase() === u.email.toLowerCase()
+        );
+
+        if (!isPreRegistered) {
+          // User not pre-registered - block access
+          await base44.auth.logout();
+          window.location.href = createPageUrl('Landing') + '?error=unauthorized';
+          return;
+        }
+
         setUser(u);
         
         if (u.role === 'admin') {

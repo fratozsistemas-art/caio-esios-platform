@@ -20,7 +20,8 @@ import {
   Network,
   Layers,
   Star,
-  Award
+  Award,
+  AlertCircle
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
@@ -44,6 +45,7 @@ export default function Landing() {
     hoursPerWeek: 15,
   });
   const [activeModule, setActiveModule] = useState("M5");
+  const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -58,6 +60,13 @@ export default function Landing() {
       }
     };
     checkAuth();
+
+    // Check for unauthorized error
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('error') === 'unauthorized') {
+      setShowUnauthorizedAlert(true);
+      toast.error('Acesso não autorizado. Seu email não está pré-cadastrado no sistema.');
+    }
   }, []);
 
   const handleLogin = (e) => {
@@ -87,6 +96,44 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
+      {/* Unauthorized Alert */}
+      {showUnauthorizedAlert && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 backdrop-blur-sm"
+          >
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-white font-semibold mb-1">Acesso Não Autorizado</h3>
+                <p className="text-sm text-slate-300 mb-3">
+                  Seu email não está pré-cadastrado no sistema. Solicite acesso através do formulário abaixo.
+                </p>
+                <div className="flex gap-2">
+                  <AccessRequestForm 
+                    trigger={
+                      <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
+                        Solicitar Acesso
+                      </Button>
+                    }
+                  />
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => setShowUnauthorizedAlert(false)}
+                    className="border-white/20 text-white hover:bg-white/5"
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-6 py-4">
