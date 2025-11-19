@@ -246,19 +246,18 @@ export default function Landing() {
             {/* Primary CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
               <AccessRequestForm />
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() =>
-                  document
-                    .getElementById("methodology")
-                    ?.scrollIntoView({ behavior: "smooth" })
+              <AccessRequestForm 
+                trigger={
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-[#00D4FF]/40 bg-[#00D4FF]/10 text-white hover:bg-[#00D4FF]/20 hover:border-[#00D4FF]/60 font-semibold px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 shadow-xl"
+                  >
+                    <Play className="w-5 h-5 mr-2" />
+                    Book a Demo
+                  </Button>
                 }
-                className="border-2 border-[#00D4FF]/40 bg-[#00D4FF]/10 text-white hover:bg-[#00D4FF]/20 hover:border-[#00D4FF]/60 font-semibold px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 shadow-xl"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                See How It Works
-              </Button>
+              />
             </div>
 
             {/* Stats Bar */}
@@ -1062,7 +1061,7 @@ export default function Landing() {
                     variant="outline"
                     className="border-2 border-[#FFB800]/40 bg-[#FFB800]/10 text-white hover:bg-[#FFB800]/20 hover:border-[#FFB800]/60 font-semibold px-8 py-6 text-lg shadow-xl"
                   >
-                    Book a Demo
+                    Schedule a Call
                   </Button>
                 }
               />
