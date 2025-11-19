@@ -28,6 +28,7 @@ import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
 import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
+import PreHomeAnimation from "../components/landing/PreHomeAnimation";
 import {
   tsiModules,
   advancedCapabilities,
@@ -41,6 +42,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPreHome, setShowPreHome] = useState(true);
   const [roiInputs, setRoiInputs] = useState({
     teamSize: 10,
     avgSalary: 120000,
@@ -69,6 +71,12 @@ export default function Landing() {
       setShowUnauthorizedAlert(true);
       toast.error('Acesso não autorizado. Seu email não está pré-cadastrado no sistema.');
     }
+
+    // Check if user has seen pre-home animation
+    const hasSeenPreHome = sessionStorage.getItem('caio_prehome_seen');
+    if (hasSeenPreHome) {
+      setShowPreHome(false);
+    }
   }, []);
 
   const handleLogin = (e) => {
@@ -88,12 +96,22 @@ export default function Landing() {
 
   const featuredModule = tsiModules.find((m) => m.featured);
 
+  const handlePreHomeComplete = () => {
+    sessionStorage.setItem('caio_prehome_seen', 'true');
+    setShowPreHome(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
         <div className="text-white">Loading...</div>
       </div>
     );
+  }
+
+  // Show pre-home animation
+  if (showPreHome) {
+    return <PreHomeAnimation onComplete={handlePreHomeComplete} />;
   }
 
   return (
