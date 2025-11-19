@@ -110,15 +110,15 @@ export const TutorialOverlay = ({ tutorial }) => {
   const { currentTutorial, currentStep, nextStep, prevStep, completeTutorial, skipTutorial } = useTutorial();
   const [targetRect, setTargetRect] = React.useState(null);
 
-  if (!tutorial || currentTutorial !== tutorial.id) return null;
-
-  const step = tutorial.steps[currentStep];
-  const isLastStep = currentStep === tutorial.steps.length - 1;
+  const step = tutorial?.steps?.[currentStep];
+  const isLastStep = tutorial ? currentStep === tutorial.steps.length - 1 : false;
   const isFirstStep = currentStep === 0;
 
   // Find and highlight target element
   React.useEffect(() => {
-    if (step.targetSelector) {
+    if (!tutorial || currentTutorial !== tutorial.id) return;
+    
+    if (step?.targetSelector) {
       const element = document.querySelector(step.targetSelector);
       if (element) {
         const rect = element.getBoundingClientRect();
@@ -130,7 +130,9 @@ export const TutorialOverlay = ({ tutorial }) => {
     } else {
       setTargetRect(null);
     }
-  }, [currentStep, step.targetSelector]);
+  }, [currentStep, step?.targetSelector, tutorial, currentTutorial]);
+
+  if (!tutorial || currentTutorial !== tutorial.id || !step) return null;
 
   // Calculate tooltip position
   const getTooltipPosition = () => {
