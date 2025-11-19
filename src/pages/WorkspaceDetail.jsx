@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -9,12 +9,19 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { 
   ArrowLeft, MessageSquare, CheckCircle, Circle, ChevronDown, 
-  ChevronRight, Users, Zap, TrendingUp, FileText,
-  Download, Share2, ArrowUpCircle
+  ChevronRight, Users, Calendar, Zap, TrendingUp, FileText,
+  Download, Share2, Target, Activity, ArrowUpCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { format } from 'date-fns';
 import { toast } from "sonner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import WorkspaceControlPanel from "../components/workspace/WorkspaceControlPanel";
+import ProjectTree from "../components/workspace/ProjectTree";
+import TaskManager from "../components/workspace/TaskManager";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function WorkspaceDetail() {
   const [searchParams] = useSearchParams();
@@ -24,6 +31,14 @@ export default function WorkspaceDetail() {
   const queryClient = useQueryClient();
   const [expandedPhase, setExpandedPhase] = useState(0);
   const [user, setUser] = useState(null);
+  const [showProjectDialog, setShowProjectDialog] = useState(false);
+  const [editingProject, setEditingProject] = useState(null);
+  const [projectFormData, setProjectFormData] = useState({
+    name: '',
+    description: '',
+    priority: 'medium',
+    parent_project_id: null
+  });
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => setUser(null));
@@ -41,6 +56,20 @@ export default function WorkspaceDetail() {
   const { data: quickActions = [] } = useQuery({
     queryKey: ['quickActions'],
     queryFn: () => base44.entities.QuickAction.list(),
+    initialData: [],
+  });
+
+  const { data: projects = [] } = useQuery({
+    queryKey: ['projects', workspaceId],
+    queryFn: () => base44.entities.Project.filter({ workspace_id: workspaceId }),
+    enabled: !!workspaceId,
+    initialData: [],
+  });
+
+  const { data: tasks = [] } = useQuery({
+    queryKey: ['tasks', workspaceId],
+    queryFn: () => base44.entities.Task.filter({ workspace_id: workspaceId }),
+    enabled: !!workspaceId,
     initialData: [],
   });
 
@@ -98,6 +127,57 @@ export default function WorkspaceDetail() {
     },
     onError: (error) => {
       toast.error('Failed to upload file: ' + error.message);
+    }
+  });
+
+  const createProjectMutation = useMutation({
+    mutationFn: (data) => base44.entities.Project.create({ ...data, workspace_id: workspaceId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', workspaceId] });
+      setShowProjectDialog(false);
+      setProjectFormData({ name: '', description: '', priority: 'medium', parent_project_id: null });
+      toast.success('Projeto criado com sucesso');
+    }
+  });
+
+  const updateProjectMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Project.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', workspaceId] });
+      setEditingProject(null);
+      toast.success('Projeto atualizado');
+    }
+  });
+
+  const deleteProjectMutation = useMutation({
+    mutationFn: (id) => base44.entities.Project.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects', workspaceId] });
+      toast.success('Projeto excluído');
+    }
+  });
+
+  const createTaskMutation = useMutation({
+    mutationFn: (data) => base44.entities.Task.create({ ...data, workspace_id: workspaceId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', workspaceId] });
+      toast.success('Tarefa criada');
+    }
+  });
+
+  const updateTaskMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Task.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', workspaceId] });
+      toast.success('Tarefa atualizada');
+    }
+  });
+
+  const deleteTaskMutation = useMutation({
+    mutationFn: (id) => base44.entities.Task.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks', workspaceId] });
+      toast.success('Tarefa excluída');
     }
   });
 
@@ -213,13 +293,117 @@ export default function WorkspaceDetail() {
       </div>
 
       {/* Tabs */}
-      <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="bg-white/5 grid w-fit grid-cols-4">
+      <Tabs defaultValue="control" className="w-full">
+        <TabsList className="bg-white/5 grid w-fit grid-cols-6">
+          <TabsTrigger value="control">Controle</TabsTrigger>
+          <TabsTrigger value="projects">Projetos</TabsTrigger>
+          <TabsTrigger value="tasks">Tarefas</TabsTrigger>
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="phases">Phases</TabsTrigger>
           <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
-          <TabsTrigger value="team">Team</TabsTrigger>
         </TabsList>
+
+        {/* Control Panel Tab */}
+        <TabsContent value="control" className="mt-6">
+          <WorkspaceControlPanel
+            workspace={workspace}
+            projects={projects}
+            tasks={tasks}
+            members={workspace.team_members || []}
+          />
+        </TabsContent>
+
+        {/* Projects Tab */}
+        <TabsContent value="projects" className="mt-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-white">Projetos Hierárquicos</h2>
+              <Dialog open={showProjectDialog} onOpenChange={setShowProjectDialog}>
+                <DialogTrigger asChild>
+                  <Button className="bg-blue-500 hover:bg-blue-600">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Novo Projeto
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-slate-950 border-white/10">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      {editingProject ? 'Editar Projeto' : 'Novo Projeto'}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <Label className="text-slate-300">Nome</Label>
+                      <Input
+                        value={projectFormData.name}
+                        onChange={(e) => setProjectFormData({ ...projectFormData, name: e.target.value })}
+                        className="bg-white/5 border-white/10 text-white mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-slate-300">Descrição</Label>
+                      <Textarea
+                        value={projectFormData.description}
+                        onChange={(e) => setProjectFormData({ ...projectFormData, description: e.target.value })}
+                        className="bg-white/5 border-white/10 text-white mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-slate-300">Prioridade</Label>
+                      <Select
+                        value={projectFormData.priority}
+                        onValueChange={(value) => setProjectFormData({ ...projectFormData, priority: value })}
+                      >
+                        <SelectTrigger className="bg-white/5 border-white/10 text-white mt-2">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Baixa</SelectItem>
+                          <SelectItem value="medium">Média</SelectItem>
+                          <SelectItem value="high">Alta</SelectItem>
+                          <SelectItem value="critical">Crítica</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button
+                      onClick={() => createProjectMutation.mutate(projectFormData)}
+                      className="w-full bg-blue-500 hover:bg-blue-600"
+                    >
+                      Criar Projeto
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+
+            <ProjectTree
+              workspaceId={workspaceId}
+              projects={projects}
+              onEdit={(project) => {
+                setEditingProject(project);
+                setProjectFormData(project);
+                setShowProjectDialog(true);
+              }}
+              onDelete={(id) => deleteProjectMutation.mutate(id)}
+              onAddProject={(parentId) => {
+                setProjectFormData({ ...projectFormData, parent_project_id: parentId });
+                setShowProjectDialog(true);
+              }}
+            />
+          </div>
+        </TabsContent>
+
+        {/* Tasks Tab */}
+        <TabsContent value="tasks" className="mt-6">
+          <TaskManager
+            tasks={tasks}
+            projects={projects}
+            members={workspace.team_members || []}
+            onCreateTask={(data) => createTaskMutation.mutate(data)}
+            onUpdateTask={(id, data) => updateTaskMutation.mutate({ id, data })}
+            onDeleteTask={(id) => deleteTaskMutation.mutate(id)}
+          />
+        </TabsContent>
 
         {/* Tab Content - Overview */}
         <TabsContent value="overview" className="space-y-6 mt-6">
