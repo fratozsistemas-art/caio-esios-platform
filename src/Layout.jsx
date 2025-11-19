@@ -9,6 +9,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import GlobalSearch from './components/GlobalSearch';
+import { TutorialProvider } from './components/tutorial/TutorialSystem';
+import TutorialLauncher from './components/tutorial/TutorialLauncher';
 
 const navSections = [
   {
@@ -152,6 +154,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
+    <TutorialProvider>
     <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0A1628]/95 backdrop-blur-lg border-b border-[#00D4FF]/20">
         <div className="flex items-center justify-between p-4">
@@ -264,15 +267,18 @@ export default function Layout({ children, currentPageName }) {
                 <p className="text-slate-400 text-xs truncate">{user.email}</p>
               </div>
             </div>
-            <Button
-              onClick={handleLogout}
-              variant="outline"
-              size="sm"
-              className="w-full bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500"
-            >
-              <LogOut className="w-4 h-4 mr-2" />
-              Sign Out
-            </Button>
+            <div className="space-y-2">
+              <TutorialLauncher />
+              <Button
+                onClick={handleLogout}
+                variant="outline"
+                size="sm"
+                className="w-full bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         )}
       </aside>

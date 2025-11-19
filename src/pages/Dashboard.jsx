@@ -7,6 +7,9 @@ import {
   LayoutDashboard, MessageSquare, Brain, Network, CheckSquare,
   TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2, Shield, Layers, Search
 } from "lucide-react";
+import { useTutorial, TutorialOverlay, ContextualTip } from "../components/tutorial/TutorialSystem";
+import { TUTORIALS } from "../components/tutorial/tutorials";
+import TutorialLauncher from "../components/tutorial/TutorialLauncher";
 import ConversationHistoryWidget from "../components/dashboard/ConversationHistoryWidget";
 import AnalysisInsightsWidget from "../components/dashboard/AnalysisInsightsWidget";
 import KnowledgeGraphWidget from "../components/dashboard/KnowledgeGraphWidget";
@@ -34,6 +37,7 @@ export default function Dashboard() {
   const [engagementData, setEngagementData] = useState([]);
   const [roiData, setRoiData] = useState([]);
   const [adoptionData, setAdoptionData] = useState([]);
+  const { startTutorial, isTutorialCompleted } = useTutorial();
 
   useEffect(() => {
     base44.auth.me().then(async u => {
@@ -49,6 +53,11 @@ export default function Dashboard() {
         if (roles && roles.length > 0) {
           setUserRole(roles[0].role_name);
         }
+      }
+
+      // Auto-start tutorial for new users
+      if (!isTutorialCompleted('dashboard')) {
+        setTimeout(() => startTutorial('dashboard'), 1000);
       }
     });
   }, []);
@@ -309,6 +318,7 @@ export default function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <TutorialLauncher />
           <Button
             variant="outline"
             size="icon"
@@ -434,6 +444,8 @@ export default function Dashboard() {
           </div>
         </motion.div>
       )}
-    </div>
-  );
-}
+
+      <TutorialOverlay tutorial={TUTORIALS.dashboard} />
+      </div>
+      );
+      }
