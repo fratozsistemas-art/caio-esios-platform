@@ -108,6 +108,7 @@ export const TutorialProvider = ({ children }) => {
 
 export const TutorialOverlay = ({ tutorial }) => {
   const { currentTutorial, currentStep, nextStep, prevStep, completeTutorial, skipTutorial } = useTutorial();
+  const [targetRect, setTargetRect] = React.useState(null);
 
   if (!tutorial || currentTutorial !== tutorial.id) return null;
 
@@ -115,37 +116,96 @@ export const TutorialOverlay = ({ tutorial }) => {
   const isLastStep = currentStep === tutorial.steps.length - 1;
   const isFirstStep = currentStep === 0;
 
+  // Find and highlight target element
+  React.useEffect(() => {
+    if (step.targetSelector) {
+      const element = document.querySelector(step.targetSelector);
+      if (element) {
+        const rect = element.getBoundingClientRect();
+        setTargetRect(rect);
+        
+        // Scroll into view
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    } else {
+      setTargetRect(null);
+    }
+  }, [currentStep, step.targetSelector]);
+
+  // Calculate tooltip position
+  const getTooltipPosition = () => {
+    if (!targetRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    
+    const margin = 20;
+    const tooltipWidth = 400;
+    const tooltipHeight = 300;
+
+    // Position below target by default
+    let top = targetRect.bottom + margin;
+    let left = targetRect.left + (targetRect.width / 2) - (tooltipWidth / 2);
+
+    // If too close to bottom, position above
+    if (top + tooltipHeight > window.innerHeight) {
+      top = targetRect.top - tooltipHeight - margin;
+    }
+
+    // Ensure tooltip stays within viewport horizontally
+    if (left < margin) left = margin;
+    if (left + tooltipWidth > window.innerWidth - margin) {
+      left = window.innerWidth - tooltipWidth - margin;
+    }
+
+    return { top: `${top}px`, left: `${left}px` };
+  };
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+        onClick={(e) => e.target === e.currentTarget && skipTutorial()}
       >
-        {/* Highlight target element */}
-        {step.target && (
-          <div
-            className="absolute pointer-events-none border-4 border-cyan-400 rounded-lg shadow-2xl shadow-cyan-400/50"
-            style={{
-              top: step.target.top || 'auto',
-              left: step.target.left || 'auto',
-              right: step.target.right || 'auto',
-              bottom: step.target.bottom || 'auto',
-              width: step.target.width || 'auto',
-              height: step.target.height || 'auto',
-            }}
-          />
+        {/* Spotlight on target element */}
+        {targetRect && (
+          <>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="absolute pointer-events-none border-4 border-cyan-400 rounded-lg shadow-2xl"
+              style={{
+                top: `${targetRect.top - 4}px`,
+                left: `${targetRect.left - 4}px`,
+                width: `${targetRect.width + 8}px`,
+                height: `${targetRect.height + 8}px`,
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 40px rgba(34, 211, 238, 0.6)',
+              }}
+            />
+            {/* Pulse animation */}
+            <motion.div
+              animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.8, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute pointer-events-none border-2 border-cyan-400 rounded-lg"
+              style={{
+                top: `${targetRect.top - 8}px`,
+                left: `${targetRect.left - 8}px`,
+                width: `${targetRect.width + 16}px`,
+                height: `${targetRect.height + 16}px`,
+              }}
+            />
+          </>
         )}
 
         {/* Tutorial Card */}
         <motion.div
-          initial={{ scale: 0.9, y: 20 }}
-          animate={{ scale: 1, y: 0 }}
-          exit={{ scale: 0.9, y: 20 }}
-          className={`relative max-w-lg ${step.position || 'mx-4'}`}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          className="absolute"
+          style={getTooltipPosition()}
         >
-          <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-cyan-500/30 shadow-2xl">
+          <Card className="bg-gradient-to-br from-slate-900 to-slate-800 border-cyan-500/30 shadow-2xl w-[400px]">
             <CardContent className="p-6">
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
