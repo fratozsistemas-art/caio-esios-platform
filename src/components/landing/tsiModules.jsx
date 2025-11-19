@@ -68,7 +68,7 @@ export const tsiModules = [
     name: "Reframing Loop",
     description: "Pensamento lateral, cenários alternativos e exploração de assimetrias competitivas.",
     icon: Layers,
-    tag: "Reframing Estratégico",
+    tag: "Maieutic Mode",
   },
   {
     id: "M9",

@@ -44,11 +44,7 @@ export default function Landing() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showPreHome, setShowPreHome] = useState(true);
-  const [roiInputs, setRoiInputs] = useState({
-    teamSize: 10,
-    avgSalary: 120000,
-    hoursPerWeek: 15,
-  });
+
   const [activeModule, setActiveModule] = useState("M5");
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
 
@@ -87,13 +83,7 @@ export default function Landing() {
     base44.auth.redirectToLogin(dashboardUrl);
   };
 
-  const calculateROI = () => {
-    const hourlyRate = roiInputs.avgSalary / 2080;
-    const weeklyWaste = roiInputs.teamSize * roiInputs.hoursPerWeek * hourlyRate;
-    const annualWaste = weeklyWaste * 52;
-    const caioSavings = annualWaste * 0.7;
-    return Math.round(caioSavings);
-  };
+
 
   const featuredModule = tsiModules.find((m) => m.featured);
 
@@ -302,7 +292,7 @@ export default function Landing() {
             </div>
 
             {/* Stats Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {[
                 {
                   icon: Layers,
@@ -321,12 +311,6 @@ export default function Landing() {
                   label: "Faster Analysis",
                   value: "95%",
                   color: "#FFC247",
-                },
-                {
-                  icon: DollarSign,
-                  label: "Avg Annual Savings",
-                  value: "$180K",
-                  color: "#E0A43C",
                 },
               ].map((stat, i) => {
                 const Icon = stat.icon;
@@ -470,7 +454,7 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   onClick={() => setActiveModule(module.id)}
-                  className={`cursor-pointer ${isFeatured ? 'md:col-span-3' : 'md:col-span-1'}`}
+                  className={`cursor-pointer ${isFeatured ? 'md:col-span-2' : 'md:col-span-1'}`}
                 >
                   <Card
                     className={`h-full transition-all duration-200 ${
@@ -962,112 +946,6 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ROI Calculator */}
-      <section className="py-20 md:py-32">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Calculate Your Savings
-            </h2>
-            <p className="text-xl text-slate-300">
-              Veja quanto tempo e budget estratégico você devolve para o seu
-              time usando CAIO.
-            </p>
-          </div>
-
-          <Card className="bg-white/10 border-white/20 backdrop-blur-sm shadow-2xl">
-            <CardContent className="p-8">
-              <div className="space-y-6 mb-8">
-                <div>
-                  <label className="text-sm text-slate-200 mb-2 block font-medium">
-                    Team Size (executives/analysts)
-                  </label>
-                  <Input
-                    type="number"
-                    value={roiInputs.teamSize}
-                    onChange={(e) =>
-                      setRoiInputs({
-                        ...roiInputs,
-                        teamSize: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm text-slate-200 mb-2 block font-medium">
-                    Average Annual Salary ($)
-                  </label>
-                  <Input
-                    type="number"
-                    value={roiInputs.avgSalary}
-                    onChange={(e) =>
-                      setRoiInputs({
-                        ...roiInputs,
-                        avgSalary: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm text-slate-200 mb-2 block font-medium">
-                    Hours/Week on Strategic Analysis
-                  </label>
-                  <Input
-                    type="number"
-                    value={roiInputs.hoursPerWeek}
-                    onChange={(e) =>
-                      setRoiInputs({
-                        ...roiInputs,
-                        hoursPerWeek: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="bg-white/10 border-white/20 text-white placeholder:text-slate-400"
-                  />
-                </div>
-              </div>
-
-              <div className="border-t border-white/20 pt-6">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-slate-200 font-medium">
-                    Current Annual Waste:
-                  </span>
-                  <span className="text-2xl font-bold text-red-400">
-                    ${(Math.round(calculateROI() / 0.7)).toLocaleString()}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-slate-200 font-medium">
-                    Potential Annual Savings with CAIO:
-                  </span>
-                  <span className="text-4xl font-bold text-emerald-400">
-                    ${calculateROI().toLocaleString()}
-                  </span>
-                </div>
-                <div className="text-sm text-slate-300 text-center mb-6 bg-white/5 p-3 rounded-lg">
-                  Estimativa baseada em{" "}
-                  <span className="font-semibold">70% de economia</span> de
-                  tempo em tarefas de análise estratégica.
-                </div>
-                <Button
-                  size="lg"
-                  onClick={() =>
-                    document
-                      .getElementById("pricing")
-                      ?.scrollIntoView({ behavior: "smooth" })
-                  }
-                  className="w-full bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] text-lg font-semibold shadow-xl shadow-[#00D4FF]/30"
-                >
-                  See Plans & Start Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
 

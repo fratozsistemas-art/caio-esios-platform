@@ -1,3 +1,4 @@
+
 export const comparisonFeatures = [
   {
     feature: "Strategic Analysis Framework (TSI v9.3)",
