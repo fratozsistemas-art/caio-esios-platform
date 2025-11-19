@@ -21,7 +21,8 @@ import {
   Layers,
   Star,
   Award,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
