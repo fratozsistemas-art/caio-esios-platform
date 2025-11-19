@@ -95,7 +95,14 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+    <div className="min-h-screen bg-caio-navy"
+      style={{
+        backgroundImage: `
+          radial-gradient(circle at 20% 50%, rgba(10, 180, 255, 0.1) 0%, transparent 50%),
+          radial-gradient(circle at 80% 50%, rgba(255, 196, 58, 0.1) 0%, transparent 50%),
+          url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 16h8v8h-8zM20 32h8v8h-8zM0 48h8v8H0zM16 0h8v8h-8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
+        `
+      }}>
       {/* Unauthorized Alert */}
       {showUnauthorizedAlert && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
@@ -135,7 +142,7 @@ export default function Landing() {
       )}
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
+      <nav className="sticky top-0 z-50 bg-caio-navy/95 backdrop-blur-xl border-b border-caio-blue/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -145,43 +152,40 @@ export default function Landing() {
                 className="w-12 h-12 object-contain"
               />
               <div>
-                <div className="text-xl font-bold text-white">
+                <div className="text-xl font-bold font-heading text-white" style={{ letterSpacing: '0.05em' }}>
                   CAIO·AI
-                </div>
-                <div className="text-[10px] text-cyan-300 font-medium">
-                  powered by FRATOZ
                 </div>
               </div>
             </div>
             <div className="hidden md:flex items-center gap-8">
               <a
                 href="#methodology"
-                className="text-slate-200 hover:text-white transition-colors font-medium"
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
               >
                 Methodology
               </a>
               <a
                 href="#capabilities"
-                className="text-slate-200 hover:text-white transition-colors font-medium"
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
               >
                 Capabilities
               </a>
               <a
                 href="#use-cases"
-                className="text-slate-200 hover:text-white transition-colors font-medium"
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
               >
                 Use Cases
               </a>
               <a
                 href="#pricing"
-                className="text-slate-200 hover:text-white transition-colors font-medium"
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
               >
                 Pricing
               </a>
               {isAuthenticated ? (
                 <Button
                   onClick={() => navigate(createPageUrl("Dashboard"))}
-                  className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 shadow-lg shadow-cyan-400/30 font-semibold"
+                  className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Go to Dashboard
                 </Button>
@@ -191,7 +195,7 @@ export default function Landing() {
                     trigger={
                       <Button
                         variant="outline"
-                        className="border-white/40 text-white hover:bg-white/10"
+                        className="border-caio-blue/40 text-caio-blue hover:bg-caio-blue/10 hover:border-caio-gold font-body transition-all duration-300"
                       >
                         Solicitar Acesso
                       </Button>
@@ -199,7 +203,7 @@ export default function Landing() {
                   />
                   <Button
                     onClick={handleLogin}
-                    className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] shadow-lg shadow-[#00D4FF]/30 font-semibold"
+                    className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Sign In
@@ -212,9 +216,12 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTM2IDE2aDh2OGgtOHpNMjAgMzJoOHY4aC04ek0wIDQ4aDh2OGgtOHpNMTYgMGg4djhoLTh6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-yellow-500/5" />
+      <section className="relative overflow-hidden py-32 md:py-48">
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-radial from-caio-blue/10 via-transparent to-caio-gold/10" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-caio-blue/20 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-caio-gold/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+        </div>
 
         <div className="relative max-w-7xl mx-auto px-6">
           <motion.div
@@ -223,69 +230,82 @@ export default function Landing() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            {/* Trust Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#00D4FF]/15 via-[#00A8CC]/10 to-[#FFB800]/20 border border-[#00D4FF]/40 text-[#00E5FF] text-sm font-medium mb-8 shadow-lg">
-              <Award className="w-4 h-4" />
-              Powered by TSI v9.3 · 11-Module Strategic Intelligence
+            {/* Logo Animated */}
+            <div className="mb-12 flex justify-center">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
+                alt="CAIO·AI Logo" 
+                className="w-32 h-32 object-contain drop-shadow-[0_0_30px_rgba(10,180,255,0.5)]"
+              />
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Raising the bar on<br />
-              <span className="bg-gradient-to-r from-[#00D4FF] via-[#00A8CC] to-[#FFB800] bg-clip-text text-transparent">
-                Strategic Dialogue
-              </span>
+            <h1 className="text-6xl md:text-8xl font-heading font-bold text-white mb-8 leading-tight" style={{ letterSpacing: '0.02em' }}>
+              CAIO·AI
             </h1>
+            <h2 className="text-3xl md:text-5xl font-heading text-transparent bg-clip-text bg-gradient-neural mb-8">
+              Inteligência que Cria Tração
+            </h2>
 
-            <p className="text-xl md:text-2xl text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed">
-              ESIOS CAIO·AI — your <span className="text-[#00D4FF] font-semibold">unwavering executive peer</span>.
+            <p className="text-xl md:text-2xl font-body text-caio-off-white mb-12 max-w-4xl mx-auto leading-relaxed">
+              Plataforma integrada de análise, decisão e execução baseada no TSI.
               <br className="hidden md:block" />
-              Multi-agent orchestration, behavioral intelligence, and strategic frameworks that evolve with you.
+              Arquitetura modular que conecta <span className="text-caio-blue font-semibold">inteligência humana</span> com <span className="text-caio-gold font-semibold">capacidade computacional</span>.
             </p>
 
             {/* Primary CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <AccessRequestForm />
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+              <AccessRequestForm 
+                trigger={
+                  <Button
+                    size="lg"
+                    className="bg-caio-blue hover:shadow-glow-gold text-white font-body font-semibold border-2 border-caio-gold/50 px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 shadow-neon-blue"
+                  >
+                    <Sparkles className="w-5 h-5 mr-2" />
+                    Iniciar Trial Gratuito
+                  </Button>
+                }
+              />
               <AccessRequestForm 
                 trigger={
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-2 border-[#00D4FF]/40 bg-[#00D4FF]/10 text-white hover:bg-[#00D4FF]/20 hover:border-[#00D4FF]/60 font-semibold px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 shadow-xl"
+                    className="border-2 border-caio-gold/50 bg-caio-gold/10 text-caio-gold hover:bg-caio-gold/20 hover:shadow-glow-gold font-body font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
                   >
                     <Play className="w-5 h-5 mr-2" />
-                    Book a Demo
+                    Agendar Demo
                   </Button>
                 }
               />
             </div>
 
             {/* Stats Bar */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
               {[
                 {
                   icon: Layers,
-                  label: "TSI Modules",
+                  label: "Módulos TSI",
                   value: "11",
-                  bgClass: "from-[#00D4FF] to-[#0099CC]",
+                  bgClass: "from-caio-blue to-caio-blue-medium",
                 },
                 {
                   icon: Network,
-                  label: "Strategic Connections",
+                  label: "Conexões Estratégicas",
                   value: "10K+",
-                  bgClass: "from-[#00B8E6] to-[#0099CC]",
+                  bgClass: "from-caio-blue-medium to-caio-blue",
                 },
                 {
                   icon: Zap,
-                  label: "Faster Analysis",
+                  label: "Análise Mais Rápida",
                   value: "95%",
-                  bgClass: "from-[#00D4FF] to-[#00E5FF]",
+                  bgClass: "from-caio-gold to-caio-gold-dark",
                 },
                 {
                   icon: DollarSign,
-                  label: "Avg. Annual Savings",
+                  label: "Economia Anual Média",
                   value: "$180K",
-                  bgClass: "from-[#FFB800] to-[#FF9500]",
+                  bgClass: "from-caio-gold-dark to-caio-gold",
                 },
               ].map((stat, i) => {
                 const Icon = stat.icon;
@@ -296,17 +316,17 @@ export default function Landing() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
-                    <Card className="bg-white/5 border-[#00D4FF]/20 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
-                      <CardContent className="p-4 text-center">
+                    <Card className="bg-caio-graphite/30 border-caio-blue/20 backdrop-blur-sm hover:bg-caio-graphite/50 hover:border-caio-gold/40 transition-all duration-300 hover:shadow-neon-blue">
+                      <CardContent className="p-6 text-center">
                         <div
-                          className={`w-10 h-10 rounded-xl bg-gradient-to-r ${stat.bgClass} flex items-center justify-center mx-auto mb-2`}
+                          className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.bgClass} flex items-center justify-center mx-auto mb-3 shadow-lg`}
                         >
-                          <Icon className="w-5 h-5 text-[#0A1628]" />
+                          <Icon className="w-7 h-7 text-white" />
                         </div>
-                        <div className="text-2xl font-bold text-white mb-1">
+                        <div className="text-3xl font-heading font-bold text-white mb-2">
                           {stat.value}
                         </div>
-                        <div className="text-xs text-slate-400">
+                        <div className="text-xs font-body text-caio-off-white/70">
                           {stat.label}
                         </div>
                       </CardContent>
@@ -319,26 +339,83 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Por que CAIO·AI */}
+      <section className="py-32 relative">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-caio-blue/5 to-transparent" />
+        <div className="max-w-7xl mx-auto px-6 relative">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-6xl font-heading font-bold text-white mb-6">
+              Por que CAIO·AI?
+            </h2>
+            <p className="text-xl font-body text-caio-off-white max-w-4xl mx-auto leading-relaxed">
+              Não é mais um chatbot. É uma arquitetura de <span className="text-caio-blue font-semibold">inteligência estratégica</span> que{" "}
+              <span className="text-caio-gold font-semibold">cria tração real</span> nos seus objetivos de negócio.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
+            {[
+              {
+                title: "Metodologia TSI Proprietária",
+                description: "11 módulos integrados cobrindo desde análise de contexto até execução e capital.",
+                icon: Brain,
+                gradient: "from-caio-blue to-caio-blue-medium"
+              },
+              {
+                title: "Simbiose Humano-IA",
+                description: "Arquitetura que amplifica decisões estratégicas sem substituir o julgamento executivo.",
+                icon: Network,
+                gradient: "from-caio-gold to-caio-gold-dark"
+              },
+              {
+                title: "Nível Enterprise",
+                description: "Governança cognitiva, auditoria de decisões e rastreabilidade completa via Hermes.",
+                icon: Target,
+                gradient: "from-caio-blue-medium to-caio-gold"
+              }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.2 }}
+                viewport={{ once: true }}
+              >
+                <Card className="bg-caio-graphite/30 border-caio-blue/20 backdrop-blur-sm h-full hover:border-caio-gold/40 transition-all duration-300 hover:shadow-glow-blue">
+                  <CardContent className="p-8 text-center">
+                    <div className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mx-auto mb-6 shadow-neon-blue`}>
+                      <item.icon className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-heading font-bold text-white mb-4">{item.title}</h3>
+                    <p className="font-body text-caio-off-white/80 leading-relaxed">{item.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Separator */}
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-20" />
+        </div>
+      </section>
+
       {/* TSI Methodology Showcase */}
       <section
         id="methodology"
-        className="py-20 md:py-32 bg-white/5 backdrop-blur-sm border-y border-white/10"
+        className="py-32 bg-caio-graphite/20 backdrop-blur-sm border-y border-caio-blue/20"
       >
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
-              🎯 TSI v9.3 · 11-Module System
+          <div className="text-center mb-20">
+            <Badge className="bg-caio-blue/20 text-caio-blue border-caio-blue/40 mb-6 px-6 py-2 text-base font-body">
+              TSI v9.3 · Sistema de 11 Módulos
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Institutional-Grade Strategic Intelligence
+            <h2 className="text-5xl md:text-6xl font-heading font-bold text-white mb-6">
+              Inteligência Estratégica<br />de Nível Institucional
             </h2>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              Diferente de modelos genéricos de chat, CAIO opera sobre um{" "}
-              <span className="text-[#00D4FF] font-semibold">
-                sistema modular de 11 blocos TSI
-              </span>{" "}
-              que cobre contexto, finanças, tecnologia, execução, capital e
-              governança cognitiva.
+            <p className="text-xl font-body text-caio-off-white max-w-3xl mx-auto leading-relaxed">
+              Diferente de modelos genéricos, CAIO opera sobre um{" "}
+              <span className="text-caio-blue font-semibold">sistema modular de 11 blocos TSI</span>{" "}
+              que cobre contexto, finanças, tecnologia, execução, capital e governança cognitiva.
             </p>
           </div>
 
@@ -1105,32 +1182,32 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 py-12 bg-slate-900/50 backdrop-blur-sm">
+      <footer className="border-t border-caio-blue/20 py-16 bg-caio-navy backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
-              <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center gap-3 mb-4">
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
                   alt="CAIO·AI" 
-                  className="w-8 h-8 object-contain"
+                  className="w-10 h-10 object-contain opacity-80"
                 />
-                <div className="text-lg font-bold text-white">CAIO·AI</div>
+                <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>CAIO·AI</div>
               </div>
-              <p className="text-sm text-slate-300">
-                Your Unwavering Executive Peer, Always On.
+              <p className="text-sm font-body text-caio-blue mb-4 font-semibold">
+                Inteligência que vira tração.
               </p>
-              <Badge className="mt-4 bg-[#00D4FF]/20 text-[#00D4FF] text-xs border border-[#00D4FF]/40">
-                TSI v9.3 · powered by FRATOZ
-              </Badge>
+              <p className="text-xs font-body text-caio-off-white/60">
+                powered by FRATOZ
+              </p>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-sm text-slate-300">
+              <h4 className="text-white font-body font-semibold mb-4">Product</h4>
+              <ul className="space-y-2 text-sm font-body text-caio-off-white/70">
                 <li>
                   <a
                     href="#methodology"
-                    className="hover:text-white transition-colors"
+                    className="hover:text-caio-gold transition-colors"
                   >
                     TSI Methodology
                   </a>
@@ -1138,7 +1215,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#capabilities"
-                    className="hover:text-white transition-colors"
+                    className="hover:text-caio-gold transition-colors"
                   >
                     Capabilities
                   </a>
@@ -1146,7 +1223,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#use-cases"
-                    className="hover:text-white transition-colors"
+                    className="hover:text-caio-gold transition-colors"
                   >
                     Use Cases
                   </a>
@@ -1154,7 +1231,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#pricing"
-                    className="hover:text-white transition-colors"
+                    className="hover:text-caio-gold transition-colors"
                   >
                     Pricing
                   </a>
@@ -1162,54 +1239,56 @@ export default function Landing() {
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm text-slate-300">
+              <h4 className="text-white font-body font-semibold mb-4">Company</h4>
+              <ul className="space-y-2 text-sm font-body text-caio-off-white/70">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     Blog
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     Careers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     Contact
                   </a>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm text-slate-300">
+              <h4 className="text-white font-body font-semibold mb-4">Legal</h4>
+              <ul className="space-y-2 text-sm font-body text-caio-off-white/70">
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     Terms
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition-colors">
+                  <a href="#" className="hover:text-caio-gold transition-colors">
                     Security
                   </a>
                 </li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-8 text-center text-sm text-slate-400">
-            © 2025 CAIO·AI Platform. All rights reserved. | Powered by TSI v9.3
-            Strategic Intelligence · FRATOZ
+          <div className="border-t border-caio-blue/10 pt-8">
+            <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-8" />
+            <p className="text-center text-sm font-body text-caio-off-white/50">
+              © 2025 CAIO·AI Platform. All rights reserved. | Powered by TSI v9.3 Strategic Intelligence
+            </p>
           </div>
         </div>
       </footer>
