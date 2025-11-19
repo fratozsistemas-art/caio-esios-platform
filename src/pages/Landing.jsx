@@ -30,6 +30,7 @@ import AccessRequestForm from "../components/landing/AccessRequestForm";
 import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
 import PreHomeAnimation from "../components/landing/PreHomeAnimation";
 import PricingSection from "../components/landing/PricingSection";
+import InteractiveDemo from "../components/landing/InteractiveDemo";
 import {
   tsiModules,
   advancedCapabilities,
@@ -47,6 +48,7 @@ export default function Landing() {
 
   const [activeModule, setActiveModule] = useState("M5");
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -275,20 +277,18 @@ export default function Landing() {
                   </Button>
                 }
               />
-              <AccessRequestForm 
-                trigger={
-                  <Button
-                    size="lg"
-                    variant="outline"
-                    className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
-                    style={{
-                      boxShadow: '0 0 20px rgba(0, 200, 255, 0.2)'
-                    }}
-                  >
-                    See How CAIO Thinks
-                  </Button>
-                }
-              />
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setShowDemo(true)}
+                className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                style={{
+                  boxShadow: '0 0 20px rgba(0, 200, 255, 0.2)'
+                }}
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Try Interactive Demo
+              </Button>
             </div>
 
             {/* Stats Bar */}
@@ -988,6 +988,9 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
+      {/* Interactive Demo Modal */}
+      <InteractiveDemo open={showDemo} onClose={() => setShowDemo(false)} />
 
       {/* Footer */}
       <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm">
