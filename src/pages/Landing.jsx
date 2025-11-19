@@ -96,14 +96,7 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-caio-navy"
-      style={{
-        backgroundImage: `
-          radial-gradient(circle at 20% 50%, rgba(10, 180, 255, 0.1) 0%, transparent 50%),
-          radial-gradient(circle at 80% 50%, rgba(255, 196, 58, 0.1) 0%, transparent 50%),
-          url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 16h8v8h-8zM20 32h8v8h-8zM0 48h8v8H0zM16 0h8v8h-8z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
-        `
-      }}>
+    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       {/* Unauthorized Alert */}
       {showUnauthorizedAlert && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
@@ -143,7 +136,7 @@ export default function Landing() {
       )}
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-caio-navy/95 backdrop-blur-xl border-b border-caio-blue/20">
+      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-caio-blue/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
@@ -1079,7 +1072,7 @@ export default function Landing() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-caio-blue/20 py-16 bg-caio-navy backdrop-blur-sm">
+      <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
