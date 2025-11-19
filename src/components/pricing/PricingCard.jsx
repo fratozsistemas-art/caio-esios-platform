@@ -66,14 +66,14 @@ export default function PricingCard({ plan, index }) {
               <span className="text-5xl font-bold text-white">{plan.price}</span>
               {plan.period && <span className="text-slate-400">{plan.period}</span>}
             </div>
-            {billingCycle === "annual" && plan.annualPrice && !plan.isEnterprise && (
+            {billingCycle === "annual" && plan.annualPrice && !plan.isEnterprise && !plan.isCustom && (
               <div className="text-sm text-slate-400">
                 or {plan.annualPrice}/year <span className="text-green-400">({plan.annualSavings})</span>
               </div>
             )}
-            {plan.isEnterprise && (
+            {plan.isCustom && (
               <div className="text-sm text-slate-400">
-                or {plan.annualPrice}/year <span className="text-green-400">({plan.annualSavings})</span>
+                Pricing tailored to your needs
               </div>
             )}
           </div>

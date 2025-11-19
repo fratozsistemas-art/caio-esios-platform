@@ -25,10 +25,10 @@ export const plans = [
   },
   {
     name: "Teams",
-    price: "$299",
+    price: "$399",
     period: "/mo",
-    annualPrice: "$2,990",
-    annualSavings: "Save $598/year",
+    annualPrice: "$3,990",
+    annualSavings: "Save $798/year",
     description: "Para times de liderança (5+ assentos incluídos)",
     priceIds: {
       monthly: "price_1SKD702MPzse1ZHQovuVBsqL",
@@ -52,12 +52,13 @@ export const plans = [
   },
   {
     name: "Enterprise",
-    price: "$2,797",
-    period: "/mo",
-    annualPrice: "$27,970",
-    annualSavings: "Save $5,594/year",
+    price: "Custom",
+    period: "",
+    annualPrice: null,
+    annualSavings: null,
     description: "Para organizações com necessidades avançadas",
     priceIds: null,
+    isCustom: true,
     features: [
       "Tudo do Teams",
       "Assentos ilimitados",
