@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
+import AccessRequestForm from "../components/landing/AccessRequestForm";
 import {
   tsiModules,
   advancedCapabilities,
@@ -138,13 +139,25 @@ export default function Landing() {
                   Go to Dashboard
                 </Button>
               ) : (
-                <Button
-                  onClick={handleLogin}
-                  className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 shadow-lg shadow-cyan-400/30 font-semibold"
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Sign In
-                </Button>
+                <>
+                  <AccessRequestForm 
+                    trigger={
+                      <Button
+                        variant="outline"
+                        className="border-white/40 text-white hover:bg-white/10"
+                      >
+                        Solicitar Acesso
+                      </Button>
+                    }
+                  />
+                  <Button
+                    onClick={handleLogin}
+                    className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 shadow-lg shadow-cyan-400/30 font-semibold"
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Button>
+                </>
               )}
             </div>
           </div>
@@ -185,18 +198,7 @@ export default function Landing() {
 
             {/* Primary CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button
-                size="lg"
-                onClick={() =>
-                  document
-                    .getElementById("pricing")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
-                className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 font-semibold px-8 py-6 text-lg shadow-xl shadow-cyan-400/30"
-              >
-                Start 14-Day Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
+              <AccessRequestForm />
               <Button
                 size="lg"
                 variant="outline"
@@ -1005,29 +1007,21 @@ export default function Landing() {
               rápidas, profundas e alinhadas à lógica de capital.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                onClick={() =>
-                  document
-                    .getElementById("pricing")
-                    ?.scrollIntoView({ behavior: "smooth" })
+              <AccessRequestForm />
+              <AccessRequestForm 
+                trigger={
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="border-2 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:border-white/60 font-semibold px-8 py-6 text-lg shadow-xl"
+                  >
+                    Book a Demo
+                  </Button>
                 }
-                className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 font-semibold px-8 py-6 text-lg shadow-xl shadow-cyan-400/30"
-              >
-                Start 14-Day Free Trial
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="border-2 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:border-white/60 font-semibold px-8 py-6 text-lg shadow-xl"
-              >
-                Book a Demo
-              </Button>
+              />
             </div>
             <p className="text-sm text-slate-300 mt-6 font-medium">
-              No credit card required · 30-day money-back guarantee · Cancel
-              anytime
+              Acesso restrito · Entre em contato para solicitar demonstração
             </p>
           </motion.div>
         </div>
