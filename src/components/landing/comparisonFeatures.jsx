@@ -81,7 +81,7 @@ export const comparisonFeatures = [
   },
   {
     feature: "Cost (annual)",
-    caio: "$1,188–$47,880",
+    caio: "$1,188–$180,000",
     llms: "$240–$2,400",
     reasoning: "$3,600–$12,000",
     individual: "$100K–$300K",
