@@ -52,11 +52,11 @@ export const plans = [
   },
   {
     name: "Enterprise",
-    price: "Custom",
-    period: "",
-    annualPrice: null,
-    annualSavings: null,
-    description: "Para organizações com necessidades avançadas",
+    price: "$15,000",
+    period: "/mo",
+    annualPrice: "$150,000",
+    annualSavings: "Save $30,000/year",
+    description: "Para Fortune 500, Ibovespa e organizações avançadas",
     priceIds: null,
     isCustom: true,
     features: [
