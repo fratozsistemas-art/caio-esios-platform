@@ -155,7 +155,7 @@ export default function Layout({ children, currentPageName }) {
 
   return (
     <TutorialProvider>
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+      <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0A1628]/95 backdrop-blur-lg border-b border-[#00D4FF]/20">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
@@ -297,7 +297,7 @@ export default function Layout({ children, currentPageName }) {
       )}
 
       <GlobalSearch open={showSearch} onClose={() => setShowSearch(false)} />
-    </div>
+      </div>
     </TutorialProvider>
   );
 }
