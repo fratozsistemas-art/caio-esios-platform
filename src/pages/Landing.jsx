@@ -50,15 +50,20 @@ export default function Landing() {
         const authenticated = await base44.auth.isAuthenticated();
         setIsAuthenticated(authenticated);
       } catch (error) {
+        // Silently handle auth errors on public landing page
         setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
     checkAuth();
   }, []);
 
-  const handleLogin = () => {
-    base44.auth.redirectToLogin(createPageUrl("Dashboard"));
+  const handleLogin = (e) => {
+    e?.preventDefault();
+    // Use window.location for public page navigation
+    const dashboardUrl = window.location.origin + createPageUrl("Dashboard");
+    base44.auth.redirectToLogin(dashboardUrl);
   };
 
   const calculateROI = () => {
