@@ -152,8 +152,8 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-lg border-b border-white/10">
+    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0A1628]/95 backdrop-blur-lg border-b border-[#00D4FF]/20">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <img 
@@ -184,11 +184,11 @@ export default function Layout({ children, currentPageName }) {
         </div>
       </div>
 
-      <aside className={`fixed top-0 left-0 h-screen w-64 bg-slate-900/95 backdrop-blur-xl border-r border-white/10 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <aside className={`fixed top-0 left-0 h-screen w-64 bg-[#0A1628]/95 backdrop-blur-xl border-r border-[#00D4FF]/20 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
               alt="CAIO·AI" 
               className="w-10 h-10 object-contain"
             />
@@ -233,12 +233,12 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         key={item.path}
                         to={createPageUrl(item.path)}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-300 hover:bg-white/5 hover:text-white border border-transparent'}`}
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-[#00D4FF]/20 text-[#00D4FF] border border-[#00D4FF]/30' : 'text-slate-300 hover:bg-white/5 hover:text-white border border-transparent'}`}
                       >
                         <Icon className="w-5 h-5 flex-shrink-0" />
                         <span className="text-sm font-medium flex-1 truncate">{item.name}</span>
                         {item.badge && (
-                          <Badge className="text-xs bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                          <Badge className="text-xs bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/30">
                             {item.badge}
                           </Badge>
                         )}
@@ -254,7 +254,7 @@ export default function Layout({ children, currentPageName }) {
         {user && (
           <div className="p-4 border-t border-white/10">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-yellow-500 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#FFB800] flex items-center justify-center">
                 <span className="text-white font-bold text-sm">
                   {user.full_name?.charAt(0) || 'U'}
                 </span>

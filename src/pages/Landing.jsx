@@ -95,7 +95,7 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
+    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       {/* Unauthorized Alert */}
       {showUnauthorizedAlert && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
@@ -135,12 +135,12 @@ export default function Landing() {
       )}
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-white/10">
+      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
                 alt="CAIO·AI" 
                 className="w-12 h-12 object-contain"
               />
@@ -199,7 +199,7 @@ export default function Landing() {
                   />
                   <Button
                     onClick={handleLogin}
-                    className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 shadow-lg shadow-cyan-400/30 font-semibold"
+                    className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] shadow-lg shadow-[#00D4FF]/30 font-semibold"
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Sign In
@@ -232,13 +232,13 @@ export default function Landing() {
             {/* Main Headline */}
             <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
               Raising the bar on<br />
-              <span className="bg-gradient-to-r from-cyan-300 via-sky-400 to-yellow-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#00D4FF] via-[#00A8CC] to-[#FFB800] bg-clip-text text-transparent">
                 Strategic Dialogue
               </span>
             </h1>
 
             <p className="text-xl md:text-2xl text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed">
-              ESIOS CAIO·AI — your <span className="text-cyan-300 font-semibold">unwavering executive peer</span>.
+              ESIOS CAIO·AI — your <span className="text-[#00D4FF] font-semibold">unwavering executive peer</span>.
               <br className="hidden md:block" />
               Multi-agent orchestration, behavioral intelligence, and strategic frameworks that evolve with you.
             </p>
@@ -268,25 +268,25 @@ export default function Landing() {
                   icon: Layers,
                   label: "TSI Modules",
                   value: "11",
-                  bgClass: "from-cyan-300 to-cyan-500",
+                  bgClass: "from-[#00D4FF] to-[#0099CC]",
                 },
                 {
                   icon: Network,
                   label: "Strategic Connections",
                   value: "10K+",
-                  bgClass: "from-sky-300 to-sky-500",
+                  bgClass: "from-[#00B8E6] to-[#0099CC]",
                 },
                 {
                   icon: Zap,
                   label: "Faster Analysis",
                   value: "95%",
-                  bgClass: "from-emerald-300 to-emerald-500",
+                  bgClass: "from-[#00D4FF] to-[#00E5FF]",
                 },
                 {
                   icon: DollarSign,
                   label: "Avg. Annual Savings",
                   value: "$180K",
-                  bgClass: "from-yellow-300 to-yellow-500",
+                  bgClass: "from-[#FFB800] to-[#FF9500]",
                 },
               ].map((stat, i) => {
                 const Icon = stat.icon;
@@ -297,12 +297,12 @@ export default function Landing() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
-                    <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
+                    <Card className="bg-white/5 border-[#00D4FF]/20 backdrop-blur-sm hover:bg-white/10 transition-all duration-300">
                       <CardContent className="p-4 text-center">
                         <div
                           className={`w-10 h-10 rounded-xl bg-gradient-to-r ${stat.bgClass} flex items-center justify-center mx-auto mb-2`}
                         >
-                          <Icon className="w-5 h-5 text-slate-950" />
+                          <Icon className="w-5 h-5 text-[#0A1628]" />
                         </div>
                         <div className="text-2xl font-bold text-white mb-1">
                           {stat.value}
@@ -327,7 +327,7 @@ export default function Landing() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-cyan-500/20 text-cyan-300 border-cyan-400/40 mb-4">
+            <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
               🎯 TSI v9.3 · 11-Module System
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -335,7 +335,7 @@ export default function Landing() {
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
               Diferente de modelos genéricos de chat, CAIO opera sobre um{" "}
-              <span className="text-cyan-300 font-semibold">
+              <span className="text-[#00D4FF] font-semibold">
                 sistema modular de 11 blocos TSI
               </span>{" "}
               que cobre contexto, finanças, tecnologia, execução, capital e
@@ -398,14 +398,14 @@ export default function Landing() {
                 <Card
                   className={`h-full transition-all duration-300 ${
                     activeModule === featuredModule.id
-                      ? "bg-gradient-to-br from-cyan-500/25 via-sky-500/15 to-yellow-400/20 border-cyan-300/60 shadow-xl shadow-cyan-400/30"
+                      ? "bg-gradient-to-br from-[#00D4FF]/25 via-[#00A8CC]/15 to-[#FFB800]/20 border-[#00D4FF]/60 shadow-xl shadow-[#00D4FF]/30"
                       : "bg-white/5 border-white/10 hover:bg-white/10"
                   }`}
                 >
                   <CardContent className="p-6 h-full flex flex-col md:flex-row gap-5">
                     <div className="flex flex-col items-center md:items-start gap-3 md:w-1/4">
-                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center">
-                        <featuredModule.icon className="w-7 h-7 text-slate-950" />
+                      <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center">
+                        <featuredModule.icon className="w-7 h-7 text-[#0A1628]" />
                       </div>
                       <Badge className="bg-white/10 text-white text-xs">
                         Core Module · {featuredModule.id}
