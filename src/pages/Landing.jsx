@@ -224,7 +224,7 @@ export default function Landing() {
             className="text-center mb-16"
           >
             {/* Trust Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-400/15 via-sky-500/10 to-yellow-400/20 border border-cyan-300/40 text-cyan-100 text-sm font-medium mb-8 shadow-lg">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-[#00D4FF]/15 via-[#00A8CC]/10 to-[#FFB800]/20 border border-[#00D4FF]/40 text-[#00E5FF] text-sm font-medium mb-8 shadow-lg">
               <Award className="w-4 h-4" />
               Powered by TSI v9.3 · 11-Module Strategic Intelligence
             </div>
@@ -254,7 +254,7 @@ export default function Landing() {
                     .getElementById("methodology")
                     ?.scrollIntoView({ behavior: "smooth" })
                 }
-                className="border-2 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:border-white/60 font-semibold px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 shadow-xl"
+                className="border-2 border-[#00D4FF]/40 bg-[#00D4FF]/10 text-white hover:bg-[#00D4FF]/20 hover:border-[#00D4FF]/60 font-semibold px-8 py-6 text-lg backdrop-blur-sm transition-all duration-300 shadow-xl"
               >
                 <Play className="w-5 h-5 mr-2" />
                 See How It Works
@@ -497,24 +497,24 @@ export default function Landing() {
                 title: "Cobertura Completa",
                 description:
                   "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
-                bgClass: "bg-emerald-500/20",
-                iconClass: "text-emerald-300",
+                bgClass: "bg-[#00D4FF]/20",
+                iconClass: "text-[#00D4FF]",
               },
               {
                 icon: Zap,
                 title: "Modo Especialista Modular",
                 description:
                   "Rode apenas o módulo que interessa (M1–M11) sem perder coerência com a arquitetura TSI.",
-                bgClass: "bg-yellow-500/20",
-                iconClass: "text-yellow-300",
+                bgClass: "bg-[#FFB800]/20",
+                iconClass: "text-[#FFB800]",
               },
               {
                 icon: Target,
                 title: "Depth-Level Architecture",
                 description:
                   "Saídas adaptadas para Board, C-Suite, VPs, gestores e analistas, com o mesmo núcleo analítico.",
-                bgClass: "bg-cyan-500/20",
-                iconClass: "text-cyan-300",
+                bgClass: "bg-[#00D4FF]/20",
+                iconClass: "text-[#00D4FF]",
               },
             ].map((benefit, i) => {
               const Icon = benefit.icon;
@@ -554,7 +554,7 @@ export default function Landing() {
       <section id="capabilities" className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-purple-500/20 text-purple-300 border-purple-400/40 mb-4">
+            <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
               🚀 Advanced Capabilities
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -579,8 +579,8 @@ export default function Landing() {
                 >
                   <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 h-full group">
                     <CardContent className="p-6">
-                      <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-                        <Icon className="w-7 h-7 text-slate-950" />
+                      <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                        <Icon className="w-7 h-7 text-[#0A1628]" />
                       </div>
                       <h3 className="text-xl font-bold text-white mb-3">
                         {capability.title}
@@ -589,7 +589,7 @@ export default function Landing() {
                         {capability.description}
                       </p>
                       <div className="pt-4 border-t border-white/10">
-                        <Badge className="bg-cyan-500/20 text-cyan-300 text-xs">
+                        <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] text-xs">
                           {capability.metric}
                         </Badge>
                       </div>
@@ -606,7 +606,7 @@ export default function Landing() {
       <section className="py-20 md:py-32 bg-white/5 backdrop-blur-sm border-y border-white/10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-400/40 mb-4">
+            <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
               📊 Feature Comparison
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -624,8 +624,8 @@ export default function Landing() {
                   <th className="p-4 text-slate-400 font-semibold">Feature</th>
                   <th className="p-4 text-center">
                     <div className="flex flex-col items-center">
-                      <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center mb-2">
-                        <Brain className="w-6 h-6 text-slate-950" />
+                      <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-2">
+                        <Brain className="w-6 h-6 text-[#0A1628]" />
                       </div>
                       <span className="text-white font-semibold">CAIO</span>
                     </div>
@@ -704,16 +704,16 @@ export default function Landing() {
 
           <div className="text-center mt-12">
             <p className="text-slate-300 mb-6">
-              <span className="text-cyan-300 font-semibold">
+              <span className="text-[#00D4FF] font-semibold">
                 Metodologia nível consultoria
               </span>{" "}
               +
-              <span className="text-purple-300 font-semibold">
+              <span className="text-[#00A8CC] font-semibold">
                 {" "}
                 velocidade de IA
               </span>{" "}
               +
-              <span className="text-emerald-300 font-semibold">
+              <span className="text-[#FFB800] font-semibold">
                 {" "}
                 modelo SaaS
               </span>
@@ -725,7 +725,7 @@ export default function Landing() {
                   .getElementById("pricing")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 font-semibold"
+              className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold"
             >
               Start Free Trial
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -738,7 +738,7 @@ export default function Landing() {
       <section id="use-cases" className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-orange-500/20 text-orange-300 border-orange-400/40 mb-4">
+            <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/40 mb-4">
               💼 Real-World Results
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -810,16 +810,16 @@ export default function Landing() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                          <div className="p-4 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 border border-emerald-400/40">
-                            <p className="text-xs text-emerald-200 mb-1">
+                          <div className="p-4 rounded-xl bg-gradient-to-br from-[#00D4FF]/20 to-[#00A8CC]/20 border border-[#00D4FF]/40">
+                            <p className="text-xs text-[#00E5FF] mb-1">
                               Cost Savings
                             </p>
                             <p className="text-xl font-bold text-white">
                               {useCase.savings}
                             </p>
                           </div>
-                          <div className="p-4 rounded-xl bg-gradient-to-br from-cyan-500/20 to-sky-500/20 border border-cyan-400/40">
-                            <p className="text-xs text-cyan-200 mb-1">
+                          <div className="p-4 rounded-xl bg-gradient-to-br from-[#FFB800]/20 to-[#FF9500]/20 border border-[#FFB800]/40">
+                            <p className="text-xs text-[#FFE5A8] mb-1">
                               Time Saved
                             </p>
                             <p className="text-xl font-bold text-white">
@@ -841,7 +841,7 @@ export default function Landing() {
       <section className="py-20 md:py-32 bg-white/5 backdrop-blur-sm border-y border-white/10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-400/40 mb-4">
+            <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/40 mb-4">
               ⭐ Trusted by Leaders
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
@@ -874,7 +874,7 @@ export default function Landing() {
                     </p>
 
                     <div className="flex items-center gap-4 pt-6 border-t border-white/10">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-cyan-400 to-yellow-400 flex items-center justify-center text-slate-950 font-bold shadow-lg">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center text-[#0A1628] font-bold shadow-lg">
                         {testimonial.avatar}
                       </div>
                       <div className="flex-1">
@@ -891,7 +891,7 @@ export default function Landing() {
                     </div>
 
                     <div className="mt-4">
-                      <Badge className="bg-emerald-500/20 text-emerald-300 border-emerald-400/40">
+                      <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40">
                         <TrendingUp className="w-3 h-3 mr-1" />
                         {testimonial.metric}
                       </Badge>
@@ -999,7 +999,7 @@ export default function Landing() {
                       .getElementById("pricing")
                       ?.scrollIntoView({ behavior: "smooth" })
                   }
-                  className="w-full bg-gradient-to-r from-cyan-400 to-yellow-400 hover:from-cyan-300 hover:to-yellow-300 text-slate-950 text-lg font-semibold shadow-xl shadow-cyan-400/30"
+                  className="w-full bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] text-lg font-semibold shadow-xl shadow-[#00D4FF]/30"
                 >
                   See Plans & Start Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
@@ -1023,7 +1023,7 @@ export default function Landing() {
             <p className="text-xl text-slate-200 max-w-3xl mx-auto mb-8">
               14-day free trial. No credit card required. Cancel anytime.
             </p>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 border border-emerald-400/40 text-emerald-200 text-sm font-medium shadow-lg">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00D4FF]/20 border border-[#00D4FF]/40 text-[#00E5FF] text-sm font-medium shadow-lg">
               <CheckCircle className="w-4 h-4" />
               30-Day Money-Back Guarantee
             </div>
@@ -1038,7 +1038,7 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 md:py-32 bg-gradient-to-br from-cyan-400/10 via-sky-500/10 to-transparent">
+      <section className="py-20 md:py-32 bg-gradient-to-br from-[#00D4FF]/10 via-[#00A8CC]/10 to-transparent">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -1060,7 +1060,7 @@ export default function Landing() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-2 border-white/40 bg-white/10 text-white hover:bg-white/20 hover:border-white/60 font-semibold px-8 py-6 text-lg shadow-xl"
+                    className="border-2 border-[#FFB800]/40 bg-[#FFB800]/10 text-white hover:bg-[#FFB800]/20 hover:border-[#FFB800]/60 font-semibold px-8 py-6 text-lg shadow-xl"
                   >
                     Book a Demo
                   </Button>
@@ -1090,7 +1090,7 @@ export default function Landing() {
               <p className="text-sm text-slate-300">
                 Your Unwavering Executive Peer, Always On.
               </p>
-              <Badge className="mt-4 bg-cyan-500/20 text-cyan-300 text-xs border border-cyan-400/40">
+              <Badge className="mt-4 bg-[#00D4FF]/20 text-[#00D4FF] text-xs border border-[#00D4FF]/40">
                 TSI v9.3 · powered by FRATOZ
               </Badge>
             </div>
