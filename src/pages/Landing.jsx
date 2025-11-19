@@ -27,6 +27,7 @@ import {
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
+import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
 import {
   tsiModules,
   advancedCapabilities,
@@ -212,9 +213,7 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="relative overflow-hidden py-32 md:py-48">
         <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-radial from-caio-blue/10 via-transparent to-caio-gold/10" />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-caio-blue/20 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-caio-gold/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '1s' }} />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
         </div>
 
         <div className="relative max-w-7xl mx-auto px-6">
@@ -225,26 +224,29 @@ export default function Landing() {
             className="text-center mb-16"
           >
             {/* Logo Animated */}
-            <div className="mb-12 flex justify-center">
+            <div className="mb-12 flex justify-center relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-[#00C8FF] via-[#16A9FF] to-[#FFC247] opacity-20 blur-3xl rounded-full" />
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
                 alt="CAIO·AI Logo" 
-                className="w-32 h-32 object-contain drop-shadow-[0_0_30px_rgba(10,180,255,0.5)]"
+                className="w-40 h-40 object-contain drop-shadow-[0_0_40px_rgba(0,200,255,0.6)] relative z-10"
               />
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-6xl md:text-8xl font-heading font-bold text-white mb-8 leading-tight" style={{ letterSpacing: '0.02em' }}>
-              CAIO·AI
+            <h1 className="text-5xl md:text-7xl font-bold text-[#EAF6FF] mb-6 leading-tight tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
+              The Executive System for<br />
+              Intelligent Strategic Operations
             </h1>
-            <h2 className="text-4xl md:text-6xl font-heading font-bold text-white mb-8 drop-shadow-[0_0_20px_rgba(10,180,255,0.3)]">
-              Inteligência que Cria Tração
-            </h2>
+            
+            <p className="text-xl md:text-2xl text-[#A7B2C4] mb-4 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
+              Built on TSI v9.3 — 11 Cognitive Modules
+            </p>
 
-            <p className="text-2xl md:text-3xl font-body text-white mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
-              Plataforma integrada de análise, decisão e execução baseada no TSI.
+            <p className="text-lg md:text-xl text-[#EAF6FF]/80 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+              Structured intelligence for executive decision-making.
               <br className="hidden md:block" />
-              Arquitetura modular que conecta <span className="text-caio-blue font-bold drop-shadow-[0_0_10px_rgba(10,180,255,0.5)]">inteligência humana</span> com <span className="text-caio-gold font-bold drop-shadow-[0_0_10px_rgba(255,196,58,0.5)]">capacidade computacional</span>.
+              A strategic partner designed to <span className="text-[#00C8FF] font-semibold">think with you</span>, not for you.
             </p>
 
             {/* Primary CTAs */}
@@ -253,10 +255,14 @@ export default function Landing() {
                 trigger={
                   <Button
                     size="lg"
-                    className="bg-caio-blue hover:shadow-glow-gold text-white font-body font-semibold border-2 border-caio-gold/50 px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 shadow-neon-blue"
+                    className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
+                    style={{
+                      background: 'linear-gradient(90deg, #00C8FF 0%, #16A9FF 50%, #FFC247 100%)',
+                      boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
+                    }}
                   >
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Iniciar Trial Gratuito
+                    Start with CAIO·AI — 14-Day Free Access
+                    <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 }
               />
@@ -265,10 +271,12 @@ export default function Landing() {
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-2 border-caio-gold/50 bg-caio-gold/10 text-caio-gold hover:bg-caio-gold/20 hover:shadow-glow-gold font-body font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                    className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                    style={{
+                      boxShadow: '0 0 20px rgba(0, 200, 255, 0.2)'
+                    }}
                   >
-                    <Play className="w-5 h-5 mr-2" />
-                    Agendar Demo
+                    See How CAIO Thinks
                   </Button>
                 }
               />
@@ -279,27 +287,27 @@ export default function Landing() {
               {[
                 {
                   icon: Layers,
-                  label: "Módulos TSI",
+                  label: "TSI Modules",
                   value: "11",
-                  bgClass: "from-caio-blue to-caio-blue-medium",
+                  color: "#00C8FF",
                 },
                 {
                   icon: Network,
-                  label: "Conexões Estratégicas",
+                  label: "Strategic Connections",
                   value: "10K+",
-                  bgClass: "from-caio-blue-medium to-caio-blue",
+                  color: "#16A9FF",
                 },
                 {
                   icon: Zap,
-                  label: "Análise Mais Rápida",
+                  label: "Faster Analysis",
                   value: "95%",
-                  bgClass: "from-caio-gold to-caio-gold-dark",
+                  color: "#FFC247",
                 },
                 {
                   icon: DollarSign,
-                  label: "Economia Anual Média",
+                  label: "Avg Annual Savings",
                   value: "$180K",
-                  bgClass: "from-caio-gold-dark to-caio-gold",
+                  color: "#E0A43C",
                 },
               ].map((stat, i) => {
                 const Icon = stat.icon;
@@ -310,17 +318,21 @@ export default function Landing() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
-                    <Card className="bg-caio-graphite/30 border-caio-blue/20 backdrop-blur-sm hover:bg-caio-graphite/50 hover:border-caio-gold/40 transition-all duration-300 hover:shadow-neon-blue">
+                    <Card className="bg-[#0B0F1A]/50 border-[#00C8FF]/20 backdrop-blur-sm hover:border-[#00C8FF]/50 transition-all duration-300" style={{ boxShadow: `0 0 20px ${stat.color}15` }}>
                       <CardContent className="p-6 text-center">
                         <div
-                          className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${stat.bgClass} flex items-center justify-center mx-auto mb-3 shadow-lg`}
+                          className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3"
+                          style={{ 
+                            background: `linear-gradient(135deg, ${stat.color}20, ${stat.color}10)`,
+                            boxShadow: `0 0 20px ${stat.color}30`
+                          }}
                         >
-                          <Icon className="w-7 h-7 text-white" />
+                          <Icon className="w-7 h-7" style={{ color: stat.color }} />
                         </div>
-                        <div className="text-3xl font-heading font-bold text-white mb-2">
+                        <div className="text-3xl font-bold text-[#EAF6FF] mb-2">
                           {stat.value}
                         </div>
-                        <div className="text-xs font-body text-caio-off-white/70">
+                        <div className="text-xs text-[#A7B2C4]">
                           {stat.label}
                         </div>
                       </CardContent>
@@ -333,39 +345,38 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Por que CAIO·AI */}
+      {/* Why CAIO·AI Is Different */}
       <section className="py-32 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-caio-blue/5 to-transparent" />
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-7xl font-heading font-bold text-white mb-8 drop-shadow-[0_0_30px_rgba(10,180,255,0.3)]">
-              Por que CAIO·AI?
+            <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
+              Why CAIO·AI Is Different
             </h2>
-            <p className="text-2xl md:text-3xl font-body text-white max-w-4xl mx-auto leading-relaxed font-medium">
-              Não é mais um chatbot. É uma arquitetura de <span className="text-caio-blue font-bold">inteligência estratégica</span> que{" "}
-              <span className="text-caio-gold font-bold">cria tração real</span> nos seus objetivos de negócio.
+            <p className="text-xl md:text-2xl text-[#A7B2C4] max-w-4xl mx-auto leading-relaxed font-light">
+              Not another chatbot. <span className="text-[#00C8FF] font-semibold">Cognitive infrastructure</span> for{" "}
+              <span className="text-[#FFC247] font-semibold">modern organizations</span>.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             {[
               {
-                title: "Metodologia TSI Proprietária",
-                description: "11 módulos integrados cobrindo desde análise de contexto até execução e capital.",
+                title: "TSI v9.3 Proprietary Methodology",
+                description: "11 integrated modules covering context, finance, technology, execution, capital, and cognitive governance.",
                 icon: Brain,
-                gradient: "from-caio-blue to-caio-blue-medium"
+                color: "#00C8FF"
               },
               {
-                title: "Simbiose Humano-IA",
-                description: "Arquitetura que amplifica decisões estratégicas sem substituir o julgamento executivo.",
+                title: "Human-AI Symbiosis",
+                description: "Architecture that amplifies strategic decisions without replacing executive judgment.",
                 icon: Network,
-                gradient: "from-caio-gold to-caio-gold-dark"
+                color: "#16A9FF"
               },
               {
-                title: "Nível Enterprise",
-                description: "Governança cognitiva, auditoria de decisões e rastreabilidade completa via Hermes.",
+                title: "Enterprise-Grade",
+                description: "Cognitive governance, decision auditing, and full traceability via Hermes Trust-Broker.",
                 icon: Target,
-                gradient: "from-caio-blue-medium to-caio-gold"
+                color: "#FFC247"
               }
             ].map((item, idx) => (
               <motion.div
@@ -375,13 +386,25 @@ export default function Landing() {
                 transition={{ duration: 0.6, delay: idx * 0.2 }}
                 viewport={{ once: true }}
               >
-                <Card className="bg-caio-graphite/50 border-caio-blue/30 backdrop-blur-sm h-full hover:border-caio-gold/60 transition-all duration-300 hover:shadow-glow-blue">
+                <Card 
+                  className="bg-[#0B0F1A]/50 border-[#00C8FF]/20 backdrop-blur-sm h-full hover:border-[#00C8FF]/50 transition-all duration-200"
+                  style={{ 
+                    boxShadow: `0 0 30px ${item.color}10`,
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                >
                   <CardContent className="p-10 text-center">
-                    <div className={`w-24 h-24 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center mx-auto mb-6 shadow-neon-blue`}>
-                      <item.icon className="w-12 h-12 text-white" />
+                    <div 
+                      className="w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-6"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${item.color}20, ${item.color}05)`,
+                        boxShadow: `0 0 30px ${item.color}30`
+                      }}
+                    >
+                      <item.icon className="w-10 h-10" style={{ color: item.color }} />
                     </div>
-                    <h3 className="text-3xl font-heading font-bold text-white mb-6">{item.title}</h3>
-                    <p className="text-lg font-body text-white leading-relaxed">{item.description}</p>
+                    <h3 className="text-2xl font-bold text-[#EAF6FF] mb-4">{item.title}</h3>
+                    <p className="text-base text-[#A7B2C4] leading-relaxed font-light">{item.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -389,7 +412,7 @@ export default function Landing() {
           </div>
 
           {/* Separator */}
-          <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-20" />
+          <div className="h-px w-full bg-gradient-to-r from-transparent via-[#00C8FF] to-[#FFC247] opacity-30" />
         </div>
       </section>
 
@@ -400,64 +423,83 @@ export default function Landing() {
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
-            <Badge className="bg-caio-blue/30 text-white border-caio-blue/60 mb-8 px-8 py-3 text-lg font-body font-semibold shadow-neon-blue">
-              TSI v9.3 · Sistema de 11 Módulos
+            <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/40 mb-8 px-8 py-3 text-base font-semibold" style={{ boxShadow: '0 0 20px rgba(0, 200, 255, 0.3)' }}>
+              TSI v9.3 · 11 Cognitive Modules
             </Badge>
-            <h2 className="text-6xl md:text-7xl font-heading font-bold text-white mb-8 drop-shadow-[0_0_30px_rgba(10,180,255,0.3)]">
-              Inteligência Estratégica<br />de Nível Institucional
+            <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-8">
+              Institutional-Grade<br />Strategic Intelligence
             </h2>
-            <p className="text-2xl md:text-3xl font-body text-white max-w-4xl mx-auto leading-relaxed font-medium">
-              Diferente de modelos genéricos, CAIO opera sobre um{" "}
-              <span className="text-caio-blue font-bold">sistema modular de 11 blocos TSI</span>{" "}
-              que cobre contexto, finanças, tecnologia, execução, capital e governança cognitiva.
+            <p className="text-xl md:text-2xl text-[#A7B2C4] max-w-4xl mx-auto leading-relaxed font-light">
+              Unlike generic models, CAIO operates on a{" "}
+              <span className="text-[#00C8FF] font-semibold">modular 11-block TSI system</span>{" "}
+              covering context, finance, technology, execution, capital, and cognitive governance.
             </p>
           </div>
 
-          {/* Grid com módulos TSI */}
-          <div className="grid gap-6 md:grid-cols-3 lg:grid-cols-4 mb-16">
+          {/* Grid 4x3 com M5 destacado */}
+          <div className="grid gap-4 md:grid-cols-4 mb-16">
             {tsiModules.map((module) => {
               const Icon = module.icon;
               const isActive = activeModule === module.id;
+              const isFeatured = module.id === "M5";
+              const moduleColor = parseInt(module.id.slice(1)) % 2 === 0 ? "#FFC247" : "#00C8FF";
+              
               return (
                 <motion.div
                   key={module.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  whileHover={{ scale: 1.05, y: -5 }}
                   onClick={() => setActiveModule(module.id)}
-                  className="cursor-pointer"
+                  className={`cursor-pointer ${isFeatured ? 'md:col-span-3' : 'md:col-span-1'}`}
                 >
                   <Card
-                    className={`h-full transition-all duration-300 ${
+                    className={`h-full transition-all duration-200 ${
                       isActive
-                        ? "bg-gradient-to-br from-caio-blue/30 to-caio-gold/30 border-caio-gold/60 shadow-glow-gold"
-                        : "bg-caio-graphite/50 border-caio-blue/30 hover:border-caio-gold/40 hover:shadow-neon-blue"
+                        ? "bg-gradient-to-br from-[#00C8FF]/20 to-[#FFC247]/20 border-[#00C8FF]/60"
+                        : "bg-[#0B0F1A]/50 border-[#00C8FF]/20 hover:border-[#00C8FF]/50"
                     }`}
+                    style={{ 
+                      boxShadow: isActive ? '0 0 40px rgba(0, 200, 255, 0.3)' : '0 0 20px rgba(0, 200, 255, 0.1)',
+                      transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                    }}
                   >
-                    <CardContent className="p-6 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-caio-blue to-caio-gold flex items-center justify-center mx-auto mb-4 shadow-neon-blue">
-                        <Icon className="w-8 h-8 text-white" />
+                    <CardContent className={`${isFeatured ? 'p-8' : 'p-5'} flex ${isFeatured ? 'flex-row' : 'flex-col'} gap-4 h-full`}>
+                      <div className={`flex ${isFeatured ? 'flex-col' : 'flex-col'} items-center gap-3 ${isFeatured ? 'w-32' : 'w-full'}`}>
+                        <div 
+                          className={`${isFeatured ? 'w-16 h-16' : 'w-12 h-12'} rounded-xl flex items-center justify-center`}
+                          style={{ 
+                            background: `linear-gradient(135deg, ${moduleColor}20, ${moduleColor}10)`,
+                            boxShadow: `0 0 20px ${moduleColor}30`
+                          }}
+                        >
+                          <Icon className={`${isFeatured ? 'w-8 h-8' : 'w-6 h-6'}`} style={{ color: moduleColor }} />
+                        </div>
+                        <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/30 text-xs font-mono font-bold">
+                          {module.id}
+                        </Badge>
+                        {isFeatured && (
+                          <Badge className="bg-[#FFC247]/20 text-[#FFC247] border-[#FFC247]/30 text-[10px]">
+                            CORE
+                          </Badge>
+                        )}
                       </div>
-                      <Badge className="bg-caio-blue/30 text-white border-caio-blue/50 text-xs mb-3 font-mono font-bold">
-                        {module.id}
-                      </Badge>
-                      <h3 className="font-heading font-bold text-white text-lg mb-2">
-                        {module.name}
-                      </h3>
-                      <p className="text-sm font-body text-white/90 leading-relaxed mb-2">
-                        {module.description}
-                      </p>
-                      <p className="text-xs font-body text-caio-gold/80 font-medium">
-                        {module.tag}
-                      </p>
+                      <div className={`flex-1 ${isFeatured ? 'text-left' : 'text-center'}`}>
+                        <h3 className={`font-bold text-[#EAF6FF] ${isFeatured ? 'text-xl' : 'text-sm'} mb-2`}>
+                          {module.name}
+                        </h3>
+                        <p className={`${isFeatured ? 'text-sm' : 'text-xs'} text-[#A7B2C4] leading-relaxed mb-2 font-light`}>
+                          {module.description}
+                        </p>
+                        <p className="text-[10px]" style={{ color: moduleColor, opacity: 0.7 }}>
+                          {module.tag}
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 </motion.div>
               );
             })}
-
-
           </div>
 
           {/* Methodology Benefits */}
@@ -515,6 +557,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* Authority Positioning Spectrum */}
+      <AuthoritySpectrum />
 
       {/* Advanced Capabilities */}
       <section id="capabilities" className="py-20 md:py-32">
