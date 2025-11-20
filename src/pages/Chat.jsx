@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap, GitMerge, Activity } from "lucide-react";
@@ -22,6 +23,10 @@ import { Label } from "@/components/ui/label";
 import ModelSelector from "../components/chat/ModelSelector";
 
 export default function Chat() {
+  const location = useLocation();
+  const initialPrompt = location.state?.initialPrompt || '';
+  const quickActionMetadata = location.state?.quickActionMetadata || null;
+
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState("");
@@ -49,6 +54,13 @@ export default function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Handle initial prompt from Quick Actions
+  useEffect(() => {
+    if (initialPrompt && !selectedConversation) {
+      handleCreateConversation(initialPrompt);
+    }
+  }, [initialPrompt]);
 
   const { data: conversations = [], refetch: refetchConversations } = useQuery({
     queryKey: ['conversations'],
@@ -86,7 +98,7 @@ export default function Chat() {
     }
   }, [messages, selectedConversation]);
 
-  const handleCreateConversation = async () => {
+  const handleCreateConversation = async (initialMessage = null) => {
     try {
       const newConv = await base44.agents.createConversation({
         agent_name: "caio_agent",
@@ -94,12 +106,22 @@ export default function Chat() {
           created_at: new Date().toISOString(),
           persona: agentPersona,
           orchestration_enabled: useOrchestration,
-          selected_model: selectedModel
+          selected_model: selectedModel,
+          quick_action_metadata: quickActionMetadata
         }
       });
       setSelectedConversation(newConv);
       setMessages([]);
       refetchConversations();
+
+      // If there's an initial message, send it immediately
+      if (initialMessage) {
+        setUserInput(initialMessage);
+        // Send it after a short delay to ensure conversation is set
+        setTimeout(() => {
+          sendMessageWithContent(initialMessage, newConv);
+        }, 100);
+      }
     } catch (error) {
       toast.error("Failed to create conversation");
     }
@@ -126,10 +148,10 @@ export default function Chat() {
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!userInput.trim() && uploadedFiles.length === 0 || !selectedConversation || isSending) return;
+  const sendMessageWithContent = async (content, conversation = selectedConversation) => {
+    if (!conversation || isSending) return;
 
-    const messageContent = userInput.trim();
+    const messageContent = content.trim();
     const filesToSend = [...uploadedFiles];
 
     setUserInput("");
@@ -142,9 +164,9 @@ export default function Chat() {
 
         const { data } = await base44.functions.invoke('orchestrateAgents', {
           user_message: messageContent,
-          conversation_id: selectedConversation.id,
+          conversation_id: conversation.id,
           conversation_history: messages,
-          user_profile_id: selectedConversation.metadata?.behavioral_profile_id,
+          user_profile_id: conversation.metadata?.behavioral_profile_id,
           selected_model: selectedModel
         });
 
@@ -152,13 +174,13 @@ export default function Chat() {
           setLastOrchestration(data.orchestration);
           setActiveOrchestration(data.orchestration);
 
-          await base44.agents.addMessage(selectedConversation, {
+          await base44.agents.addMessage(conversation, {
             role: "user",
             content: messageContent,
             file_urls: filesToSend.map((f) => f.url)
           });
 
-          await base44.agents.addMessage(selectedConversation, {
+          await base44.agents.addMessage(conversation, {
             role: "assistant",
             content: data.response.content,
             metadata: {
@@ -177,7 +199,7 @@ export default function Chat() {
           }, 3000);
         }
       } else {
-        await base44.agents.addMessage(selectedConversation, {
+        await base44.agents.addMessage(conversation, {
           role: "user",
           content: messageContent || "Analyze these files",
           file_urls: filesToSend.map((f) => f.url),
@@ -194,6 +216,11 @@ export default function Chat() {
     } finally {
       setIsSending(false);
     }
+  };
+
+  const handleSendMessage = async () => {
+    if (!userInput.trim() && uploadedFiles.length === 0 || !selectedConversation) return;
+    await sendMessageWithContent(userInput);
   };
 
   const handleKeyPress = (e) => {
@@ -275,7 +302,7 @@ export default function Chat() {
 
         <div className="p-4 border-b border-white/10">
           <Button
-            onClick={handleCreateConversation}
+            onClick={() => handleCreateConversation()}
             className="w-full bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
             <Plus className="w-4 h-4 mr-2" />
             New Conversation
@@ -381,7 +408,7 @@ export default function Chat() {
                 </div>
                 <div className="flex gap-3">
                   <Button
-                  onClick={handleCreateConversation}
+                  onClick={() => handleCreateConversation()}
                   className="bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
                     <Plus className="w-4 h-4 mr-2" />
                     Start New Conversation

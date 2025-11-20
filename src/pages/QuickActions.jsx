@@ -1,12 +1,10 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Search,
   Zap,
@@ -28,238 +26,45 @@ import {
   CheckCircle,
   AlertCircle,
   FileText,
-  Map
+  Map,
+  Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import QuickActionAssistantModal from "../components/quickactions/QuickActionAssistantModal";
 
 export default function QuickActions() {
-  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [isAssistantModalOpen, setIsAssistantModalOpen] = useState(false);
+  const [selectedQuickAction, setSelectedQuickAction] = useState(null);
 
-  const quickActionsData = [
-    {
-      id: "market_sizing",
-      title: "Market Sizing & TAM/SAM/SOM",
-      description: "Calculate addressable market with bottom-up and top-down methods",
-      category: "market_intelligence",
-      icon: "TrendingUp",
-      color: "from-blue-500 to-cyan-500",
-      estimated_time: "5 min",
-      primary_framework: "M1",
-      modules_activated: ["M1"],
-      confidence_range: "85-95%",
-      prompt_template: `You are a Market Intelligence expert specializing in market sizing...`
-    },
-    {
-      id: "competitive_analysis",
-      title: "Competitive Landscape Analysis",
-      description: "Deep dive into competitors, positioning, and strategic gaps",
-      category: "competitive_intelligence",
-      icon: "Target",
-      color: "from-purple-500 to-pink-500",
-      estimated_time: "10 min",
-      primary_framework: "M2",
-      modules_activated: ["M2"],
-      confidence_range: "80-90%",
-      prompt_template: `You are a Competitive Intelligence expert using Module M2...`
-    },
-    {
-      id: "financial_modeling",
-      title: "Financial Model & Unit Economics",
-      description: "Build financial projections, calculate LTV/CAC, break-even analysis",
-      category: "financial_planning",
-      icon: "DollarSign",
-      color: "from-green-500 to-emerald-500",
-      estimated_time: "8 min",
-      primary_framework: "M4",
-      modules_activated: ["M4"],
-      confidence_range: "75-85%",
-      prompt_template: `You are a Financial Modeling expert using Module M4...`
-    },
-    {
-      id: "gtm_strategy",
-      title: "Go-to-Market Strategy",
-      description: "Design launch strategy, channels, positioning, and tactics",
-      category: "strategy_execution",
-      icon: "Rocket",
-      color: "from-orange-500 to-red-500",
-      estimated_time: "12 min",
-      primary_framework: "M6",
-      modules_activated: ["M6", "M7"],
-      confidence_range: "80-90%",
-      prompt_template: `You are a Go-to-Market Strategy expert...`
-    },
-    {
-      id: "risk_modeling",
-      title: "Risk Assessment & Mitigation",
-      description: "Identify, quantify, and prioritize business risks with mitigation strategies",
-      category: "risk_management",
-      icon: "Shield",
-      color: "from-red-500 to-pink-500",
-      estimated_time: "7 min",
-      primary_framework: "ABRA",
-      modules_activated: ["M5", "M8"],
-      confidence_range: "85-95%",
-      prompt_template: `You are a Risk Management expert...`
-    },
-    {
-      id: "fundraising_strategy",
-      title: "Fundraising Strategy & Investor Targeting",
-      description: "Design fundraising approach, identify target investors, build narrative",
-      category: "fundraising",
-      icon: "TrendingUp",
-      color: "from-indigo-500 to-purple-500",
-      estimated_time: "10 min",
-      primary_framework: "M9",
-      modules_activated: ["M9", "M4"],
-      confidence_range: "80-90%",
-      prompt_template: `You are a Fundraising Strategy expert using Module M9...`
-    },
-    {
-      id: "customer_segmentation",
-      title: "Customer Segmentation & Personas",
-      description: "Identify and profile target customer segments with behavioral patterns",
-      category: "customer_intelligence",
-      icon: "Users",
-      color: "from-cyan-500 to-blue-500",
-      estimated_time: "6 min",
-      primary_framework: "HYBRID",
-      modules_activated: ["M1", "M5"],
-      confidence_range: "85-92%",
-      prompt_template: `You are a Customer Intelligence expert...`
-    },
-    {
-      id: "pricing_strategy",
-      title: "Pricing Strategy & Optimization",
-      description: "Design pricing model, tiers, and optimization strategy",
-      category: "revenue_optimization",
-      icon: "DollarSign",
-      color: "from-yellow-500 to-orange-500",
-      estimated_time: "8 min",
-      primary_framework: "M4",
-      modules_activated: ["M4", "M5"],
-      confidence_range: "80-88%",
-      prompt_template: `You are a Pricing Strategy expert...`
-    },
-    {
-      id: "product_roadmap",
-      title: "Product Roadmap & Prioritization",
-      description: "Build product roadmap with feature prioritization framework",
-      category: "product_strategy",
-      icon: "Map",
-      color: "from-pink-500 to-rose-500",
-      estimated_time: "10 min",
-      primary_framework: "M7",
-      modules_activated: ["M7", "M6"],
-      confidence_range: "82-90%",
-      prompt_template: `You are a Product Strategy expert...`
-    },
-    {
-      id: "churn_analysis",
-      title: "Churn Analysis & Retention Strategy",
-      description: "Analyze churn drivers and design retention improvement plan",
-      category: "customer_success",
-      icon: "AlertCircle",
-      color: "from-red-500 to-orange-500",
-      estimated_time: "7 min",
-      primary_framework: "M4",
-      modules_activated: ["M4", "M5"],
-      confidence_range: "78-86%",
-      prompt_template: `You are a Customer Success & Retention expert...`
-    },
-    {
-      id: "partnership_strategy",
-      title: "Strategic Partnerships & Alliances",
-      description: "Identify and prioritize partnership opportunities with execution plan",
-      category: "growth_strategy",
-      icon: "Users",
-      color: "from-teal-500 to-green-500",
-      estimated_time: "9 min",
-      primary_framework: "NIA",
-      modules_activated: ["M2", "M6"],
-      confidence_range: "75-85%",
-      prompt_template: `You are a Strategic Partnerships expert...`
-    },
-    {
-      id: "sales_playbook",
-      title: "Sales Process & Playbook Design",
-      description: "Build repeatable sales process with messaging and tactics",
-      category: "sales_enablement",
-      icon: "TrendingUp",
-      color: "from-green-500 to-teal-500",
-      estimated_time: "11 min",
-      primary_framework: "M7",
-      modules_activated: ["M7", "M5"],
-      confidence_range: "80-88%",
-      prompt_template: `You are a Sales Strategy expert...`
-    },
-    {
-      id: "content_strategy",
-      title: "Content Marketing Strategy",
-      description: "Design content strategy with topics, channels, and distribution plan",
-      category: "marketing_strategy",
-      icon: "FileText",
-      color: "from-purple-500 to-indigo-500",
-      estimated_time: "8 min",
-      primary_framework: "M7",
-      modules_activated: ["M1", "M7"],
-      confidence_range: "80-88%",
-      prompt_template: `You are a Content Strategy expert...`
-    },
-    {
-      id: "tech_stack_strategy",
-      title: "Technology Stack Selection",
-      description: "Evaluate and recommend technology stack for product development",
-      category: "technology_strategy",
-      icon: "Code",
-      color: "from-indigo-500 to-blue-500",
-      estimated_time: "9 min",
-      primary_framework: "M3",
-      modules_activated: ["M3"],
-      confidence_range: "85-92%",
-      prompt_template: `You are a Technology Architecture expert...`
-    },
-    {
-      id: "hiring_plan",
-      title: "Strategic Hiring Plan",
-      description: "Design hiring roadmap with roles, timeline, and budget",
-      category: "people_operations",
-      icon: "Users",
-      color: "from-pink-500 to-purple-500",
-      estimated_time: "7 min",
-      primary_framework: "M7",
-      modules_activated: ["M7"],
-      confidence_range: "80-88%",
-      prompt_template: `You are a Talent Strategy expert...`
-    }
-  ];
+  const { data: quickActions = [], isLoading } = useQuery({
+    queryKey: ["quickActions"],
+    queryFn: () => base44.entities.QuickAction.list("-created_date"),
+  });
 
-  const quickActions = quickActionsData;
-  const isLoading = false;
-
-  const allCategories = [...new Set(quickActions.map(action => action.category))];
+  const allCategories = [...new Set(quickActions?.map(action => action.data.category))];
   const categories = allCategories.map(cat => ({ id: cat, label: cat.replace(/_/g, ' ') }));
 
-  const filteredActions = quickActions.filter(action => {
-    const matchesSearch = action.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.category?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || action.category === selectedCategory;
+  const filteredActions = quickActions?.filter(action => {
+    const matchesSearch = action.data.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         action.data.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         action.data.category?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || action.data.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
 
   const handleExecuteAction = (action) => {
-    navigate(createPageUrl("Chat"), {
-      state: { quickAction: action }
-    });
+    setSelectedQuickAction(action);
+    setIsAssistantModalOpen(true);
   };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="text-white">Loading Quick Actions...</div>
+        <Loader2 className="h-10 w-10 animate-spin text-cyan-500" />
+        <p className="text-white ml-4 text-lg">Loading Quick Actions...</p>
       </div>
     );
   }
@@ -271,7 +76,7 @@ export default function QuickActions() {
           Quick Actions
         </h1>
         <p className="text-slate-400">
-          15+ pre-configured strategic analysis templates
+          {quickActions.length}+ pre-configured strategic analysis templates
         </p>
       </div>
 
@@ -309,7 +114,7 @@ export default function QuickActions() {
         ))}
       </div>
 
-      {filteredActions.length === 0 ? (
+      {filteredActions?.length === 0 ? (
         <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
           <CardContent className="p-12 text-center">
             <Zap className="w-16 h-16 text-slate-600 mx-auto mb-4" />
@@ -333,6 +138,12 @@ export default function QuickActions() {
           ))}
         </div>
       )}
+
+      <QuickActionAssistantModal
+        open={isAssistantModalOpen}
+        onClose={() => setIsAssistantModalOpen(false)}
+        quickAction={selectedQuickAction}
+      />
     </div>
   );
 }
@@ -361,8 +172,8 @@ const iconMap = {
 };
 
 function QuickActionCard({ action, index, onClick }) {
-  const IconComponent = iconMap[action.icon] || Zap;
-  const cardColorClass = action.color;
+  const IconComponent = iconMap[action.data.icon] || Zap;
+  const cardColorClass = action.data.color || "from-gray-500 to-gray-700";
 
   return (
     <motion.div
@@ -380,39 +191,39 @@ function QuickActionCard({ action, index, onClick }) {
               <IconComponent className="w-6 h-6 text-white" />
             </div>
             <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
-              {action.category.replace(/_/g, ' ')}
+              {action.data.category?.replace(/_/g, ' ')}
             </span>
           </div>
           <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
-            {action.title}
+            {action.data.title}
           </CardTitle>
           <CardDescription className="text-slate-400 text-sm mt-2">
-            {action.description}
+            {action.data.description}
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6 space-y-3 flex-grow">
-          {action.primary_framework && (
+          {action.data.primary_framework && (
             <div className="flex items-center text-xs text-slate-400">
               <FlaskConical className="w-4 h-4 mr-2" />
-              Primary Framework: <span className="ml-1 text-white font-medium">{action.primary_framework}</span>
+              Primary Framework: <span className="ml-1 text-white font-medium">{action.data.primary_framework}</span>
             </div>
           )}
-          {action.modules_activated && action.modules_activated.length > 0 && (
+          {action.data.modules_activated && action.data.modules_activated.length > 0 && (
             <div className="flex items-center text-xs text-slate-400">
               <Code className="w-4 h-4 mr-2" />
-              Modules: <span className="ml-1 text-white font-medium">{action.modules_activated.join(", ")}</span>
+              Modules: <span className="ml-1 text-white font-medium">{action.data.modules_activated.join(", ")}</span>
             </div>
           )}
-          {action.estimated_time && (
+          {action.data.estimated_time && (
             <div className="flex items-center text-xs text-slate-400">
               <Timer className="w-4 h-4 mr-2" />
-              Est. Time: <span className="ml-1 text-green-400 font-medium">{action.estimated_time}</span>
+              Est. Time: <span className="ml-1 text-green-400 font-medium">{action.data.estimated_time}</span>
             </div>
           )}
-          {action.confidence_range && (
+          {action.data.confidence_range && (
             <div className="flex items-center text-xs text-slate-400">
               <CheckCircle className="w-4 h-4 mr-2" />
-              Confidence: <span className="ml-1 text-blue-400 font-medium">{action.confidence_range}</span>
+              Confidence: <span className="ml-1 text-blue-400 font-medium">{action.data.confidence_range}</span>
             </div>
           )}
         </CardContent>
