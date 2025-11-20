@@ -38,6 +38,7 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import AgentPerformance from './pages/AgentPerformance';
 import SupportTickets from './pages/SupportTickets';
 import AgentTraining from './pages/AgentTraining';
+import CompanyIntelligenceHub from './pages/CompanyIntelligenceHub';
 import __Layout from './Layout.jsx';
 
 
@@ -82,6 +83,7 @@ export const PAGES = {
     "AgentPerformance": AgentPerformance,
     "SupportTickets": SupportTickets,
     "AgentTraining": AgentTraining,
+    "CompanyIntelligenceHub": CompanyIntelligenceHub,
 }
 
 export const pagesConfig = {

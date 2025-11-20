@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,7 @@ const navSections = [
   {
     title: "Intelligence",
     items: [
+      { name: 'Company Intelligence Hub', icon: Compass, path: 'CompanyIntelligenceHub', badge: 'NEW' },
       { name: 'Behavioral Intelligence', icon: Brain, path: 'BehavioralIntelligence', badge: 'NEW' },
       { name: 'Knowledge Management', icon: BookOpen, path: 'KnowledgeManagement' },
       { name: 'Knowledge Graph', icon: Network, path: 'KnowledgeGraph' },
@@ -101,14 +102,12 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     base44.auth.me()
       .then(async u => {
-        // Verify if user is pre-registered
         const allUsers = await base44.entities.User.list();
         const isPreRegistered = allUsers.some(registeredUser => 
           registeredUser.email.toLowerCase() === u.email.toLowerCase()
         );
 
         if (!isPreRegistered) {
-          // User not pre-registered - block access
           await base44.auth.logout();
           window.location.href = createPageUrl('Landing') + '?error=unauthorized';
           return;
