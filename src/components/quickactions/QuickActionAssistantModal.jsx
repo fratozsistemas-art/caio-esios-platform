@@ -25,7 +25,7 @@ export default function QuickActionAssistantModal({
   useEffect(() => {
     if (quickAction) {
       const initialData = {};
-      quickAction.data.required_inputs?.forEach((input) => {
+      quickAction.required_inputs?.forEach((input) => {
         initialData[input.name] = "";
       });
       setFormData(initialData);
@@ -51,10 +51,10 @@ export default function QuickActionAssistantModal({
   };
 
   const validateForm = () => {
-    if (!quickAction || !quickAction.data.required_inputs) return true;
+    if (!quickAction || !quickAction.required_inputs) return true;
     
     const errors = {};
-    for (const input of quickAction.data.required_inputs) {
+    for (const input of quickAction.required_inputs) {
       if (input.required && !formData[input.name]?.trim()) {
         errors[input.name] = `${input.label} é obrigatório`;
       }
@@ -77,7 +77,7 @@ export default function QuickActionAssistantModal({
     
     // Simulate processing time for better UX
     setTimeout(() => {
-      let finalPrompt = quickAction.data.prompt_template;
+      let finalPrompt = quickAction.prompt_template;
 
       // Replace placeholders in prompt_template with form data
       for (const key in formData) {
@@ -99,9 +99,9 @@ export default function QuickActionAssistantModal({
         state: { 
           initialPrompt: generatedPrompt,
           quickActionMetadata: {
-            title: quickAction.data.title,
-            framework: quickAction.data.primary_framework,
-            modules: quickAction.data.modules_activated
+            title: quickAction.title,
+            framework: quickAction.primary_framework,
+            modules: quickAction.modules_activated
           }
         },
       });
@@ -111,7 +111,7 @@ export default function QuickActionAssistantModal({
     }
   };
 
-  const hasRequiredInputs = quickAction?.data.required_inputs?.length > 0;
+  const hasRequiredInputs = quickAction?.required_inputs?.length > 0;
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -119,7 +119,7 @@ export default function QuickActionAssistantModal({
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-white flex items-center gap-2">
             <Zap className="w-6 h-6 text-cyan-400" />
-            Assistente: {quickAction?.data.title}
+            Assistente: {quickAction?.title}
           </DialogTitle>
           <DialogDescription className="text-slate-400 mt-2">
             {hasRequiredInputs 
@@ -130,7 +130,7 @@ export default function QuickActionAssistantModal({
 
         <div className="grid gap-6 py-4">
           {hasRequiredInputs ? (
-            quickAction.data.required_inputs.map((input) => (
+            quickAction.required_inputs.map((input) => (
               <div key={input.name} className="grid gap-2">
                 <Label htmlFor={input.name} className="text-slate-300 font-medium">
                   {input.label} {input.required && <span className="text-red-400">*</span>}

@@ -43,14 +43,14 @@ export default function QuickActions() {
     queryFn: () => base44.entities.QuickAction.list("-created_date"),
   });
 
-  const allCategories = [...new Set(quickActions?.map(action => action.data.category))];
+  const allCategories = [...new Set(quickActions?.map(action => action.category))];
   const categories = allCategories.map(cat => ({ id: cat, label: cat.replace(/_/g, ' ') }));
 
   const filteredActions = quickActions?.filter(action => {
-    const matchesSearch = action.data.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.data.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.data.category?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || action.data.category === selectedCategory;
+    const matchesSearch = action.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         action.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         action.category?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || action.category === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
@@ -172,8 +172,8 @@ const iconMap = {
 };
 
 function QuickActionCard({ action, index, onClick }) {
-  const IconComponent = iconMap[action.data.icon] || Zap;
-  const cardColorClass = action.data.color || "from-gray-500 to-gray-700";
+  const IconComponent = iconMap[action.icon] || Zap;
+  const cardColorClass = action.color || "from-gray-500 to-gray-700";
 
   return (
     <motion.div
@@ -191,41 +191,41 @@ function QuickActionCard({ action, index, onClick }) {
               <IconComponent className="w-6 h-6 text-white" />
             </div>
             <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
-              {action.data.category?.replace(/_/g, ' ')}
+              {action.category?.replace(/_/g, ' ')}
             </span>
-          </div>
-          <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
-            {action.data.title}
-          </CardTitle>
-          <CardDescription className="text-slate-400 text-sm mt-2">
-            {action.data.description}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="p-6 space-y-3 flex-grow">
-          {action.data.primary_framework && (
+            </div>
+            <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
+            {action.title}
+            </CardTitle>
+            <CardDescription className="text-slate-400 text-sm mt-2">
+            {action.description}
+            </CardDescription>
+            </CardHeader>
+            <CardContent className="p-6 space-y-3 flex-grow">
+            {action.primary_framework && (
             <div className="flex items-center text-xs text-slate-400">
               <FlaskConical className="w-4 h-4 mr-2" />
-              Primary Framework: <span className="ml-1 text-white font-medium">{action.data.primary_framework}</span>
+              Primary Framework: <span className="ml-1 text-white font-medium">{action.primary_framework}</span>
             </div>
-          )}
-          {action.data.modules_activated && action.data.modules_activated.length > 0 && (
+            )}
+            {action.modules_activated && action.modules_activated.length > 0 && (
             <div className="flex items-center text-xs text-slate-400">
               <Code className="w-4 h-4 mr-2" />
-              Modules: <span className="ml-1 text-white font-medium">{action.data.modules_activated.join(", ")}</span>
+              Modules: <span className="ml-1 text-white font-medium">{action.modules_activated.join(", ")}</span>
             </div>
-          )}
-          {action.data.estimated_time && (
+            )}
+            {action.estimated_time && (
             <div className="flex items-center text-xs text-slate-400">
               <Timer className="w-4 h-4 mr-2" />
-              Est. Time: <span className="ml-1 text-green-400 font-medium">{action.data.estimated_time}</span>
+              Est. Time: <span className="ml-1 text-green-400 font-medium">{action.estimated_time}</span>
             </div>
-          )}
-          {action.data.confidence_range && (
+            )}
+            {action.confidence_range && (
             <div className="flex items-center text-xs text-slate-400">
               <CheckCircle className="w-4 h-4 mr-2" />
-              Confidence: <span className="ml-1 text-blue-400 font-medium">{action.data.confidence_range}</span>
+              Confidence: <span className="ml-1 text-blue-400 font-medium">{action.confidence_range}</span>
             </div>
-          )}
+            )}
         </CardContent>
       </Card>
     </motion.div>
