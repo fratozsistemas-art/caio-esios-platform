@@ -22,8 +22,8 @@ import {
   Star,
   Award,
   AlertCircle,
-  Sparkles } from
-"lucide-react";
+  Sparkles
+} from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
@@ -37,8 +37,8 @@ import {
   comparisonFeatures,
   detailedUseCases,
   testimonials,
-  plans } from
-"../components/landing";
+  plans
+} from "../components/landing";
 
 export default function Landing() {
   const navigate = useNavigate();
@@ -71,9 +71,10 @@ export default function Landing() {
       toast.error('Acesso não autorizado. Seu email não está pré-cadastrado no sistema.');
     }
 
-    // Check if user has seen pre-home animation
+    // Check if user has seen pre-home animation or chosen to skip
     const hasSeenPreHome = sessionStorage.getItem('caio_prehome_seen');
-    if (hasSeenPreHome) {
+    const skipIntro = localStorage.getItem('caio_skip_intro');
+    if (hasSeenPreHome || skipIntro === 'true') {
       setShowPreHome(false);
     }
   }, []);
@@ -98,8 +99,8 @@ export default function Landing() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
         <div className="text-white">Loading...</div>
-      </div>);
-
+      </div>
+    );
   }
 
   // Show pre-home animation
@@ -110,13 +111,13 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       {/* Unauthorized Alert */}
-      {showUnauthorizedAlert &&
-      <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
+      {showUnauthorizedAlert && (
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 max-w-md w-full mx-4">
           <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 backdrop-blur-sm">
-
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 backdrop-blur-sm"
+          >
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
@@ -125,19 +126,19 @@ export default function Landing() {
                   Seu email não está pré-cadastrado no sistema. Solicite acesso através do formulário abaixo.
                 </p>
                 <div className="flex gap-2">
-                  <AccessRequestForm
-                  trigger={
-                  <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
+                  <AccessRequestForm 
+                    trigger={
+                      <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
                         Solicitar Acesso
                       </Button>
-                  } />
-
-                  <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setShowUnauthorizedAlert(false)}
-                  className="border-white/20 text-white hover:bg-white/5">
-
+                    }
+                  />
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    onClick={() => setShowUnauthorizedAlert(false)}
+                    className="border-white/20 text-white hover:bg-white/5"
+                  >
                     Fechar
                   </Button>
                 </div>
@@ -145,18 +146,18 @@ export default function Landing() {
             </div>
           </motion.div>
         </div>
-      }
+      )}
 
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-caio-blue/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png"
-                alt="CAIO·AI"
-                className="w-12 h-12 object-contain" />
-
+              <img 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                alt="CAIO·AI" 
+                className="w-12 h-12 object-contain"
+              />
               <div>
                 <div className="text-xl font-bold font-heading text-white" style={{ letterSpacing: '0.05em' }}>
                   CAIO·AI
@@ -166,56 +167,56 @@ export default function Landing() {
             <div className="hidden md:flex items-center gap-8">
               <a
                 href="#methodology"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
-
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
+              >
                 Methodology
               </a>
               <a
                 href="#capabilities"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
-
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
+              >
                 Capabilities
               </a>
               <a
                 href="#use-cases"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
-
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
+              >
                 Use Cases
               </a>
               <a
                 href="#pricing"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
-
+                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
+              >
                 Pricing
               </a>
-              {isAuthenticated ?
-              <Button
-                onClick={() => navigate(createPageUrl("Dashboard"))}
-                className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5">
-
+              {isAuthenticated ? (
+                <Button
+                  onClick={() => navigate(createPageUrl("Dashboard"))}
+                  className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
+                >
                   Go to Dashboard
-                </Button> :
-
-              <>
-                  <AccessRequestForm
-                  trigger={
-                  <Button
-                    variant="outline"
-                    className="border-caio-blue/40 text-caio-blue hover:bg-caio-blue/10 hover:border-caio-gold font-body transition-all duration-300">
-
+                </Button>
+              ) : (
+                <>
+                  <AccessRequestForm 
+                    trigger={
+                      <Button
+                        variant="outline"
+                        className="border-caio-blue/40 text-caio-blue hover:bg-caio-blue/10 hover:border-caio-gold font-body transition-all duration-300"
+                      >
                         Solicitar Acesso
                       </Button>
-                  } />
-
+                    }
+                  />
                   <Button
-                  onClick={handleLogin}
-                  className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5">
-
+                    onClick={handleLogin}
+                    className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
+                  >
                     <Mail className="w-4 h-4 mr-2" />
                     Sign In
                   </Button>
                 </>
-              }
+              )}
             </div>
           </div>
         </div>
@@ -232,16 +233,16 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16">
-
+            className="text-center mb-16"
+          >
             {/* Logo Animated */}
             <div className="mb-12 flex justify-center relative">
               <div className="absolute inset-0 bg-gradient-to-r from-[#00C8FF] via-[#16A9FF] to-[#FFC247] opacity-20 blur-3xl rounded-full" />
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png"
-                alt="CAIO·AI Logo"
-                className="w-40 h-40 object-contain drop-shadow-[0_0_40px_rgba(0,200,255,0.6)] relative z-10" />
-
+              <img 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                alt="CAIO·AI Logo" 
+                className="w-40 h-40 object-contain drop-shadow-[0_0_40px_rgba(0,200,255,0.6)] relative z-10"
+              />
             </div>
 
             {/* Main Headline */}
@@ -250,33 +251,41 @@ export default function Landing() {
               Intelligent Strategic Operations
             </h1>
             
-            <p className="text-xl md:text-2xl text-[#A7B2C4] mb-4 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <p className="text-xl md:text-2xl text-[#A7B2C4] mb-6 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
+            <div className="flex justify-center mb-8">
+              <img 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                alt="CAIO·AI" 
+                className="h-16 object-contain opacity-60"
+              />
+            </div>
+
             <p className="text-lg md:text-xl text-[#EAF6FF]/80 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
               Structured intelligence for executive decision-making.
-              <br className="h-1 object-contain opacity-60" />
+              <br className="hidden md:block" />
               A strategic partner designed to <span className="text-[#00C8FF] font-semibold">think with you</span>, not for you.
             </p>
 
             {/* Primary CTAs */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <AccessRequestForm
+              <AccessRequestForm 
                 trigger={
-                <Button
-                  size="lg"
-                  className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
-                  style={{
-                    background: 'linear-gradient(90deg, #00C8FF 0%, #16A9FF 50%, #FFC247 100%)',
-                    boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
-                  }}>
-
+                  <Button
+                    size="lg"
+                    className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
+                    style={{
+                      background: 'linear-gradient(90deg, #00C8FF 0%, #16A9FF 50%, #FFC247 100%)',
+                      boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
+                    }}
+                  >
                     Start with CAIO·AI — 14-Day Free Access
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
-                } />
-
+                }
+              />
               <Button
                 size="lg"
                 variant="outline"
@@ -284,8 +293,8 @@ export default function Landing() {
                 className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
                 style={{
                   boxShadow: '0 0 20px rgba(0, 200, 255, 0.2)'
-                }}>
-
+                }}
+              >
                 <Play className="w-5 h-5 mr-2" />
                 Try Interactive Demo
               </Button>
@@ -294,42 +303,42 @@ export default function Landing() {
             {/* Stats Bar */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {[
-              {
-                icon: Layers,
-                label: "TSI Modules",
-                value: "11",
-                color: "#00C8FF"
-              },
-              {
-                icon: Network,
-                label: "Strategic Connections",
-                value: "10K+",
-                color: "#16A9FF"
-              },
-              {
-                icon: Zap,
-                label: "Faster Analysis",
-                value: "95%",
-                color: "#FFC247"
-              }].
-              map((stat, i) => {
+                {
+                  icon: Layers,
+                  label: "TSI Modules",
+                  value: "11",
+                  color: "#00C8FF",
+                },
+                {
+                  icon: Network,
+                  label: "Strategic Connections",
+                  value: "10K+",
+                  color: "#16A9FF",
+                },
+                {
+                  icon: Zap,
+                  label: "Faster Analysis",
+                  value: "95%",
+                  color: "#FFC247",
+                },
+              ].map((stat, i) => {
                 const Icon = stat.icon;
                 return (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: i * 0.1 }}>
-
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                  >
                     <Card className="bg-[#0B0F1A]/50 border-[#00C8FF]/20 backdrop-blur-sm hover:border-[#00C8FF]/50 transition-all duration-300" style={{ boxShadow: `0 0 20px ${stat.color}15` }}>
                       <CardContent className="p-6 text-center">
                         <div
                           className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3"
-                          style={{
+                          style={{ 
                             background: `linear-gradient(135deg, ${stat.color}20, ${stat.color}10)`,
                             boxShadow: `0 0 20px ${stat.color}30`
-                          }}>
-
+                          }}
+                        >
                           <Icon className="w-7 h-7" style={{ color: stat.color }} />
                         </div>
                         <div className="text-3xl font-bold text-[#EAF6FF] mb-2">
@@ -340,8 +349,8 @@ export default function Landing() {
                         </div>
                       </CardContent>
                     </Card>
-                  </motion.div>);
-
+                  </motion.div>
+                );
               })}
             </div>
           </motion.div>
@@ -363,47 +372,47 @@ export default function Landing() {
 
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             {[
-            {
-              title: "TSI v9.3 Proprietary Methodology",
-              description: "11 integrated modules covering context, finance, technology, execution, capital, and cognitive governance.",
-              icon: Brain,
-              color: "#00C8FF"
-            },
-            {
-              title: "Human-AI Symbiosis",
-              description: "Architecture that amplifies strategic decisions without replacing executive judgment.",
-              icon: Network,
-              color: "#16A9FF"
-            },
-            {
-              title: "Enterprise-Grade",
-              description: "Cognitive governance, decision auditing, and full traceability via Hermes Trust-Broker.",
-              icon: Target,
-              color: "#FFC247"
-            }].
-            map((item, idx) =>
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.2 }}
-              viewport={{ once: true }}>
-
-                <Card
-                className="bg-[#0B0F1A]/50 border-[#00C8FF]/20 backdrop-blur-sm h-full hover:border-[#00C8FF]/50 transition-all duration-200"
-                style={{
-                  boxShadow: `0 0 30px ${item.color}10`,
-                  transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                }}>
-
+              {
+                title: "TSI v9.3 Proprietary Methodology",
+                description: "11 integrated modules covering context, finance, technology, execution, capital, and cognitive governance.",
+                icon: Brain,
+                color: "#00C8FF"
+              },
+              {
+                title: "Human-AI Symbiosis",
+                description: "Architecture that amplifies strategic decisions without replacing executive judgment.",
+                icon: Network,
+                color: "#16A9FF"
+              },
+              {
+                title: "Enterprise-Grade",
+                description: "Cognitive governance, decision auditing, and full traceability via Hermes Trust-Broker.",
+                icon: Target,
+                color: "#FFC247"
+              }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.2 }}
+                viewport={{ once: true }}
+              >
+                <Card 
+                  className="bg-[#0B0F1A]/50 border-[#00C8FF]/20 backdrop-blur-sm h-full hover:border-[#00C8FF]/50 transition-all duration-200"
+                  style={{ 
+                    boxShadow: `0 0 30px ${item.color}10`,
+                    transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                >
                   <CardContent className="p-10 text-center">
-                    <div
-                    className="w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-6"
-                    style={{
-                      background: `linear-gradient(135deg, ${item.color}20, ${item.color}05)`,
-                      boxShadow: `0 0 30px ${item.color}30`
-                    }}>
-
+                    <div 
+                      className="w-20 h-20 rounded-xl flex items-center justify-center mx-auto mb-6"
+                      style={{ 
+                        background: `linear-gradient(135deg, ${item.color}20, ${item.color}05)`,
+                        boxShadow: `0 0 30px ${item.color}30`
+                      }}
+                    >
                       <item.icon className="w-10 h-10" style={{ color: item.color }} />
                     </div>
                     <h3 className="text-2xl font-bold text-[#EAF6FF] mb-4">{item.title}</h3>
@@ -411,7 +420,7 @@ export default function Landing() {
                   </CardContent>
                 </Card>
               </motion.div>
-            )}
+            ))}
           </div>
 
           {/* Separator */}
@@ -422,8 +431,8 @@ export default function Landing() {
       {/* TSI Methodology Showcase */}
       <section
         id="methodology"
-        className="py-32 bg-caio-graphite/20 backdrop-blur-sm border-y border-caio-blue/20">
-
+        className="py-32 bg-caio-graphite/20 backdrop-blur-sm border-y border-caio-blue/20"
+      >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/40 mb-8 px-8 py-3 text-base font-semibold" style={{ boxShadow: '0 0 20px rgba(0, 200, 255, 0.3)' }}>
@@ -446,7 +455,7 @@ export default function Landing() {
               const isActive = activeModule === module.id;
               const isFeatured = module.id === "M5";
               const moduleColor = parseInt(module.id.slice(1)) % 2 === 0 ? "#FFC247" : "#00C8FF";
-
+              
               return (
                 <motion.div
                   key={module.id}
@@ -454,38 +463,38 @@ export default function Landing() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   onClick={() => setActiveModule(module.id)}
-                  className={`cursor-pointer ${isFeatured ? 'md:col-span-2' : 'md:col-span-1'}`}>
-
+                  className={`cursor-pointer ${isFeatured ? 'md:col-span-2' : 'md:col-span-1'}`}
+                >
                   <Card
                     className={`h-full transition-all duration-200 ${
-                    isActive ?
-                    "bg-gradient-to-br from-[#00C8FF]/20 to-[#FFC247]/20 border-[#00C8FF]/60" :
-                    "bg-[#0B0F1A]/50 border-[#00C8FF]/20 hover:border-[#00C8FF]/50"}`
-                    }
-                    style={{
+                      isActive
+                        ? "bg-gradient-to-br from-[#00C8FF]/20 to-[#FFC247]/20 border-[#00C8FF]/60"
+                        : "bg-[#0B0F1A]/50 border-[#00C8FF]/20 hover:border-[#00C8FF]/50"
+                    }`}
+                    style={{ 
                       boxShadow: isActive ? '0 0 40px rgba(0, 200, 255, 0.3)' : '0 0 20px rgba(0, 200, 255, 0.1)',
                       transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
-                    }}>
-
+                    }}
+                  >
                     <CardContent className={`${isFeatured ? 'p-8' : 'p-5'} flex ${isFeatured ? 'flex-row' : 'flex-col'} gap-4 h-full`}>
                       <div className={`flex ${isFeatured ? 'flex-col' : 'flex-col'} items-center gap-3 ${isFeatured ? 'w-32' : 'w-full'}`}>
-                        <div
+                        <div 
                           className={`${isFeatured ? 'w-16 h-16' : 'w-12 h-12'} rounded-xl flex items-center justify-center`}
-                          style={{
+                          style={{ 
                             background: `linear-gradient(135deg, ${moduleColor}20, ${moduleColor}10)`,
                             boxShadow: `0 0 20px ${moduleColor}30`
-                          }}>
-
+                          }}
+                        >
                           <Icon className={`${isFeatured ? 'w-8 h-8' : 'w-6 h-6'}`} style={{ color: moduleColor }} />
                         </div>
                         <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/30 text-xs font-mono font-bold">
                           {module.id}
                         </Badge>
-                        {isFeatured &&
-                        <Badge className="bg-[#FFC247]/20 text-[#FFC247] border-[#FFC247]/30 text-[10px]">
+                        {isFeatured && (
+                          <Badge className="bg-[#FFC247]/20 text-[#FFC247] border-[#FFC247]/30 text-[10px]">
                             CORE
                           </Badge>
-                        }
+                        )}
                       </div>
                       <div className={`flex-1 ${isFeatured ? 'text-left' : 'text-center'}`}>
                         <h3 className={`font-bold text-[#EAF6FF] ${isFeatured ? 'text-xl' : 'text-sm'} mb-2`}>
@@ -500,36 +509,36 @@ export default function Landing() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>);
-
+                </motion.div>
+              );
             })}
           </div>
 
           {/* Methodology Benefits */}
           <div className="grid md:grid-cols-3 gap-8 mt-16">
             {[
-            {
-              icon: CheckCircle,
-              title: "Cobertura Completa",
-              description:
-              "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
-              gradient: "from-caio-blue to-caio-blue-medium"
-            },
-            {
-              icon: Zap,
-              title: "Modo Especialista Modular",
-              description:
-              "Rode apenas o módulo que interessa (M1–M11) sem perder coerência com a arquitetura TSI.",
-              gradient: "from-caio-gold to-caio-gold-dark"
-            },
-            {
-              icon: Target,
-              title: "Depth-Level Architecture",
-              description:
-              "Saídas adaptadas para Board, C-Suite, VPs, gestores e analistas, com o mesmo núcleo analítico.",
-              gradient: "from-caio-blue-medium to-caio-gold"
-            }].
-            map((benefit, i) => {
+              {
+                icon: CheckCircle,
+                title: "Cobertura Completa",
+                description:
+                  "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
+                gradient: "from-caio-blue to-caio-blue-medium",
+              },
+              {
+                icon: Zap,
+                title: "Modo Especialista Modular",
+                description:
+                  "Rode apenas o módulo que interessa (M1–M11) sem perder coerência com a arquitetura TSI.",
+                gradient: "from-caio-gold to-caio-gold-dark",
+              },
+              {
+                icon: Target,
+                title: "Depth-Level Architecture",
+                description:
+                  "Saídas adaptadas para Board, C-Suite, VPs, gestores e analistas, com o mesmo núcleo analítico.",
+                gradient: "from-caio-blue-medium to-caio-gold",
+              },
+            ].map((benefit, i) => {
               const Icon = benefit.icon;
               return (
                 <motion.div
@@ -537,13 +546,13 @@ export default function Landing() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  viewport={{ once: true }}>
-
+                  viewport={{ once: true }}
+                >
                   <Card className="bg-caio-graphite/50 border-caio-blue/30 backdrop-blur-sm h-full hover:border-caio-gold/50 hover:shadow-neon-blue transition-all duration-300">
                     <CardContent className="p-8">
                       <div
-                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-6 shadow-neon-blue`}>
-
+                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-6 shadow-neon-blue`}
+                      >
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-2xl font-heading font-bold text-white mb-4">
@@ -554,8 +563,8 @@ export default function Landing() {
                       </p>
                     </CardContent>
                   </Card>
-                </motion.div>);
-
+                </motion.div>
+              );
             })}
           </div>
         </div>
@@ -589,8 +598,8 @@ export default function Landing() {
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: i * 0.1 }}
-                  viewport={{ once: true }}>
-
+                  viewport={{ once: true }}
+                >
                   <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all duration-300 h-full group">
                     <CardContent className="p-6">
                       <div className="w-14 h-14 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -609,8 +618,8 @@ export default function Landing() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>);
-
+                </motion.div>
+              );
             })}
           </div>
         </div>
@@ -671,79 +680,79 @@ export default function Landing() {
                 </tr>
               </thead>
               <tbody>
-                {comparisonFeatures.map((row, i) =>
-                <tr
-                  key={i}
-                  className="border-b border-white/10 hover:bg-white/5 transition-colors">
-
+                {comparisonFeatures.map((row, i) => (
+                  <tr
+                    key={i}
+                    className="border-b border-white/10 hover:bg-white/5 transition-colors"
+                  >
                     <td className="p-3 text-slate-300 font-medium text-xs">
                       {row.feature}
                     </td>
                     <td className="p-3 text-center">
-                      {typeof row.caio === "boolean" ?
-                    row.caio ?
-                    <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" /> :
-
-                    <X className="w-5 h-5 text-slate-600 mx-auto" /> :
-
-
-                    <span className="text-white font-semibold text-xs">
+                      {typeof row.caio === "boolean" ? (
+                        row.caio ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-white font-semibold text-xs">
                           {row.caio}
                         </span>
-                    }
+                      )}
                     </td>
                     <td className="p-3 text-center">
-                      {typeof row.llms === "boolean" ?
-                    row.llms ?
-                    <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" /> :
-
-                    <X className="w-5 h-5 text-slate-600 mx-auto" /> :
-
-
-                    <span className="text-slate-400 text-xs">
+                      {typeof row.llms === "boolean" ? (
+                        row.llms ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-slate-400 text-xs">
                           {row.llms}
                         </span>
-                    }
+                      )}
                     </td>
                     <td className="p-3 text-center">
-                      {typeof row.reasoning === "boolean" ?
-                    row.reasoning ?
-                    <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" /> :
-
-                    <X className="w-5 h-5 text-slate-600 mx-auto" /> :
-
-
-                    <span className="text-slate-400 text-xs">{row.reasoning}</span>
-                    }
+                      {typeof row.reasoning === "boolean" ? (
+                        row.reasoning ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-slate-400 text-xs">{row.reasoning}</span>
+                      )}
                     </td>
                     <td className="p-3 text-center">
-                      {typeof row.individual === "boolean" ?
-                    row.individual ?
-                    <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" /> :
-
-                    <X className="w-5 h-5 text-slate-600 mx-auto" /> :
-
-
-                    <span className="text-slate-400 text-xs">
+                      {typeof row.individual === "boolean" ? (
+                        row.individual ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-slate-400 text-xs">
                           {row.individual}
                         </span>
-                    }
+                      )}
                     </td>
                     <td className="p-3 text-center">
-                      {typeof row.boutique === "boolean" ?
-                    row.boutique ?
-                    <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" /> :
-
-                    <X className="w-5 h-5 text-slate-600 mx-auto" /> :
-
-
-                    <span className="text-slate-400 text-xs">
+                      {typeof row.boutique === "boolean" ? (
+                        row.boutique ? (
+                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                        ) : (
+                          <X className="w-5 h-5 text-slate-600 mx-auto" />
+                        )
+                      ) : (
+                        <span className="text-slate-400 text-xs">
                           {row.boutique}
                         </span>
-                    }
+                      )}
                     </td>
                   </tr>
-                )}
+                ))}
               </tbody>
             </table>
           </div>
@@ -764,17 +773,17 @@ export default function Landing() {
                 modelo SaaS
               </span>
             </p>
-            <AccessRequestForm
+            <AccessRequestForm 
               trigger={
-              <Button
-                size="lg"
-                className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold">
-
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold"
+                >
                   Start Free Trial
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
-              } />
-
+              }
+            />
           </div>
         </div>
       </section>
@@ -796,14 +805,14 @@ export default function Landing() {
           </div>
 
           <div className="space-y-8">
-            {detailedUseCases.map((useCase, i) =>
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}>
-
+            {detailedUseCases.map((useCase, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+              >
                 <Card className="bg-gradient-to-br from-white/10 to-white/5 border-white/20 backdrop-blur-sm overflow-hidden">
                   <CardContent className="p-8">
                     <div className="grid md:grid-cols-5 gap-8">
@@ -841,17 +850,17 @@ export default function Landing() {
                           Results
                         </p>
                         <div className="grid gap-3 mb-6">
-                          {useCase.results.map((result, idx) =>
-                        <div
-                          key={idx}
-                          className="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-white/10">
-
+                          {useCase.results.map((result, idx) => (
+                            <div
+                              key={idx}
+                              className="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
+                            >
                               <CheckCircle className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
                               <span className="text-slate-200 text-sm">
                                 {result}
                               </span>
                             </div>
-                        )}
+                          ))}
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -877,7 +886,7 @@ export default function Landing() {
                   </CardContent>
                 </Card>
               </motion.div>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -895,23 +904,23 @@ export default function Landing() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, i) =>
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.2 }}
-              viewport={{ once: true }}>
-
+            {testimonials.map((testimonial, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: i * 0.2 }}
+                viewport={{ once: true }}
+              >
                 <Card className="bg-white/10 border-white/20 backdrop-blur-sm h-full hover:bg-white/15 transition-all duration-300">
                   <CardContent className="p-8">
                     <div className="flex gap-1 mb-4">
-                      {Array.from({ length: 5 }).map((_, j) =>
-                    <Star
-                      key={j}
-                      className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-
-                    )}
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <Star
+                          key={j}
+                          className="w-5 h-5 fill-yellow-400 text-yellow-400"
+                        />
+                      ))}
                     </div>
 
                     <p className="text-slate-200 mb-6 italic leading-relaxed">
@@ -944,7 +953,7 @@ export default function Landing() {
                   </CardContent>
                 </Card>
               </motion.div>
-            )}
+            ))}
           </div>
         </div>
       </section>
@@ -959,8 +968,8 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            viewport={{ once: true }}>
-
+            viewport={{ once: true }}
+          >
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to Transform Strategic Decision-Making?
             </h2>
@@ -969,36 +978,36 @@ export default function Landing() {
               rápidas, profundas e alinhadas à lógica de capital.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <AccessRequestForm
+              <AccessRequestForm 
                 trigger={
-                <Button
-                  size="lg"
-                  className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
-                  style={{
-                    background: 'linear-gradient(90deg, #00C8FF 0%, #16A9FF 50%, #FFC247 100%)',
-                    boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
-                  }}>
-
+                  <Button
+                    size="lg"
+                    className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
+                    style={{
+                      background: 'linear-gradient(90deg, #00C8FF 0%, #16A9FF 50%, #FFC247 100%)',
+                      boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
+                    }}
+                  >
                     Solicitar Acesso
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
-                } />
-
-              <AccessRequestForm
+                }
+              />
+              <AccessRequestForm 
                 trigger={
-                <Button
-                  size="lg"
-                  className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
-                  style={{
-                    background: 'linear-gradient(90deg, #FFC247 0%, #16A9FF 50%, #00C8FF 100%)',
-                    boxShadow: '0 0 30px rgba(255, 194, 71, 0.4), 0 0 60px rgba(0, 200, 255, 0.3)'
-                  }}>
-
+                  <Button
+                    size="lg"
+                    className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
+                    style={{
+                      background: 'linear-gradient(90deg, #FFC247 0%, #16A9FF 50%, #00C8FF 100%)',
+                      boxShadow: '0 0 30px rgba(255, 194, 71, 0.4), 0 0 60px rgba(0, 200, 255, 0.3)'
+                    }}
+                  >
                     Schedule a Call
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
-                } />
-
+                }
+              />
             </div>
             <p className="text-sm text-slate-300 mt-6 font-medium">
               Acesso restrito · Entre em contato para solicitar demonstração
@@ -1016,11 +1025,11 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
               <div className="flex items-center gap-3 mb-4">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png"
-                  alt="CAIO·AI"
-                  className="w-10 h-10 object-contain opacity-80" />
-
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+                  alt="CAIO·AI" 
+                  className="w-10 h-10 object-contain opacity-80"
+                />
                 <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>CAIO·AI</div>
               </div>
               <p className="text-sm font-body text-caio-blue mb-4 font-semibold">
@@ -1036,32 +1045,32 @@ export default function Landing() {
                 <li>
                   <a
                     href="#methodology"
-                    className="text-slate-300 hover:text-caio-gold transition-colors">
-
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                  >
                     TSI Methodology
                   </a>
                 </li>
                 <li>
                   <a
                     href="#capabilities"
-                    className="text-slate-300 hover:text-caio-gold transition-colors">
-
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                  >
                     Capabilities
                   </a>
                 </li>
                 <li>
                   <a
                     href="#use-cases"
-                    className="text-slate-300 hover:text-caio-gold transition-colors">
-
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                  >
                     Use Cases
                   </a>
                 </li>
                 <li>
                   <a
                     href="#pricing"
-                    className="text-slate-300 hover:text-caio-gold transition-colors">
-
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                  >
                     Pricing
                   </a>
                 </li>
@@ -1121,6 +1130,6 @@ export default function Landing() {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 }
