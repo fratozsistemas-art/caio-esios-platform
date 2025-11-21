@@ -270,28 +270,46 @@ export const TutorialOverlay = ({ tutorial }) => {
         {/* Spotlight on target element */}
         {targetRect && (
           <>
+            {/* Bright highlight with strong glow */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="absolute pointer-events-none border-4 border-cyan-400 rounded-lg shadow-2xl"
+              className="absolute pointer-events-none rounded-xl"
               style={{
-                top: `${targetRect.top - 4}px`,
-                left: `${targetRect.left - 4}px`,
-                width: `${targetRect.width + 8}px`,
-                height: `${targetRect.height + 8}px`,
-                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5), 0 0 40px rgba(34, 211, 238, 0.6)',
+                top: `${targetRect.top - 12}px`,
+                left: `${targetRect.left - 12}px`,
+                width: `${targetRect.width + 24}px`,
+                height: `${targetRect.height + 24}px`,
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.92), 0 0 80px 20px rgba(34, 211, 238, 0.9), inset 0 0 40px rgba(34, 211, 238, 0.4)',
+                border: '4px solid rgb(34, 211, 238)',
+                background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(56, 189, 248, 0.15))',
+              }}
+            />
+            {/* Outer glow layer */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="absolute pointer-events-none rounded-xl"
+              style={{
+                top: `${targetRect.top - 20}px`,
+                left: `${targetRect.left - 20}px`,
+                width: `${targetRect.width + 40}px`,
+                height: `${targetRect.height + 40}px`,
+                background: 'radial-gradient(ellipse at center, rgba(34, 211, 238, 0.3) 0%, transparent 70%)',
+                filter: 'blur(8px)',
               }}
             />
             {/* Pulse animation */}
             <motion.div
-              animate={{ scale: [1, 1.05, 1], opacity: [0.5, 0.8, 0.5] }}
+              animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
               transition={{ duration: 2, repeat: Infinity }}
-              className="absolute pointer-events-none border-2 border-cyan-400 rounded-lg"
+              className="absolute pointer-events-none border-4 border-cyan-300 rounded-xl"
               style={{
-                top: `${targetRect.top - 8}px`,
-                left: `${targetRect.left - 8}px`,
-                width: `${targetRect.width + 16}px`,
-                height: `${targetRect.height + 16}px`,
+                top: `${targetRect.top - 16}px`,
+                left: `${targetRect.left - 16}px`,
+                width: `${targetRect.width + 32}px`,
+                height: `${targetRect.height + 32}px`,
+                boxShadow: '0 0 60px rgba(34, 211, 238, 0.8)',
               }}
             />
           </>
