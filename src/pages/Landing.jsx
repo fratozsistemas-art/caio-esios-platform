@@ -235,16 +235,6 @@ export default function Landing() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            {/* Logo Animated */}
-            <div className="mb-12 flex justify-center relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[#00C8FF] via-[#16A9FF] to-[#FFC247] opacity-20 blur-3xl rounded-full" />
-              <img 
-                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI Logo" 
-                className="w-40 h-40 object-contain drop-shadow-[0_0_40px_rgba(0,200,255,0.6)] relative z-10"
-              />
-            </div>
-
             {/* Main Headline */}
             <h1 className="text-5xl md:text-7xl font-bold text-[#EAF6FF] mb-6 leading-tight tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
               The Executive System for<br />
@@ -255,11 +245,13 @@ export default function Landing() {
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-8 relative">
+              <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" />
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI" 
-                className="h-16 object-contain opacity-60"
+                className="w-52 h-52 object-contain relative z-10"
+                style={{ filter: 'drop-shadow(0 0 60px rgba(0, 200, 255, 0.9)) drop-shadow(0 0 30px rgba(0, 200, 255, 0.7))' }}
               />
             </div>
 
