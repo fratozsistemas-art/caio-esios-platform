@@ -270,46 +270,56 @@ export const TutorialOverlay = ({ tutorial }) => {
         {/* Spotlight on target element */}
         {targetRect && (
           <>
-            {/* Bright highlight with strong glow */}
+            {/* Dark overlay with cutout for highlighted area */}
+            <div className="absolute inset-0 pointer-events-none">
+              <svg width="100%" height="100%" className="absolute inset-0">
+                <defs>
+                  <mask id="spotlight-mask">
+                    <rect width="100%" height="100%" fill="white" />
+                    <rect
+                      x={targetRect.left - 8}
+                      y={targetRect.top - 8}
+                      width={targetRect.width + 16}
+                      height={targetRect.height + 16}
+                      rx="12"
+                      fill="black"
+                    />
+                  </mask>
+                </defs>
+                <rect
+                  width="100%"
+                  height="100%"
+                  fill="rgba(0, 0, 0, 0.92)"
+                  mask="url(#spotlight-mask)"
+                />
+              </svg>
+            </div>
+
+            {/* Bright frame around highlighted area */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="absolute pointer-events-none rounded-xl"
               style={{
+                top: `${targetRect.top - 8}px`,
+                left: `${targetRect.left - 8}px`,
+                width: `${targetRect.width + 16}px`,
+                height: `${targetRect.height + 16}px`,
+                border: '4px solid rgb(34, 211, 238)',
+                boxShadow: '0 0 60px 10px rgba(34, 211, 238, 0.8), 0 0 100px rgba(34, 211, 238, 0.5)',
+              }}
+            />
+
+            {/* Pulse animation */}
+            <motion.div
+              animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.8, 0.4] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute pointer-events-none border-2 border-cyan-300 rounded-xl"
+              style={{
                 top: `${targetRect.top - 12}px`,
                 left: `${targetRect.left - 12}px`,
                 width: `${targetRect.width + 24}px`,
                 height: `${targetRect.height + 24}px`,
-                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.92), 0 0 80px 20px rgba(34, 211, 238, 0.9), inset 0 0 40px rgba(34, 211, 238, 0.4)',
-                border: '4px solid rgb(34, 211, 238)',
-                background: 'linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(56, 189, 248, 0.15))',
-              }}
-            />
-            {/* Outer glow layer */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="absolute pointer-events-none rounded-xl"
-              style={{
-                top: `${targetRect.top - 20}px`,
-                left: `${targetRect.left - 20}px`,
-                width: `${targetRect.width + 40}px`,
-                height: `${targetRect.height + 40}px`,
-                background: 'radial-gradient(ellipse at center, rgba(34, 211, 238, 0.3) 0%, transparent 70%)',
-                filter: 'blur(8px)',
-              }}
-            />
-            {/* Pulse animation */}
-            <motion.div
-              animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute pointer-events-none border-4 border-cyan-300 rounded-xl"
-              style={{
-                top: `${targetRect.top - 16}px`,
-                left: `${targetRect.left - 16}px`,
-                width: `${targetRect.width + 32}px`,
-                height: `${targetRect.height + 32}px`,
-                boxShadow: '0 0 60px rgba(34, 211, 238, 0.8)',
               }}
             />
           </>
