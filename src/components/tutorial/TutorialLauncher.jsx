@@ -17,7 +17,7 @@ import { motion } from 'framer-motion';
 
 export default function TutorialLauncher({ trigger }) {
   const [open, setOpen] = useState(false);
-  const { startTutorial, isTutorialCompleted, showTips, toggleTips } = useTutorial();
+  const { startTutorial, isTutorialCompleted, showTips, toggleTips, shouldShowTutorial } = useTutorial();
 
   const handleStartTutorial = (tutorialId) => {
     startTutorial(tutorialId);
@@ -34,10 +34,10 @@ export default function TutorialLauncher({ trigger }) {
           <Button
             variant="outline"
             size="sm"
-            className="border-purple-500/30 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20"
+            className="w-full border-purple-500/30 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 hover:text-purple-300"
           >
             <GraduationCap className="w-4 h-4 mr-2" />
-            Tutoriais
+            {shouldShowTutorial ? 'Tutoriais (Novo!)' : 'Tutoriais'}
             {completedCount < tutorialsArray.length && (
               <Badge className="ml-2 bg-purple-500/30 text-purple-300 text-xs">
                 {completedCount}/{tutorialsArray.length}
