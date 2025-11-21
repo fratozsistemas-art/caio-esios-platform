@@ -1014,11 +1014,11 @@ export default function Landing() {
             </div>
             <div>
               <h4 className="text-white font-body font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-sm font-body text-caio-off-white/70">
+              <ul className="space-y-2 text-sm font-body">
                 <li>
                   <a
                     href="#methodology"
-                    className="hover:text-caio-gold transition-colors"
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
                   >
                     TSI Methodology
                   </a>
@@ -1026,7 +1026,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#capabilities"
-                    className="hover:text-caio-gold transition-colors"
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
                   >
                     Capabilities
                   </a>
@@ -1034,7 +1034,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#use-cases"
-                    className="hover:text-caio-gold transition-colors"
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
                   >
                     Use Cases
                   </a>
@@ -1042,7 +1042,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#pricing"
-                    className="hover:text-caio-gold transition-colors"
+                    className="text-slate-300 hover:text-caio-gold transition-colors"
                   >
                     Pricing
                   </a>
@@ -1051,24 +1051,24 @@ export default function Landing() {
             </div>
             <div>
               <h4 className="text-white font-body font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-sm font-body text-caio-off-white/70">
+              <ul className="space-y-2 text-sm font-body">
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     Blog
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     Careers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     Contact
                   </a>
                 </li>
@@ -1076,19 +1076,19 @@ export default function Landing() {
             </div>
             <div>
               <h4 className="text-white font-body font-semibold mb-4">Legal</h4>
-              <ul className="space-y-2 text-sm font-body text-caio-off-white/70">
+              <ul className="space-y-2 text-sm font-body">
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     Terms
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
                     Security
                   </a>
                 </li>
