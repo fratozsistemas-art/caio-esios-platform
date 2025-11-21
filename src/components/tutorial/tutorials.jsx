@@ -30,7 +30,7 @@ export const TUTORIALS = {
         title: 'Busca Global',
         content: 'Pressione ⌘K (ou Ctrl+K) a qualquer momento para buscar conversas, análises, empresas e documentos instantaneamente.',
         icon: Search,
-        targetSelector: '.p-6.border-b button',
+        targetSelector: 'aside .p-6.border-b button',
       },
     ],
   },
