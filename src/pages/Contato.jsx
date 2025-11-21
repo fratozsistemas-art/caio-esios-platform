@@ -64,6 +64,15 @@ export default function Contato() {
     }
     canonical.href = window.location.origin + createPageUrl('Contato');
 
+    // Favicon
+    let favicon = document.querySelector('link[rel="icon"]');
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
+    }
+    favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png';
+
     const ogTags = {
       'og:title': 'Contato CAIO·AI - Fale Conosco',
       'og:description': 'Vendas, suporte e parcerias. Resposta em até 24h.',
