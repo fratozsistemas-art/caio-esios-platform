@@ -9,6 +9,7 @@ export default function UploadAsset() {
   const [uploading, setUploading] = useState(false);
   const [uploadedUrl, setUploadedUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [fileName, setFileName] = useState("");
   const fileInputRef = useRef(null);
 
   const handleUpload = async (e) => {
@@ -19,7 +20,8 @@ export default function UploadAsset() {
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setUploadedUrl(file_url);
-      toast.success("Vídeo enviado com sucesso!");
+      setFileName(file.name);
+      toast.success("Arquivo enviado com sucesso!");
     } catch (error) {
       toast.error("Erro ao fazer upload");
       console.error(error);
@@ -38,18 +40,18 @@ export default function UploadAsset() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950 p-8">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-white mb-8">Upload de Vídeo</h1>
+        <h1 className="text-3xl font-bold text-white mb-8">Upload de Arquivos</h1>
         
         <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
           <CardHeader>
-            <CardTitle className="text-white">Enviar arquivo .mp4</CardTitle>
+            <CardTitle className="text-white">Enviar arquivos</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex flex-col items-center justify-center border-2 border-dashed border-white/20 rounded-lg p-8 hover:border-cyan-500/50 transition-colors">
               <input
                 ref={fileInputRef}
                 type="file"
-                accept=".mp4,video/mp4"
+                accept="video/*,image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
                 onChange={handleUpload}
                 className="hidden"
               />
@@ -67,12 +69,12 @@ export default function UploadAsset() {
                 ) : (
                   <>
                     <Upload className="w-5 h-5 mr-2" />
-                    Selecionar Vídeo .mp4
+                    Selecionar Arquivo
                   </>
                 )}
               </Button>
               <p className="text-slate-400 text-sm mt-4">
-                Clique para selecionar um arquivo de vídeo
+                Vídeos, imagens, PDFs, documentos e mais
               </p>
             </div>
 
@@ -83,8 +85,16 @@ export default function UploadAsset() {
                   <span className="font-medium">Upload concluído!</span>
                 </div>
 
+                {fileName && (
+                  <div className="bg-slate-900/50 rounded-lg p-3">
+                    <p className="text-slate-400 text-sm">
+                      <strong>Arquivo:</strong> {fileName}
+                    </p>
+                  </div>
+                )}
+
                 <div className="bg-slate-900/50 rounded-lg p-4 space-y-3">
-                  <p className="text-slate-400 text-sm font-medium">URL do vídeo:</p>
+                  <p className="text-slate-400 text-sm font-medium">URL do arquivo:</p>
                   <div className="flex items-center gap-2">
                     <code className="flex-1 bg-black/30 px-4 py-2 rounded text-cyan-400 text-sm overflow-x-auto">
                       {uploadedUrl}
@@ -102,14 +112,11 @@ export default function UploadAsset() {
                       )}
                     </Button>
                   </div>
-                  <p className="text-slate-500 text-xs">
-                    ↑ Copie esta URL e cole no código da PreHomeAnimation
-                  </p>
                 </div>
 
                 <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
                   <p className="text-yellow-400 text-sm">
-                    <strong>Próximo passo:</strong> Copie a URL acima e use no componente PreHomeAnimation
+                    <strong>Próximo passo:</strong> Copie a URL e use onde precisar
                   </p>
                 </div>
               </div>
