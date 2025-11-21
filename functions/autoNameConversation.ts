@@ -24,38 +24,41 @@ Deno.serve(async (req) => {
       }, { status: 404 });
     }
 
-    // Extract first few user messages
-    const userMessages = conversation.messages
-      .filter(m => m.role === 'user' && m.content && m.content.trim().length > 10)
-      .slice(0, 3)
-      .map(m => m.content.trim());
+    // Extract first few user messages and assistant responses for better context
+    const relevantMessages = conversation.messages
+      .filter(m => m.content && m.content.trim().length > 10)
+      .slice(0, 4)
+      .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content.trim()}`);
 
-    if (userMessages.length === 0) {
+    if (relevantMessages.length === 0) {
       return Response.json({ 
         success: false,
-        error: 'No meaningful user messages found'
+        error: 'No meaningful messages found'
       }, { status: 400 });
     }
 
-    const conversationContext = userMessages.join('\n\n').substring(0, 500);
+    const conversationContext = relevantMessages.join('\n\n').substring(0, 800);
 
     // Generate name using LLM
     const suggestedName = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analyze this conversation and create a concise, professional title.
+      prompt: `Analyze this conversation and create a concise, descriptive title that captures the main topic.
 
-CONVERSATION SNIPPET:
+CONVERSATION CONTEXT:
 ${conversationContext}
 
-INSTRUCTIONS:
-1. Identify the company/organization name (if mentioned)
-2. Identify the main topic/objective
-3. Create a title in this format:
-   - If company mentioned: "[Company] - [Topic]" (e.g., "Nubank - Market Entry Strategy")
-   - If no company: "[Topic]" (e.g., "Digital Transformation Roadmap")
-4. Keep it under 50 characters
+GUIDELINES:
+1. Extract the core topic/question being discussed
+2. If a company/organization is mentioned prominently, include it
+3. Format examples:
+   - "Nubank - Market Entry Strategy"
+   - "E-commerce Growth Analysis"
+   - "Golden Deer Brasil - VC Assessment"
+   - "Digital Transformation Planning"
+4. Keep title between 30-50 characters
 5. Be specific and professional
+6. Use title case
 
-Return ONLY the title, nothing else. No quotes, no explanation.`,
+Return ONLY the title without quotes or additional text.`,
       add_context_from_internet: false
     });
 

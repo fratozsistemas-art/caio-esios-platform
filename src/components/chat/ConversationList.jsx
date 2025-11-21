@@ -21,6 +21,17 @@ export default function ConversationList({
 }) {
   const queryClient = useQueryClient();
 
+  const handleSelectConversation = async (conv) => {
+    try {
+      // Fetch full conversation with messages
+      const fullConv = await base44.agents.getConversation(conv.id);
+      onSelectConversation(fullConv);
+    } catch (error) {
+      console.error('Error loading conversation:', error);
+      onSelectConversation(conv);
+    }
+  };
+
   const deleteAllMutation = useMutation({
     mutationFn: async () => {
       const { data } = await base44.functions.invoke('deleteAllConversations', {
@@ -102,7 +113,7 @@ export default function ConversationList({
               }`}
             >
               <div
-                onClick={() => onSelectConversation(conv)}
+                onClick={() => handleSelectConversation(conv)}
                 className="p-3"
               >
                 <div className="flex items-start gap-2">
