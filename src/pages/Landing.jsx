@@ -380,7 +380,19 @@ export default function Landing() {
             </p>
 
             <div className="flex justify-center mb-8 relative">
-              <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" aria-hidden="true" />
+              <div className="absolute inset-0 bg-[#000917] blur-[120px] rounded-full" aria-hidden="true" />
+              <div className="absolute inset-0 bg-[#00C8FF] opacity-20 blur-[80px] rounded-full" aria-hidden="true" 
+                style={{ 
+                  animation: 'pulse 3s ease-in-out infinite',
+                  transform: 'scale(0.8)'
+                }} 
+              />
+              <div className="absolute inset-0 bg-[#00C8FF] opacity-40 blur-[40px] rounded-full" aria-hidden="true" 
+                style={{ 
+                  animation: 'pulse 3s ease-in-out infinite 0.5s',
+                  transform: 'scale(0.6)'
+                }} 
+              />
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f9665b60c_A20short20intro20animation20for20a20video20featuring20the20metallic20CAIOC2B7AI20logo20The20camera20starts20with20a20close-up20on20the20glowing20brain20symbol2C20then20smoothly20pulls20back20to20reveal20the20full.gif" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
