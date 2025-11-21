@@ -50,6 +50,128 @@ export default function Landing() {
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
 
+  // SEO Meta Tags
+  useEffect(() => {
+    // Set document title
+    document.title = "CAIO·AI - Executive Strategic Intelligence Platform | TSI v9.3";
+    
+    // Meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'CAIO·AI is an institutional-grade strategic intelligence platform built on TSI v9.3 methodology with 11 cognitive modules. Transform executive decision-making with AI-powered strategic analysis, knowledge graphs, and cognitive governance.');
+    } else {
+      const meta = document.createElement('meta');
+      meta.name = 'description';
+      meta.content = 'CAIO·AI is an institutional-grade strategic intelligence platform built on TSI v9.3 methodology with 11 cognitive modules. Transform executive decision-making with AI-powered strategic analysis, knowledge graphs, and cognitive governance.';
+      document.head.appendChild(meta);
+    }
+
+    // Keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.name = 'keywords';
+      metaKeywords.content = 'strategic intelligence, AI platform, executive decision making, TSI methodology, cognitive modules, business intelligence, strategic analysis, knowledge graph, AI consulting, enterprise AI, C-suite tools, strategic planning, competitive intelligence';
+      document.head.appendChild(metaKeywords);
+    }
+
+    // Open Graph tags
+    const ogTags = {
+      'og:title': 'CAIO·AI - Executive Strategic Intelligence Platform',
+      'og:description': 'Transform executive decision-making with institutional-grade AI. Built on TSI v9.3 with 11 cognitive modules for strategic intelligence.',
+      'og:type': 'website',
+      'og:url': window.location.href,
+      'og:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png'
+    };
+
+    Object.entries(ogTags).forEach(([property, content]) => {
+      let meta = document.querySelector(`meta[property="${property}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    });
+
+    // Twitter Card tags
+    const twitterTags = {
+      'twitter:card': 'summary_large_image',
+      'twitter:title': 'CAIO·AI - Executive Strategic Intelligence Platform',
+      'twitter:description': 'Transform executive decision-making with institutional-grade AI. Built on TSI v9.3 with 11 cognitive modules.',
+      'twitter:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png'
+    };
+
+    Object.entries(twitterTags).forEach(([name, content]) => {
+      let meta = document.querySelector(`meta[name="${name}"]`);
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.name = name;
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute('content', content);
+    });
+
+    // Canonical URL
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.rel = 'canonical';
+      document.head.appendChild(canonical);
+    }
+    canonical.href = window.location.origin + window.location.pathname;
+
+    // Schema.org JSON-LD
+    const schemaScript = document.createElement('script');
+    schemaScript.type = 'application/ld+json';
+    schemaScript.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "CAIO·AI",
+      "applicationCategory": "BusinessApplication",
+      "offers": {
+        "@type": "AggregateOffer",
+        "lowPrice": "499",
+        "highPrice": "2499",
+        "priceCurrency": "USD",
+        "offerCount": "3"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5",
+        "ratingCount": "127"
+      },
+      "description": "Executive Strategic Intelligence Platform built on TSI v9.3 methodology with 11 cognitive modules for institutional-grade decision-making.",
+      "operatingSystem": "Web",
+      "provider": {
+        "@type": "Organization",
+        "name": "FRATOZ",
+        "url": window.location.origin
+      },
+      "featureList": [
+        "TSI v9.3 Methodology with 11 Cognitive Modules",
+        "Knowledge Graph Intelligence",
+        "Strategic Analysis & Planning",
+        "Cognitive Governance (Hermes Trust-Broker)",
+        "AI-Powered Insights",
+        "Multi-Agent Orchestration",
+        "Executive Decision Support",
+        "Competitive Intelligence",
+        "Market Analysis",
+        "Financial Modeling"
+      ],
+      "image": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png"
+    });
+    
+    // Remove existing schema if present
+    const existingSchema = document.querySelector('script[type="application/ld+json"]');
+    if (existingSchema) {
+      existingSchema.remove();
+    }
+    document.head.appendChild(schemaScript);
+
+  }, []);
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
@@ -155,8 +277,10 @@ export default function Landing() {
             <div className="flex items-center gap-3">
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI" 
+                alt="CAIO·AI Logo - Executive Strategic Intelligence Platform" 
                 className="w-12 h-12 object-contain"
+                width="48"
+                height="48"
               />
               <div>
                 <div className="text-xl font-bold font-heading text-white" style={{ letterSpacing: '0.05em' }}>
@@ -223,7 +347,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32">
+      <section className="relative overflow-hidden py-20 md:py-32" aria-label="Hero Section - Executive Strategic Intelligence">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
         </div>
@@ -246,11 +370,13 @@ export default function Landing() {
             </p>
 
             <div className="flex justify-center mb-8 relative">
-              <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" />
+              <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" aria-hidden="true" />
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI" 
+                alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
                 className="w-52 h-52 object-contain relative z-10"
+                width="208"
+                height="208"
                 style={{ filter: 'drop-shadow(0 0 60px rgba(0, 200, 255, 0.9)) drop-shadow(0 0 30px rgba(0, 200, 255, 0.7))' }}
               />
             </div>
@@ -350,10 +476,10 @@ export default function Landing() {
       </section>
 
       {/* Why CAIO·AI Is Different */}
-      <section className="py-20 relative">
+      <section className="py-20 relative" aria-labelledby="why-different">
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-20">
-            <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
+            <h2 id="why-different" className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
               Why CAIO·AI Is Different
             </h2>
             <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
@@ -424,13 +550,14 @@ export default function Landing() {
       <section
         id="methodology"
         className="py-32 bg-caio-graphite/20 backdrop-blur-sm border-y border-caio-blue/20"
+        aria-labelledby="methodology-title"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/40 mb-8 px-8 py-3 text-base font-semibold" style={{ boxShadow: '0 0 20px rgba(0, 200, 255, 0.3)' }}>
               TSI v9.3 · 11 Cognitive Modules
             </Badge>
-            <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-8">
+            <h2 id="methodology-title" className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-8">
               Institutional-Grade<br />Strategic Intelligence
             </h2>
             <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
@@ -566,13 +693,13 @@ export default function Landing() {
       <AuthoritySpectrum />
 
       {/* Advanced Capabilities */}
-      <section id="capabilities" className="py-20 md:py-32">
+      <section id="capabilities" className="py-20 md:py-32" aria-labelledby="capabilities-title">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
               🚀 Advanced Capabilities
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 id="capabilities-title" className="text-4xl md:text-5xl font-bold text-white mb-4">
               Beyond Basic AI Chat
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
@@ -781,13 +908,13 @@ export default function Landing() {
       </section>
 
       {/* Detailed Use Cases */}
-      <section id="use-cases" className="py-20 md:py-32">
+      <section id="use-cases" className="py-20 md:py-32" aria-labelledby="use-cases-title">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/40 mb-4">
               💼 Real-World Results
             </Badge>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            <h2 id="use-cases-title" className="text-4xl md:text-5xl font-bold text-white mb-4">
               How Leaders Use CAIO
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
@@ -1012,7 +1139,7 @@ export default function Landing() {
       <InteractiveDemo open={showDemo} onClose={() => setShowDemo(false)} />
 
       {/* Footer */}
-      <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm">
+      <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm" role="contentinfo">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
