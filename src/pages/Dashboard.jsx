@@ -415,7 +415,7 @@ export default function Dashboard() {
       )}
 
       {/* Dynamic Dashboard Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-tour="dashboard-widgets">
         {dashboardLayout.map((widgetId) => renderWidget(widgetId))}
       </div>
 
