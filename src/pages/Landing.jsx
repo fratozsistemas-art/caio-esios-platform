@@ -222,7 +222,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-32 md:py-48">
+      <section className="relative overflow-hidden py-20 md:py-32">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
         </div>
@@ -349,7 +349,7 @@ export default function Landing() {
       </section>
 
       {/* Why CAIO·AI Is Different */}
-      <section className="py-32 relative">
+      <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-20">
             <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
