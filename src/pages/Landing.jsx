@@ -382,11 +382,12 @@ export default function Landing() {
             <div className="flex justify-center mb-8 relative">
               <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" aria-hidden="true" />
               <img 
-                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f9665b60c_A20short20intro20animation20for20a20video20featuring20the20metallic20CAIOC2B7AI20logo20The20camera20starts20with20a20close-up20on20the20glowing20brain20symbol2C20then20smoothly20pulls20back20to20reveal20the20full.gif" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
                 className="w-52 h-52 object-contain relative z-10"
                 width="208"
                 height="208"
+                loading="eager"
                 style={{ filter: 'drop-shadow(0 0 60px rgba(0, 200, 255, 0.9)) drop-shadow(0 0 30px rgba(0, 200, 255, 0.7))' }}
               />
             </div>
