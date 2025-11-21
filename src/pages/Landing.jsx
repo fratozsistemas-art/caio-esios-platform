@@ -251,9 +251,17 @@ export default function Landing() {
               Intelligent Strategic Operations
             </h1>
             
-            <p className="text-xl md:text-2xl text-[#A7B2C4] mb-4 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <p className="text-xl md:text-2xl text-[#A7B2C4] mb-6 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
+
+            <div className="flex justify-center mb-8">
+              <img 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                alt="CAIO·AI" 
+                className="h-16 object-contain opacity-60"
+              />
+            </div>
 
             <p className="text-lg md:text-xl text-[#EAF6FF]/80 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
               Structured intelligence for executive decision-making.
