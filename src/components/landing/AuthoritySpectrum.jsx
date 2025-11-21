@@ -76,20 +76,21 @@ export default function AuthoritySpectrum() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: idx * 0.1 }}
                 viewport={{ once: true }}
+                className="flex"
               >
                 <Card 
                   className={`${
                     level.highlight 
                       ? 'bg-gradient-to-br from-[#00C8FF]/20 to-[#FFC247]/20 border-[#FFC247]/60' 
                       : 'bg-[#0B0F1A]/50 border-[#00C8FF]/20'
-                  } backdrop-blur-sm hover:scale-105 transition-all duration-200`}
+                  } backdrop-blur-sm hover:scale-105 transition-all duration-200 w-full flex flex-col`}
                   style={{ 
                     boxShadow: level.highlight 
                       ? '0 0 40px rgba(255, 194, 71, 0.4)' 
                       : '0 0 20px rgba(0, 200, 255, 0.1)'
                   }}
                 >
-                  <CardContent className="p-6 text-center">
+                  <CardContent className="p-6 text-center flex flex-col h-full">
                     <div className="mb-4">
                       <div className="flex justify-center gap-1 mb-3">
                         {Array.from({ length: 3 }).map((_, i) => (
@@ -126,7 +127,7 @@ export default function AuthoritySpectrum() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-[#A7B2C4] font-light leading-relaxed">
+                    <p className="text-xs text-[#A7B2C4] font-light leading-relaxed flex-grow">
                       {level.description}
                     </p>
 
