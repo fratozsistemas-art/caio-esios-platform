@@ -85,3 +85,19 @@
     box-shadow: 0 0 0 10px rgba(0, 212, 255, 0);
   }
 }
+
+/* Logo glow animation - dark to bright to dark */
+@keyframes logoGlow {
+  0% {
+    opacity: 0.1;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0.1;
+    transform: scale(0.8);
+  }
+}

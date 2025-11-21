@@ -381,16 +381,14 @@ export default function Landing() {
 
             <div className="flex justify-center mb-8 relative">
               <div className="absolute inset-0 bg-[#000917] blur-[120px] rounded-full" aria-hidden="true" />
-              <div className="absolute inset-0 bg-[#00C8FF] opacity-20 blur-[80px] rounded-full" aria-hidden="true" 
+              <div className="absolute inset-0 bg-[#00C8FF] blur-[80px] rounded-full" aria-hidden="true" 
                 style={{ 
-                  animation: 'pulse 3s ease-in-out infinite',
-                  transform: 'scale(0.8)'
+                  animation: 'logoGlow 4s ease-in-out infinite'
                 }} 
               />
-              <div className="absolute inset-0 bg-[#00C8FF] opacity-40 blur-[40px] rounded-full" aria-hidden="true" 
+              <div className="absolute inset-0 bg-[#00C8FF] blur-[40px] rounded-full" aria-hidden="true" 
                 style={{ 
-                  animation: 'pulse 3s ease-in-out infinite 0.5s',
-                  transform: 'scale(0.6)'
+                  animation: 'logoGlow 4s ease-in-out infinite 0.5s'
                 }} 
               />
               <img 
