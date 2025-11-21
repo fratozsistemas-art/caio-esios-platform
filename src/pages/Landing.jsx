@@ -241,7 +241,7 @@ export default function Landing() {
               Intelligent Strategic Operations
             </h1>
             
-            <p className="text-xl md:text-2xl text-[#A7B2C4] mb-6 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <p className="text-xl md:text-2xl text-slate-300 mb-6 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
@@ -255,10 +255,10 @@ export default function Landing() {
               />
             </div>
 
-            <p className="text-lg md:text-xl text-[#EAF6FF]/80 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-lg md:text-xl text-slate-200 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
               Structured intelligence for executive decision-making.
               <br className="hidden md:block" />
-              A strategic partner designed to <span className="text-[#00C8FF] font-semibold">think with you</span>, not for you.
+              A strategic partner designed to <span className="text-[#00D4FF] font-semibold">think with you</span>, not for you.
             </p>
 
             {/* Primary CTAs */}
@@ -356,9 +356,9 @@ export default function Landing() {
             <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
               Why CAIO·AI Is Different
             </h2>
-            <p className="text-xl md:text-2xl text-[#A7B2C4] max-w-4xl mx-auto leading-relaxed font-light">
-              Not another chatbot. <span className="text-[#00C8FF] font-semibold">Cognitive infrastructure</span> for{" "}
-              <span className="text-[#FFC247] font-semibold">modern organizations</span>.
+            <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
+              Not another chatbot. <span className="text-[#00D4FF] font-semibold">Cognitive infrastructure</span> for{" "}
+              <span className="text-[#FFB800] font-semibold">modern organizations</span>.
             </p>
           </div>
 
@@ -408,7 +408,7 @@ export default function Landing() {
                       <item.icon className="w-10 h-10" style={{ color: item.color }} />
                     </div>
                     <h3 className="text-2xl font-bold text-[#EAF6FF] mb-4">{item.title}</h3>
-                    <p className="text-base text-[#A7B2C4] leading-relaxed font-light">{item.description}</p>
+                    <p className="text-base text-slate-300 leading-relaxed font-light">{item.description}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -433,9 +433,9 @@ export default function Landing() {
             <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-8">
               Institutional-Grade<br />Strategic Intelligence
             </h2>
-            <p className="text-xl md:text-2xl text-[#A7B2C4] max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
               Unlike generic models, CAIO operates on a{" "}
-              <span className="text-[#00C8FF] font-semibold">modular 11-block TSI system</span>{" "}
+              <span className="text-[#00D4FF] font-semibold">modular 11-block TSI system</span>{" "}
               covering context, finance, technology, execution, capital, and cognitive governance.
             </p>
           </div>
@@ -550,7 +550,7 @@ export default function Landing() {
                       <h3 className="text-2xl font-heading font-bold text-white mb-4">
                         {benefit.title}
                       </h3>
-                      <p className="text-white text-base font-body leading-relaxed">
+                      <p className="text-slate-200 text-base font-body leading-relaxed">
                         {benefit.description}
                       </p>
                     </CardContent>
@@ -750,12 +750,12 @@ export default function Landing() {
           </div>
 
           <div className="text-center mt-12">
-            <p className="text-slate-300 mb-6">
+            <p className="text-slate-200 mb-6">
               <span className="text-[#00D4FF] font-semibold">
                 Metodologia nível consultoria
               </span>{" "}
               +
-              <span className="text-[#00A8CC] font-semibold">
+              <span className="text-[#00D4FF] font-semibold">
                 {" "}
                 velocidade de IA
               </span>{" "}
@@ -965,7 +965,7 @@ export default function Landing() {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Ready to Transform Strategic Decision-Making?
             </h2>
-            <p className="text-xl text-slate-200 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-white mb-8 max-w-2xl mx-auto">
               Junte-se a organizações que usam CAIO·AI para tomar decisões mais
               rápidas, profundas e alinhadas à lógica de capital.
             </p>
@@ -1001,7 +1001,7 @@ export default function Landing() {
                 }
               />
             </div>
-            <p className="text-sm text-slate-300 mt-6 font-medium">
+            <p className="text-sm text-slate-200 mt-6 font-medium">
               Acesso restrito · Entre em contato para solicitar demonstração
             </p>
           </motion.div>
@@ -1037,7 +1037,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#methodology"
-                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
                   >
                     TSI Methodology
                   </a>
@@ -1045,7 +1045,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#capabilities"
-                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
                   >
                     Capabilities
                   </a>
@@ -1053,7 +1053,7 @@ export default function Landing() {
                 <li>
                   <a
                     href="#use-cases"
-                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
                   >
                     Use Cases
                   </a>
@@ -1061,53 +1061,53 @@ export default function Landing() {
                 <li>
                   <a
                     href="#pricing"
-                    className="text-slate-300 hover:text-caio-gold transition-colors"
+                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
                   >
                     Pricing
                   </a>
                 </li>
               </ul>
-            </div>
-            <div>
+              </div>
+              <div>
               <h4 className="text-white font-body font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm font-body">
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     About
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Blog
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Careers
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Contact
                   </a>
                 </li>
               </ul>
-            </div>
-            <div>
+              </div>
+              <div>
               <h4 className="text-white font-body font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm font-body">
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Privacy
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Terms
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-slate-300 hover:text-caio-gold transition-colors">
+                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Security
                   </a>
                 </li>
@@ -1116,7 +1116,7 @@ export default function Landing() {
           </div>
           <div className="border-t border-caio-blue/10 pt-8">
             <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-8" />
-            <p className="text-center text-sm font-body text-caio-off-white/50">
+            <p className="text-center text-sm font-body text-slate-400">
               © 2025 CAIO·AI Platform. All rights reserved. | Powered by TSI v9.3 Strategic Intelligence
             </p>
           </div>
