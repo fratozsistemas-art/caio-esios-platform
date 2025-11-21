@@ -39,6 +39,7 @@ import AgentPerformance from './pages/AgentPerformance';
 import SupportTickets from './pages/SupportTickets';
 import AgentTraining from './pages/AgentTraining';
 import CompanyIntelligenceHub from './pages/CompanyIntelligenceHub';
+import UploadAsset from './pages/UploadAsset';
 import __Layout from './Layout.jsx';
 
 
@@ -84,6 +85,7 @@ export const PAGES = {
     "SupportTickets": SupportTickets,
     "AgentTraining": AgentTraining,
     "CompanyIntelligenceHub": CompanyIntelligenceHub,
+    "UploadAsset": UploadAsset,
 }
 
 export const pagesConfig = {
