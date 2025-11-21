@@ -71,9 +71,10 @@ export default function Landing() {
       toast.error('Acesso não autorizado. Seu email não está pré-cadastrado no sistema.');
     }
 
-    // Check if user has seen pre-home animation
+    // Check if user has seen pre-home animation or chosen to skip
     const hasSeenPreHome = sessionStorage.getItem('caio_prehome_seen');
-    if (hasSeenPreHome) {
+    const skipIntro = localStorage.getItem('caio_skip_intro');
+    if (hasSeenPreHome || skipIntro === 'true') {
       setShowPreHome(false);
     }
   }, []);
