@@ -40,6 +40,7 @@ import SupportTickets from './pages/SupportTickets';
 import AgentTraining from './pages/AgentTraining';
 import CompanyIntelligenceHub from './pages/CompanyIntelligenceHub';
 import UploadAsset from './pages/UploadAsset';
+import Roadmap from './pages/Roadmap';
 import __Layout from './Layout.jsx';
 
 
@@ -86,6 +87,7 @@ export const PAGES = {
     "AgentTraining": AgentTraining,
     "CompanyIntelligenceHub": CompanyIntelligenceHub,
     "UploadAsset": UploadAsset,
+    "Roadmap": Roadmap,
 }
 
 export const pagesConfig = {
