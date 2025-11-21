@@ -110,8 +110,11 @@ export default function Chat() {
           quick_action_metadata: quickActionMetadata
         }
       });
-      setSelectedConversation(newConv);
-      setMessages([]);
+      
+      // Fetch the conversation with messages to ensure proper state
+      const fullConv = await base44.agents.getConversation(newConv.id);
+      setSelectedConversation(fullConv);
+      setMessages(fullConv.messages || []);
       refetchConversations();
 
       // If there's an initial message, send it immediately
@@ -119,7 +122,7 @@ export default function Chat() {
         setUserInput(initialMessage);
         // Send it after a short delay to ensure conversation is set
         setTimeout(() => {
-          sendMessageWithContent(initialMessage, newConv);
+          sendMessageWithContent(initialMessage, fullConv);
         }, 100);
       }
     } catch (error) {
