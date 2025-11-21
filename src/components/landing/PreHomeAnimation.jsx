@@ -2,13 +2,26 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const floatingWords = [
-  "Executive Intelligence",
+  "Market Intelligence",
   "Strategic Synthesis",
-  "Cognitive Governance",
-  "Institutional Brain",
-  "Decision Architecture",
-  "Capital Intelligence",
-  "Unwavering Peer"
+  "Financial Modeling",
+  "Competitive Analysis",
+  "Risk Assessment",
+  "M&A Evaluation",
+  "Digital Transformation",
+  "Innovation Strategy",
+  "Capital Allocation",
+  "Growth Opportunity",
+  "Operational Excellence",
+  "ESG Framework",
+  "Technology Stack",
+  "Customer Success",
+  "Product Launch",
+  "Business Intelligence",
+  "Executive Decision",
+  "Portfolio Optimization",
+  "Cost Efficiency",
+  "Market Entry"
 ];
 
 export default function PreHomeAnimation({ onComplete }) {
@@ -16,16 +29,18 @@ export default function PreHomeAnimation({ onComplete }) {
   const [currentWords, setCurrentWords] = useState([]);
 
   useEffect(() => {
-    // Schedule words to appear at different times
+    // Schedule words to appear at different times with staggered timing
     const wordTimers = floatingWords.map((word, idx) => {
       return setTimeout(() => {
         setCurrentWords(prev => [...prev, {
           text: word,
           id: idx,
-          x: Math.random() * 60 + 20, // 20-80%
-          y: Math.random() * 60 + 20  // 20-80%
+          x: Math.random() * 70 + 15, // 15-85%
+          y: Math.random() * 70 + 15, // 15-85%
+          size: Math.random() * 0.5 + 0.8, // 0.8-1.3x size variation
+          delay: Math.random() * 2 // Random delay for variety
         }]);
-      }, idx * 1200);
+      }, idx * 400);
     });
 
     // Start fade out after 10 seconds
@@ -55,83 +70,55 @@ export default function PreHomeAnimation({ onComplete }) {
           transition={{ duration: 1.5 }}
           className="fixed inset-0 z-50 bg-[#050B1A] flex items-center justify-center overflow-hidden"
         >
-          {/* Floating Words */}
+          {/* Floating Word Cloud */}
           {currentWords.map((word) => (
             <motion.div
               key={word.id}
-              initial={{ opacity: 0, scale: 0.8 }}
+              initial={{ 
+                opacity: 0, 
+                scale: 0.5,
+                x: 0,
+                y: 0
+              }}
               animate={{ 
-                opacity: [0, 1, 1, 0],
-                scale: [0.8, 1, 1, 0.8]
+                opacity: [0, 1, 0.8, 1, 0],
+                scale: [0.5, word.size, word.size * 1.1, word.size, 0.5],
+                x: [0, Math.random() * 40 - 20, Math.random() * 60 - 30, 0],
+                y: [0, Math.random() * 40 - 20, Math.random() * 60 - 30, 0]
               }}
               transition={{
-                duration: 3,
-                times: [0, 0.2, 0.8, 1],
-                ease: "easeInOut"
+                duration: 4 + word.delay,
+                times: [0, 0.15, 0.5, 0.85, 1],
+                ease: "easeInOut",
+                delay: word.delay
               }}
               style={{
                 position: 'absolute',
                 left: `${word.x}%`,
                 top: `${word.y}%`,
+                fontSize: `${word.size}rem`,
+                textShadow: '0 0 20px rgba(255, 194, 71, 0.6), 0 0 40px rgba(255, 194, 71, 0.3)',
               }}
-              className="text-[#00C8FF]/40 text-sm md:text-base font-light whitespace-nowrap"
+              className="text-[#00C8FF] font-medium whitespace-nowrap pointer-events-none"
             >
               {word.text}
             </motion.div>
           ))}
 
-          {/* Central Logo with Rotation and Glow */}
+          {/* Central Glow Effect */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.5 }}
             animate={{ 
-              opacity: 1, 
-              scale: 1,
-              rotate: 360
+              opacity: [0, 0.6, 0.8, 0.6, 0],
+              scale: [0.5, 1.2, 1.5, 1.2, 0.5]
             }}
             transition={{
-              opacity: { duration: 1 },
-              scale: { duration: 1 },
-              rotate: { duration: 10, ease: "linear" }
+              duration: 10,
+              times: [0, 0.2, 0.5, 0.8, 1],
+              ease: "easeInOut"
             }}
-            className="relative"
-          >
-            {/* Alternating Glow Effect */}
-            <motion.div
-              animate={{
-                opacity: [0.3, 0.8, 0.3],
-                scale: [1, 1.2, 1]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute inset-0 bg-gradient-to-r from-[#00C8FF] via-[#16A9FF] to-[#FFC247] opacity-30 blur-3xl rounded-full"
-              style={{ transform: 'scale(1.5)' }}
-            />
-
-            <motion.div
-              animate={{
-                opacity: [0.8, 0.3, 0.8],
-                scale: [1.2, 1, 1.2]
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: 1.5
-              }}
-              className="absolute inset-0 bg-gradient-to-r from-[#FFC247] via-[#E0A43C] to-[#00C8FF] opacity-30 blur-3xl rounded-full"
-              style={{ transform: 'scale(1.5)' }}
-            />
-
-            {/* Logo */}
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
-              alt="CAIO·AI" 
-              className="w-48 h-48 md:w-64 md:h-64 object-contain relative z-10 drop-shadow-[0_0_60px_rgba(0,200,255,0.8)]"
-            />
-          </motion.div>
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-[#FFC247] via-[#00C8FF] to-[#FFC247] opacity-20 blur-[100px] rounded-full"
+          />
 
           {/* Subtitle */}
           <motion.div
