@@ -1024,10 +1024,10 @@ export default function Landing() {
                 />
                 <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>CAIO·AI</div>
               </div>
-              <p className="text-sm font-body text-caio-blue mb-4 font-semibold">
+              <p className="text-sm font-body text-[#00D4FF] mb-4 font-semibold">
                 Inteligência que vira tração.
               </p>
-              <p className="text-xs font-body text-caio-off-white/60">
+              <p className="text-xs font-body text-slate-400">
                 powered by FRATOZ
               </p>
             </div>
