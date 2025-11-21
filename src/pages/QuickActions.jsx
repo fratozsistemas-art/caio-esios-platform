@@ -27,9 +27,16 @@ import {
   AlertCircle,
   FileText,
   Map,
-  Loader2
+  Loader2,
+  Info
 } from "lucide-react";
 import { motion } from "framer-motion";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import QuickActionAssistantModal from "../components/quickactions/QuickActionAssistantModal";
 
 export default function QuickActions() {
@@ -176,58 +183,102 @@ function QuickActionCard({ action, index, onClick }) {
   const cardColorClass = action.color || "from-gray-500 to-gray-700";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.05 }}
-    >
-      <Card
-        className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 cursor-pointer transition-all duration-300 group h-full flex flex-col"
-        onClick={() => onClick(action)}
+    <TooltipProvider>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.05 }}
       >
-        <CardHeader className="border-b border-white/10 p-6">
-          <div className="flex items-start justify-between mb-3">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${cardColorClass} flex items-center justify-center p-2`}>
-              <IconComponent className="w-6 h-6 text-white" />
-            </div>
-            <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
-              {action.category?.replace(/_/g, ' ')}
-            </span>
-            </div>
-            <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
-            {action.title}
-            </CardTitle>
-            <CardDescription className="text-slate-400 text-sm mt-2">
-            {action.description}
-            </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6 space-y-3 flex-grow">
-            {action.primary_framework && (
-            <div className="flex items-center text-xs text-slate-400">
-              <FlaskConical className="w-4 h-4 mr-2" />
-              Primary Framework: <span className="ml-1 text-white font-medium">{action.primary_framework}</span>
-            </div>
-            )}
-            {action.modules_activated && action.modules_activated.length > 0 && (
-            <div className="flex items-center text-xs text-slate-400">
-              <Code className="w-4 h-4 mr-2" />
-              Modules: <span className="ml-1 text-white font-medium">{action.modules_activated.join(", ")}</span>
-            </div>
-            )}
-            {action.estimated_time && (
-            <div className="flex items-center text-xs text-slate-400">
-              <Timer className="w-4 h-4 mr-2" />
-              Est. Time: <span className="ml-1 text-green-400 font-medium">{action.estimated_time}</span>
-            </div>
-            )}
-            {action.confidence_range && (
-            <div className="flex items-center text-xs text-slate-400">
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Confidence: <span className="ml-1 text-blue-400 font-medium">{action.confidence_range}</span>
-            </div>
-            )}
-        </CardContent>
-      </Card>
-    </motion.div>
+        <Card
+          className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 cursor-pointer transition-all duration-300 group h-full flex flex-col"
+          onClick={() => onClick(action)}
+        >
+          <CardHeader className="border-b border-white/10 p-6">
+            <div className="flex items-start justify-between mb-3">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${cardColorClass} flex items-center justify-center p-2`}>
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Framework: {action.primary_framework}</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30 cursor-help">
+                    {action.category?.replace(/_/g, ' ')}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Categoria de análise estratégica</p>
+                </TooltipContent>
+              </Tooltip>
+              </div>
+              <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
+              {action.title}
+              </CardTitle>
+              <CardDescription className="text-slate-400 text-sm mt-2">
+              {action.description}
+              </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-3 flex-grow">
+              {action.primary_framework && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center text-xs text-slate-400 cursor-help">
+                    <FlaskConical className="w-4 h-4 mr-2" />
+                    Primary Framework: <span className="ml-1 text-white font-medium">{action.primary_framework}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Framework metodológico principal utilizado na análise</p>
+                </TooltipContent>
+              </Tooltip>
+              )}
+              {action.modules_activated && action.modules_activated.length > 0 && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center text-xs text-slate-400 cursor-help">
+                    <Code className="w-4 h-4 mr-2" />
+                    Modules: <span className="ml-1 text-white font-medium">{action.modules_activated.join(", ")}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Módulos TSI ativados para esta análise</p>
+                </TooltipContent>
+              </Tooltip>
+              )}
+              {action.estimated_time && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center text-xs text-slate-400 cursor-help">
+                    <Timer className="w-4 h-4 mr-2" />
+                    Est. Time: <span className="ml-1 text-green-400 font-medium">{action.estimated_time}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Tempo estimado de processamento</p>
+                </TooltipContent>
+              </Tooltip>
+              )}
+              {action.confidence_range && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center text-xs text-slate-400 cursor-help">
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Confidence: <span className="ml-1 text-blue-400 font-medium">{action.confidence_range}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Nível de confiança esperado dos resultados</p>
+                </TooltipContent>
+              </Tooltip>
+              )}
+          </CardContent>
+        </Card>
+      </motion.div>
+    </TooltipProvider>
   );
 }

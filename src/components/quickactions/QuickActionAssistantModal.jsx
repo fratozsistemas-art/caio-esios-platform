@@ -77,37 +77,47 @@ export default function QuickActionAssistantModal({
     
     // Simulate processing time for better UX
     setTimeout(() => {
-      let finalPrompt = quickAction.prompt_template;
+      try {
+        let finalPrompt = quickAction.prompt_template;
 
-      // Replace placeholders in prompt_template with form data
-      for (const key in formData) {
-        const placeholder = `{${key}}`;
-        if (finalPrompt.includes(placeholder)) {
-          finalPrompt = finalPrompt.replace(new RegExp(placeholder, "g"), formData[key]);
+        // Replace placeholders in prompt_template with form data
+        for (const key in formData) {
+          const placeholder = `{${key}}`;
+          if (finalPrompt.includes(placeholder)) {
+            finalPrompt = finalPrompt.replace(new RegExp(placeholder, "g"), formData[key]);
+          }
         }
-      }
 
-      setGeneratedPrompt(finalPrompt);
-      setIsGeneratingPrompt(false);
-      toast.success("Prompt gerado com sucesso!");
+        setGeneratedPrompt(finalPrompt);
+        setIsGeneratingPrompt(false);
+        toast.success("✅ Prompt gerado com sucesso!");
+      } catch (error) {
+        setIsGeneratingPrompt(false);
+        toast.error("❌ Erro ao gerar prompt. Tente novamente.");
+      }
     }, 500);
   };
 
   const handleSendToChat = () => {
     if (generatedPrompt) {
-      navigate(createPageUrl("Chat"), {
-        state: { 
-          initialPrompt: generatedPrompt,
-          quickActionMetadata: {
-            title: quickAction.title,
-            framework: quickAction.primary_framework,
-            modules: quickAction.modules_activated
-          }
-        },
-      });
-      onClose();
+      try {
+        navigate(createPageUrl("Chat"), {
+          state: { 
+            initialPrompt: generatedPrompt,
+            quickActionMetadata: {
+              title: quickAction.title,
+              framework: quickAction.primary_framework,
+              modules: quickAction.modules_activated
+            }
+          },
+        });
+        toast.success("🚀 Redirecionando para o chat com CAIO...");
+        setTimeout(() => onClose(), 500);
+      } catch (error) {
+        toast.error("❌ Erro ao redirecionar. Tente novamente.");
+      }
     } else {
-      toast.error("Por favor, gere o prompt antes de enviar para o chat.");
+      toast.error("⚠️ Por favor, gere o prompt antes de enviar para o chat.");
     }
   };
 
