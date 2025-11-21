@@ -21,6 +21,7 @@ import {
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
+import AccessibilityEnhancer from "../components/AccessibilityEnhancer";
 
 export default function Contato() {
   const navigate = useNavigate();
@@ -176,6 +177,7 @@ export default function Contato() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+      <AccessibilityEnhancer />
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
         <div className="max-w-7xl mx-auto px-6 py-4">

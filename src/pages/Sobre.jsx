@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
+import AccessibilityEnhancer from "../components/AccessibilityEnhancer";
 
 export default function Sobre() {
   const navigate = useNavigate();
@@ -56,6 +57,15 @@ export default function Sobre() {
       document.head.appendChild(canonical);
     }
     canonical.href = window.location.origin + createPageUrl('Sobre');
+
+    // Favicon
+    let favicon = document.querySelector('link[rel="icon"]');
+    if (!favicon) {
+      favicon = document.createElement('link');
+      favicon.rel = 'icon';
+      document.head.appendChild(favicon);
+    }
+    favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png';
 
     // Open Graph
     const ogTags = {
@@ -184,6 +194,7 @@ export default function Sobre() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+      <AccessibilityEnhancer />
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
