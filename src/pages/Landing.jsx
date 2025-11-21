@@ -968,16 +968,34 @@ export default function Landing() {
               Junte-se a organizações que usam CAIO·AI para tomar decisões mais
               rápidas, profundas e alinhadas à lógica de capital.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <AccessRequestForm />
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <AccessRequestForm 
                 trigger={
                   <Button
                     size="lg"
-                    variant="outline"
-                    className="border-2 border-[#FFB800]/40 bg-[#FFB800]/10 text-white hover:bg-[#FFB800]/20 hover:border-[#FFB800]/60 font-semibold px-8 py-6 text-lg shadow-xl"
+                    className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
+                    style={{
+                      background: 'linear-gradient(90deg, #00C8FF 0%, #16A9FF 50%, #FFC247 100%)',
+                      boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
+                    }}
+                  >
+                    Solicitar Acesso
+                    <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
+                  </Button>
+                }
+              />
+              <AccessRequestForm 
+                trigger={
+                  <Button
+                    size="lg"
+                    className="relative overflow-hidden text-white font-semibold px-10 py-7 text-lg transition-all duration-300 hover:-translate-y-1 border-0"
+                    style={{
+                      background: 'linear-gradient(90deg, #FFC247 0%, #16A9FF 50%, #00C8FF 100%)',
+                      boxShadow: '0 0 30px rgba(255, 194, 71, 0.4), 0 0 60px rgba(0, 200, 255, 0.3)'
+                    }}
                   >
                     Schedule a Call
+                    <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 }
               />
