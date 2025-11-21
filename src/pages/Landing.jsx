@@ -153,7 +153,7 @@ export default function Landing() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI" 
                 className="w-12 h-12 object-contain"
               />
@@ -238,7 +238,7 @@ export default function Landing() {
             <div className="mb-12 flex justify-center relative">
               <div className="absolute inset-0 bg-gradient-to-r from-[#00C8FF] via-[#16A9FF] to-[#FFC247] opacity-20 blur-3xl rounded-full" />
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Logo" 
                 className="w-40 h-40 object-contain drop-shadow-[0_0_40px_rgba(0,200,255,0.6)] relative z-10"
               />
