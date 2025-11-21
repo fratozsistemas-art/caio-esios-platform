@@ -45,6 +45,9 @@ import Sobre from './pages/Sobre';
 import Funcionalidades from './pages/Funcionalidades';
 import Precos from './pages/Precos';
 import Contato from './pages/Contato';
+import CentralAjuda from './pages/CentralAjuda';
+import BaseConhecimento from './pages/BaseConhecimento';
+import Forum from './pages/Forum';
 import __Layout from './Layout.jsx';
 
 
@@ -96,6 +99,9 @@ export const PAGES = {
     "Funcionalidades": Funcionalidades,
     "Precos": Precos,
     "Contato": Contato,
+    "CentralAjuda": CentralAjuda,
+    "BaseConhecimento": BaseConhecimento,
+    "Forum": Forum,
 }
 
 export const pagesConfig = {
