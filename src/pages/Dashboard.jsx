@@ -302,6 +302,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4"
+        data-tour="dashboard-header"
       >
         <div>
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
@@ -323,7 +324,7 @@ export default function Dashboard() {
             variant="outline"
             size="icon"
             onClick={() => refetchConversations()}
-            className="border-white/10 text-white hover:bg-white/10"
+            className="border-[#00D4FF]/40 text-white hover:bg-[#00D4FF]/20 hover:border-[#00D4FF]/60"
           >
             <RefreshCw className="w-5 h-5" />
           </Button>
@@ -375,9 +376,9 @@ export default function Dashboard() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="grid grid-cols-3 gap-4"
+          className="grid grid-cols-1 md:grid-cols-3 gap-4"
         >
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 h-full">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-400">Hermes Integrity</p>
@@ -386,7 +387,7 @@ export default function Dashboard() {
               <Shield className={`w-8 h-8 ${hermesStats.avgIntegrity >= 80 ? 'text-green-400' : 'text-yellow-400'} opacity-50`} />
             </div>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 h-full">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-400">Critical Issues</p>
@@ -397,7 +398,7 @@ export default function Dashboard() {
               </Badge>
             </div>
           </div>
-          <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+          <div className="bg-white/5 border border-white/10 rounded-lg p-4 h-full">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs text-slate-400">Analyses</p>
