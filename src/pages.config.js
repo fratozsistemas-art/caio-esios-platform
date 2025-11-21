@@ -41,6 +41,10 @@ import AgentTraining from './pages/AgentTraining';
 import CompanyIntelligenceHub from './pages/CompanyIntelligenceHub';
 import UploadAsset from './pages/UploadAsset';
 import Roadmap from './pages/Roadmap';
+import Sobre from './pages/Sobre';
+import Funcionalidades from './pages/Funcionalidades';
+import Precos from './pages/Precos';
+import Contato from './pages/Contato';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +92,10 @@ export const PAGES = {
     "CompanyIntelligenceHub": CompanyIntelligenceHub,
     "UploadAsset": UploadAsset,
     "Roadmap": Roadmap,
+    "Sobre": Sobre,
+    "Funcionalidades": Funcionalidades,
+    "Precos": Precos,
+    "Contato": Contato,
 }
 
 export const pagesConfig = {
