@@ -4,7 +4,6 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Brain,
@@ -15,20 +14,15 @@ import {
   X,
   Mail,
   Target,
-  DollarSign,
   Play,
   Network,
   Layers,
   Star,
-  Award,
-  AlertCircle,
-  Sparkles
+  AlertCircle
 } from "lucide-react";
 import { motion } from "framer-motion";
-import PricingCard from "../components/pricing/PricingCard";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
 import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
-import PreHomeAnimation from "../components/landing/PreHomeAnimation";
 import PricingSection from "../components/landing/PricingSection";
 import InteractiveDemo from "../components/landing/InteractiveDemo";
 import {
@@ -36,52 +30,47 @@ import {
   advancedCapabilities,
   comparisonFeatures,
   detailedUseCases,
-  testimonials,
-  plans
+  testimonials
 } from "../components/landing";
 
-export default function Landing() {
+export default function LandingPT() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showPreHome, setShowPreHome] = useState(false);
-
   const [activeModule, setActiveModule] = useState("M5");
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
 
   // SEO Meta Tags
   useEffect(() => {
-    // Set document title
-    document.title = "CAIO·AI - Executive Strategic Intelligence Platform | TSI v9.3";
+    document.documentElement.lang = 'pt-BR';
+    document.title = "CAIO·AI - Plataforma de Inteligência Estratégica Executiva | TSI v9.3";
     
-    // Meta description
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'CAIO·AI is an institutional-grade strategic intelligence platform built on TSI v9.3 methodology with 11 cognitive modules. Transform executive decision-making with AI-powered strategic analysis, knowledge graphs, and cognitive governance.');
+      metaDescription.setAttribute('content', 'CAIO·AI é uma plataforma de inteligência estratégica de nível institucional construída sobre metodologia TSI v9.3 com 11 módulos cognitivos. Transforme decisões executivas com análise estratégica potencializada por IA, knowledge graphs e governança cognitiva.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'CAIO·AI is an institutional-grade strategic intelligence platform built on TSI v9.3 methodology with 11 cognitive modules. Transform executive decision-making with AI-powered strategic analysis, knowledge graphs, and cognitive governance.';
+      meta.content = 'CAIO·AI é uma plataforma de inteligência estratégica de nível institucional construída sobre metodologia TSI v9.3 com 11 módulos cognitivos. Transforme decisões executivas com análise estratégica potencializada por IA, knowledge graphs e governança cognitiva.';
       document.head.appendChild(meta);
     }
 
-    // Keywords
     let metaKeywords = document.querySelector('meta[name="keywords"]');
     if (!metaKeywords) {
       metaKeywords = document.createElement('meta');
       metaKeywords.name = 'keywords';
-      metaKeywords.content = 'strategic intelligence, AI platform, executive decision making, TSI methodology, cognitive modules, business intelligence, strategic analysis, knowledge graph, AI consulting, enterprise AI, C-suite tools, strategic planning, competitive intelligence';
+      metaKeywords.content = 'inteligência estratégica, plataforma IA, tomada de decisão executiva, metodologia TSI, módulos cognitivos, business intelligence, análise estratégica, knowledge graph, consultoria IA, IA empresarial, ferramentas C-suite, planejamento estratégico, inteligência competitiva';
       document.head.appendChild(metaKeywords);
     }
 
-    // Open Graph tags
     const ogTags = {
-      'og:title': 'CAIO·AI - Executive Strategic Intelligence Platform',
-      'og:description': 'Transform executive decision-making with institutional-grade AI. Built on TSI v9.3 with 11 cognitive modules for strategic intelligence.',
+      'og:title': 'CAIO·AI - Plataforma de Inteligência Estratégica Executiva',
+      'og:description': 'Transforme decisões executivas com IA de nível institucional. Construída sobre TSI v9.3 com 11 módulos cognitivos para inteligência estratégica.',
       'og:type': 'website',
       'og:url': window.location.href,
-      'og:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png'
+      'og:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png',
+      'og:locale': 'pt_BR'
     };
 
     Object.entries(ogTags).forEach(([property, content]) => {
@@ -94,11 +83,10 @@ export default function Landing() {
       meta.setAttribute('content', content);
     });
 
-    // Twitter Card tags
     const twitterTags = {
       'twitter:card': 'summary_large_image',
-      'twitter:title': 'CAIO·AI - Executive Strategic Intelligence Platform',
-      'twitter:description': 'Transform executive decision-making with institutional-grade AI. Built on TSI v9.3 with 11 cognitive modules.',
+      'twitter:title': 'CAIO·AI - Plataforma de Inteligência Estratégica Executiva',
+      'twitter:description': 'Transforme decisões executivas com IA de nível institucional. Construída sobre TSI v9.3 com 11 módulos cognitivos.',
       'twitter:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png'
     };
 
@@ -112,7 +100,6 @@ export default function Landing() {
       meta.setAttribute('content', content);
     });
 
-    // Canonical URL
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
       canonical = document.createElement('link');
@@ -121,7 +108,6 @@ export default function Landing() {
     }
     canonical.href = window.location.origin + window.location.pathname;
 
-    // Schema.org JSON-LD
     const schemaScript = document.createElement('script');
     schemaScript.type = 'application/ld+json';
     schemaScript.text = JSON.stringify({
@@ -131,9 +117,9 @@ export default function Landing() {
       "applicationCategory": "BusinessApplication",
       "offers": {
         "@type": "AggregateOffer",
-        "lowPrice": "499",
-        "highPrice": "2499",
-        "priceCurrency": "USD",
+        "lowPrice": "1497",
+        "highPrice": "4997",
+        "priceCurrency": "BRL",
         "offerCount": "3"
       },
       "aggregateRating": {
@@ -141,7 +127,7 @@ export default function Landing() {
         "ratingValue": "5",
         "ratingCount": "127"
       },
-      "description": "Executive Strategic Intelligence Platform built on TSI v9.3 methodology with 11 cognitive modules for institutional-grade decision-making.",
+      "description": "Plataforma de Inteligência Estratégica Executiva construída sobre metodologia TSI v9.3 com 11 módulos cognitivos para tomada de decisão de nível institucional.",
       "operatingSystem": "Web",
       "provider": {
         "@type": "Organization",
@@ -149,21 +135,21 @@ export default function Landing() {
         "url": window.location.origin
       },
       "featureList": [
-        "TSI v9.3 Methodology with 11 Cognitive Modules",
-        "Knowledge Graph Intelligence",
-        "Strategic Analysis & Planning",
-        "Cognitive Governance (Hermes Trust-Broker)",
-        "AI-Powered Insights",
-        "Multi-Agent Orchestration",
-        "Executive Decision Support",
-        "Competitive Intelligence",
-        "Market Analysis",
-        "Financial Modeling"
+        "Metodologia TSI v9.3 com 11 Módulos Cognitivos",
+        "Inteligência de Knowledge Graph",
+        "Análise e Planejamento Estratégico",
+        "Governança Cognitiva (Hermes Trust-Broker)",
+        "Insights Potencializados por IA",
+        "Orquestração Multi-Agente",
+        "Suporte a Decisões Executivas",
+        "Inteligência Competitiva",
+        "Análise de Mercado",
+        "Modelagem Financeira"
       ],
-      "image": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png"
+      "image": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
+      "inLanguage": "pt-BR"
     });
     
-    // Remove existing schema if present
     const existingSchema = document.querySelector('script[type="application/ld+json"]');
     if (existingSchema) {
       existingSchema.remove();
@@ -178,7 +164,6 @@ export default function Landing() {
         const authenticated = await base44.auth.isAuthenticated();
         setIsAuthenticated(authenticated);
       } catch (error) {
-        // Silently handle auth errors on public landing page
         setIsAuthenticated(false);
       } finally {
         setIsLoading(false);
@@ -186,47 +171,24 @@ export default function Landing() {
     };
     checkAuth();
 
-    // Check for unauthorized error
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('error') === 'unauthorized') {
       setShowUnauthorizedAlert(true);
-    }
-
-    // Check if user has seen pre-home animation or chosen to skip
-    const hasSeenPreHome = sessionStorage.getItem('caio_prehome_seen');
-    const skipIntro = localStorage.getItem('caio_skip_intro');
-    if (hasSeenPreHome || skipIntro === 'true') {
-      setShowPreHome(false);
     }
   }, []);
 
   const handleLogin = (e) => {
     e?.preventDefault();
-    // Use window.location for public page navigation
     const dashboardUrl = window.location.origin + createPageUrl("Dashboard");
     base44.auth.redirectToLogin(dashboardUrl);
-  };
-
-
-
-  const featuredModule = tsiModules.find((m) => m.featured);
-
-  const handlePreHomeComplete = () => {
-    sessionStorage.setItem('caio_prehome_seen', 'true');
-    setShowPreHome(false);
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
-        <div className="text-white">Loading...</div>
+        <div className="text-white">Carregando...</div>
       </div>
     );
-  }
-
-  // Show pre-home animation
-  if (showPreHome) {
-    return <PreHomeAnimation onComplete={handlePreHomeComplete} />;
   }
 
   return (
@@ -242,15 +204,15 @@ export default function Landing() {
             <div className="flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <h3 className="text-white font-semibold mb-1">Unauthorized Access</h3>
+                <h3 className="text-white font-semibold mb-1">Acesso Não Autorizado</h3>
                 <p className="text-sm text-slate-300 mb-3">
-                  Your email is not pre-registered in the system. Request access through the form below.
+                  Seu email não está pré-cadastrado no sistema. Solicite acesso através do formulário.
                 </p>
                 <div className="flex gap-2">
                   <AccessRequestForm 
                     trigger={
                       <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white">
-                        Request Access
+                        Solicitar Acesso
                       </Button>
                     }
                   />
@@ -260,7 +222,7 @@ export default function Landing() {
                     onClick={() => setShowUnauthorizedAlert(false)}
                     className="border-white/20 text-white hover:bg-white/5"
                   >
-                    Close
+                    Fechar
                   </Button>
                 </div>
               </div>
@@ -276,48 +238,34 @@ export default function Landing() {
             <div className="flex items-center gap-3">
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI Logo - Executive Strategic Intelligence Platform" 
+                alt="CAIO·AI Logo - Plataforma de Inteligência Estratégica Executiva" 
                 className="w-12 h-12 object-contain"
                 width="48"
                 height="48"
               />
-              <div>
-                <div className="text-xl font-bold font-heading text-white" style={{ letterSpacing: '0.05em' }}>
-                  CAIO·AI
-                </div>
+              <div className="text-xl font-bold font-heading text-white" style={{ letterSpacing: '0.05em' }}>
+                CAIO·AI
               </div>
             </div>
             <div className="hidden md:flex items-center gap-8">
-              <a
-                href="#methodology"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
-                Methodology
+              <a href="#metodologia" className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
+                Metodologia
               </a>
-              <a
-                href="#capabilities"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
-                Capabilities
+              <a href="#capacidades" className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
+                Capacidades
               </a>
-              <a
-                href="#use-cases"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
-                Use Cases
+              <a href="#casos-uso" className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
+                Casos de Uso
               </a>
-              <a
-                href="#pricing"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
-                Pricing
+              <a href="#precos" className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium">
+                Preços
               </a>
               {isAuthenticated ? (
                 <Button
                   onClick={() => navigate(createPageUrl("Dashboard"))}
                   className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
                 >
-                  Go to Dashboard
+                  Ir para Dashboard
                 </Button>
               ) : (
                 <>
@@ -327,7 +275,7 @@ export default function Landing() {
                         variant="outline"
                         className="border-caio-blue/40 text-caio-blue hover:bg-caio-blue/10 hover:border-caio-gold font-body transition-all duration-300"
                       >
-                        Request Access
+                        Solicitar Acesso
                       </Button>
                     }
                   />
@@ -336,7 +284,7 @@ export default function Landing() {
                     className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
                   >
                     <Mail className="w-4 h-4 mr-2" />
-                    Sign In
+                    Entrar
                   </Button>
                 </>
               )}
@@ -346,7 +294,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32" aria-label="Hero Section - Executive Strategic Intelligence">
+      <section className="relative overflow-hidden py-20 md:py-32">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
         </div>
@@ -358,21 +306,20 @@ export default function Landing() {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            {/* Main Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold text-[#EAF6FF] mb-6 leading-tight tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
-              The Executive System for<br />
-              Intelligent Strategic Operations
+            <h1 className="text-5xl md:text-7xl font-bold text-[#EAF6FF] mb-6 leading-tight tracking-tight">
+              O Sistema Executivo para<br />
+              Operações Estratégicas Inteligentes
             </h1>
             
-            <p className="text-xl md:text-2xl text-slate-300 mb-6 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
-              Built on TSI v9.3 — 11 Cognitive Modules
+            <p className="text-xl md:text-2xl text-slate-300 mb-6 font-light">
+              Construído sobre TSI v9.3 — 11 Módulos Cognitivos
             </p>
 
             <div className="flex justify-center mb-8 relative">
-              <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" aria-hidden="true" />
+              <div className="absolute inset-0 bg-[#00C8FF] opacity-30 blur-[60px] rounded-full" />
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
+                alt="Logo da Plataforma CAIO·AI - IA Cognitiva para Inteligência Estratégica e Tomada de Decisão Executiva" 
                 className="w-52 h-52 object-contain relative z-10"
                 width="208"
                 height="208"
@@ -381,9 +328,9 @@ export default function Landing() {
             </div>
 
             <p className="text-lg md:text-xl text-slate-200 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
-              Structured intelligence for executive decision-making.
+              Inteligência estruturada para tomada de decisão executiva.
               <br className="hidden md:block" />
-              A strategic partner designed to <span className="text-[#00D4FF] font-semibold">think with you</span>, not for you.
+              Um parceiro estratégico projetado para <span className="text-[#00D4FF] font-semibold">pensar com você</span>, não por você.
             </p>
 
             {/* Primary CTAs */}
@@ -398,7 +345,7 @@ export default function Landing() {
                       boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
                     }}
                   >
-                    Start with CAIO·AI — 14-Day Free Access
+                    Começar com CAIO·AI — 14 Dias Grátis
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 }
@@ -413,31 +360,16 @@ export default function Landing() {
                 }}
               >
                 <Play className="w-5 h-5 mr-2" />
-                Try Interactive Demo
+                Ver Demo Interativa
               </Button>
             </div>
 
             {/* Stats Bar */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               {[
-                {
-                  icon: Layers,
-                  label: "TSI Modules",
-                  value: "11",
-                  color: "#00C8FF",
-                },
-                {
-                  icon: Network,
-                  label: "Strategic Connections",
-                  value: "10K+",
-                  color: "#16A9FF",
-                },
-                {
-                  icon: Zap,
-                  label: "Faster Analysis",
-                  value: "95%",
-                  color: "#FFC247",
-                },
+                { icon: Layers, label: "Módulos TSI", value: "11", color: "#00C8FF" },
+                { icon: Network, label: "Conexões Estratégicas", value: "10K+", color: "#16A9FF" },
+                { icon: Zap, label: "Análise Mais Rápida", value: "95%", color: "#FFC247" }
               ].map((stat, i) => {
                 const Icon = stat.icon;
                 return (
@@ -475,35 +407,35 @@ export default function Landing() {
       </section>
 
       {/* Why CAIO·AI Is Different */}
-      <section className="py-20 relative" aria-labelledby="why-different">
+      <section className="py-20 relative">
         <div className="max-w-7xl mx-auto px-6 relative">
           <div className="text-center mb-20">
-            <h2 id="why-different" className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
-              Why CAIO·AI Is Different
+            <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
+              Por Que CAIO·AI É Diferente
             </h2>
             <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
-              Not another chatbot. <span className="text-[#00D4FF] font-semibold">Cognitive infrastructure</span> for{" "}
-              <span className="text-[#FFB800] font-semibold">modern organizations</span>.
+              Não é mais um chatbot. <span className="text-[#00D4FF] font-semibold">Infraestrutura cognitiva</span> para{" "}
+              <span className="text-[#FFB800] font-semibold">organizações modernas</span>.
             </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 mb-20">
             {[
               {
-                title: "TSI v9.3 Proprietary Methodology",
-                description: "11 integrated modules covering context, finance, technology, execution, capital, and cognitive governance.",
+                title: "Metodologia Proprietária TSI v9.3",
+                description: "11 módulos integrados cobrindo contexto, finanças, tecnologia, execução, capital e governança cognitiva.",
                 icon: Brain,
                 color: "#00C8FF"
               },
               {
-                title: "Human-AI Symbiosis",
-                description: "Architecture that amplifies strategic decisions without replacing executive judgment.",
+                title: "Simbiose Humano-IA",
+                description: "Arquitetura que amplifica decisões estratégicas sem substituir julgamento executivo.",
                 icon: Network,
                 color: "#16A9FF"
               },
               {
-                title: "Enterprise-Grade",
-                description: "Cognitive governance, decision auditing, and full traceability via Hermes Trust-Broker.",
+                title: "Nível Enterprise",
+                description: "Governança cognitiva, auditoria de decisões e rastreabilidade completa via Hermes Trust-Broker.",
                 icon: Target,
                 color: "#FFC247"
               }
@@ -540,33 +472,27 @@ export default function Landing() {
             ))}
           </div>
 
-          {/* Separator */}
           <div className="h-px w-full bg-gradient-to-r from-transparent via-[#00C8FF] to-[#FFC247] opacity-30" />
         </div>
       </section>
 
       {/* TSI Methodology Showcase */}
-      <section
-        id="methodology"
-        className="py-32 bg-caio-graphite/20 backdrop-blur-sm border-y border-caio-blue/20"
-        aria-labelledby="methodology-title"
-      >
+      <section id="metodologia" className="py-32 bg-caio-graphite/20 backdrop-blur-sm border-y border-caio-blue/20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-20">
             <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/40 mb-8 px-8 py-3 text-base font-semibold" style={{ boxShadow: '0 0 20px rgba(0, 200, 255, 0.3)' }}>
-              TSI v9.3 · 11 Cognitive Modules
+              TSI v9.3 · 11 Módulos Cognitivos
             </Badge>
-            <h2 id="methodology-title" className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-8">
-              Institutional-Grade<br />Strategic Intelligence
+            <h2 className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-8">
+              Inteligência Estratégica<br />de Nível Institucional
             </h2>
             <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
-              Unlike generic models, CAIO operates on a{" "}
-              <span className="text-[#00D4FF] font-semibold">modular 11-block TSI system</span>{" "}
-              covering context, finance, technology, execution, capital, and cognitive governance.
+              Ao contrário de modelos genéricos, CAIO opera em um{" "}
+              <span className="text-[#00D4FF] font-semibold">sistema TSI modular de 11 blocos</span>{" "}
+              cobrindo contexto, finanças, tecnologia, execução, capital e governança cognitiva.
             </p>
           </div>
 
-          {/* Grid 4x3 com M5 destacado */}
           <div className="grid gap-4 md:grid-cols-4 mb-16">
             {tsiModules.map((module) => {
               const Icon = module.icon;
@@ -595,7 +521,7 @@ export default function Landing() {
                     }}
                   >
                     <CardContent className={`${isFeatured ? 'p-8' : 'p-5'} flex ${isFeatured ? 'flex-row' : 'flex-col'} gap-4 h-full`}>
-                      <div className={`flex ${isFeatured ? 'flex-col' : 'flex-col'} items-center gap-3 ${isFeatured ? 'w-32' : 'w-full'}`}>
+                      <div className={`flex flex-col items-center gap-3 ${isFeatured ? 'w-32' : 'w-full'}`}>
                         <div 
                           className={`${isFeatured ? 'w-16 h-16' : 'w-12 h-12'} rounded-xl flex items-center justify-center`}
                           style={{ 
@@ -632,30 +558,26 @@ export default function Landing() {
             })}
           </div>
 
-          {/* Methodology Benefits */}
           <div className="grid md:grid-cols-3 gap-8 mt-16">
             {[
               {
                 icon: CheckCircle,
                 title: "Cobertura Completa",
-                description:
-                  "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
-                gradient: "from-caio-blue to-caio-blue-medium",
+                description: "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
+                gradient: "from-caio-blue to-caio-blue-medium"
               },
               {
                 icon: Zap,
                 title: "Modo Especialista Modular",
-                description:
-                  "Rode apenas o módulo que interessa (M1–M11) sem perder coerência com a arquitetura TSI.",
-                gradient: "from-caio-gold to-caio-gold-dark",
+                description: "Rode apenas o módulo que interessa (M1–M11) sem perder coerência com a arquitetura TSI.",
+                gradient: "from-caio-gold to-caio-gold-dark"
               },
               {
                 icon: Target,
-                title: "Depth-Level Architecture",
-                description:
-                  "Saídas adaptadas para Board, C-Suite, VPs, gestores e analistas, com o mesmo núcleo analítico.",
-                gradient: "from-caio-blue-medium to-caio-gold",
-              },
+                title: "Arquitetura Multi-Nível",
+                description: "Saídas adaptadas para Board, C-Suite, VPs, gestores e analistas, com o mesmo núcleo analítico.",
+                gradient: "from-caio-blue-medium to-caio-gold"
+              }
             ].map((benefit, i) => {
               const Icon = benefit.icon;
               return (
@@ -668,9 +590,7 @@ export default function Landing() {
                 >
                   <Card className="bg-caio-graphite/50 border-caio-blue/30 backdrop-blur-sm h-full hover:border-caio-gold/50 hover:shadow-neon-blue transition-all duration-300">
                     <CardContent className="p-8">
-                      <div
-                        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-6 shadow-neon-blue`}
-                      >
+                      <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${benefit.gradient} flex items-center justify-center mb-6 shadow-neon-blue`}>
                         <Icon className="w-8 h-8 text-white" />
                       </div>
                       <h3 className="text-2xl font-heading font-bold text-white mb-4">
@@ -692,18 +612,17 @@ export default function Landing() {
       <AuthoritySpectrum />
 
       {/* Advanced Capabilities */}
-      <section id="capabilities" className="py-20 md:py-32" aria-labelledby="capabilities-title">
+      <section id="capacidades" className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
-              🚀 Advanced Capabilities
+              🚀 Capacidades Avançadas
             </Badge>
-            <h2 id="capabilities-title" className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Beyond Basic AI Chat
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Além do Chat de IA Básico
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              6 unique capabilities that differentiate CAIO from generic models and
-              traditional consultancies.
+              6 capacidades únicas que diferenciam CAIO de modelos genéricos e consultorias tradicionais.
             </p>
           </div>
 
@@ -748,13 +667,13 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
-              📊 Feature Comparison
+              📊 Comparação de Recursos
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              CAIO vs LLMs vs Reasoning Models vs Consultants
+              CAIO vs LLMs vs Modelos de Raciocínio vs Consultorias
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              AI speed combined with 11-module TSI methodology and decision governance.
+              A velocidade da IA combinada com metodologia TSI de 11 módulos e governança de decisão.
             </p>
           </div>
 
@@ -762,7 +681,7 @@ export default function Landing() {
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-white/20">
-                  <th className="p-3 text-slate-400 font-semibold text-left">Feature</th>
+                  <th className="p-3 text-slate-400 font-semibold text-left">Recurso</th>
                   <th className="p-3 text-center">
                     <div className="flex flex-col items-center">
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-1">
@@ -779,20 +698,20 @@ export default function Landing() {
                   </th>
                   <th className="p-3 text-center">
                     <div className="flex flex-col items-center">
-                      <span className="text-slate-400 font-semibold text-xs">Reasoning</span>
+                      <span className="text-slate-400 font-semibold text-xs">Raciocínio</span>
                       <span className="text-slate-500 text-[10px]">(o1, o3)</span>
                     </div>
                   </th>
                   <th className="p-3 text-center">
                     <div className="flex flex-col items-center">
-                      <span className="text-slate-400 font-semibold text-xs">Individual</span>
-                      <span className="text-slate-500 text-[10px]">Consultants</span>
+                      <span className="text-slate-400 font-semibold text-xs">Individuais</span>
+                      <span className="text-slate-500 text-[10px]">Consultores</span>
                     </div>
                   </th>
                   <th className="p-3 text-center">
                     <div className="flex flex-col items-center">
                       <span className="text-slate-400 font-semibold text-xs">Boutique</span>
-                      <span className="text-slate-500 text-[10px]">Consultancies</span>
+                      <span className="text-slate-500 text-[10px]">Consultorias</span>
                     </div>
                   </th>
                 </tr>
@@ -877,19 +796,9 @@ export default function Landing() {
 
           <div className="text-center mt-12">
             <p className="text-slate-200 mb-6">
-              <span className="text-[#00D4FF] font-semibold">
-                Consulting-level methodology
-              </span>{" "}
-              +
-              <span className="text-[#00D4FF] font-semibold">
-                {" "}
-                AI speed
-              </span>{" "}
-              +
-              <span className="text-[#FFB800] font-semibold">
-                {" "}
-                SaaS pricing
-              </span>
+              <span className="text-[#00D4FF] font-semibold">Metodologia nível consultoria</span>{" "}+
+              <span className="text-[#00D4FF] font-semibold"> velocidade de IA</span>{" "}+
+              <span className="text-[#FFB800] font-semibold"> modelo SaaS</span>
             </p>
             <AccessRequestForm 
               trigger={
@@ -897,7 +806,7 @@ export default function Landing() {
                   size="lg"
                   className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold"
                 >
-                  Start Free Trial
+                  Começar Teste Gratuito
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               }
@@ -907,17 +816,17 @@ export default function Landing() {
       </section>
 
       {/* Detailed Use Cases */}
-      <section id="use-cases" className="py-20 md:py-32" aria-labelledby="use-cases-title">
+      <section id="casos-uso" className="py-20 md:py-32">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/40 mb-4">
-              💼 Real-World Results
+              💼 Resultados Reais
             </Badge>
-            <h2 id="use-cases-title" className="text-4xl md:text-5xl font-bold text-white mb-4">
-              How Leaders Use CAIO
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Como Líderes Usam CAIO
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              Real cases with measurable ROI and dramatic analysis time compression.
+              Casos reais com ROI mensurável e compressão brutal de tempo de análise.
             </p>
           </div>
 
@@ -944,7 +853,7 @@ export default function Landing() {
                         <div className="space-y-4">
                           <div>
                             <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">
-                              Challenge
+                              Desafio
                             </p>
                             <p className="text-slate-300 text-sm">
                               {useCase.challenge}
@@ -953,7 +862,7 @@ export default function Landing() {
 
                           <div>
                             <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">
-                              CAIO Solution
+                              Solução CAIO
                             </p>
                             <p className="text-slate-300 text-sm">
                               {useCase.solution}
@@ -964,7 +873,7 @@ export default function Landing() {
 
                       <div className="md:col-span-3">
                         <p className="text-xs text-slate-500 uppercase tracking-wide mb-3">
-                          Results
+                          Resultados
                         </p>
                         <div className="grid gap-3 mb-6">
                           {useCase.results.map((result, idx) => (
@@ -983,7 +892,7 @@ export default function Landing() {
                         <div className="grid grid-cols-2 gap-4">
                           <div className="p-4 rounded-xl bg-gradient-to-br from-[#00D4FF]/20 to-[#00A8CC]/20 border border-[#00D4FF]/40">
                             <p className="text-xs text-[#00E5FF] mb-1">
-                              Cost Savings
+                              Economia
                             </p>
                             <p className="text-xl font-bold text-white">
                               {useCase.savings}
@@ -991,7 +900,7 @@ export default function Landing() {
                           </div>
                           <div className="p-4 rounded-xl bg-gradient-to-br from-[#FFB800]/20 to-[#FF9500]/20 border border-[#FFB800]/40">
                             <p className="text-xs text-[#FFE5A8] mb-1">
-                              Time Saved
+                              Tempo Economizado
                             </p>
                             <p className="text-xl font-bold text-white">
                               {useCase.timeframe}
@@ -1013,10 +922,10 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/40 mb-4">
-              ⭐ Trusted by Leaders
+              ⭐ Confiado por Líderes
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              What Executives Say
+              O Que Executivos Dizem
             </h2>
           </div>
 
@@ -1088,11 +997,10 @@ export default function Landing() {
             viewport={{ once: true }}
           >
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Transform Strategic Decision-Making?
+              Pronto para Transformar Decisões Estratégicas?
             </h2>
             <p className="text-xl text-white mb-8 max-w-2xl mx-auto">
-              Join organizations using CAIO·AI to make faster, deeper decisions
-              aligned with capital logic.
+              Junte-se a organizações que usam CAIO·AI para tomar decisões mais rápidas, profundas e alinhadas à lógica de capital.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <AccessRequestForm 
@@ -1105,7 +1013,7 @@ export default function Landing() {
                       boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
                     }}
                   >
-                    Request Access
+                    Solicitar Acesso
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 }
@@ -1120,14 +1028,14 @@ export default function Landing() {
                       boxShadow: '0 0 30px rgba(255, 194, 71, 0.4), 0 0 60px rgba(0, 200, 255, 0.3)'
                     }}
                   >
-                    Schedule a Call
+                    Agendar Chamada
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 }
               />
             </div>
             <p className="text-sm text-slate-200 mt-6 font-medium">
-              Restricted access · Contact us to request a demo
+              Acesso restrito · Entre em contato para solicitar demonstração
             </p>
           </motion.div>
         </div>
@@ -1137,7 +1045,7 @@ export default function Landing() {
       <InteractiveDemo open={showDemo} onClose={() => setShowDemo(false)} />
 
       {/* Footer */}
-      <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm" role="contentinfo">
+      <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-12">
             <div>
@@ -1157,92 +1065,36 @@ export default function Landing() {
               </p>
             </div>
             <div>
-              <h4 className="text-white font-body font-semibold mb-4">Product</h4>
+              <h4 className="text-white font-body font-semibold mb-4">Produto</h4>
               <ul className="space-y-2 text-sm font-body">
-                <li>
-                  <a
-                    href="#methodology"
-                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
-                  >
-                    TSI Methodology
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#capabilities"
-                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
-                  >
-                    Capabilities
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#use-cases"
-                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
-                  >
-                    Use Cases
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#pricing"
-                    className="text-slate-200 hover:text-[#FFB800] transition-colors"
-                  >
-                    Pricing
-                  </a>
-                </li>
+                <li><a href="#metodologia" className="text-slate-200 hover:text-[#FFB800] transition-colors">Metodologia TSI</a></li>
+                <li><a href="#capacidades" className="text-slate-200 hover:text-[#FFB800] transition-colors">Capacidades</a></li>
+                <li><a href="#casos-uso" className="text-slate-200 hover:text-[#FFB800] transition-colors">Casos de Uso</a></li>
+                <li><a href="#precos" className="text-slate-200 hover:text-[#FFB800] transition-colors">Preços</a></li>
               </ul>
-              </div>
-              <div>
-              <h4 className="text-white font-body font-semibold mb-4">Company</h4>
+            </div>
+            <div>
+              <h4 className="text-white font-body font-semibold mb-4">Empresa</h4>
               <ul className="space-y-2 text-sm font-body">
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    About
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    Blog
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    Careers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    Contact
-                  </a>
-                </li>
+                <li><a href={createPageUrl('Sobre')} className="text-slate-200 hover:text-[#FFB800] transition-colors">Sobre</a></li>
+                <li><a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">Blog</a></li>
+                <li><a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">Carreiras</a></li>
+                <li><a href={createPageUrl('Contato')} className="text-slate-200 hover:text-[#FFB800] transition-colors">Contato</a></li>
               </ul>
-              </div>
-              <div>
+            </div>
+            <div>
               <h4 className="text-white font-body font-semibold mb-4">Legal</h4>
               <ul className="space-y-2 text-sm font-body">
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    Privacy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    Terms
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    Security
-                  </a>
-                </li>
+                <li><a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">Privacidade</a></li>
+                <li><a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">Termos</a></li>
+                <li><a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">Segurança</a></li>
               </ul>
             </div>
           </div>
           <div className="border-t border-caio-blue/10 pt-8">
             <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-8" />
             <p className="text-center text-sm font-body text-slate-400">
-              © 2025 CAIO·AI Platform. All rights reserved. | Powered by TSI v9.3 Strategic Intelligence
+              © 2025 CAIO·AI Platform. Todos os direitos reservados. | Powered by TSI v9.3 Strategic Intelligence
             </p>
           </div>
         </div>

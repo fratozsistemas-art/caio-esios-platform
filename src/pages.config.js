@@ -48,6 +48,7 @@ import Contato from './pages/Contato';
 import CentralAjuda from './pages/CentralAjuda';
 import BaseConhecimento from './pages/BaseConhecimento';
 import Forum from './pages/Forum';
+import LandingPT from './pages/LandingPT';
 import __Layout from './Layout.jsx';
 
 
@@ -102,6 +103,7 @@ export const PAGES = {
     "CentralAjuda": CentralAjuda,
     "BaseConhecimento": BaseConhecimento,
     "Forum": Forum,
+    "LandingPT": LandingPT,
 }
 
 export const pagesConfig = {
