@@ -11,26 +11,31 @@ import { Badge } from '@/components/ui/badge';
 import GlobalSearch from './components/GlobalSearch';
 import { TutorialProvider } from './components/tutorial/TutorialSystem';
 import TutorialLauncher from './components/tutorial/TutorialLauncher';
+import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext';
+import LanguageSwitcher from './components/i18n/LanguageSwitcher';
 
+function LayoutContent({ children, currentPageName }) {
+  const { t } = useLanguage();
+  
 const navSections = [
-  {
-    title: "Core",
-    items: [
-      { name: 'Dashboard', icon: LayoutDashboard, path: 'Dashboard' },
-      { name: 'Chat with CAIO', icon: MessageSquare, path: 'Chat', badge: 'AI' },
-      { name: 'Quick Actions', icon: Zap, path: 'QuickActions' }
+    {
+      title: "Core",
+      items: [
+        { name: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: 'Dashboard' },
+        { name: t('nav.chat', 'Chat with CAIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
+        { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' }
     ]
   },
   {
-    title: "Intelligence",
+    title: t('nav.intelligence', 'Intelligence'),
     items: [
-      { name: 'Company Intelligence Hub', icon: Compass, path: 'CompanyIntelligenceHub', badge: 'NEW' },
-      { name: 'Behavioral Intelligence', icon: Brain, path: 'BehavioralIntelligence', badge: 'NEW' },
-      { name: 'Knowledge Management', icon: BookOpen, path: 'KnowledgeManagement' },
-      { name: 'Knowledge Graph', icon: Network, path: 'KnowledgeGraph' },
-      { name: 'Network Map', icon: Network, path: 'NetworkMap', badge: 'AI' },
-      { name: 'Agent Memory', icon: Brain, path: 'AgentMemory', badge: 'NEW' },
-      { name: 'CVM Graph', icon: Database, path: 'CVMGraph', badge: 'Neo4j' }
+      { name: t('nav.companyHub', 'Company Intelligence Hub'), icon: Compass, path: 'CompanyIntelligenceHub', badge: 'NEW' },
+      { name: t('nav.behavioral', 'Behavioral Intelligence'), icon: Brain, path: 'BehavioralIntelligence', badge: 'NEW' },
+      { name: t('nav.knowledge', 'Knowledge Management'), icon: BookOpen, path: 'KnowledgeManagement' },
+      { name: t('nav.knowledgeGraph', 'Knowledge Graph'), icon: Network, path: 'KnowledgeGraph' },
+      { name: t('nav.networkMap', 'Network Map'), icon: Network, path: 'NetworkMap', badge: 'AI' },
+      { name: t('nav.agentMemory', 'Agent Memory'), icon: Brain, path: 'AgentMemory', badge: 'NEW' },
+      { name: t('nav.cvmGraph', 'CVM Graph'), icon: Database, path: 'CVMGraph', badge: 'Neo4j' }
     ]
   },
   {
@@ -92,7 +97,7 @@ const navSections = [
   }
 ];
 
-export default function Layout({ children, currentPageName }) {
+function LayoutInner({ children, currentPageName }) {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -264,20 +269,21 @@ export default function Layout({ children, currentPageName }) {
               <div className="flex-1 min-w-0">
                 <p className="text-white text-sm font-medium truncate">{user.full_name}</p>
                 <p className="text-slate-400 text-xs truncate">{user.email}</p>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <TutorialLauncher />
-              <Button
+                </div>
+                </div>
+                <div className="space-y-2">
+                <LanguageSwitcher />
+                <TutorialLauncher />
+                <Button
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
                 className="w-full bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"
-              >
+                >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
-              </Button>
-            </div>
+                {t('nav.signOut', 'Sign Out')}
+                </Button>
+                </div>
           </div>
         )}
       </aside>
@@ -298,5 +304,13 @@ export default function Layout({ children, currentPageName }) {
       <GlobalSearch open={showSearch} onClose={() => setShowSearch(false)} />
       </div>
     </TutorialProvider>
+  );
+}
+
+export default function Layout({ children, currentPageName }) {
+  return (
+    <LanguageProvider>
+      <LayoutInner children={children} currentPageName={currentPageName} />
+    </LanguageProvider>
   );
 }
