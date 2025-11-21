@@ -44,7 +44,7 @@ export default function Landing() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showPreHome, setShowPreHome] = useState(true);
+  const [showPreHome, setShowPreHome] = useState(false);
 
   const [activeModule, setActiveModule] = useState("M5");
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
