@@ -65,37 +65,142 @@ Deno.serve(async (req) => {
       }
     };
 
-    // Define analysis prompt based on type
+    // Define analysis prompt based on type - HIGHLY DIFFERENTIATED
     const analysisPrompts = {
-      trends: `Analyze conversation patterns and identify:
-1. Recurring themes or topics the user is exploring
-2. Evolution in the user's strategic focus over time
-3. Emerging patterns in their questions or challenges
-4. Shifts in decision-making style or priorities`,
+      trends: `TREND DETECTION ANALYSIS - Quantitative Pattern Recognition
 
-      anomalies: `Identify anomalies and unusual patterns:
-1. Topics that are new or different from previous conversations
-2. Unexpected shifts in focus or concern areas
-3. Questions that indicate potential risks or opportunities
-4. Deviations from the user's typical inquiry patterns`,
+You are a data scientist specializing in longitudinal analysis. Apply time-series thinking:
 
-      risk_assessment: `Conduct a comprehensive risk assessment:
-1. Identify potential risks mentioned in conversations
-2. Assess risk severity and likelihood
-3. Detect blind spots or overlooked risk factors
-4. Recommend risk mitigation strategies`,
+QUANTITATIVE METRICS TO EXTRACT:
+1. Topic frequency analysis: Which themes appear repeatedly (count occurrences)
+2. Temporal patterns: When do certain topics emerge (timestamps, sequences)
+3. Momentum indicators: Are topics gaining/losing attention? (first mention vs last mention)
+4. Cross-conversation connections: Same themes across different sessions?
+5. Strategic drift: How has focus shifted over the timeline (week 1 vs week 2 vs now)
 
-      opportunity_scouting: `Scout for strategic opportunities:
-1. Identify emerging opportunities mentioned
-2. Connect dots between different conversations
-3. Spot market gaps or unmet needs
-4. Recommend actionable next steps`,
+TREND CLASSIFICATION:
+- Emerging (new in last 2-3 conversations)
+- Sustained (consistent across 4+ conversations)
+- Declining (mentioned before but fading)
+- Cyclical (recurring at intervals)
 
-      executive_summary: `Create an executive summary:
-1. Key strategic questions being explored
-2. Main decisions or insights uncovered
-3. Critical action items identified
-4. Strategic trajectory and next steps`
+OUTPUT FORMAT:
+For each trend: Name → Frequency → Direction → Business Implication → Data Evidence
+Focus on NUMBERS and TRAJECTORIES, not generic insights.`,
+
+      anomalies: `ANOMALY DETECTION ANALYSIS - Statistical Outlier Identification
+
+You are a fraud detection specialist looking for statistical outliers. Think Bayesian inference:
+
+ANOMALY DETECTION FRAMEWORK:
+1. Baseline establishment: What's "normal" for this user? (typical topics, question patterns, language)
+2. Deviation metrics: What breaks the baseline? (new terminology, sudden urgency, uncharacteristic depth)
+3. Contextual anomalies: Questions that don't fit the user's role/industry/previous interests
+4. Sentiment shifts: Sudden changes in tone, confidence, or decisiveness
+5. Temporal anomalies: Unusual conversation timing, frequency changes
+
+ANOMALY TYPES TO FLAG:
+- Topic outliers (never discussed before)
+- Urgency spikes (sudden "need to decide by X")
+- Authority mismatch (asking questions above/below typical level)
+- Cognitive dissonance (contradicting previous positions)
+
+OUTPUT FORMAT:
+For each anomaly: Deviation Type → Expected vs Actual → Confidence Score → Possible Root Cause
+Be SPECIFIC about what makes it anomalous with statistical reasoning.`,
+
+      risk_assessment: `RISK ASSESSMENT ANALYSIS - Enterprise Risk Management (ERM) Framework
+
+You are a Chief Risk Officer conducting systematic risk evaluation. Use ISO 31000 methodology:
+
+RISK IDENTIFICATION:
+1. Strategic risks: Competitive threats, market shifts, strategic misalignment
+2. Financial risks: Capital allocation, ROI uncertainty, funding gaps
+3. Operational risks: Execution complexity, resource constraints, timeline pressure
+4. Compliance/Governance risks: Regulatory exposure, ESG concerns
+5. Reputational risks: Brand damage, stakeholder trust erosion
+
+RISK QUANTIFICATION (for each identified risk):
+- Likelihood: Low/Medium/High (with rationale)
+- Impact: Quantified in business terms (revenue, time, relationships)
+- Velocity: How fast could this risk materialize? (days/weeks/months)
+- Detection difficulty: Would we see it coming?
+
+RISK MITIGATION HIERARCHY:
+1. Avoid (don't proceed)
+2. Transfer (insurance, partnerships)
+3. Mitigate (controls, processes)
+4. Accept (conscious decision to bear risk)
+
+OUTPUT FORMAT:
+Risk Register: [Risk ID] → [Category] → [Likelihood × Impact = Score] → [Mitigation Action] → [Owner/Timeline]
+Prioritize by Risk Score (Likelihood × Impact). Include residual risk after mitigation.`,
+
+      opportunity_scouting: `OPPORTUNITY SCOUTING ANALYSIS - Blue Ocean Strategy + Jobs-to-be-Done
+
+You are a strategic opportunity analyst combining market sensing with innovation frameworks:
+
+OPPORTUNITY IDENTIFICATION LAYERS:
+1. White Space Detection: What's being asked about but not addressed? (unmet needs)
+2. Adjacent Opportunities: What's "one step away" from current discussion? (market adjacencies)
+3. Convergence Plays: Where do multiple conversation threads intersect? (synthesis opportunities)
+4. Timing Windows: What opportunities have urgency/market timing? (windows closing)
+5. Asymmetric Bets: Low-cost, high-upside options mentioned but not explored
+
+OPPORTUNITY EVALUATION CRITERIA:
+- Market size/TAM implications
+- Competitive positioning (are others seeing this?)
+- Resource requirements (can we execute?)
+- Strategic fit (aligns with trajectory?)
+- Time sensitivity (act now or lose it?)
+
+OPPORTUNITY TYPES:
+- Market entry (new segments)
+- Product innovation (new offerings)
+- Partnership/M&A (inorganic growth)
+- Process improvement (efficiency gains)
+- Business model innovation (revenue model shifts)
+
+OUTPUT FORMAT:
+Opportunity Brief: [Name] → [Type] → [Market Size/Impact] → [Barriers to Entry] → [Next Action/Validation Step]
+Rank by Attractiveness Score (Impact × Feasibility). Focus on ACTIONABLE opportunities.`,
+
+      executive_summary: `EXECUTIVE SUMMARY - McKinsey-Style Situation-Complication-Resolution (SCR)
+
+You are a strategy consultant presenting to a C-suite audience. Use pyramid principle:
+
+EXECUTIVE SUMMARY STRUCTURE:
+1. SITUATION (Context):
+   - What strategic question is being explored?
+   - Why now? (urgency/catalyst)
+   - What's at stake? (quantified impact)
+
+2. COMPLICATION (Challenge):
+   - What makes this hard? (constraints, tradeoffs, unknowns)
+   - What's preventing immediate action? (gaps, risks)
+   - What assumptions need validation?
+
+3. RESOLUTION (Way Forward):
+   - Top 3 strategic options (with pros/cons)
+   - Recommended path + rationale
+   - Key milestones/decision points
+   - Success metrics
+
+COMMUNICATION PRINCIPLES:
+- Lead with the answer (not the journey)
+- Quantify everything possible ($, %, time)
+- Highlight decisions needed vs FYI
+- Flag critical path dependencies
+- Note what's NOT covered (scope boundaries)
+
+OUTPUT FORMAT:
+• ONE-LINER: [Single sentence capturing the essence]
+• SITUATION: [2-3 bullets]
+• COMPLICATION: [2-3 bullets]  
+• RESOLUTION: [Recommended action + 3 next steps]
+• CONFIDENCE LEVEL: [High/Medium/Low with reasoning]
+
+Write for a CEO with 5 minutes. Every word must earn its place.`
     };
 
     const prompt = analysisPrompts[analysis_type || 'trends'] || analysisPrompts.executive_summary;
