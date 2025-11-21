@@ -260,42 +260,53 @@ export const TutorialOverlay = ({ tutorial }) => {
 
   return (
     <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
-        onClick={(e) => e.target === e.currentTarget && skipTutorial()}
-      >
-        {/* Spotlight on target element */}
+      <div className="fixed inset-0 z-50">
+        {/* Dark overlay with cutout for highlighted area */}
+        {targetRect && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 pointer-events-none"
+          >
+            <svg width="100%" height="100%" className="absolute inset-0">
+              <defs>
+                <mask id="spotlight-mask">
+                  <rect width="100%" height="100%" fill="white" />
+                  <rect
+                    x={targetRect.left - 8}
+                    y={targetRect.top - 8}
+                    width={targetRect.width + 16}
+                    height={targetRect.height + 16}
+                    rx="12"
+                    fill="black"
+                  />
+                </mask>
+              </defs>
+              <rect
+                width="100%"
+                height="100%"
+                fill="rgba(0, 0, 0, 0.92)"
+                mask="url(#spotlight-mask)"
+              />
+            </svg>
+          </motion.div>
+        )}
+
+        {/* No target: simple dark overlay */}
+        {!targetRect && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm pointer-events-auto"
+            onClick={(e) => e.target === e.currentTarget && skipTutorial()}
+          />
+        )}
+
+        {/* Bright cyan frame around highlighted area */}
         {targetRect && (
           <>
-            {/* Dark overlay with cutout for highlighted area */}
-            <div className="absolute inset-0 pointer-events-none">
-              <svg width="100%" height="100%" className="absolute inset-0">
-                <defs>
-                  <mask id="spotlight-mask">
-                    <rect width="100%" height="100%" fill="white" />
-                    <rect
-                      x={targetRect.left - 8}
-                      y={targetRect.top - 8}
-                      width={targetRect.width + 16}
-                      height={targetRect.height + 16}
-                      rx="12"
-                      fill="black"
-                    />
-                  </mask>
-                </defs>
-                <rect
-                  width="100%"
-                  height="100%"
-                  fill="rgba(0, 0, 0, 0.92)"
-                  mask="url(#spotlight-mask)"
-                />
-              </svg>
-            </div>
-
-            {/* Bright frame around highlighted area */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
