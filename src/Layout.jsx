@@ -235,7 +235,7 @@ export default function Layout({ children, currentPageName }) {
                       <Link
                         key={item.path}
                         to={createPageUrl(item.path)}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-[#00D4FF]/20 text-[#00D4FF] border border-[#00D4FF]/30' : 'text-slate-300 hover:bg-white/5 hover:text-white border border-transparent'}`}
+                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-[#00D4FF]/20 text-[#00D4FF] border border-[#00D4FF]/30 font-medium' : 'text-slate-300 hover:bg-white/10 hover:text-white border border-transparent'}`}
                       >
                         <Icon className="w-5 h-5 flex-shrink-0" />
                         <span className="text-sm font-medium flex-1 truncate">{item.name}</span>
@@ -272,7 +272,7 @@ export default function Layout({ children, currentPageName }) {
                 onClick={handleLogout}
                 variant="outline"
                 size="sm"
-                className="w-full bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500"
+                className="w-full bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out

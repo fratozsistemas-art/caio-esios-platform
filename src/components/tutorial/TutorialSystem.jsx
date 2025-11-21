@@ -6,6 +6,9 @@ import { Badge } from '@/components/ui/badge';
 import { X, ChevronRight, ChevronLeft, Check, Sparkles, Play, SkipForward } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+// PLATFORM VERSION - Increment this when releasing major tutorial updates
+const CURRENT_PLATFORM_VERSION = '1.0.0';
+
 const TutorialContext = createContext();
 
 export const useTutorial = () => {
@@ -21,6 +24,7 @@ export const TutorialProvider = ({ children }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [completedTutorials, setCompletedTutorials] = useState([]);
   const [showTips, setShowTips] = useState(true);
+  const [shouldShowTutorial, setShouldShowTutorial] = useState(false);
 
   useEffect(() => {
     const loadProgress = async () => {
@@ -29,6 +33,19 @@ export const TutorialProvider = ({ children }) => {
         const completed = user.tutorial_progress || [];
         setCompletedTutorials(completed);
         setShowTips(user.show_tutorial_tips !== false);
+
+        // Check if tutorial should be shown
+        const userTutorialVersion = user.tutorial_version || '0.0.0';
+        const skipUntilVersion = user.skip_tutorial_until_version;
+
+        // Show tutorial if:
+        // 1. User's tutorial version is older than current platform version
+        // 2. AND (no skip preference OR skip preference is for older version)
+        const shouldShow = 
+          compareVersions(userTutorialVersion, CURRENT_PLATFORM_VERSION) < 0 &&
+          (!skipUntilVersion || compareVersions(skipUntilVersion, CURRENT_PLATFORM_VERSION) < 0);
+
+        setShouldShowTutorial(shouldShow);
       } catch (error) {
         console.error('Failed to load tutorial progress:', error);
       }
@@ -56,8 +73,10 @@ export const TutorialProvider = ({ children }) => {
       
       try {
         await base44.auth.updateMe({
-          tutorial_progress: updated
+          tutorial_progress: updated,
+          tutorial_version: CURRENT_PLATFORM_VERSION
         });
+        setShouldShowTutorial(false);
       } catch (error) {
         console.error('Failed to save tutorial progress:', error);
       }
@@ -67,7 +86,29 @@ export const TutorialProvider = ({ children }) => {
   };
 
   const skipTutorial = async () => {
-    await completeTutorial();
+    try {
+      await base44.auth.updateMe({
+        tutorial_version: CURRENT_PLATFORM_VERSION
+      });
+      setShouldShowTutorial(false);
+    } catch (error) {
+      console.error('Failed to skip tutorial:', error);
+    }
+    setCurrentTutorial(null);
+    setCurrentStep(0);
+  };
+
+  const skipUntilNextUpdate = async () => {
+    try {
+      await base44.auth.updateMe({
+        skip_tutorial_until_version: CURRENT_PLATFORM_VERSION
+      });
+      setShouldShowTutorial(false);
+    } catch (error) {
+      console.error('Failed to skip tutorial:', error);
+    }
+    setCurrentTutorial(null);
+    setCurrentStep(0);
   };
 
   const toggleTips = async (show) => {
@@ -92,11 +133,13 @@ export const TutorialProvider = ({ children }) => {
         currentStep,
         completedTutorials,
         showTips,
+        shouldShowTutorial,
         startTutorial,
         nextStep,
         prevStep,
         completeTutorial,
         skipTutorial,
+        skipUntilNextUpdate,
         toggleTips,
         isTutorialCompleted,
       }}
@@ -106,8 +149,20 @@ export const TutorialProvider = ({ children }) => {
   );
 };
 
+// Helper function to compare semantic versions
+function compareVersions(v1, v2) {
+  const parts1 = v1.split('.').map(Number);
+  const parts2 = v2.split('.').map(Number);
+  
+  for (let i = 0; i < 3; i++) {
+    if (parts1[i] > parts2[i]) return 1;
+    if (parts1[i] < parts2[i]) return -1;
+  }
+  return 0;
+}
+
 export const TutorialOverlay = ({ tutorial }) => {
-  const { currentTutorial, currentStep, nextStep, prevStep, completeTutorial, skipTutorial } = useTutorial();
+  const { currentTutorial, currentStep, nextStep, prevStep, completeTutorial, skipTutorial, skipUntilNextUpdate } = useTutorial();
   const [targetRect, setTargetRect] = React.useState(null);
 
   const step = tutorial?.steps?.[currentStep];
@@ -327,15 +382,22 @@ export const TutorialOverlay = ({ tutorial }) => {
                 </div>
               </div>
 
-              {/* Skip option */}
-              {!isLastStep && (
+              {/* Skip options */}
+              <div className="flex items-center justify-center gap-3 mt-4 pt-4 border-t border-slate-700">
                 <button
                   onClick={skipTutorial}
-                  className="w-full text-center text-sm text-slate-500 hover:text-slate-400 mt-4"
+                  className="text-sm text-slate-400 hover:text-slate-300 transition-colors"
                 >
-                  Pular tutorial
+                  Pular agora
                 </button>
-              )}
+                <span className="text-slate-600">•</span>
+                <button
+                  onClick={skipUntilNextUpdate}
+                  className="text-sm text-slate-400 hover:text-slate-300 transition-colors"
+                >
+                  Pular até próxima atualização
+                </button>
+              </div>
             </CardContent>
           </Card>
         </motion.div>

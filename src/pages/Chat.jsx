@@ -333,7 +333,7 @@ export default function Chat() {
                   variant="ghost"
                   size="icon"
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden text-white hover:bg-white/10">
+                  className="lg:hidden text-slate-300 hover:bg-white/10 hover:text-white">
                   <Menu className="w-5 h-5" />
                 </Button>
                 <div>

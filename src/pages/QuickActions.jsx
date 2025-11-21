@@ -105,7 +105,7 @@ export default function QuickActions() {
         <Button
           variant={selectedCategory === "all" ? "default" : "outline"}
           onClick={() => setSelectedCategory("all")}
-          className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500"}
+          className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
         >
           All
         </Button>
@@ -114,7 +114,7 @@ export default function QuickActions() {
             key={cat.id}
             variant={selectedCategory === cat.id ? "default" : "outline"}
             onClick={() => setSelectedCategory(cat.id)}
-            className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500"}
+            className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
           >
             {cat.label}
           </Button>
