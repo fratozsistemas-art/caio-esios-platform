@@ -174,6 +174,7 @@ export const TutorialOverlay = ({ tutorial }) => {
     if (!tutorial || currentTutorial !== tutorial.id) return;
     
     const updateTargetPosition = () => {
+      // Only highlight if step explicitly has a targetSelector
       if (step?.targetSelector) {
         const element = document.querySelector(step.targetSelector);
         if (element) {
@@ -185,23 +186,27 @@ export const TutorialOverlay = ({ tutorial }) => {
             element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
           }, 100);
         } else {
+          // Element not found, don't show spotlight
           setTargetRect(null);
         }
       } else {
+        // No targetSelector means no spotlight (general info step)
         setTargetRect(null);
       }
     };
 
     updateTargetPosition();
 
-    // Update position on window resize and scroll
-    window.addEventListener('resize', updateTargetPosition);
-    window.addEventListener('scroll', updateTargetPosition, true);
+    // Update position on window resize and scroll only if there's a target
+    if (step?.targetSelector) {
+      window.addEventListener('resize', updateTargetPosition);
+      window.addEventListener('scroll', updateTargetPosition, true);
 
-    return () => {
-      window.removeEventListener('resize', updateTargetPosition);
-      window.removeEventListener('scroll', updateTargetPosition, true);
-    };
+      return () => {
+        window.removeEventListener('resize', updateTargetPosition);
+        window.removeEventListener('scroll', updateTargetPosition, true);
+      };
+    }
   }, [currentStep, step?.targetSelector, tutorial, currentTutorial]);
 
   if (!tutorial || currentTutorial !== tutorial.id || !step) return null;
