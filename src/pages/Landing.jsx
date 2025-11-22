@@ -379,16 +379,14 @@ export default function Landing() {
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
-            <div className="flex justify-center mb-5 relative">
-              <div className="absolute inset-0 bg-[#00D4FF] blur-[30px] rounded-full opacity-8" aria-hidden="true" />
+            <div className="flex justify-center mb-5">
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
-                className="w-40 h-40 object-contain relative z-10"
+                className="w-40 h-40 object-contain"
                 width="160"
                 height="160"
                 loading="eager"
-                style={{ filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.25))' }}
               />
             </div>
 
