@@ -357,7 +357,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-12 md:py-16" aria-label="Hero Section - Executive Strategic Intelligence">
+      <section className="relative overflow-hidden py-12 md:py-16" aria-label="Hero Section - Executive Strategic Intelligence" style={{ background: 'linear-gradient(180deg, #0A1628 0%, #0A1628 60%, rgba(11, 15, 26, 0.3) 90%, rgba(11, 15, 26, 0) 100%)' }}>
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
         </div>
@@ -379,14 +379,17 @@ export default function Landing() {
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
-            <div className="flex justify-center mb-5">
+            <div className="flex justify-center mb-5 relative">
+              <div className="absolute inset-0 bg-[#FFB800] blur-[80px] rounded-full opacity-20" aria-hidden="true" />
+              <div className="absolute inset-0 bg-[#FFC247] blur-[40px] rounded-full opacity-15" aria-hidden="true" />
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
-                className="w-40 h-40 object-contain"
+                className="w-40 h-40 object-contain relative z-10"
                 width="160"
                 height="160"
                 loading="eager"
+                style={{ filter: 'drop-shadow(0 0 30px rgba(255, 184, 0, 0.4)) drop-shadow(0 0 15px rgba(255, 194, 71, 0.3))' }}
               />
             </div>
 
