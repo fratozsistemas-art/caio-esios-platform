@@ -417,12 +417,12 @@ export default function Landing() {
                 size="lg"
                 variant="outline"
                 onClick={() => setShowDemo(true)}
-                className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-8 py-6 text-base backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-8 py-5 text-base backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
                 style={{
                   boxShadow: '0 0 20px rgba(0, 200, 255, 0.2)'
                 }}
               >
-                <Play className="w-5 h-5 mr-2" />
+                <Play className="w-4 h-4 mr-2" />
                 Try Interactive Demo
               </Button>
             </div>
