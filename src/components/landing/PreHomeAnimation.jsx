@@ -39,15 +39,31 @@ export default function PreHomeAnimation({ onComplete }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          className="fixed inset-0 z-50 bg-[#050B1A] flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-50 bg-[#0A1628] flex items-center justify-center overflow-hidden"
         >
-          <video
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full object-contain"
-            src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f63295790_A203D20brain2C20initially201002520organic20and20blue2C20slowly20rotates2027020degrees20over201220seconds2C20starting20from20a20side20view20and20ending20facing20fo20As20it20rotates2C20it20undergoes20a20stunn-4.mp4"
-          />
+          {/* Animated logo with glow effect */}
+          <div className="relative flex items-center justify-center">
+            <div className="absolute inset-0 bg-[#00C8FF] blur-[120px] rounded-full" aria-hidden="true" 
+              style={{ 
+                animation: 'logoGlow 4s ease-in-out infinite',
+                width: '600px',
+                height: '600px'
+              }} 
+            />
+            <div className="absolute inset-0 bg-[#00C8FF] blur-[60px] rounded-full" aria-hidden="true" 
+              style={{ 
+                animation: 'logoGlow 4s ease-in-out infinite 0.5s',
+                width: '600px',
+                height: '600px'
+              }} 
+            />
+            <img 
+              src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f9665b60c_A20short20intro20animation20for20a20video20featuring20the20metallic20CAIOC2B7AI20logo20The20camera20starts20with20a20close-up20on20the20glowing20brain20symbol2C20then20smoothly20pulls20back20to20reveal20the20full.gif" 
+              alt="CAIO·AI Logo Animation" 
+              className="w-[600px] h-[600px] object-contain relative z-10"
+              style={{ filter: 'drop-shadow(0 0 80px rgba(0, 200, 255, 0.9)) drop-shadow(0 0 40px rgba(0, 200, 255, 0.7))' }}
+            />
+          </div>
           
           {/* Skip Button */}
           <div className="absolute bottom-8 right-8 flex flex-col items-end gap-3">
