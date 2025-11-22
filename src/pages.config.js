@@ -50,6 +50,11 @@ import BaseConhecimento from './pages/BaseConhecimento';
 import Forum from './pages/Forum';
 import LandingPT from './pages/LandingPT';
 import SEOGuide from './pages/SEOGuide';
+import UseCaseMaDueDiligence from './pages/UseCaseMaDueDiligence';
+import UseCaseMarketEntry from './pages/UseCaseMarketEntry';
+import UseCaseDigitalTransformation from './pages/UseCaseDigitalTransformation';
+import ComparisonCaioVsChatGPT from './pages/ComparisonCaioVsChatGPT';
+import BlogResources from './pages/BlogResources';
 import __Layout from './Layout.jsx';
 
 
@@ -106,6 +111,11 @@ export const PAGES = {
     "Forum": Forum,
     "LandingPT": LandingPT,
     "SEOGuide": SEOGuide,
+    "UseCaseMaDueDiligence": UseCaseMaDueDiligence,
+    "UseCaseMarketEntry": UseCaseMarketEntry,
+    "UseCaseDigitalTransformation": UseCaseDigitalTransformation,
+    "ComparisonCaioVsChatGPT": ComparisonCaioVsChatGPT,
+    "BlogResources": BlogResources,
 }
 
 export const pagesConfig = {
