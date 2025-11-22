@@ -357,7 +357,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 md:py-32" aria-label="Hero Section - Executive Strategic Intelligence">
+      <section className="relative overflow-hidden py-12 md:py-16" aria-label="Hero Section - Executive Strategic Intelligence">
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
         </div>
@@ -367,37 +367,37 @@ export default function Landing() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-10"
           >
             {/* Main Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold text-[#EAF6FF] mb-6 leading-tight tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <h1 className="text-4xl md:text-6xl font-bold text-[#EAF6FF] mb-4 leading-tight tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
               The Executive System for<br />
               Intelligent Strategic Operations
             </h1>
             
-            <p className="text-xl md:text-2xl text-slate-300 mb-6 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <p className="text-lg md:text-xl text-slate-300 mb-5 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
-            <div className="flex justify-center mb-8">
+            <div className="flex justify-center mb-5">
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
-                className="w-52 h-52 object-contain"
-                width="208"
-                height="208"
+                className="w-40 h-40 object-contain"
+                width="160"
+                height="160"
                 loading="eager"
               />
             </div>
 
-            <p className="text-lg md:text-xl text-slate-200 mb-12 max-w-4xl mx-auto leading-relaxed font-light">
+            <p className="text-base md:text-lg text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed font-light">
               Structured intelligence for executive decision-making.
               <br className="hidden md:block" />
               A strategic partner designed to <span className="text-[#00D4FF] font-semibold">think with you</span>, not for you.
             </p>
 
             {/* Primary CTAs */}
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
               <AccessRequestForm 
                 trigger={
                   <Button
@@ -417,7 +417,7 @@ export default function Landing() {
                 size="lg"
                 variant="outline"
                 onClick={() => setShowDemo(true)}
-                className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-10 py-7 text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                className="border-2 border-[#00C8FF]/50 bg-transparent text-[#00C8FF] hover:bg-[#00C8FF]/10 font-semibold px-8 py-6 text-base backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
                 style={{
                   boxShadow: '0 0 20px rgba(0, 200, 255, 0.2)'
                 }}
@@ -458,17 +458,17 @@ export default function Landing() {
                     transition={{ duration: 0.5, delay: i * 0.1 }}
                   >
                     <Card className="bg-[#0B0F1A]/50 border-[#00C8FF]/20 backdrop-blur-sm hover:border-[#00C8FF]/50 transition-all duration-300" style={{ boxShadow: `0 0 20px ${stat.color}15` }}>
-                      <CardContent className="p-6 text-center">
+                      <CardContent className="p-5 text-center">
                         <div
-                          className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-3"
+                          className="w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-2"
                           style={{ 
                             background: `linear-gradient(135deg, ${stat.color}20, ${stat.color}10)`,
                             boxShadow: `0 0 20px ${stat.color}30`
                           }}
                         >
-                          <Icon className="w-7 h-7" style={{ color: stat.color }} />
+                          <Icon className="w-6 h-6" style={{ color: stat.color }} />
                         </div>
-                        <div className="text-3xl font-bold text-[#EAF6FF] mb-2">
+                        <div className="text-2xl font-bold text-[#EAF6FF] mb-1">
                           {stat.value}
                         </div>
                         <div className="text-xs text-[#A7B2C4]">
@@ -485,10 +485,10 @@ export default function Landing() {
       </section>
 
       {/* Why CAIO·AI Is Different */}
-      <section className="py-20 relative" aria-labelledby="why-different">
+      <section className="py-16 relative" aria-labelledby="why-different">
         <div className="max-w-7xl mx-auto px-6 relative">
-          <div className="text-center mb-20">
-            <h2 id="why-different" className="text-5xl md:text-6xl font-bold text-[#EAF6FF] mb-6">
+          <div className="text-center mb-12">
+            <h2 id="why-different" className="text-4xl md:text-5xl font-bold text-[#EAF6FF] mb-4">
               Why CAIO·AI Is Different
             </h2>
             <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
