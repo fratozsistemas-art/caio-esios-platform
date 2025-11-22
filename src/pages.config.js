@@ -55,6 +55,10 @@ import UseCaseMarketEntry from './pages/UseCaseMarketEntry';
 import UseCaseDigitalTransformation from './pages/UseCaseDigitalTransformation';
 import ComparisonCaioVsChatGPT from './pages/ComparisonCaioVsChatGPT';
 import BlogResources from './pages/BlogResources';
+import UseCaseStrategicPlanning from './pages/UseCaseStrategicPlanning';
+import UseCaseCompetitiveIntelligence from './pages/UseCaseCompetitiveIntelligence';
+import ComparisonAIvsConsulting from './pages/ComparisonAIvsConsulting';
+import ComparisonStrategicAIPlatforms from './pages/ComparisonStrategicAIPlatforms';
 import __Layout from './Layout.jsx';
 
 
@@ -116,6 +120,10 @@ export const PAGES = {
     "UseCaseDigitalTransformation": UseCaseDigitalTransformation,
     "ComparisonCaioVsChatGPT": ComparisonCaioVsChatGPT,
     "BlogResources": BlogResources,
+    "UseCaseStrategicPlanning": UseCaseStrategicPlanning,
+    "UseCaseCompetitiveIntelligence": UseCaseCompetitiveIntelligence,
+    "ComparisonAIvsConsulting": ComparisonAIvsConsulting,
+    "ComparisonStrategicAIPlatforms": ComparisonStrategicAIPlatforms,
 }
 
 export const pagesConfig = {
