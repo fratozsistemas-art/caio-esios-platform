@@ -380,8 +380,7 @@ export default function Landing() {
             </p>
 
             <div className="flex justify-center mb-5 relative">
-              <div className="absolute inset-0 bg-[#00D4FF] blur-[60px] rounded-full opacity-15" aria-hidden="true" />
-              <div className="absolute inset-0 bg-[#00C8FF] blur-[30px] rounded-full opacity-12" aria-hidden="true" />
+              <div className="absolute inset-0 bg-[#00D4FF] blur-[30px] rounded-full opacity-8" aria-hidden="true" />
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
@@ -389,7 +388,7 @@ export default function Landing() {
                 width="160"
                 height="160"
                 loading="eager"
-                style={{ filter: 'drop-shadow(0 0 25px rgba(0, 212, 255, 0.4)) drop-shadow(0 0 12px rgba(0, 200, 255, 0.3))' }}
+                style={{ filter: 'drop-shadow(0 0 15px rgba(0, 212, 255, 0.25))' }}
               />
             </div>
 
