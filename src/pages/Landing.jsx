@@ -205,8 +205,8 @@ export default function Landing() {
     // Check if user has seen pre-home animation or chosen to skip
     const hasSeenPreHome = sessionStorage.getItem('caio_prehome_seen');
     const skipIntro = localStorage.getItem('caio_skip_intro');
-    if (hasSeenPreHome || skipIntro === 'true') {
-      setShowPreHome(false);
+    if (!hasSeenPreHome && skipIntro !== 'true') {
+      setShowPreHome(true);
     }
   }, []);
 

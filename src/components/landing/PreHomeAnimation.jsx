@@ -8,14 +8,14 @@ export default function PreHomeAnimation({ onComplete }) {
   const [rememberChoice, setRememberChoice] = useState(false);
 
   useEffect(() => {
-    // Complete animation after 12 seconds (video duration)
+    // Complete animation after 6 seconds (GIF duration)
     const completeTimer = setTimeout(() => {
       setShowAnimation(false);
-    }, 12000);
+    }, 6000);
 
     const endTimer = setTimeout(() => {
       onComplete();
-    }, 13000);
+    }, 7000);
 
     return () => {
       clearTimeout(completeTimer);
