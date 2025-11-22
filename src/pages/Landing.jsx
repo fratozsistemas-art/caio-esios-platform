@@ -202,11 +202,12 @@ export default function Landing() {
       setShowUnauthorizedAlert(true);
     }
 
-    // Check if user has seen pre-home animation or chosen to skip
-    const hasSeenPreHome = sessionStorage.getItem('caio_prehome_seen');
+    // Check if user has chosen to skip intro permanently
     const skipIntro = localStorage.getItem('caio_skip_intro');
-    if (hasSeenPreHome || skipIntro === 'true') {
+    if (skipIntro === 'true') {
       setShowPreHome(false);
+    } else {
+      setShowPreHome(true);
     }
   }, []);
 
@@ -379,26 +380,14 @@ export default function Landing() {
               Built on TSI v9.3 — 11 Cognitive Modules
             </p>
 
-            <div className="flex justify-center mb-8 relative">
-              <div className="absolute inset-0 bg-[#000917] blur-[120px] rounded-full" aria-hidden="true" />
-              <div className="absolute inset-0 bg-[#00C8FF] blur-[80px] rounded-full" aria-hidden="true" 
-                style={{ 
-                  animation: 'logoGlow 4s ease-in-out infinite'
-                }} 
-              />
-              <div className="absolute inset-0 bg-[#00C8FF] blur-[40px] rounded-full" aria-hidden="true" 
-                style={{ 
-                  animation: 'logoGlow 4s ease-in-out infinite 0.5s'
-                }} 
-              />
+            <div className="flex justify-center mb-8">
               <img 
-                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f9665b60c_A20short20intro20animation20for20a20video20featuring20the20metallic20CAIOC2B7AI20logo20The20camera20starts20with20a20close-up20on20the20glowing20brain20symbol2C20then20smoothly20pulls20back20to20reveal20the20full.gif" 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Platform Logo - Cognitive AI for Strategic Intelligence and Executive Decision Making" 
-                className="w-52 h-52 object-contain relative z-10"
+                className="w-52 h-52 object-contain"
                 width="208"
                 height="208"
                 loading="eager"
-                style={{ filter: 'drop-shadow(0 0 60px rgba(0, 200, 255, 0.9)) drop-shadow(0 0 30px rgba(0, 200, 255, 0.7))' }}
               />
             </div>
 

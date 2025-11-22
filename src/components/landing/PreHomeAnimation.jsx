@@ -8,14 +8,14 @@ export default function PreHomeAnimation({ onComplete }) {
   const [rememberChoice, setRememberChoice] = useState(false);
 
   useEffect(() => {
-    // Complete animation after 12 seconds (video duration)
+    // Complete animation after 8 seconds (GIF duration)
     const completeTimer = setTimeout(() => {
       setShowAnimation(false);
-    }, 12000);
+    }, 8000);
 
     const endTimer = setTimeout(() => {
       onComplete();
-    }, 13000);
+    }, 9000);
 
     return () => {
       clearTimeout(completeTimer);
@@ -39,15 +39,31 @@ export default function PreHomeAnimation({ onComplete }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          className="fixed inset-0 z-50 bg-[#050B1A] flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-50 bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410] flex items-center justify-center overflow-hidden"
         >
-          <video
-            autoPlay
-            muted
-            playsInline
-            className="w-full h-full object-contain"
-            src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f63295790_A203D20brain2C20initially201002520organic20and20blue2C20slowly20rotates2027020degrees20over201220seconds2C20starting20from20a20side20view20and20ending20facing20fo20As20it20rotates2C20it20undergoes20a20stunn-4.mp4"
-          />
+          {/* Animated Logo with Glow Effect */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-[#000917] blur-[120px] rounded-full" aria-hidden="true" />
+            <div className="absolute inset-0 bg-[#00C8FF] blur-[80px] rounded-full" aria-hidden="true" 
+              style={{ 
+                animation: 'logoGlow 4s ease-in-out infinite'
+              }} 
+            />
+            <div className="absolute inset-0 bg-[#00C8FF] blur-[40px] rounded-full" aria-hidden="true" 
+              style={{ 
+                animation: 'logoGlow 4s ease-in-out infinite 0.5s'
+              }} 
+            />
+            <img 
+              src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/f9665b60c_A20short20intro20animation20for20a20video20featuring20the20metallic20CAIOC2B7AI20logo20The20camera20starts20with20a20close-up20on20the20glowing20brain20symbol2C20then20smoothly20pulls20back20to20reveal20the20full.gif" 
+              alt="CAIO·AI Platform Logo" 
+              className="w-96 h-96 object-contain relative z-10"
+              width="384"
+              height="384"
+              loading="eager"
+              style={{ filter: 'drop-shadow(0 0 60px rgba(0, 200, 255, 0.9)) drop-shadow(0 0 30px rgba(0, 200, 255, 0.7))' }}
+            />
+          </div>
           
           {/* Skip Button */}
           <div className="absolute bottom-8 right-8 flex flex-col items-end gap-3">
