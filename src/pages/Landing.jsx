@@ -413,33 +413,33 @@ export default function Landing() {
                 Pricing
               </a>
               {isAuthenticated ? (
-                <Button
-                  onClick={() => navigate(createPageUrl("Dashboard"))}
-                  className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
-                >
-                  Go to Dashboard
-                </Button>
-              ) : (
-                <>
-                  <AccessRequestForm 
-                    trigger={
+                    <Button
+                      onClick={() => navigate(createPageUrl("Dashboard"))}
+                      className="bg-[#00D4FF] hover:bg-[#00E5FF] text-[#0A1628] font-semibold transition-all duration-300 hover:-translate-y-0.5"
+                    >
+                      Go to Dashboard
+                    </Button>
+                  ) : (
+                    <>
+                      <AccessRequestForm 
+                        trigger={
+                          <Button
+                            variant="outline"
+                            className="border-[#00D4FF]/60 text-[#00D4FF] hover:bg-[#00D4FF]/10 hover:border-[#00D4FF] font-semibold transition-all duration-300"
+                          >
+                            Request Access
+                          </Button>
+                        }
+                      />
                       <Button
-                        variant="outline"
-                        className="border-caio-blue/40 text-caio-blue hover:bg-caio-blue/10 hover:border-caio-gold font-body transition-all duration-300"
+                        onClick={handleLogin}
+                        className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold transition-all duration-300 hover:-translate-y-0.5"
                       >
-                        Request Access
+                        <Mail className="w-4 h-4 mr-2" />
+                        Sign In
                       </Button>
-                    }
-                  />
-                  <Button
-                    onClick={handleLogin}
-                    className="bg-caio-blue hover:shadow-neon-gold text-white font-body font-semibold border border-caio-gold/50 transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    <Mail className="w-4 h-4 mr-2" />
-                    Sign In
-                  </Button>
-                </>
-              )}
+                    </>
+                  )}
             </div>
           </div>
         </div>
