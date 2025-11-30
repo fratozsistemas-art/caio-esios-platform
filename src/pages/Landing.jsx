@@ -22,7 +22,8 @@ import {
   Star,
   Award,
   AlertCircle,
-  Sparkles
+  Sparkles,
+  Menu
 } from "lucide-react";
 import { motion } from "framer-motion";
 import PricingCard from "../components/pricing/PricingCard";
