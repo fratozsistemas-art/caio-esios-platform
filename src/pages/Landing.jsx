@@ -369,79 +369,153 @@ export default function Landing() {
       )}
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-caio-blue/20">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3">
+            {/* Logo */}
+            <div className="flex items-center gap-2 sm:gap-3">
               <img 
                 src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
                 alt="CAIO·AI Logo - Executive Strategic Intelligence Platform with TSI v9.3 Methodology" 
-                className="w-12 h-12 object-contain"
+                className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
                 width="48"
                 height="48"
                 loading="eager"
               />
-              <div>
-                <div className="text-xl font-bold font-heading text-white" style={{ letterSpacing: '0.05em' }}>
-                  CAIO·AI
-                </div>
+              <div className="text-lg sm:text-xl font-bold text-white" style={{ letterSpacing: '0.05em' }}>
+                CAIO·AI
               </div>
             </div>
-            <div className="hidden md:flex items-center gap-8">
-              <a
-                href="#methodology"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
+
+            {/* Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-6">
+              <a href="#methodology" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
                 Methodology
               </a>
-              <a
-                href="#capabilities"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
+              <a href="#capabilities" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
                 Capabilities
               </a>
-              <a
-                href="#use-cases"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
+              <a href="#use-cases" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
                 Use Cases
               </a>
-              <a
-                href="#pricing"
-                className="text-caio-blue hover:text-caio-gold transition-colors font-body font-medium"
-              >
+              <a href="#pricing" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
                 Pricing
               </a>
-              {isAuthenticated ? (
+              <a href={createPageUrl("BlogResources")} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+                Blog
+              </a>
+              <a href="#about" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+                About
+              </a>
+
+              <div className="flex items-center gap-3 ml-4 pl-4 border-l border-white/10">
+                {isAuthenticated ? (
+                  <Button
+                    onClick={() => navigate(createPageUrl("Dashboard"))}
+                    className="bg-[#00D4FF] hover:bg-[#00E5FF] text-[#0A1628] font-semibold text-sm px-4 py-2 transition-all duration-300 hover:-translate-y-0.5"
+                  >
+                    Go to Dashboard
+                  </Button>
+                ) : (
+                  <>
+                    <AccessRequestForm 
+                      trigger={
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="border-[#00D4FF]/60 text-[#00D4FF] hover:bg-[#00D4FF]/10 hover:border-[#00D4FF] font-semibold text-sm transition-all duration-300"
+                        >
+                          Request Access
+                        </Button>
+                      }
+                    />
                     <Button
-                      onClick={() => navigate(createPageUrl("Dashboard"))}
-                      className="bg-[#00D4FF] hover:bg-[#00E5FF] text-[#0A1628] font-semibold transition-all duration-300 hover:-translate-y-0.5"
+                      onClick={handleLogin}
+                      size="sm"
+                      className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold text-sm transition-all duration-300 hover:-translate-y-0.5"
                     >
-                      Go to Dashboard
+                      <Mail className="w-4 h-4 mr-2" />
+                      Sign In
                     </Button>
-                  ) : (
-                    <>
-                      <AccessRequestForm 
-                        trigger={
-                          <Button
-                            variant="outline"
-                            className="border-[#00D4FF]/60 text-[#00D4FF] hover:bg-[#00D4FF]/10 hover:border-[#00D4FF] font-semibold transition-all duration-300"
-                          >
-                            Request Access
-                          </Button>
-                        }
-                      />
-                      <Button
-                        onClick={handleLogin}
-                        className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628] font-semibold transition-all duration-300 hover:-translate-y-0.5"
-                      >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Sign In
-                      </Button>
-                    </>
-                  )}
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden flex items-center gap-2">
+              {isAuthenticated ? (
+                <Button
+                  onClick={() => navigate(createPageUrl("Dashboard"))}
+                  size="sm"
+                  className="bg-[#00D4FF] hover:bg-[#00E5FF] text-[#0A1628] font-semibold text-xs px-3 py-1.5"
+                >
+                  Dashboard
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleLogin}
+                  size="sm"
+                  className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] text-[#0A1628] font-semibold text-xs px-3 py-1.5"
+                >
+                  Sign In
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="text-white hover:bg-white/10 p-2"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </Button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="lg:hidden mt-4 pb-4 border-t border-white/10 pt-4"
+            >
+              <div className="flex flex-col gap-3">
+                <a href="#methodology" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
+                  Methodology
+                </a>
+                <a href="#capabilities" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
+                  Capabilities
+                </a>
+                <a href="#use-cases" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
+                  Use Cases
+                </a>
+                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
+                  Pricing
+                </a>
+                <a href={createPageUrl("BlogResources")} onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
+                  Blog
+                </a>
+                <a href="#about" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
+                  About
+                </a>
+                {!isAuthenticated && (
+                  <div className="pt-3 mt-2 border-t border-white/10">
+                    <AccessRequestForm 
+                      trigger={
+                        <Button
+                          variant="outline"
+                          className="w-full border-[#00D4FF]/60 text-[#00D4FF] hover:bg-[#00D4FF]/10 font-semibold text-sm"
+                        >
+                          Request Access
+                        </Button>
+                      }
+                    />
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
         </div>
       </nav>
 
