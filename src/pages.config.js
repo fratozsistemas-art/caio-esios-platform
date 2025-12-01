@@ -59,6 +59,7 @@ import UseCaseStrategicPlanning from './pages/UseCaseStrategicPlanning';
 import UseCaseCompetitiveIntelligence from './pages/UseCaseCompetitiveIntelligence';
 import ComparisonAIvsConsulting from './pages/ComparisonAIvsConsulting';
 import ComparisonStrategicAIPlatforms from './pages/ComparisonStrategicAIPlatforms';
+import Collaboration from './pages/Collaboration';
 import __Layout from './Layout.jsx';
 
 
@@ -124,6 +125,7 @@ export const PAGES = {
     "UseCaseCompetitiveIntelligence": UseCaseCompetitiveIntelligence,
     "ComparisonAIvsConsulting": ComparisonAIvsConsulting,
     "ComparisonStrategicAIPlatforms": ComparisonStrategicAIPlatforms,
+    "Collaboration": Collaboration,
 }
 
 export const pagesConfig = {
