@@ -76,7 +76,8 @@ function LayoutInner({ children, currentPageName }) {
       title: t('nav.projects', 'Projects'),
       items: [
         { name: t('nav.workspaces', 'Workspaces'), icon: Briefcase, path: 'Workspaces' },
-        { name: t('nav.strategies', 'Strategies'), icon: Target, path: 'Strategies' }
+        { name: t('nav.strategies', 'Strategies'), icon: Target, path: 'Strategies' },
+        { name: t('nav.collaboration', 'Collaboration'), icon: Users, path: 'Collaboration', badge: 'NEW' }
       ]
     },
     {
