@@ -65,8 +65,8 @@ export const tsiModules = [
   },
   {
     id: "M8",
-    name: "Reframing Loop",
-    description: "Pensamento lateral, cenários alternativos e exploração de assimetrias competitivas.",
+    name: "Maieutic Reframing",
+    description: "Lateral thinking through Socratic questioning, alternative scenarios, and exploration of competitive asymmetries.",
     icon: Layers,
     tag: "Maieutic Mode",
   },
