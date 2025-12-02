@@ -1,16 +1,19 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { 
   Network, Building2, Users, Code, TrendingUp, Target, 
   DollarSign, GitMerge, Database, Search, ChevronRight,
   ExternalLink, Sparkles, ArrowRight, Loader2, Info, X,
-  Plus, Minus, Route, Filter, Eye, Link2, MousePointer
+  Plus, Minus, Route, Filter, Eye, Link2, MousePointer,
+  Brain, Save, Share2, Copy, Grid3X3, Wand2
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -42,6 +45,12 @@ export default function StrategicConnectionsExplorer({
   const [highlightedPath, setHighlightedPath] = useState([]);
   const [insightFilters, setInsightFilters] = useState([]);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [isAIPathfinding, setIsAIPathfinding] = useState(false);
+  const [aiPathResult, setAiPathResult] = useState(null);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [viewName, setViewName] = useState("");
+  const [clusteringEnabled, setClusteringEnabled] = useState(false);
+  const [clusters, setClusters] = useState([]);
 
   const { data: nodes = [], isLoading: nodesLoading } = useQuery({
     queryKey: ['strategic_connections_nodes'],
@@ -100,6 +109,107 @@ export default function StrategicConnectionsExplorer({
     
     return [];
   }, [relationships]);
+
+  // AI-powered strategic pathfinding
+  const findStrategicPath = useCallback(async (startId, endId) => {
+    const startNode = nodes.find(n => n.id === startId);
+    const endNode = nodes.find(n => n.id === endId);
+    if (!startNode || !endNode) return null;
+
+    setIsAIPathfinding(true);
+    try {
+      const paths = [];
+      const findAllPaths = (current, target, visited, path, depth) => {
+        if (depth > 4) return;
+        if (current === target) { paths.push([...path]); return; }
+        relationships.forEach(r => {
+          let next = null;
+          if (r.from_node_id === current && !visited.has(r.to_node_id)) next = r.to_node_id;
+          if (r.to_node_id === current && !visited.has(r.from_node_id)) next = r.from_node_id;
+          if (next) {
+            visited.add(next);
+            path.push(next);
+            findAllPaths(next, target, visited, path, depth + 1);
+            path.pop();
+            visited.delete(next);
+          }
+        });
+      };
+      findAllPaths(startId, endId, new Set([startId]), [startId], 0);
+
+      if (paths.length === 0) { toast.error("No path found"); return null; }
+
+      const pathsWithDetails = paths.slice(0, 10).map(path => ({
+        nodes: path.map(id => { const n = nodes.find(node => node.id === id); return { id, label: n?.label, type: n?.node_type }; }),
+        relationships: path.slice(0, -1).map((id, idx) => {
+          const rel = relationships.find(r => (r.from_node_id === id && r.to_node_id === path[idx + 1]) || (r.to_node_id === id && r.from_node_id === path[idx + 1]));
+          return rel?.relationship_type || 'connected';
+        })
+      }));
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze paths between "${startNode.label}" and "${endNode.label}":\n${pathsWithDetails.map((p, i) => `Path ${i + 1}: ${p.nodes.map(n => n.label).join(' → ')}`).join('\n')}\nSelect most strategically relevant path.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            best_path_index: { type: "integer" },
+            strategic_score: { type: "number" },
+            reasoning: { type: "string" },
+            opportunities: { type: "array", items: { type: "string" } }
+          }
+        }
+      });
+
+      setHighlightedPath(paths[result.best_path_index] || paths[0]);
+      setAiPathResult(result);
+      toast.success(`Strategic path found (score: ${result.strategic_score})`);
+      return result;
+    } catch (error) {
+      toast.error("AI pathfinding failed");
+      return null;
+    } finally {
+      setIsAIPathfinding(false);
+    }
+  }, [nodes, relationships]);
+
+  // Clustering
+  const computeClusters = useMemo(() => {
+    if (!clusteringEnabled || relevantNodes.length < 8) return [];
+    const typeGroups = {};
+    relevantNodes.forEach(node => {
+      const type = node.node_type || 'other';
+      if (!typeGroups[type]) typeGroups[type] = [];
+      typeGroups[type].push(node);
+    });
+    return Object.entries(typeGroups).filter(([_, n]) => n.length >= 3).map(([type, nodeList]) => ({
+      type,
+      count: nodeList.length,
+      color: NODE_CONFIG[type]?.color || '#64748b'
+    }));
+  }, [clusteringEnabled, relevantNodes]);
+
+  // Save view
+  const saveCurrentView = useCallback(async () => {
+    try {
+      await base44.entities.SharedInsight.create({
+        title: viewName || `Explorer View ${new Date().toLocaleDateString()}`,
+        content: JSON.stringify({
+          selectedEntities: Array.from(selectedEntities),
+          expandedEntities: Array.from(expandedEntities),
+          highlightedPath,
+          filters: insightFilters
+        }),
+        source_entity_type: 'knowledge_graph',
+        visibility: 'team',
+        tags: ['explorer-view', ...insightFilters.slice(0, 3)]
+      });
+      toast.success("View saved!");
+      setShowSaveDialog(false);
+      setViewName("");
+    } catch (error) {
+      toast.error("Failed to save");
+    }
+  }, [viewName, selectedEntities, expandedEntities, highlightedPath, insightFilters]);
 
   // Find relevant nodes based on context and expansions
   const relevantNodes = React.useMemo(() => {
@@ -348,16 +458,51 @@ export default function StrategicConnectionsExplorer({
           </Button>
 
           {selectedEntities.size === 2 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={showPathBetweenSelected}
-              className="h-9 px-3 bg-purple-500/20 text-purple-400 border border-purple-500/30"
-            >
-              <Route className="w-3 h-3 mr-1" />
-              Find Path
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={showPathBetweenSelected}
+                className="h-9 px-3 bg-purple-500/20 text-purple-400 border border-purple-500/30"
+              >
+                <Route className="w-3 h-3 mr-1" />
+                Path
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const [a, b] = Array.from(selectedEntities);
+                  findStrategicPath(a, b);
+                }}
+                disabled={isAIPathfinding}
+                className="h-9 px-3 bg-amber-500/20 text-amber-400 border border-amber-500/30"
+              >
+                {isAIPathfinding ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Brain className="w-3 h-3 mr-1" />}
+                AI Path
+              </Button>
+            </>
           )}
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setClusteringEnabled(!clusteringEnabled)}
+            className={`h-9 px-3 ${clusteringEnabled ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-white/5 text-slate-400'} border border-white/10`}
+          >
+            <Grid3X3 className="w-3 h-3 mr-1" />
+            Cluster
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setShowSaveDialog(true)}
+            className="h-9 px-3 bg-white/5 text-slate-400 border border-white/10"
+          >
+            <Save className="w-3 h-3 mr-1" />
+            Save
+          </Button>
 
           {(selectedEntities.size > 0 || highlightedPath.length > 0) && (
             <Button
@@ -394,6 +539,45 @@ export default function StrategicConnectionsExplorer({
               >
                 <Plus className="w-2 h-2 mr-1" />
                 {insight.length > 20 ? insight.substring(0, 20) + '...' : insight}
+              </Badge>
+            ))}
+          </div>
+        )}
+
+        {/* AI Path Result */}
+        <AnimatePresence>
+          {aiPathResult && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="mb-4 p-3 bg-amber-500/10 rounded-lg border border-amber-500/30"
+            >
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Brain className="w-4 h-4 text-amber-400" />
+                  <span className="text-white text-sm font-medium">AI Strategic Path</span>
+                  <Badge className="bg-amber-500/20 text-amber-400 text-xs">Score: {aiPathResult.strategic_score}</Badge>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => { setAiPathResult(null); setHighlightedPath([]); }} className="h-5 w-5 text-slate-400">
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+              <p className="text-xs text-slate-300">{aiPathResult.reasoning}</p>
+              {aiPathResult.opportunities?.[0] && (
+                <div className="mt-2 text-xs text-green-400"><Sparkles className="w-3 h-3 inline mr-1" />{aiPathResult.opportunities[0]}</div>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Cluster Summary */}
+        {clusteringEnabled && computeClusters.length > 0 && (
+          <div className="mb-4 flex flex-wrap gap-2">
+            {computeClusters.map(cluster => (
+              <Badge key={cluster.type} style={{ backgroundColor: cluster.color + '20', color: cluster.color, borderColor: cluster.color + '40' }}>
+                <Grid3X3 className="w-3 h-3 mr-1" />
+                {NODE_CONFIG[cluster.type]?.label || cluster.type}: {cluster.count}
               </Badge>
             ))}
           </div>
@@ -707,6 +891,34 @@ export default function StrategicConnectionsExplorer({
           </div>
         )}
       </CardContent>
+      {/* Save Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="bg-slate-900 border-white/10">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Save className="w-5 h-5 text-cyan-400" />
+              Save Explorer View
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              value={viewName}
+              onChange={(e) => setViewName(e.target.value)}
+              placeholder="View name..."
+              className="bg-white/5 border-white/10 text-white"
+            />
+            <div className="text-xs text-slate-500">
+              Saves: {selectedEntities.size} selected, {expandedEntities.size} expanded, {highlightedPath.length > 0 ? 'path' : 'no path'}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowSaveDialog(false)} className="text-slate-400">Cancel</Button>
+            <Button onClick={saveCurrentView} className="bg-cyan-600 hover:bg-cyan-700">
+              <Save className="w-4 h-4 mr-2" />Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

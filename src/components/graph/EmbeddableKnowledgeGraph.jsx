@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useQuery } from "@tanstack/react-query";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { 
   Search, Filter, ZoomIn, ZoomOut, Maximize2, Minimize2,
   Network, Building2, Users, Target, ExternalLink, Loader2,
   Code, TrendingUp, DollarSign, Database, GitMerge, Sparkles,
   ChevronRight, Info, X, Play, Pause, RotateCcw, Plus, Minus,
-  Eye, Route, MoreHorizontal, Focus, Trash2, Link2, MousePointer
+  Eye, Route, MoreHorizontal, Focus, Trash2, Link2, MousePointer,
+  Brain, Share2, Save, Copy, Layers, Grid3X3, Wand2
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -58,6 +60,14 @@ export default function EmbeddableKnowledgeGraph({
   const [contextMenu, setContextMenu] = useState(null);
   const [multiSelectMode, setMultiSelectMode] = useState(false);
   const [insightFilters, setInsightFilters] = useState([]);
+  const [isAIPathfinding, setIsAIPathfinding] = useState(false);
+  const [aiPathResult, setAiPathResult] = useState(null);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [viewName, setViewName] = useState("");
+  const [viewDescription, setViewDescription] = useState("");
+  const [clusteringEnabled, setClusteringEnabled] = useState(false);
+  const [clusters, setClusters] = useState([]);
 
   const width = 900;
   const graphHeight = height - 60;
@@ -160,6 +170,188 @@ export default function EmbeddableKnowledgeGraph({
     
     return [];
   }, [allRelationships]);
+
+  // AI-powered strategic pathfinding
+  const findStrategicPath = useCallback(async (startId, endId) => {
+    const startNode = allNodes.find(n => n.id === startId);
+    const endNode = allNodes.find(n => n.id === endId);
+    if (!startNode || !endNode) return null;
+
+    setIsAIPathfinding(true);
+    try {
+      // Get all possible paths (up to 3 hops)
+      const paths = [];
+      const findAllPaths = (current, target, visited, path, depth) => {
+        if (depth > 4) return;
+        if (current === target) {
+          paths.push([...path]);
+          return;
+        }
+        allRelationships.forEach(r => {
+          let next = null;
+          if (r.from_node_id === current && !visited.has(r.to_node_id)) next = r.to_node_id;
+          if (r.to_node_id === current && !visited.has(r.from_node_id)) next = r.from_node_id;
+          if (next) {
+            visited.add(next);
+            path.push(next);
+            findAllPaths(next, target, visited, path, depth + 1);
+            path.pop();
+            visited.delete(next);
+          }
+        });
+      };
+      findAllPaths(startId, endId, new Set([startId]), [startId], 0);
+
+      if (paths.length === 0) {
+        toast.error("No path found between nodes");
+        return null;
+      }
+
+      // Prepare paths with node details for AI
+      const pathsWithDetails = paths.slice(0, 10).map(path => ({
+        nodes: path.map(id => {
+          const n = allNodes.find(node => node.id === id);
+          return { id, label: n?.label, type: n?.node_type };
+        }),
+        relationships: path.slice(0, -1).map((id, idx) => {
+          const rel = allRelationships.find(r =>
+            (r.from_node_id === id && r.to_node_id === path[idx + 1]) ||
+            (r.to_node_id === id && r.from_node_id === path[idx + 1])
+          );
+          return rel?.relationship_type || 'connected';
+        })
+      }));
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analyze these connection paths between "${startNode.label}" (${startNode.node_type}) and "${endNode.label}" (${endNode.node_type}).
+        
+Paths found:
+${pathsWithDetails.map((p, i) => `Path ${i + 1}: ${p.nodes.map(n => n.label).join(' → ')} (via: ${p.relationships.join(', ')})`).join('\n')}
+
+Select the most strategically relevant path and explain why. Consider:
+- Business/strategic relationship strength
+- Industry relevance
+- Decision-making influence
+- Information flow importance`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            best_path_index: { type: "integer", description: "0-indexed best path" },
+            strategic_score: { type: "number", description: "0-100 relevance score" },
+            reasoning: { type: "string", description: "Why this path is most strategic" },
+            key_connections: { type: "array", items: { type: "string" }, description: "Important relationships in path" },
+            opportunities: { type: "array", items: { type: "string" }, description: "Strategic opportunities" }
+          }
+        }
+      });
+
+      const bestPath = paths[result.best_path_index] || paths[0];
+      setHighlightedPath(bestPath);
+      setAiPathResult(result);
+      toast.success(`Strategic path found (score: ${result.strategic_score})`);
+      return result;
+    } catch (error) {
+      toast.error("AI pathfinding failed");
+      console.error(error);
+      return null;
+    } finally {
+      setIsAIPathfinding(false);
+    }
+  }, [allNodes, allRelationships]);
+
+  // Clustering algorithm (k-means style by node type and connections)
+  const computeClusters = useCallback(() => {
+    if (!clusteringEnabled || filteredNodes.length < 10) {
+      setClusters([]);
+      return;
+    }
+
+    const nodesList = Object.values(nodePositions);
+    if (nodesList.length === 0) return;
+
+    // Group by type first
+    const typeGroups = {};
+    nodesList.forEach(node => {
+      const type = node.node_type || 'other';
+      if (!typeGroups[type]) typeGroups[type] = [];
+      typeGroups[type].push(node);
+    });
+
+    // Create clusters for groups with 3+ nodes
+    const newClusters = [];
+    Object.entries(typeGroups).forEach(([type, nodes]) => {
+      if (nodes.length >= 3) {
+        const centerX = nodes.reduce((sum, n) => sum + n.x, 0) / nodes.length;
+        const centerY = nodes.reduce((sum, n) => sum + n.y, 0) / nodes.length;
+        const radius = Math.max(
+          ...nodes.map(n => Math.sqrt((n.x - centerX) ** 2 + (n.y - centerY) ** 2))
+        ) + 30;
+
+        newClusters.push({
+          id: type,
+          type,
+          centerX,
+          centerY,
+          radius: Math.min(radius, 150),
+          nodeCount: nodes.length,
+          color: NODE_CONFIG[type]?.color || '#64748b'
+        });
+      }
+    });
+
+    setClusters(newClusters);
+  }, [clusteringEnabled, nodePositions, filteredNodes.length]);
+
+  useEffect(() => {
+    computeClusters();
+  }, [computeClusters]);
+
+  // Save current view
+  const saveCurrentView = useCallback(async () => {
+    const viewData = {
+      name: viewName || `Graph View ${new Date().toLocaleDateString()}`,
+      description: viewDescription,
+      selectedNodes: Array.from(selectedNodes),
+      expandedNodes: Array.from(expandedNodes),
+      highlightedPath,
+      filters: insightFilters,
+      zoom,
+      pan,
+      clusteringEnabled,
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      await base44.entities.SharedInsight.create({
+        title: viewData.name,
+        content: JSON.stringify(viewData),
+        source_entity_type: 'knowledge_graph',
+        source_entity_id: 'graph_view',
+        visibility: 'team',
+        tags: ['graph-view', 'strategic-connections', ...insightFilters.slice(0, 3)]
+      });
+      toast.success("Graph view saved!");
+      setShowSaveDialog(false);
+      setViewName("");
+      setViewDescription("");
+    } catch (error) {
+      toast.error("Failed to save view");
+    }
+  }, [viewName, viewDescription, selectedNodes, expandedNodes, highlightedPath, insightFilters, zoom, pan, clusteringEnabled]);
+
+  // Generate shareable link
+  const generateShareLink = useCallback(() => {
+    const shareData = {
+      nodes: Array.from(selectedNodes),
+      path: highlightedPath,
+      filters: insightFilters
+    };
+    const encoded = btoa(JSON.stringify(shareData));
+    const shareUrl = `${window.location.origin}${createPageUrl('KnowledgeGraph')}?view=${encoded}`;
+    navigator.clipboard.writeText(shareUrl);
+    toast.success("Share link copied to clipboard!");
+    setShowShareDialog(false);
+  }, [selectedNodes, highlightedPath, insightFilters]);
 
   // Force-directed layout
   useEffect(() => {
@@ -392,16 +584,41 @@ export default function EmbeddableKnowledgeGraph({
         </Button>
 
         {selectedNodes.size === 2 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={showPathBetweenSelected}
-            className="h-8 px-2 bg-purple-500/20 text-purple-400 border border-purple-500/30"
-          >
-            <Route className="w-3 h-3 mr-1" />
-            Find Path
-          </Button>
+          <>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={showPathBetweenSelected}
+              className="h-8 px-2 bg-purple-500/20 text-purple-400 border border-purple-500/30"
+            >
+              <Route className="w-3 h-3 mr-1" />
+              Path
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                const [a, b] = Array.from(selectedNodes);
+                findStrategicPath(a, b);
+              }}
+              disabled={isAIPathfinding}
+              className="h-8 px-2 bg-amber-500/20 text-amber-400 border border-amber-500/30"
+            >
+              {isAIPathfinding ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Brain className="w-3 h-3 mr-1" />}
+              AI Path
+            </Button>
+          </>
         )}
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setClusteringEnabled(!clusteringEnabled)}
+          className={`h-8 px-2 ${clusteringEnabled ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-slate-800/95 text-white'} border border-white/10`}
+        >
+          <Grid3X3 className="w-3 h-3 mr-1" />
+          Cluster
+        </Button>
 
         {(selectedNodes.size > 0 || highlightedPath.length > 0) && (
           <Button
@@ -439,6 +656,24 @@ export default function EmbeddableKnowledgeGraph({
             ))}
           </SelectContent>
         </Select>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowSaveDialog(true)}
+          className="bg-slate-800/95 border border-white/10 text-white hover:bg-white/10 h-8 w-8"
+          title="Save view"
+        >
+          <Save className="w-4 h-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setShowShareDialog(true)}
+          className="bg-slate-800/95 border border-white/10 text-white hover:bg-white/10 h-8 w-8"
+          title="Share"
+        >
+          <Share2 className="w-4 h-4" />
+        </Button>
         {showFullScreenButton && !fullScreen && (
           <Button
             variant="ghost"
@@ -506,6 +741,9 @@ export default function EmbeddableKnowledgeGraph({
               <marker id="arrow-highlight" markerWidth="8" markerHeight="8" refX="20" refY="3" orient="auto">
                 <polygon points="0 0, 8 3, 0 6" fill="#22d3ee" opacity="0.8" />
               </marker>
+              <marker id="arrow-ai" markerWidth="8" markerHeight="8" refX="20" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#fbbf24" opacity="0.8" />
+              </marker>
               <filter id="glow-embed">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
@@ -513,7 +751,43 @@ export default function EmbeddableKnowledgeGraph({
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
               </filter>
+              <filter id="glow-cluster">
+                <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
             </defs>
+
+            {/* Clusters */}
+            {clusteringEnabled && clusters.map(cluster => (
+              <g key={cluster.id} className="cluster">
+                <circle
+                  cx={cluster.centerX}
+                  cy={cluster.centerY}
+                  r={cluster.radius}
+                  fill={cluster.color}
+                  fillOpacity={0.08}
+                  stroke={cluster.color}
+                  strokeWidth="1"
+                  strokeOpacity={0.3}
+                  strokeDasharray="8,4"
+                  filter="url(#glow-cluster)"
+                />
+                <text
+                  x={cluster.centerX}
+                  y={cluster.centerY - cluster.radius - 8}
+                  textAnchor="middle"
+                  fill={cluster.color}
+                  fontSize="10"
+                  fontWeight="500"
+                  opacity={0.8}
+                >
+                  {NODE_CONFIG[cluster.type]?.label || cluster.type} ({cluster.nodeCount})
+                </text>
+              </g>
+            ))}
 
             {/* Edges */}
             <g className="edges">
@@ -663,7 +937,61 @@ export default function EmbeddableKnowledgeGraph({
             {expandedNodes.size} expanded
           </Badge>
         )}
+        {clusteringEnabled && clusters.length > 0 && (
+          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+            {clusters.length} clusters
+          </Badge>
+        )}
+        {aiPathResult && (
+          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">
+            AI Score: {aiPathResult.strategic_score}
+          </Badge>
+        )}
       </div>
+
+      {/* AI Path Result Panel */}
+      <AnimatePresence>
+        {aiPathResult && highlightedPath.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="absolute bottom-16 left-3 right-3 max-w-lg bg-slate-900/95 border border-amber-500/30 rounded-lg p-3 backdrop-blur-sm"
+          >
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Brain className="w-4 h-4 text-amber-400" />
+                <span className="text-white text-sm font-medium">AI Strategic Path</span>
+                <Badge className="bg-amber-500/20 text-amber-400 text-xs">
+                  Score: {aiPathResult.strategic_score}/100
+                </Badge>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => { setAiPathResult(null); setHighlightedPath([]); }}
+                className="h-5 w-5 text-slate-400 hover:text-white"
+              >
+                <X className="w-3 h-3" />
+              </Button>
+            </div>
+            <p className="text-xs text-slate-300 mb-2">{aiPathResult.reasoning}</p>
+            {aiPathResult.key_connections?.length > 0 && (
+              <div className="flex flex-wrap gap-1 mb-2">
+                {aiPathResult.key_connections.map((conn, i) => (
+                  <Badge key={i} className="bg-white/10 text-slate-300 text-xs">{conn}</Badge>
+                ))}
+              </div>
+            )}
+            {aiPathResult.opportunities?.length > 0 && (
+              <div className="text-xs text-green-400">
+                <Sparkles className="w-3 h-3 inline mr-1" />
+                {aiPathResult.opportunities[0]}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Instructions */}
       <div className="absolute bottom-3 right-3 bg-slate-800/80 rounded px-2 py-1 text-xs text-slate-400">
@@ -906,6 +1234,90 @@ export default function EmbeddableKnowledgeGraph({
           <GraphContent />
         </CardContent>
       </Card>
+
+      {/* Save View Dialog */}
+      <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
+        <DialogContent className="bg-slate-900 border-white/10">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Save className="w-5 h-5 text-cyan-400" />
+              Save Graph View
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm text-slate-400">View Name</label>
+              <Input
+                value={viewName}
+                onChange={(e) => setViewName(e.target.value)}
+                placeholder="My Strategic Analysis"
+                className="mt-1 bg-white/5 border-white/10 text-white"
+              />
+            </div>
+            <div>
+              <label className="text-sm text-slate-400">Description (optional)</label>
+              <Textarea
+                value={viewDescription}
+                onChange={(e) => setViewDescription(e.target.value)}
+                placeholder="Key findings and connections..."
+                className="mt-1 bg-white/5 border-white/10 text-white h-20"
+              />
+            </div>
+            <div className="text-xs text-slate-500">
+              This will save: {selectedNodes.size} selected nodes, {expandedNodes.size} expanded, {highlightedPath.length > 0 ? 'path highlighted' : 'no path'}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowSaveDialog(false)} className="text-slate-400">
+              Cancel
+            </Button>
+            <Button onClick={saveCurrentView} className="bg-cyan-600 hover:bg-cyan-700">
+              <Save className="w-4 h-4 mr-2" />
+              Save View
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="bg-slate-900 border-white/10">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Share2 className="w-5 h-5 text-cyan-400" />
+              Share Graph View
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-slate-400">
+              Generate a shareable link with your current selection and path.
+            </p>
+            <div className="p-3 bg-white/5 rounded-lg border border-white/10 space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Selected nodes:</span>
+                <span className="text-white">{selectedNodes.size}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Highlighted path:</span>
+                <span className="text-white">{highlightedPath.length > 0 ? `${highlightedPath.length} nodes` : 'None'}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-500">Active filters:</span>
+                <span className="text-white">{insightFilters.length}</span>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setShowShareDialog(false)} className="text-slate-400">
+              Cancel
+            </Button>
+            <Button onClick={generateShareLink} className="bg-cyan-600 hover:bg-cyan-700">
+              <Copy className="w-4 h-4 mr-2" />
+              Copy Link
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Full Screen Dialog */}
       <Dialog open={isFullScreen} onOpenChange={setIsFullScreen}>
