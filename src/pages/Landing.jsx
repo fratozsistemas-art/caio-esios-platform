@@ -408,6 +408,9 @@ export default function Landing() {
               <a href="#pricing" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
                 Pricing
               </a>
+              <a href="#investors" className="text-slate-300 hover:text-[#FFB800] transition-colors font-medium text-sm">
+                Investors
+              </a>
               <a href={createPageUrl("BlogResources")} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
                 Blog
               </a>
