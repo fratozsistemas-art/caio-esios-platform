@@ -4,18 +4,19 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
   Compass, TrendingUp, TrendingDown, AlertTriangle, 
-  Zap, Shield, Target, ArrowUpRight, ArrowDownRight
+  Zap, Shield, Target, ArrowUpRight, ArrowDownRight,
+  Rocket, ShieldCheck, RefreshCw, Swords, Building, ArrowLeft
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const DIRECTION_CONFIG = {
-  expansion: { icon: '🚀', color: '#22C55E', angle: 45 },
-  defense: { icon: '🛡️', color: '#3B82F6', angle: 0 },
-  survival: { icon: '⚡', color: '#EF4444', angle: -45 },
-  repositioning: { icon: '🔄', color: '#A855F7', angle: 90 },
-  attack: { icon: '⚔️', color: '#F97316', angle: 30 },
-  consolidation: { icon: '🏛️', color: '#06B6D4', angle: 0 },
-  retreat: { icon: '🔙', color: '#64748B', angle: 180 }
+  expansion: { icon: Rocket, color: '#22C55E', angle: 45 },
+  defense: { icon: ShieldCheck, color: '#3B82F6', angle: 0 },
+  survival: { icon: Zap, color: '#EF4444', angle: -45 },
+  repositioning: { icon: RefreshCw, color: '#A855F7', angle: 90 },
+  attack: { icon: Swords, color: '#F97316', angle: 30 },
+  consolidation: { icon: Building, color: '#06B6D4', angle: 0 },
+  retreat: { icon: ArrowLeft, color: '#64748B', angle: 180 }
 };
 
 const RELATION_COLORS = {
@@ -99,7 +100,10 @@ export default function VectorVisualization({ decision }) {
 
           {/* Direction Label */}
           <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-4 text-center">
-            <span className="text-3xl">{primaryDir.icon}</span>
+            {(() => {
+              const Icon = primaryDir.icon;
+              return <Icon className="w-8 h-8 mx-auto" style={{ color: primaryDir.color }} />;
+            })()}
             <p className="text-xs text-white capitalize mt-1">{decision.primary_vector?.direction}</p>
           </div>
         </div>
