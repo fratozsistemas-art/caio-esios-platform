@@ -138,21 +138,22 @@ export default function CompanyIntelligenceHub() {
   };
 
   const enrichCompanyData = async (companyData) => {
-    setEnrichmentStatus({ status: "enriching", message: "Enriquecendo dados com IA..." });
+    setEnrichmentStatus({ status: "enriching", message: "Enriquecendo dados com fontes externas..." });
 
     try {
-      const { data: enriched } = await base44.functions.invoke('enrichCompanyData', {
+      const { data: enriched } = await base44.functions.invoke('enrichCompanyWithExternalData', {
         company_data: companyData
       });
 
       setEnrichmentStatus({ 
         status: "completed", 
         message: "Enriquecimento concluído",
-        data: enriched
+        data: enriched?.enrichment || enriched
       });
 
-      toast.success("Dados enriquecidos com IA!");
+      toast.success("Dados enriquecidos com sucesso!");
     } catch (error) {
+      console.error("Enrichment error:", error);
       setEnrichmentStatus({ 
         status: "error", 
         message: "Erro no enriquecimento"
