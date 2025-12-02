@@ -15,6 +15,7 @@ import M9FundingIntelligence from "../components/modules/M9FundingIntelligence";
 import M10BehavioralIntelligence from "../components/modules/M10BehavioralIntelligence";
 import M11HermesGovernance from "../components/modules/M11HermesGovernance";
 import ModuleSynergyEngine from "../components/modules/ModuleSynergyEngine";
+import StrategyCoach from "../components/modules/StrategyCoach";
 
 const modules = [
   { id: "m1", name: "M1 Market", icon: Globe, color: "blue", description: "Scenario Generation" },
@@ -134,6 +135,12 @@ export default function AIModules() {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* AI Strategy Coach - Meta Layer */}
+      <StrategyCoach 
+        moduleOutputs={moduleOutputs} 
+        onRecommendation={(data) => console.log("Coach:", data)} 
+      />
 
       {/* Cross-Module Synergy Engine */}
       <ModuleSynergyEngine 
