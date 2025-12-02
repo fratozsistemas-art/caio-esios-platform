@@ -221,8 +221,11 @@ export default function Landing() {
             "Reframing Loop (M8)",
             "Funding Intelligence (M9)",
             "Hermes Trust-Broker Governance",
-            "Knowledge Graph with 10K+ connections",
-            "Multi-Agent Orchestration"
+            "Interactive Knowledge Graph with 10K+ connections",
+            "AI-Powered Strategic Pathfinding",
+            "Multi-Agent Orchestration",
+            "Save & Share Graph Views",
+            "Intelligent Node Clustering"
           ],
           "image": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
           "provider": {
