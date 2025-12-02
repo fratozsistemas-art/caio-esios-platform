@@ -1261,6 +1261,141 @@ export default function Landing() {
       {/* Pricing */}
       <PricingSection />
 
+      {/* Investor Section */}
+      <section id="investors" className="py-20 md:py-32 bg-gradient-to-br from-slate-900/50 via-[#0A1628] to-slate-900/50 border-y border-white/10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/40 mb-4">
+              📈 Investor Relations
+            </Badge>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              For Investors & Strategic Partners
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              CAIO·AI operates at the intersection of <span className="text-[#00D4FF] font-semibold">Enterprise AI</span>, <span className="text-[#00D4FF] font-semibold">Strategic Intelligence</span>, and <span className="text-[#FFB800] font-semibold">Decision Automation</span> — a $47B market growing 35% annually.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            {[
+              {
+                metric: "$47B",
+                label: "Total Addressable Market",
+                sublabel: "Enterprise AI + Strategic Intelligence",
+                icon: TrendingUp
+              },
+              {
+                metric: "35%",
+                label: "Annual Market Growth",
+                sublabel: "CAGR 2024-2030",
+                icon: TrendingUp
+              },
+              {
+                metric: "95%",
+                label: "Cost Reduction vs. Consulting",
+                sublabel: "Same quality, 20x faster",
+                icon: DollarSign
+              }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="bg-white/5 border-white/10 backdrop-blur-sm text-center p-8 hover:border-[#FFB800]/50 transition-all duration-300">
+                  <item.icon className="w-8 h-8 text-[#FFB800] mx-auto mb-4" />
+                  <p className="text-4xl font-bold text-white mb-2">{item.metric}</p>
+                  <p className="text-slate-300 font-medium">{item.label}</p>
+                  <p className="text-sm text-slate-500">{item.sublabel}</p>
+                </Card>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-6">Investment Thesis</h3>
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "Proprietary Methodology",
+                    description: "TSI v9.3 with 11 cognitive modules creates defensible IP and switching costs."
+                  },
+                  {
+                    title: "Platform Network Effects",
+                    description: "Knowledge Graph grows with usage, improving recommendations for all users."
+                  },
+                  {
+                    title: "Land & Expand Model",
+                    description: "Start with one C-level, expand across the entire executive suite."
+                  },
+                  {
+                    title: "Vertical SaaS Margins",
+                    description: "90%+ gross margins with enterprise-grade pricing power."
+                  }
+                ].map((item, idx) => (
+                  <div key={idx} className="flex gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
+                    <CheckCircle className="w-6 h-6 text-[#00D4FF] flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-white font-semibold">{item.title}</p>
+                      <p className="text-slate-400 text-sm">{item.description}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-6">Competitive Moat</h3>
+              <div className="space-y-4">
+                {[
+                  {
+                    title: "vs. Generic AI (ChatGPT, Claude)",
+                    advantage: "Domain-specific methodology, governance, and decision traceability"
+                  },
+                  {
+                    title: "vs. Traditional Consulting",
+                    advantage: "95% cost reduction, 20x speed, always-on availability"
+                  },
+                  {
+                    title: "vs. BI Tools (Tableau, PowerBI)",
+                    advantage: "Prescriptive intelligence, not just descriptive analytics"
+                  },
+                  {
+                    title: "vs. Point Solutions",
+                    advantage: "Integrated 11-module platform vs. fragmented tools"
+                  }
+                ].map((item, idx) => (
+                  <div key={idx} className="p-4 bg-gradient-to-r from-[#FFB800]/10 to-transparent rounded-lg border border-[#FFB800]/20">
+                    <p className="text-[#FFB800] font-semibold text-sm mb-1">{item.title}</p>
+                    <p className="text-white">{item.advantage}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-8">
+                <AccessRequestForm 
+                  trigger={
+                    <Button
+                      size="lg"
+                      className="w-full bg-gradient-to-r from-[#FFB800] to-[#FF9500] hover:from-[#FFC520] hover:to-[#FFB800] text-[#0A1628] font-semibold"
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Schedule Investor Call
+                    </Button>
+                  }
+                />
+                <p className="text-center text-sm text-slate-500 mt-3">
+                  For qualified investors and strategic partners
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="py-20 md:py-32 bg-gradient-to-br from-[#00D4FF]/10 via-[#00A8CC]/10 to-transparent">
         <div className="max-w-4xl mx-auto px-6 text-center">
