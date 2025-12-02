@@ -15,6 +15,7 @@ import MultiFileUploader from "@/components/analysis/MultiFileUploader";
 import DataVisualizationPanel from "@/components/analysis/DataVisualizationPanel";
 import AIInsightsPanel from "@/components/analysis/AIInsightsPanel";
 import ExportReportDialog from "@/components/analysis/ExportReportDialog";
+import ShareAnalysisDialog from "@/components/collaboration/ShareAnalysisDialog";
 
 export default function AdvancedDataAnalysis() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -233,13 +234,20 @@ Retorne JSON estruturado com análise completa.`,
             </Button>
           )}
           {aiInsights && (
-            <Button
-              onClick={() => setShowExportDialog(true)}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Exportar Relatório
-            </Button>
+            <>
+              <ShareAnalysisDialog
+                analysisType="data_analysis"
+                analysisId={`analysis-${Date.now()}`}
+                analysisTitle={`Análise de ${uploadedFiles.length} arquivo(s)`}
+              />
+              <Button
+                onClick={() => setShowExportDialog(true)}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Exportar Relatório
+              </Button>
+            </>
           )}
         </div>
       </div>

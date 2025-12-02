@@ -1,13 +1,15 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { 
   TrendingUp, TrendingDown, Minus, AlertTriangle, 
   Lightbulb, Target, ArrowUpRight, ArrowDownRight,
-  Activity, Sparkles, CheckCircle, Clock
+  Activity, Sparkles, CheckCircle, Clock, Share2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import CreateTaskFromInsightDialog from "@/components/collaboration/CreateTaskFromInsightDialog";
 
 const TrendIcon = ({ direction }) => {
   switch (direction) {
@@ -256,11 +258,28 @@ export default function AIInsightsPanel({ insights }) {
                   <PriorityBadge priority={insight.priority} />
                 </div>
                 <p className="text-sm text-slate-300">{insight.insight}</p>
-                {insight.actionRequired && (
-                  <Badge className="mt-2 bg-red-500/20 text-red-400">
-                    Ação Necessária
-                  </Badge>
-                )}
+                <div className="flex items-center gap-2 mt-3">
+                  {insight.actionRequired && (
+                    <Badge className="bg-red-500/20 text-red-400">
+                      Ação Necessária
+                    </Badge>
+                  )}
+                  <CreateTaskFromInsightDialog
+                    insight={{
+                      title: insight.title,
+                      description: insight.insight,
+                      priority: insight.priority,
+                      source_type: 'data_analysis',
+                      source_id: 'ai_insight'
+                    }}
+                    trigger={
+                      <Button size="sm" variant="ghost" className="text-purple-400 hover:bg-purple-500/10 h-7">
+                        <Target className="w-3 h-3 mr-1" />
+                        Criar Tarefa
+                      </Button>
+                    }
+                  />
+                </div>
               </motion.div>
             ))}
           </CardContent>
@@ -293,7 +312,7 @@ export default function AIInsightsPanel({ insights }) {
                     <div className="flex-1">
                       <h4 className="font-semibold text-white mb-1">{rec.action}</h4>
                       <p className="text-sm text-slate-300 mb-2">{rec.rationale}</p>
-                      <div className="flex flex-wrap gap-4 text-xs">
+                      <div className="flex flex-wrap items-center gap-4 text-xs">
                         <span className="text-green-400">
                           <strong>Impacto:</strong> {rec.expectedImpact}
                         </span>
@@ -303,6 +322,21 @@ export default function AIInsightsPanel({ insights }) {
                             {rec.timeframe}
                           </span>
                         )}
+                        <CreateTaskFromInsightDialog
+                          insight={{
+                            title: rec.action,
+                            description: rec.rationale,
+                            priority: 'high',
+                            source_type: 'data_analysis',
+                            source_id: 'recommendation'
+                          }}
+                          trigger={
+                            <Button size="sm" variant="ghost" className="text-purple-400 hover:bg-purple-500/10 h-6 text-xs">
+                              <Target className="w-3 h-3 mr-1" />
+                              Criar Tarefa
+                            </Button>
+                          }
+                        />
                       </div>
                     </div>
                   </div>
