@@ -150,33 +150,28 @@ export const TUTORIALS = {
     description: 'Learn how to use the CAIO·AI Dashboard',
     steps: [
       {
-        title: 'Dashboard Header 📍',
-        content: 'At the top, you\'ll find two important buttons: "Customize" to arrange widgets and personalize your view, and "Refresh" to update all data in real-time.',
-        icon: Settings,
-        targetSelector: '[data-tour="dashboard-header"]'
+        title: 'Bem-vindo ao Dashboard! 🎯',
+        content: 'Este é seu centro de comando do CAIO·AI. Aqui você monitora todas as atividades, insights e métricas em tempo real.',
+        icon: Brain,
       },
       {
-        title: 'Real-Time Metrics 📡',
-        content: 'Live monitoring shows: Active Users currently online, Live Conversations happening now, Today\'s Analyses completed, and Average Response Time.',
+        title: 'Métricas em Tempo Real 📡',
+        content: 'Acompanhe usuários ativos, conversas ao vivo, análises do dia e tempo médio de resposta. Os dados são atualizados automaticamente.',
         icon: TrendingUp,
-        targetSelector: '[data-tour="real-time-metrics"]'
       },
       {
-        title: 'Quick Stats Overview 📈',
-        content: 'Key performance indicators: Total Conversations this month, AI Insights generated, Knowledge Graph entities mapped, and Action Items pending.',
+        title: 'Indicadores Principais 📈',
+        content: 'Visualize conversas totais, insights de IA gerados, entidades no Knowledge Graph e ações pendentes - tudo em uma visão consolidada.',
         icon: BarChart3,
-        targetSelector: '[data-tour="quick-stats"]'
       },
       {
-        title: 'Customize Your Dashboard 🎨',
-        content: 'Click "Customize" to drag and drop widgets, show/hide sections, and personalize your dashboard layout. Changes are saved automatically!',
+        title: 'Personalize seu Dashboard 🎨',
+        content: 'Use o botão "Customize" no topo para reorganizar widgets, mostrar/ocultar seções e criar sua visualização ideal. As mudanças são salvas automaticamente!',
         icon: Layers,
-        targetSelector: '[data-tour="dashboard-header"]',
-        showCustomizeGif: true
       },
       {
-        title: 'Widget Library 📚',
-        content: 'Available widgets include: Conversation History, Analysis Insights, Knowledge Graph Stats, Action Items, Proactive Monitoring, Predictive Analysis, and more.',
+        title: 'Biblioteca de Widgets 📚',
+        content: 'Widgets disponíveis: Histórico de Conversas, Insights de Análise, Estatísticas do Knowledge Graph, Itens de Ação, Monitoramento Proativo, Análise Preditiva e mais.',
         icon: Database
       }
     ]
