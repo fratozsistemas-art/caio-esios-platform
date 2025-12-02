@@ -64,6 +64,7 @@ import HelpCenter from './pages/HelpCenter';
 import AdvancedDataAnalysis from './pages/AdvancedDataAnalysis';
 import FounderProfile from './pages/FounderProfile';
 import UserProfile from './pages/UserProfile';
+import VectorDecisionEngine from './pages/VectorDecisionEngine';
 import __Layout from './Layout.jsx';
 
 
@@ -134,6 +135,7 @@ export const PAGES = {
     "AdvancedDataAnalysis": AdvancedDataAnalysis,
     "FounderProfile": FounderProfile,
     "UserProfile": UserProfile,
+    "VectorDecisionEngine": VectorDecisionEngine,
 }
 
 export const pagesConfig = {
