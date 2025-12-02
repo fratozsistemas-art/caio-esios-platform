@@ -286,8 +286,8 @@ export default function CompanyIntelligenceHub() {
       );
     }
 
-    if (data.competitors || data.competition) {
-      const competitors = data.competitors || data.competition;
+    if (data.competitors || data.competition || data.competitors_mentioned) {
+      const competitors = data.competitors || data.competition || data.competitors_mentioned;
       sections.push(
         <Card key="competitors" className="bg-slate-800/30 border-slate-700">
           <CardContent className="p-4">
@@ -305,6 +305,103 @@ export default function CompanyIntelligenceHub() {
           </CardContent>
         </Card>
       );
+    }
+
+    // News Section
+    if (data.news && data.news.length > 0) {
+      sections.push(
+        <Card key="news" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-blue-400" />
+              Notícias Recentes
+            </h4>
+            <div className="space-y-2 max-h-48 overflow-y-auto">
+              {data.news.slice(0, 5).map((news, idx) => (
+                <div key={idx} className="p-2 bg-slate-900/50 rounded text-sm">
+                  <a href={news.url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline">
+                    {news.title}
+                  </a>
+                  <p className="text-xs text-slate-500 mt-1">{news.source} • {news.published_at ? new Date(news.published_at).toLocaleDateString() : ''}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Sentiment Section
+    if (data.sentiment_analysis) {
+      sections.push(
+        <Card key="sentiment" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-green-400" />
+              Análise de Sentimento
+            </h4>
+            <div className="flex items-center gap-4">
+              <Badge className={
+                data.sentiment_analysis.overall_sentiment?.includes('positive') ? 'bg-green-500/20 text-green-400' :
+                data.sentiment_analysis.overall_sentiment?.includes('negative') ? 'bg-red-500/20 text-red-400' :
+                'bg-yellow-500/20 text-yellow-400'
+              }>
+                {data.sentiment_analysis.overall_sentiment || 'Neutro'}
+              </Badge>
+              {data.sentiment_analysis.overall_score !== undefined && (
+                <span className="text-sm text-slate-300">
+                  Score: {(data.sentiment_analysis.overall_score * 100).toFixed(0)}%
+                </span>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // AI Analysis Section
+    if (data.ai_analysis) {
+      if (data.ai_analysis.risks?.length > 0) {
+        sections.push(
+          <Card key="risks" className="bg-slate-800/30 border-slate-700">
+            <CardContent className="p-4">
+              <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-orange-400" />
+                Riscos Identificados
+              </h4>
+              <ul className="space-y-1">
+                {data.ai_analysis.risks.map((risk, idx) => (
+                  <li key={idx} className="text-sm text-slate-300 flex items-start gap-2">
+                    <span className="text-orange-400">•</span>
+                    {risk}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        );
+      }
+
+      if (data.ai_analysis.opportunities?.length > 0) {
+        sections.push(
+          <Card key="opportunities" className="bg-slate-800/30 border-slate-700">
+            <CardContent className="p-4">
+              <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4 text-green-400" />
+                Oportunidades
+              </h4>
+              <ul className="space-y-1">
+                {data.ai_analysis.opportunities.map((opp, idx) => (
+                  <li key={idx} className="text-sm text-slate-300 flex items-start gap-2">
+                    <span className="text-green-400">•</span>
+                    {opp}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        );
+      }
     }
 
     // Mostrar outros dados não processados
