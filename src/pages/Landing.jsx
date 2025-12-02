@@ -225,7 +225,9 @@ export default function Landing() {
             "AI-Powered Strategic Pathfinding",
             "Multi-Agent Orchestration",
             "Save & Share Graph Views",
-            "Intelligent Node Clustering"
+            "Intelligent Node Clustering",
+            "Vector Decision Engine for Strategic Vectors",
+            "Behavioral Intelligence with Archetype Library"
           ],
           "image": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
           "provider": {

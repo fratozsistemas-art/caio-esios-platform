@@ -1,6 +1,12 @@
-import { Network, Users, Shield, GitMerge, MessageSquare, Zap, Brain, Share2 } from "lucide-react";
+import { Network, Users, Shield, GitMerge, MessageSquare, Zap, Brain, Share2, Compass, Target } from "lucide-react";
 
 export const advancedCapabilities = [
+  {
+    icon: Compass,
+    title: "Vector Decision Engine",
+    description: "Externalize strategic vectors with direction, intensity, and evidence. Track decisions with periodic checkpoints, AI validation, and projection scenarios. Full governance with stakeholder approvals.",
+    metric: "AI-validated strategic vectors",
+  },
   {
     icon: Network,
     title: "Interactive Knowledge Graph",
@@ -8,10 +14,10 @@ export const advancedCapabilities = [
     metric: "10,000+ strategic connections",
   },
   {
-    icon: Users,
-    title: "Behavioral Intelligence",
-    description: "Sistema de arquétipos comportamentais. Detecta padrões de decisão, prevê necessidades e adapta estratégias de engajamento por cliente.",
-    metric: "Detecção automática de arquétipos",
+    icon: Target,
+    title: "Archetype Library",
+    description: "Behavioral intelligence with 12+ client archetypes. Auto-detect decision patterns, predict needs, and adapt engagement strategies. Match profiles with AI-powered archetype scoring.",
+    metric: "AI-powered archetype matching",
   },
   {
     icon: Shield,
@@ -46,7 +52,7 @@ export const advancedCapabilities = [
   {
     icon: Zap,
     title: "Modular Expert Mode",
-    description: "Execute deep-dives isolados (M1–M11) em minutos, sem perder coerência com a arquitetura TSI completa.",
-    metric: "5–7 min por módulo especializado",
+    description: "Execute isolated deep-dives (M1–M11) in minutes without losing coherence with the complete TSI architecture. Each module delivers consulting-grade analysis.",
+    metric: "5–7 min per specialized module",
   },
 ];
