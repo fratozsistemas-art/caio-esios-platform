@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,11 +9,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   Network, Building2, Users, Code, TrendingUp, Target, 
   DollarSign, GitMerge, Database, Search, ChevronRight,
-  ExternalLink, Sparkles, ArrowRight, Loader2, Info
+  ExternalLink, Sparkles, ArrowRight, Loader2, Info, X,
+  Plus, Minus, Route, Filter, Eye, Link2, MousePointer
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { toast } from "sonner";
 
 const NODE_CONFIG = {
   company: { color: '#3b82f6', icon: Building2, label: 'Companies' },
@@ -30,27 +32,84 @@ const NODE_CONFIG = {
 export default function StrategicConnectionsExplorer({ 
   contextEntities = [],
   onEntitySelect,
-  compact = false 
+  compact = false,
+  highlightedInsights = []
 }) {
-  const [selectedEntity, setSelectedEntity] = useState(null);
+  const [selectedEntities, setSelectedEntities] = useState(new Set());
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [expandedEntities, setExpandedEntities] = useState(new Set());
+  const [highlightedPath, setHighlightedPath] = useState([]);
+  const [insightFilters, setInsightFilters] = useState([]);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
 
   const { data: nodes = [], isLoading: nodesLoading } = useQuery({
     queryKey: ['strategic_connections_nodes'],
-    queryFn: () => base44.entities.KnowledgeGraphNode.list('-created_date', 200)
+    queryFn: () => base44.entities.KnowledgeGraphNode.list('-created_date', 300)
   });
 
   const { data: relationships = [], isLoading: relsLoading } = useQuery({
     queryKey: ['strategic_connections_relationships'],
-    queryFn: () => base44.entities.KnowledgeGraphRelationship.list('-created_date', 500)
+    queryFn: () => base44.entities.KnowledgeGraphRelationship.list('-created_date', 800)
   });
 
-  // Find relevant nodes based on context
-  const relevantNodes = React.useMemo(() => {
-    if (contextEntities.length === 0) return nodes.slice(0, 50);
+  // Get connections for a node
+  const getConnections = useCallback((nodeId) => {
+    const connected = [];
+    relationships.forEach(r => {
+      if (r.from_node_id === nodeId) {
+        const target = nodes.find(n => n.id === r.to_node_id);
+        if (target) connected.push({ node: target, type: r.relationship_type, direction: 'outgoing', relId: r.id });
+      }
+      if (r.to_node_id === nodeId) {
+        const source = nodes.find(n => n.id === r.from_node_id);
+        if (source) connected.push({ node: source, type: r.relationship_type, direction: 'incoming', relId: r.id });
+      }
+    });
+    return connected;
+  }, [nodes, relationships]);
+
+  // Find path between two nodes (BFS)
+  const findPath = useCallback((startId, endId) => {
+    if (!startId || !endId) return [];
     
-    const contextLabels = contextEntities.map(e => e.toLowerCase());
+    const queue = [[startId]];
+    const visited = new Set([startId]);
+    
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const current = path[path.length - 1];
+      
+      if (current === endId) return path;
+      
+      const neighbors = [];
+      relationships.forEach(r => {
+        if (r.from_node_id === current && !visited.has(r.to_node_id)) {
+          neighbors.push(r.to_node_id);
+        }
+        if (r.to_node_id === current && !visited.has(r.from_node_id)) {
+          neighbors.push(r.from_node_id);
+        }
+      });
+      
+      for (const neighbor of neighbors) {
+        visited.add(neighbor);
+        queue.push([...path, neighbor]);
+      }
+    }
+    
+    return [];
+  }, [relationships]);
+
+  // Find relevant nodes based on context and expansions
+  const relevantNodes = React.useMemo(() => {
+    const allFilters = [...contextEntities, ...insightFilters].filter(Boolean);
+    
+    if (allFilters.length === 0 && expandedEntities.size === 0) {
+      return nodes.slice(0, 50);
+    }
+    
+    const contextLabels = allFilters.map(e => e?.toLowerCase()).filter(Boolean);
     const directMatches = nodes.filter(n => 
       contextLabels.some(label => 
         n.label?.toLowerCase().includes(label) || 
@@ -61,14 +120,26 @@ export default function StrategicConnectionsExplorer({
     const directIds = new Set(directMatches.map(n => n.id));
     const connectedIds = new Set();
     
+    // Add connections from context matches
     relationships.forEach(r => {
       if (directIds.has(r.from_node_id)) connectedIds.add(r.to_node_id);
       if (directIds.has(r.to_node_id)) connectedIds.add(r.from_node_id);
     });
 
-    const connectedNodes = nodes.filter(n => connectedIds.has(n.id) && !directIds.has(n.id));
+    // Add connections from expanded entities
+    expandedEntities.forEach(entityId => {
+      relationships.forEach(r => {
+        if (r.from_node_id === entityId) connectedIds.add(r.to_node_id);
+        if (r.to_node_id === entityId) connectedIds.add(r.from_node_id);
+      });
+    });
+
+    const connectedNodes = nodes.filter(n => 
+      connectedIds.has(n.id) && !directIds.has(n.id)
+    );
+    
     return [...directMatches, ...connectedNodes];
-  }, [nodes, relationships, contextEntities]);
+  }, [nodes, relationships, contextEntities, expandedEntities, insightFilters]);
 
   // Group by type
   const nodesByType = React.useMemo(() => {
@@ -88,30 +159,71 @@ export default function StrategicConnectionsExplorer({
     return matchesSearch && matchesCategory;
   });
 
-  // Get connections for a node
-  const getConnections = (nodeId) => {
-    const connected = [];
-    relationships.forEach(r => {
-      if (r.from_node_id === nodeId) {
-        const target = nodes.find(n => n.id === r.to_node_id);
-        if (target) connected.push({ node: target, type: r.relationship_type, direction: 'outgoing' });
-      }
-      if (r.to_node_id === nodeId) {
-        const source = nodes.find(n => n.id === r.from_node_id);
-        if (source) connected.push({ node: source, type: r.relationship_type, direction: 'incoming' });
-      }
-    });
-    return connected;
+  const handleEntityClick = (node) => {
+    if (multiSelectMode) {
+      setSelectedEntities(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(node.id)) {
+          newSet.delete(node.id);
+        } else {
+          newSet.add(node.id);
+        }
+        return newSet;
+      });
+    } else {
+      setSelectedEntities(new Set([node.id]));
+      if (onEntitySelect) onEntitySelect(node);
+    }
   };
 
-  const handleEntityClick = (node) => {
-    setSelectedEntity(node);
-    if (onEntitySelect) onEntitySelect(node);
+  const toggleExpansion = (nodeId) => {
+    setExpandedEntities(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(nodeId)) {
+        newSet.delete(nodeId);
+        toast.info("Entity collapsed");
+      } else {
+        newSet.add(nodeId);
+        toast.success("Entity expanded - showing connections");
+      }
+      return newSet;
+    });
+  };
+
+  const showPathBetweenSelected = () => {
+    const selectedArray = Array.from(selectedEntities);
+    if (selectedArray.length === 2) {
+      const path = findPath(selectedArray[0], selectedArray[1]);
+      if (path.length > 0) {
+        setHighlightedPath(path);
+        toast.success(`Path found: ${path.length} entities`);
+      } else {
+        toast.error("No path found between selected entities");
+      }
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedEntities(new Set());
+    setHighlightedPath([]);
+  };
+
+  const addInsightFilter = (insight) => {
+    const filterText = insight.split(' ').slice(0, 4).join(' ');
+    if (!insightFilters.includes(filterText)) {
+      setInsightFilters(prev => [...prev, filterText]);
+      toast.success("Filter added");
+    }
+  };
+
+  const removeInsightFilter = (filter) => {
+    setInsightFilters(prev => prev.filter(f => f !== filter));
   };
 
   const isLoading = nodesLoading || relsLoading;
   const categories = Object.keys(nodesByType);
 
+  // Compact view
   if (compact) {
     return (
       <Card className="bg-white/5 border-white/10">
@@ -135,30 +247,54 @@ export default function StrategicConnectionsExplorer({
               <Loader2 className="w-5 h-5 text-cyan-400 animate-spin" />
             </div>
           ) : (
-            <div className="flex flex-wrap gap-2">
-              {filteredNodes.slice(0, 12).map(node => {
-                const config = NODE_CONFIG[node.node_type] || { color: '#64748b', icon: Network };
-                const Icon = config.icon;
-                return (
-                  <Badge
-                    key={node.id}
-                    className="cursor-pointer hover:opacity-80 transition-opacity"
-                    style={{ 
-                      backgroundColor: config.color + '20',
-                      color: config.color,
-                      borderColor: config.color + '40'
-                    }}
-                    onClick={() => handleEntityClick(node)}
-                  >
-                    <Icon className="w-3 h-3 mr-1" />
-                    {node.label?.length > 15 ? node.label.substring(0, 15) + '...' : node.label}
+            <div className="space-y-2">
+              <div className="flex flex-wrap gap-2">
+                {filteredNodes.slice(0, 12).map(node => {
+                  const config = NODE_CONFIG[node.node_type] || { color: '#64748b', icon: Network };
+                  const Icon = config.icon;
+                  const isSelected = selectedEntities.has(node.id);
+                  const isExpanded = expandedEntities.has(node.id);
+                  
+                  return (
+                    <Badge
+                      key={node.id}
+                      className={`cursor-pointer transition-all ${isSelected ? 'ring-2 ring-white' : ''} ${isExpanded ? 'ring-1 ring-purple-400' : ''}`}
+                      style={{ 
+                        backgroundColor: config.color + '20',
+                        color: config.color,
+                        borderColor: config.color + '40'
+                      }}
+                      onClick={() => handleEntityClick(node)}
+                      onDoubleClick={() => toggleExpansion(node.id)}
+                    >
+                      <Icon className="w-3 h-3 mr-1" />
+                      {node.label?.length > 15 ? node.label.substring(0, 15) + '...' : node.label}
+                      {isExpanded && <Plus className="w-2 h-2 ml-1" />}
+                    </Badge>
+                  );
+                })}
+                {filteredNodes.length > 12 && (
+                  <Badge className="bg-white/10 text-slate-400 border-white/20">
+                    +{filteredNodes.length - 12} more
                   </Badge>
-                );
-              })}
-              {filteredNodes.length > 12 && (
-                <Badge className="bg-white/10 text-slate-400 border-white/20">
-                  +{filteredNodes.length - 12} more
-                </Badge>
+                )}
+              </div>
+              {highlightedInsights.length > 0 && (
+                <div className="pt-2 border-t border-white/10">
+                  <p className="text-xs text-slate-500 mb-1">Filter by insight:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {highlightedInsights.slice(0, 3).map((insight, idx) => (
+                      <Badge
+                        key={idx}
+                        className="text-xs bg-slate-700/50 text-slate-300 cursor-pointer hover:bg-amber-500/20 hover:text-amber-400"
+                        onClick={() => addInsightFilter(insight)}
+                      >
+                        <Plus className="w-2 h-2 mr-1" />
+                        {insight.length > 20 ? insight.substring(0, 20) + '...' : insight}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           )}
@@ -167,6 +303,7 @@ export default function StrategicConnectionsExplorer({
     );
   }
 
+  // Full view
   return (
     <Card className="bg-white/5 border-white/10">
       <CardHeader className="py-3 px-4 border-b border-white/10">
@@ -188,9 +325,9 @@ export default function StrategicConnectionsExplorer({
       </CardHeader>
 
       <CardContent className="p-4">
-        {/* Search and Filters */}
-        <div className="flex gap-3 mb-4">
-          <div className="relative flex-1">
+        {/* Controls Bar */}
+        <div className="flex flex-wrap gap-3 mb-4">
+          <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               value={searchTerm}
@@ -199,7 +336,68 @@ export default function StrategicConnectionsExplorer({
               className="pl-9 bg-white/5 border-white/10 text-white h-9"
             />
           </div>
+          
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setMultiSelectMode(!multiSelectMode)}
+            className={`h-9 px-3 ${multiSelectMode ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' : 'bg-white/5 text-slate-400'} border border-white/10`}
+          >
+            <MousePointer className="w-3 h-3 mr-1" />
+            {multiSelectMode ? 'Multi-Select' : 'Single'}
+          </Button>
+
+          {selectedEntities.size === 2 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={showPathBetweenSelected}
+              className="h-9 px-3 bg-purple-500/20 text-purple-400 border border-purple-500/30"
+            >
+              <Route className="w-3 h-3 mr-1" />
+              Find Path
+            </Button>
+          )}
+
+          {(selectedEntities.size > 0 || highlightedPath.length > 0) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearSelection}
+              className="h-9 px-3 bg-white/5 text-slate-400 border border-white/10"
+            >
+              <X className="w-3 h-3 mr-1" />
+              Clear ({selectedEntities.size})
+            </Button>
+          )}
         </div>
+
+        {/* Insight Filters */}
+        {(insightFilters.length > 0 || highlightedInsights.length > 0) && (
+          <div className="flex flex-wrap gap-2 mb-4 p-2 bg-white/5 rounded-lg border border-white/10">
+            <span className="text-xs text-slate-500 self-center">Filters:</span>
+            {insightFilters.map((filter, idx) => (
+              <Badge 
+                key={idx}
+                className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs cursor-pointer hover:bg-amber-500/30"
+                onClick={() => removeInsightFilter(filter)}
+              >
+                {filter}
+                <X className="w-2 h-2 ml-1" />
+              </Badge>
+            ))}
+            {highlightedInsights.slice(0, 4).map((insight, idx) => (
+              <Badge 
+                key={`hi-${idx}`}
+                className="bg-slate-700/50 text-slate-300 text-xs cursor-pointer hover:bg-cyan-500/20 hover:text-cyan-400"
+                onClick={() => addInsightFilter(insight)}
+              >
+                <Plus className="w-2 h-2 mr-1" />
+                {insight.length > 20 ? insight.substring(0, 20) + '...' : insight}
+              </Badge>
+            ))}
+          </div>
+        )}
 
         {/* Category Tabs */}
         <Tabs value={activeCategory} onValueChange={setActiveCategory} className="mb-4">
@@ -232,10 +430,12 @@ export default function StrategicConnectionsExplorer({
           <div className="grid grid-cols-2 gap-4">
             {/* Entity List */}
             <div className="space-y-2 max-h-96 overflow-y-auto pr-2">
-              {filteredNodes.slice(0, 20).map(node => {
+              {filteredNodes.slice(0, 25).map(node => {
                 const config = NODE_CONFIG[node.node_type] || { color: '#64748b', icon: Network };
                 const Icon = config.icon;
-                const isSelected = selectedEntity?.id === node.id;
+                const isSelected = selectedEntities.has(node.id);
+                const isExpanded = expandedEntities.has(node.id);
+                const isInPath = highlightedPath.includes(node.id);
                 const connections = getConnections(node.id);
 
                 return (
@@ -244,16 +444,21 @@ export default function StrategicConnectionsExplorer({
                     initial={{ opacity: 0, y: 5 }}
                     animate={{ opacity: 1, y: 0 }}
                     className={`p-3 rounded-lg border cursor-pointer transition-all ${
-                      isSelected 
-                        ? 'bg-cyan-500/10 border-cyan-500/30' 
-                        : 'bg-white/5 border-white/10 hover:border-white/20'
+                      isInPath 
+                        ? 'bg-cyan-500/20 border-cyan-500/50' 
+                        : isSelected 
+                          ? 'bg-blue-500/20 border-blue-500/50' 
+                          : isExpanded
+                            ? 'bg-purple-500/10 border-purple-500/30'
+                            : 'bg-white/5 border-white/10 hover:border-white/20'
                     }`}
                     onClick={() => handleEntityClick(node)}
+                    onDoubleClick={() => toggleExpansion(node.id)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-2">
                         <div 
-                          className="w-8 h-8 rounded-lg flex items-center justify-center"
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center ${isInPath ? 'ring-2 ring-cyan-400' : ''}`}
                           style={{ backgroundColor: config.color + '20' }}
                         >
                           <Icon className="w-4 h-4" style={{ color: config.color }} />
@@ -265,87 +470,221 @@ export default function StrategicConnectionsExplorer({
                           <p className="text-xs text-slate-500">{node.node_type}</p>
                         </div>
                       </div>
-                      <Badge className="bg-white/10 text-slate-400 text-xs">
-                        {connections.length}
-                      </Badge>
+                      <div className="flex items-center gap-1">
+                        {isExpanded && (
+                          <Badge className="bg-purple-500/20 text-purple-400 text-xs">
+                            expanded
+                          </Badge>
+                        )}
+                        <Badge className="bg-white/10 text-slate-400 text-xs">
+                          {connections.length}
+                        </Badge>
+                      </div>
                     </div>
+
+                    {/* Expanded connections preview */}
+                    {isExpanded && connections.length > 0 && (
+                      <div className="mt-2 pt-2 border-t border-white/10 space-y-1">
+                        {connections.slice(0, 3).map((conn, idx) => (
+                          <div 
+                            key={idx}
+                            className="flex items-center justify-between text-xs bg-white/5 rounded px-2 py-1"
+                          >
+                            <span className="text-slate-300 truncate">{conn.node.label}</span>
+                            <Badge className="bg-white/10 text-slate-500 text-xs scale-75">
+                              {conn.type || 'related'}
+                            </Badge>
+                          </div>
+                        ))}
+                        {connections.length > 3 && (
+                          <p className="text-xs text-slate-500 text-center">+{connections.length - 3} more</p>
+                        )}
+                      </div>
+                    )}
                   </motion.div>
                 );
               })}
-              {filteredNodes.length > 20 && (
+              {filteredNodes.length > 25 && (
                 <p className="text-xs text-slate-500 text-center py-2">
-                  +{filteredNodes.length - 20} more entities
+                  +{filteredNodes.length - 25} more entities
                 </p>
               )}
             </div>
 
             {/* Selected Entity Details */}
             <div className="bg-white/5 rounded-lg border border-white/10 p-4">
-              {selectedEntity ? (
+              {selectedEntities.size > 0 ? (
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    {React.createElement(NODE_CONFIG[selectedEntity.node_type]?.icon || Network, {
-                      className: "w-6 h-6 mt-1",
-                      style: { color: NODE_CONFIG[selectedEntity.node_type]?.color }
-                    })}
-                    <div>
-                      <h3 className="text-white font-semibold">{selectedEntity.label}</h3>
-                      <Badge 
-                        className="mt-1 text-xs"
-                        style={{ 
-                          backgroundColor: NODE_CONFIG[selectedEntity.node_type]?.color + '20',
-                          color: NODE_CONFIG[selectedEntity.node_type]?.color 
-                        }}
-                      >
-                        {selectedEntity.node_type}
-                      </Badge>
-                    </div>
-                  </div>
+                  {selectedEntities.size === 1 ? (
+                    // Single selection view
+                    (() => {
+                      const entityId = Array.from(selectedEntities)[0];
+                      const selectedEntity = nodes.find(n => n.id === entityId);
+                      if (!selectedEntity) return null;
+                      
+                      const connections = getConnections(entityId);
+                      
+                      return (
+                        <>
+                          <div className="flex items-start gap-3">
+                            {React.createElement(NODE_CONFIG[selectedEntity.node_type]?.icon || Network, {
+                              className: "w-6 h-6 mt-1",
+                              style: { color: NODE_CONFIG[selectedEntity.node_type]?.color }
+                            })}
+                            <div className="flex-1">
+                              <h3 className="text-white font-semibold">{selectedEntity.label}</h3>
+                              <Badge 
+                                className="mt-1 text-xs"
+                                style={{ 
+                                  backgroundColor: NODE_CONFIG[selectedEntity.node_type]?.color + '20',
+                                  color: NODE_CONFIG[selectedEntity.node_type]?.color 
+                                }}
+                              >
+                                {selectedEntity.node_type}
+                              </Badge>
+                            </div>
+                          </div>
 
-                  {selectedEntity.properties && Object.keys(selectedEntity.properties).length > 0 && (
-                    <div className="space-y-2 pt-3 border-t border-white/10">
-                      <h4 className="text-xs text-slate-400 uppercase">Properties</h4>
-                      {Object.entries(selectedEntity.properties).slice(0, 5).map(([key, value]) => (
-                        <div key={key} className="flex justify-between text-xs">
-                          <span className="text-slate-500">{key}</span>
-                          <span className="text-white">{String(value).substring(0, 30)}</span>
+                          <div className="flex gap-2">
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => toggleExpansion(entityId)}
+                              className={`h-8 px-3 text-xs ${expandedEntities.has(entityId) ? 'bg-purple-500/20 text-purple-400' : 'bg-white/5 text-slate-400'}`}
+                            >
+                              {expandedEntities.has(entityId) ? <Minus className="w-3 h-3 mr-1" /> : <Plus className="w-3 h-3 mr-1" />}
+                              {expandedEntities.has(entityId) ? 'Collapse' : 'Expand'}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => addInsightFilter(selectedEntity.label)}
+                              className="h-8 px-3 text-xs bg-white/5 text-slate-400"
+                            >
+                              <Filter className="w-3 h-3 mr-1" />
+                              Add Filter
+                            </Button>
+                          </div>
+
+                          {selectedEntity.properties && Object.keys(selectedEntity.properties).length > 0 && (
+                            <div className="space-y-2 pt-3 border-t border-white/10">
+                              <h4 className="text-xs text-slate-400 uppercase">Properties</h4>
+                              {Object.entries(selectedEntity.properties).slice(0, 5).map(([key, value]) => (
+                                <div key={key} className="flex justify-between text-xs">
+                                  <span className="text-slate-500">{key}</span>
+                                  <span className="text-white">{String(value).substring(0, 30)}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+
+                          <div className="space-y-2 pt-3 border-t border-white/10">
+                            <h4 className="text-xs text-slate-400 uppercase">
+                              Connections ({connections.length})
+                            </h4>
+                            <div className="space-y-1 max-h-48 overflow-y-auto">
+                              {connections.slice(0, 10).map((conn, idx) => {
+                                const config = NODE_CONFIG[conn.node.node_type] || { color: '#64748b', icon: Network };
+                                return (
+                                  <div 
+                                    key={idx}
+                                    className="flex items-center justify-between p-2 bg-white/5 rounded text-xs cursor-pointer hover:bg-white/10"
+                                    onClick={() => handleEntityClick(conn.node)}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <div 
+                                        className="w-2 h-2 rounded-full"
+                                        style={{ backgroundColor: config.color }}
+                                      />
+                                      <span className="text-white">{conn.node.label}</span>
+                                    </div>
+                                    <Badge className="bg-white/10 text-slate-400 text-xs">
+                                      {conn.type || 'related'}
+                                    </Badge>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </>
+                      );
+                    })()
+                  ) : (
+                    // Multiple selection view
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-white font-semibold">{selectedEntities.size} entities selected</h3>
+                        <Button size="sm" variant="ghost" onClick={clearSelection} className="h-7 px-2 text-slate-400">
+                          <X className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      
+                      {selectedEntities.size === 2 && (
+                        <Button
+                          onClick={showPathBetweenSelected}
+                          className="w-full bg-purple-600 hover:bg-purple-700"
+                        >
+                          <Route className="w-4 h-4 mr-2" />
+                          Find Path Between Selected
+                        </Button>
+                      )}
+
+                      {highlightedPath.length > 0 && (
+                        <div className="p-3 bg-cyan-500/10 rounded-lg border border-cyan-500/30">
+                          <h4 className="text-xs text-cyan-400 uppercase mb-2">Path Found ({highlightedPath.length} nodes)</h4>
+                          <div className="flex flex-wrap items-center gap-1">
+                            {highlightedPath.map((nodeId, idx) => {
+                              const pathNode = nodes.find(n => n.id === nodeId);
+                              return (
+                                <React.Fragment key={nodeId}>
+                                  <Badge className="bg-cyan-500/20 text-cyan-400 text-xs">
+                                    {pathNode?.label?.substring(0, 15)}
+                                  </Badge>
+                                  {idx < highlightedPath.length - 1 && (
+                                    <ArrowRight className="w-3 h-3 text-cyan-400" />
+                                  )}
+                                </React.Fragment>
+                              );
+                            })}
+                          </div>
                         </div>
-                      ))}
+                      )}
+
+                      <div className="space-y-1">
+                        {Array.from(selectedEntities).map(entityId => {
+                          const entity = nodes.find(n => n.id === entityId);
+                          if (!entity) return null;
+                          const config = NODE_CONFIG[entity.node_type] || { color: '#64748b' };
+                          return (
+                            <div key={entityId} className="flex items-center justify-between p-2 bg-white/5 rounded text-xs">
+                              <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: config.color }} />
+                                <span className="text-white">{entity.label}</span>
+                              </div>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => {
+                                  setSelectedEntities(prev => {
+                                    const newSet = new Set(prev);
+                                    newSet.delete(entityId);
+                                    return newSet;
+                                  });
+                                }}
+                                className="h-5 w-5 p-0 text-slate-400 hover:text-white"
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
 
-                  <div className="space-y-2 pt-3 border-t border-white/10">
-                    <h4 className="text-xs text-slate-400 uppercase">
-                      Connections ({getConnections(selectedEntity.id).length})
-                    </h4>
-                    <div className="space-y-1 max-h-48 overflow-y-auto">
-                      {getConnections(selectedEntity.id).slice(0, 10).map((conn, idx) => {
-                        const config = NODE_CONFIG[conn.node.node_type] || { color: '#64748b', icon: Network };
-                        return (
-                          <div 
-                            key={idx}
-                            className="flex items-center justify-between p-2 bg-white/5 rounded text-xs cursor-pointer hover:bg-white/10"
-                            onClick={() => handleEntityClick(conn.node)}
-                          >
-                            <div className="flex items-center gap-2">
-                              <div 
-                                className="w-2 h-2 rounded-full"
-                                style={{ backgroundColor: config.color }}
-                              />
-                              <span className="text-white">{conn.node.label}</span>
-                            </div>
-                            <Badge className="bg-white/10 text-slate-400 text-xs">
-                              {conn.type || 'related'}
-                            </Badge>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
                   <Link
                     to={createPageUrl("KnowledgeGraph")}
-                    className="flex items-center justify-center gap-2 text-sm text-cyan-400 hover:text-cyan-300 pt-2"
+                    className="flex items-center justify-center gap-2 text-sm text-cyan-400 hover:text-cyan-300 pt-2 border-t border-white/10"
                   >
                     <Sparkles className="w-4 h-4" />
                     Explore in Full Graph
@@ -357,7 +696,10 @@ export default function StrategicConnectionsExplorer({
                   <Info className="w-8 h-8 text-slate-600 mb-3" />
                   <p className="text-slate-400 text-sm">Select an entity to view details</p>
                   <p className="text-slate-500 text-xs mt-1">
-                    Discover connections and relationships
+                    Double-click to expand connections
+                  </p>
+                  <p className="text-slate-500 text-xs">
+                    Use multi-select to find paths
                   </p>
                 </div>
               )}
