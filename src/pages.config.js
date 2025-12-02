@@ -63,6 +63,7 @@ import Collaboration from './pages/Collaboration';
 import HelpCenter from './pages/HelpCenter';
 import AdvancedDataAnalysis from './pages/AdvancedDataAnalysis';
 import FounderProfile from './pages/FounderProfile';
+import UserProfile from './pages/UserProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -132,6 +133,7 @@ export const PAGES = {
     "HelpCenter": HelpCenter,
     "AdvancedDataAnalysis": AdvancedDataAnalysis,
     "FounderProfile": FounderProfile,
+    "UserProfile": UserProfile,
 }
 
 export const pagesConfig = {
