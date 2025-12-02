@@ -330,7 +330,7 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+    <div className="min-h-screen" style={{ background: "radial-gradient(circle at center, #0A1628 0%, #0d2847 40%, #1a2744 70%, #243352 100%)" }}>
       <AccessibilityEnhancer />
       {/* Unauthorized Alert */}
       {showUnauthorizedAlert && (

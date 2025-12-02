@@ -62,6 +62,7 @@ import ComparisonStrategicAIPlatforms from './pages/ComparisonStrategicAIPlatfor
 import Collaboration from './pages/Collaboration';
 import HelpCenter from './pages/HelpCenter';
 import AdvancedDataAnalysis from './pages/AdvancedDataAnalysis';
+import FounderProfile from './pages/FounderProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -130,6 +131,7 @@ export const PAGES = {
     "Collaboration": Collaboration,
     "HelpCenter": HelpCenter,
     "AdvancedDataAnalysis": AdvancedDataAnalysis,
+    "FounderProfile": FounderProfile,
 }
 
 export const pagesConfig = {
