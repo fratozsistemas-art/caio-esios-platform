@@ -503,6 +503,9 @@ export default function Landing() {
                 <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
                   Pricing
                 </a>
+                <a href="#investors" onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#FFB800] transition-colors font-medium text-sm py-2">
+                  Investors
+                </a>
                 <a href={createPageUrl("BlogResources")} onClick={() => setMobileMenuOpen(false)} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm py-2">
                   Blog
                 </a>
