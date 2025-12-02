@@ -60,6 +60,89 @@ export const TUTORIALS = {
     ]
   },
 
+  collaboration: {
+    id: 'collaboration',
+    title: 'Collaboration Tools',
+    category: 'Teamwork',
+    description: 'Learn to collaborate with your team in real-time',
+    steps: [
+      {
+        title: 'Real-Time Collaboration 👥',
+        content: 'CAIO·AI enables seamless teamwork. See who\'s online, what they\'re working on, and collaborate in real-time across all strategic initiatives.',
+        icon: Users,
+      },
+      {
+        title: 'User Presence 🟢',
+        content: 'The presence indicator shows team members currently viewing the same entity. Avatars display status (online, away, busy) for instant awareness.',
+        icon: Users,
+        targetSelector: '[data-tour="user-presence"]'
+      },
+      {
+        title: 'Comments & Discussions 💬',
+        content: 'Add comments to any strategy, analysis, or workspace. Reply to create threads, @mention colleagues, and add emoji reactions. Resolve threads when done.',
+        icon: MessageSquare,
+        targetSelector: '[data-tour="comments"]'
+      },
+      {
+        title: 'Task Assignments ✅',
+        content: 'Create tasks directly from any entity. Assign to team members, set priority and due dates. Track progress and receive notifications on updates.',
+        icon: Target,
+        targetSelector: '[data-tour="tasks"]'
+      },
+      {
+        title: 'Activity Feed 📋',
+        content: 'The activity feed shows all team actions: comments, task completions, insights shared. Filter by entity or user. Click to jump to the source.',
+        icon: TrendingUp,
+        targetSelector: '[data-tour="activity-feed"]'
+      },
+      {
+        title: 'Share Insights 🔗',
+        content: 'Use the Share Insight feature to create summaries from any analysis. Control visibility (private, team, public) and add tags for easy discovery.',
+        icon: Network,
+      }
+    ]
+  },
+
+  aiInsights: {
+    id: 'aiInsights',
+    title: 'AI-Powered Insights',
+    category: 'Intelligence',
+    description: 'Discover how CAIO generates strategic insights',
+    steps: [
+      {
+        title: 'Proactive Intelligence 🧠',
+        content: 'CAIO doesn\'t wait—it continuously monitors data sources, identifies patterns, and surfaces insights before you ask. Strategic intelligence on autopilot.',
+        icon: Brain,
+      },
+      {
+        title: 'Dashboard Widgets 📊',
+        content: 'Your dashboard displays real-time analytics: active users, live conversations, analyses completed, and key performance indicators—all customizable.',
+        icon: BarChart3,
+        targetSelector: '[data-tour="quick-stats"]'
+      },
+      {
+        title: 'Knowledge Graph 🕸️',
+        content: 'The Knowledge Graph connects 10K+ entities: companies, executives, technologies, frameworks. Query in natural language to discover hidden relationships.',
+        icon: Network,
+      },
+      {
+        title: 'Quick Actions ⚡',
+        content: 'Pre-configured analyses execute in seconds. Filter by C-level role or strategic theme. Each action uses specific TSI modules for structured outputs.',
+        icon: Zap,
+      },
+      {
+        title: 'Predictive Analysis 🔮',
+        content: 'CAIO predicts market shifts, identifies opportunities, and suggests strategic moves based on historical patterns and real-time signals.',
+        icon: TrendingUp,
+      },
+      {
+        title: 'Cross-Platform Insights 🌐',
+        content: 'Insights aggregate from multiple sources: CVM data, financial APIs, news sentiment, and your internal analyses—unified in one intelligent view.',
+        icon: Compass,
+      }
+    ]
+  },
+
   dashboard: {
     id: 'dashboard',
     title: 'Dashboard Overview',

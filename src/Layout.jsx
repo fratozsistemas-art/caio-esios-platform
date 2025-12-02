@@ -13,19 +13,22 @@ import { TutorialProvider } from './components/tutorial/TutorialSystem';
 import TutorialLauncher from './components/tutorial/TutorialLauncher';
 import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext';
 import LanguageSwitcher from './components/i18n/LanguageSwitcher';
+import WelcomeModal from './components/onboarding/WelcomeModal';
 
 function LayoutInner({ children, currentPageName }) {
   const { t } = useLanguage();
   
-  const navSections = [
-    {
-      title: "Core",
-      items: [
-        { name: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: 'Dashboard' },
-        { name: t('nav.chat', 'Chat with CAIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
-        { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' }
-      ]
-    },
+  const [showTutorialLauncher, setShowTutorialLauncher] = useState(false);
+
+          const navSections = [
+            {
+              title: "Core",
+              items: [
+                { name: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: 'Dashboard' },
+                { name: t('nav.chat', 'Chat with CAIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
+                { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' }
+              ]
+            },
     {
       title: t('nav.intelligence', 'Intelligence'),
       items: [
@@ -91,12 +94,18 @@ function LayoutInner({ children, currentPageName }) {
     },
     {
       title: t('nav.settings', 'Settings'),
-      items: [
-        { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations', badge: 'NEW' },
-        { name: t('nav.userManagement', 'User Management'), icon: Users, path: 'UserManagement', adminOnly: true }
-      ]
-    }
-  ];
+                  items: [
+                    { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations', badge: 'NEW' },
+                    { name: t('nav.userManagement', 'User Management'), icon: Users, path: 'UserManagement', adminOnly: true }
+                  ]
+                },
+                {
+                  title: t('nav.support', 'Support'),
+                  items: [
+                    { name: t('nav.helpCenter', 'Help Center'), icon: BookOpen, path: 'HelpCenter' }
+                  ]
+                }
+              ];
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
@@ -301,10 +310,16 @@ function LayoutInner({ children, currentPageName }) {
       )}
 
       <GlobalSearch open={showSearch} onClose={() => setShowSearch(false)} />
-      </div>
-    </TutorialProvider>
-  );
-}
+
+                  {/* Welcome Modal for New Users */}
+                  <WelcomeModal 
+                    onComplete={() => {}} 
+                    onOpenTutorials={() => setShowTutorialLauncher(true)} 
+                  />
+                  </div>
+                </TutorialProvider>
+              );
+            }
 
 export default function Layout({ children, currentPageName }) {
   return (
