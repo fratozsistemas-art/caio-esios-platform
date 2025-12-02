@@ -156,11 +156,7 @@ export default function Collaboration() {
             </TabsList>
 
             <TabsContent value="activity" className="mt-4">
-              <Card className="bg-slate-800/50 border-slate-700">
-                <CardContent className="p-4">
-                  <ActivityFeedPanel showAll />
-                </CardContent>
-              </Card>
+              <CentralActivityFeed />
             </TabsContent>
 
             <TabsContent value="insights" className="mt-4">
