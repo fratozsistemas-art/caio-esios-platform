@@ -45,9 +45,9 @@ export const advancedCapabilities = [
   },
   {
     icon: MessageSquare,
-    title: "Socratic Mode",
-    description: "Construção de contexto por diálogo inteligente, sem formulários rígidos. Modo SOC guiando o pensamento estratégico.",
-    metric: "70% maior engajamento",
+    title: "Maieutic Mode",
+    description: "Context building through intelligent Socratic dialogue, no rigid forms. SOC mode guiding strategic thinking through questions that reveal hidden assumptions.",
+    metric: "70% higher engagement",
   },
   {
     icon: Zap,
