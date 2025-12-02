@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2, TrendingUp, AlertTriangle, CheckCircle, Trash2, Eye, X, Target, Share2 } from "lucide-react";
+import { FileText, Loader2, TrendingUp, AlertTriangle, CheckCircle, Trash2, Eye, X, Target, Share2, BarChart3, Lightbulb } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import SecureFileUpload from "@/components/ui/SecureFileUpload";
 import { LoadingCard } from "@/components/ui/LoadingState";
@@ -49,10 +49,10 @@ export default function FileAnalyzer() {
         setSelectedAnalysis(null);
         setShowDetailModal(false);
       }
-      toast.success('✅ Análise excluída com sucesso!');
+      toast.success('Análise excluída com sucesso!');
     },
     onError: (error) => {
-      toast.error(`❌ Erro: ${error.message}`);
+      toast.error(`Erro: ${error.message}`);
     }
   });
 
@@ -93,7 +93,7 @@ export default function FileAnalyzer() {
 
   const processFile = async (analysisId, fileUrl, fileName, fileType) => {
     try {
-      console.log(`🔄 Processing: ${fileName}`);
+      console.log(`Processing: ${fileName}`);
 
       // ✅ GUARANTEED COMPLETE ANALYSIS PROMPT
       const prompt = `You are an elite business analyst. Extract ACTIONABLE insights from this document.
@@ -103,7 +103,7 @@ export default function FileAnalyzer() {
 
 ---
 
-## 📊 MANDATORY OUTPUT (JSON ONLY - NO MARKDOWN)
+## MANDATORY OUTPUT (JSON ONLY - NO MARKDOWN)
 
 Return VALID JSON with ALL fields populated:
 
@@ -286,12 +286,12 @@ Execute now.`;
         status: 'completed'
       });
 
-      console.log(`✅ Analysis completed: ${fileName}`);
+      console.log(`Analysis completed: ${fileName}`);
       queryClient.invalidateQueries({ queryKey: ['fileAnalyses'] });
-      toast.success(`✅ ${fileName} analyzed successfully!`);
+      toast.success(`${fileName} analyzed successfully!`);
 
     } catch (error) {
-      console.error(`❌ Error processing ${fileName}:`, error);
+      console.error(`Error processing ${fileName}:`, error);
       
       await base44.entities.FileAnalysis.update(analysisId, {
         status: 'failed',
@@ -299,7 +299,7 @@ Execute now.`;
       });
       
       queryClient.invalidateQueries({ queryKey: ['fileAnalyses'] });
-      toast.error(`❌ Failed to analyze ${fileName}`);
+      toast.error(`Failed to analyze ${fileName}`);
     }
   };
 
@@ -478,7 +478,10 @@ Execute now.`;
               {/* Extracted Data */}
               {selectedAnalysis.extracted_data && (
                 <div>
-                  <h3 className="text-xl font-semibold mb-3 text-blue-400">📊 Extracted Data</h3>
+                  <h3 className="text-xl font-semibold mb-3 text-blue-400 flex items-center gap-2">
+                    <BarChart3 className="w-5 h-5" />
+                    Extracted Data
+                  </h3>
                   <div className="grid md:grid-cols-2 gap-4">
                     {selectedAnalysis.extracted_data.key_numbers?.length > 0 && (
                       <div className="p-4 rounded-lg bg-white/5 border border-white/10">
@@ -498,7 +501,10 @@ Execute now.`;
               {/* Key Insights */}
               {selectedAnalysis.key_insights && selectedAnalysis.key_insights.length > 0 && (
                 <div>
-                  <h3 className="text-xl font-semibold mb-3 text-green-400">💡 Key Insights</h3>
+                  <h3 className="text-xl font-semibold mb-3 text-green-400 flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5" />
+                    Key Insights
+                  </h3>
                   <ul className="space-y-2">
                     {selectedAnalysis.key_insights.map((insight, idx) => (
                       <li key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
@@ -513,7 +519,10 @@ Execute now.`;
               {/* Suggested Actions */}
               {selectedAnalysis.suggested_actions && selectedAnalysis.suggested_actions.length > 0 && (
                 <div>
-                  <h3 className="text-xl font-semibold mb-3 text-orange-400">🎯 Suggested Actions</h3>
+                  <h3 className="text-xl font-semibold mb-3 text-orange-400 flex items-center gap-2">
+                    <Target className="w-5 h-5" />
+                    Suggested Actions
+                  </h3>
                   <div className="space-y-3">
                     {selectedAnalysis.suggested_actions.map((action, idx) => (
                       <div key={idx} className="p-4 rounded-lg bg-white/5 border border-white/10">
