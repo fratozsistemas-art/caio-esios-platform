@@ -56,6 +56,11 @@ export default function VectorDecisionEngine() {
     enabled: !!selectedDecision?.id
   });
 
+  const { data: allCheckpoints = [] } = useQuery({
+    queryKey: ['all_vector_checkpoints'],
+    queryFn: () => base44.entities.VectorCheckpoint.list('-checkpoint_date', 100)
+  });
+
   const activeDecisions = decisions.filter(d => ['active', 'monitoring'].includes(d.status));
   const pendingCheckpoints = activeDecisions.filter(d => {
     if (!d.next_checkpoint_date) return false;
@@ -323,7 +328,7 @@ export default function VectorDecisionEngine() {
         <TabsContent value="learning" className="mt-6">
           <VectorLearningEngine 
             decisions={decisions} 
-            checkpoints={checkpoints}
+            checkpoints={allCheckpoints}
           />
         </TabsContent>
       </Tabs>
