@@ -8,17 +8,18 @@ import {
 } from 'recharts';
 import { 
   TrendingUp, Activity, GitBranch, Eye, Check, 
-  ChevronRight, Sparkles, BarChart3, LineChart, 
-  ScatterChart, PieChart as PieChartIcon, AreaChart as AreaChartIcon
+  ChevronRight, Sparkles, BarChart3,
+  LineChart as LineChartIcon, ScatterChart as ScatterChartIcon,
+  PieChart as PieChartIcon, AreaChart as AreaChartIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const COLORS = ['#00D4FF', '#FFB800', '#22C55E', '#EF4444', '#A855F7', '#EC4899'];
 
 const chartTypeIcons = {
-  line: LineChart,
+  line: LineChartIcon,
   bar: BarChart3,
-  scatter: ScatterChart,
+  scatter: ScatterChartIcon,
   area: AreaChartIcon,
   pie: PieChartIcon
 };
