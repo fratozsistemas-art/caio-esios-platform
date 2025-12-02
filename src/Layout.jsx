@@ -51,12 +51,13 @@ function LayoutInner({ children, currentPageName }) {
     },
     {
       title: t('nav.analysis', 'Analysis'),
-      items: [
-        { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject', badge: 'v6.0' },
-        { name: t('nav.fileAnalyzer', 'File Analyzer'), icon: FileText, path: 'FileAnalyzer' },
-        { name: t('nav.techIntelligence', 'Tech Intelligence'), icon: Code, path: 'TechIntelligence' }
-      ]
-    },
+                  items: [
+                    { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject', badge: 'v6.0' },
+                    { name: t('nav.fileAnalyzer', 'File Analyzer'), icon: FileText, path: 'FileAnalyzer' },
+                    { name: t('nav.advancedAnalysis', 'Advanced Data Analysis'), icon: BarChart3, path: 'AdvancedDataAnalysis', badge: 'NEW' },
+                    { name: t('nav.techIntelligence', 'Tech Intelligence'), icon: Code, path: 'TechIntelligence' }
+                  ]
+                },
     {
       title: t('nav.aiWorkflows', 'AI Workflows'),
       items: [
