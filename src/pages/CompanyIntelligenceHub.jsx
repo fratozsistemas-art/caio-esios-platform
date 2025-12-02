@@ -171,6 +171,177 @@ export default function CompanyIntelligenceHub() {
   const currentMethod = searchMethods.find(m => m.id === searchMethod);
   const CurrentIcon = currentMethod?.icon || Search;
 
+  // Função para renderizar valores de campos de forma legível
+  const renderFieldValue = (key, value) => {
+    if (value === null || value === undefined) {
+      return <p className="text-slate-500">N/A</p>;
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return <p className="text-slate-500">Nenhum item</p>;
+      }
+      return (
+        <div className="space-y-1">
+          {value.map((item, idx) => (
+            <div key={idx} className="p-2 bg-slate-800/50 rounded text-sm">
+              {typeof item === 'object' ? (
+                <div className="space-y-1">
+                  {Object.entries(item).map(([k, v]) => (
+                    <div key={k} className="flex gap-2">
+                      <span className="text-slate-500 text-xs">{k.replace(/_/g, ' ')}:</span>
+                      <span className="text-white text-xs">{String(v)}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <span className="text-white">{String(item)}</span>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    if (typeof value === 'object') {
+      return (
+        <div className="p-2 bg-slate-800/50 rounded space-y-1">
+          {Object.entries(value).map(([k, v]) => (
+            <div key={k} className="flex gap-2">
+              <span className="text-slate-500 text-xs">{k.replace(/_/g, ' ')}:</span>
+              <span className="text-white text-xs">{typeof v === 'object' ? JSON.stringify(v) : String(v)}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return <p className="text-white">{String(value)}</p>;
+  };
+
+  // Função para renderizar dados enriquecidos
+  const renderEnrichedData = (data) => {
+    if (!data) return null;
+
+    const sections = [];
+    
+    if (data.summary || data.description) {
+      sections.push(
+        <Card key="summary" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              Resumo Executivo
+            </h4>
+            <p className="text-slate-300 text-sm">{data.summary || data.description}</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (data.key_insights || data.insights) {
+      const insights = data.key_insights || data.insights;
+      sections.push(
+        <Card key="insights" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-cyan-400" />
+              Insights Principais
+            </h4>
+            <ul className="space-y-2">
+              {(Array.isArray(insights) ? insights : [insights]).map((insight, idx) => (
+                <li key={idx} className="flex items-start gap-2 text-sm">
+                  <span className="text-cyan-400 mt-1">•</span>
+                  <span className="text-slate-300">{typeof insight === 'object' ? insight.text || insight.description : insight}</span>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (data.executives || data.leadership) {
+      const executives = data.executives || data.leadership;
+      sections.push(
+        <Card key="executives" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <User className="w-4 h-4 text-amber-400" />
+              Liderança
+            </h4>
+            <div className="grid md:grid-cols-2 gap-2">
+              {(Array.isArray(executives) ? executives : [executives]).map((exec, idx) => (
+                <div key={idx} className="p-2 bg-slate-900/50 rounded text-sm">
+                  <span className="text-white">{typeof exec === 'object' ? exec.name || exec.full_name : exec}</span>
+                  {typeof exec === 'object' && exec.role && (
+                    <span className="text-slate-500 ml-2">({exec.role})</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (data.competitors || data.competition) {
+      const competitors = data.competitors || data.competition;
+      sections.push(
+        <Card key="competitors" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-red-400" />
+              Competidores
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {(Array.isArray(competitors) ? competitors : [competitors]).map((comp, idx) => (
+                <Badge key={idx} className="bg-red-500/20 text-red-400 border-red-500/30">
+                  {typeof comp === 'object' ? comp.name : comp}
+                </Badge>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Mostrar outros dados não processados
+    const processedKeys = ['summary', 'description', 'key_insights', 'insights', 'executives', 'leadership', 'competitors', 'competition'];
+    const otherData = Object.entries(data).filter(([key]) => !processedKeys.includes(key));
+    
+    if (otherData.length > 0) {
+      sections.push(
+        <Card key="other" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-slate-400" />
+              Dados Adicionais
+            </h4>
+            <div className="grid md:grid-cols-2 gap-3">
+              {otherData.map(([key, value]) => (
+                <div key={key}>
+                  <p className="text-xs text-slate-500 uppercase mb-1">{key.replace(/_/g, ' ')}</p>
+                  {renderFieldValue(key, value)}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    return sections.length > 0 ? sections : (
+      <Card className="bg-slate-800/30 border-slate-700">
+        <CardContent className="p-4">
+          <pre className="text-xs text-slate-300 whitespace-pre-wrap overflow-auto max-h-60">
+            {JSON.stringify(data, null, 2)}
+          </pre>
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
     <div className="p-6 md:p-8 space-y-6">
       {/* Header */}
@@ -320,9 +491,7 @@ export default function CompanyIntelligenceHub() {
                   {Object.entries(results).map(([key, value]) => (
                     <div key={key} className="space-y-1">
                       <p className="text-xs text-slate-400 uppercase">{key.replace(/_/g, ' ')}</p>
-                      <p className="text-white">
-                        {typeof value === 'object' ? JSON.stringify(value) : value || "N/A"}
-                      </p>
+                      {renderFieldValue(key, value)}
                     </div>
                   ))}
                 </div>
@@ -354,10 +523,8 @@ export default function CompanyIntelligenceHub() {
                     )}
                   </div>
                   {enrichmentStatus.data && (
-                    <div className="mt-4 p-3 bg-slate-800/50 rounded-lg">
-                      <pre className="text-xs text-slate-300 whitespace-pre-wrap">
-                        {JSON.stringify(enrichmentStatus.data, null, 2)}
-                      </pre>
+                    <div className="mt-4 space-y-3">
+                      {renderEnrichedData(enrichmentStatus.data)}
                     </div>
                   )}
                 </CardContent>
