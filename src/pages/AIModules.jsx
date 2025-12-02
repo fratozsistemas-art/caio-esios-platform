@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Globe, Target, Code, Lightbulb, Brain, Sparkles, DollarSign, BarChart, Rocket, Layers, TrendingUp, Users, Shield } from "lucide-react";
+import { Globe, Target, Code, Lightbulb, Brain, Sparkles, DollarSign, BarChart, Rocket, Layers, TrendingUp, Users, Shield, Link2 } from "lucide-react";
 import M1ScenarioGenerator from "../components/modules/M1ScenarioGenerator";
 import M2CompetitiveAnalyzer from "../components/modules/M2CompetitiveAnalyzer";
 import M3TechStackAdvisor from "../components/modules/M3TechStackAdvisor";
@@ -14,6 +14,7 @@ import M8MaieuticReframing from "../components/modules/M8MaieuticReframing";
 import M9FundingIntelligence from "../components/modules/M9FundingIntelligence";
 import M10BehavioralIntelligence from "../components/modules/M10BehavioralIntelligence";
 import M11HermesGovernance from "../components/modules/M11HermesGovernance";
+import ModuleSynergyEngine from "../components/modules/ModuleSynergyEngine";
 
 const modules = [
   { id: "m1", name: "M1 Market", icon: Globe, color: "blue", description: "Scenario Generation" },
@@ -31,6 +32,13 @@ const modules = [
 
 export default function AIModules() {
   const [activeTab, setActiveTab] = useState("m1");
+  const [moduleOutputs, setModuleOutputs] = useState({});
+
+  const handleModuleOutput = (moduleId, data) => {
+    setModuleOutputs(prev => ({ ...prev, [moduleId]: data }));
+  };
+
+  const activeModulesCount = Object.keys(moduleOutputs).filter(k => moduleOutputs[k]).length;
 
   return (
     <div className="space-y-6">
@@ -44,10 +52,18 @@ export default function AIModules() {
             Advanced AI capabilities integrated into strategy modules M1-M11
           </p>
         </div>
-        <Badge className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border-purple-500/30 px-4 py-2">
-          <Sparkles className="w-4 h-4 mr-2" />
-          AI-Powered Analysis
-        </Badge>
+        <div className="flex items-center gap-3">
+          {activeModulesCount > 0 && (
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/30 px-3 py-1">
+              <Link2 className="w-3 h-3 mr-1" />
+              {activeModulesCount} modules active
+            </Badge>
+          )}
+          <Badge className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300 border-purple-500/30 px-4 py-2">
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI-Powered Analysis
+          </Badge>
+        </div>
       </div>
 
       <Card className="bg-white/5 border-white/10">
@@ -73,51 +89,57 @@ export default function AIModules() {
             </TabsList>
 
             <TabsContent value="m1">
-              <M1ScenarioGenerator onScenariosGenerated={(data) => console.log("Scenarios:", data)} />
+              <M1ScenarioGenerator onScenariosGenerated={(data) => handleModuleOutput("m1", data)} />
             </TabsContent>
 
             <TabsContent value="m2">
-              <M2CompetitiveAnalyzer onAnalysisComplete={(data) => console.log("Analysis:", data)} />
+              <M2CompetitiveAnalyzer onAnalysisComplete={(data) => handleModuleOutput("m2", data)} />
             </TabsContent>
 
             <TabsContent value="m3">
-              <M3TechStackAdvisor onRecommendation={(data) => console.log("Recommendation:", data)} />
+              <M3TechStackAdvisor onRecommendation={(data) => handleModuleOutput("m3", data)} />
             </TabsContent>
 
             <TabsContent value="m4">
-              <M4FinancialForecaster onForecastComplete={(data) => console.log("Forecast:", data)} />
+              <M4FinancialForecaster onForecastComplete={(data) => handleModuleOutput("m4", data)} />
             </TabsContent>
 
             <TabsContent value="m5">
-              <M5StrategicSynthesizer onSynthesisComplete={(data) => console.log("Synthesis:", data)} />
+              <M5StrategicSynthesizer onSynthesisComplete={(data) => handleModuleOutput("m5", data)} />
             </TabsContent>
 
             <TabsContent value="m6">
-              <M6OpportunityMatrix onAnalysisComplete={(data) => console.log("Matrix:", data)} />
+              <M6OpportunityMatrix onAnalysisComplete={(data) => handleModuleOutput("m6", data)} />
             </TabsContent>
 
             <TabsContent value="m7">
-              <M7ImplementationPlanner onPlanComplete={(data) => console.log("Plan:", data)} />
+              <M7ImplementationPlanner onPlanComplete={(data) => handleModuleOutput("m7", data)} />
             </TabsContent>
 
             <TabsContent value="m8">
-              <M8MaieuticReframing onReframingComplete={(data) => console.log("Reframing:", data)} />
+              <M8MaieuticReframing onReframingComplete={(data) => handleModuleOutput("m8", data)} />
             </TabsContent>
 
             <TabsContent value="m9">
-              <M9FundingIntelligence onAnalysisComplete={(data) => console.log("Funding:", data)} />
+              <M9FundingIntelligence onAnalysisComplete={(data) => handleModuleOutput("m9", data)} />
             </TabsContent>
 
             <TabsContent value="m10">
-              <M10BehavioralIntelligence onAnalysisComplete={(data) => console.log("Behavioral:", data)} />
+              <M10BehavioralIntelligence onAnalysisComplete={(data) => handleModuleOutput("m10", data)} />
             </TabsContent>
 
             <TabsContent value="m11">
-              <M11HermesGovernance onAnalysisComplete={(data) => console.log("Governance:", data)} />
+              <M11HermesGovernance onAnalysisComplete={(data) => handleModuleOutput("m11", data)} />
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Cross-Module Synergy Engine */}
+      <ModuleSynergyEngine 
+        moduleOutputs={moduleOutputs} 
+        onSynergyGenerated={(data) => console.log("Synergies:", data)} 
+      />
     </div>
   );
 }
