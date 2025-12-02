@@ -16,15 +16,24 @@ import DataVisualizationPanel from "@/components/analysis/DataVisualizationPanel
 import AIInsightsPanel from "@/components/analysis/AIInsightsPanel";
 import ExportReportDialog from "@/components/analysis/ExportReportDialog";
 import ShareAnalysisDialog from "@/components/collaboration/ShareAnalysisDialog";
+import SuggestedVisualizationsPanel from "@/components/analysis/SuggestedVisualizationsPanel";
+import AITaskSuggestions from "@/components/analysis/AITaskSuggestions";
+import { useQuery } from '@tanstack/react-query';
 
 export default function AdvancedDataAnalysis() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [consolidatedData, setConsolidatedData] = useState(null);
   const [aiInsights, setAiInsights] = useState(null);
+  const [suggestedVisualizations, setSuggestedVisualizations] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [activeTab, setActiveTab] = useState("upload");
   const [showExportDialog, setShowExportDialog] = useState(false);
+
+  const { data: users = [] } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => base44.entities.User.list()
+  });
 
   const handleFilesUploaded = useCallback(async (files) => {
     setUploadedFiles(prev => [...prev, ...files]);
@@ -180,7 +189,37 @@ Retorne JSON estruturado com análise completa.`,
                   action: { type: "string" },
                   rationale: { type: "string" },
                   expectedImpact: { type: "string" },
-                  timeframe: { type: "string" }
+                  timeframe: { type: "string" },
+                  priority: { type: "string", enum: ["critical", "high", "medium", "low"] }
+                }
+              }
+            },
+            suggestedVisualizations: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  type: { type: "string", enum: ["line", "bar", "scatter", "area", "pie"] },
+                  title: { type: "string" },
+                  insight: { type: "string" },
+                  xAxis: { type: "string" },
+                  yAxis: { type: "string" },
+                  reason: { type: "string" }
+                }
+              }
+            },
+            suggestedTasks: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  title: { type: "string" },
+                  description: { type: "string" },
+                  priority: { type: "string", enum: ["critical", "high", "medium", "low"] },
+                  expectedImpact: { type: "string" },
+                  framework: { type: "string" }
                 }
               }
             },
@@ -191,6 +230,11 @@ Retorne JSON estruturado com análise completa.`,
       });
 
       setAiInsights(result);
+      
+      // Set suggested visualizations
+      if (result.suggestedVisualizations) {
+        setSuggestedVisualizations(result.suggestedVisualizations);
+      }
       setActiveTab("insights");
       toast.success("Análise de IA concluída!");
     } catch (error) {
@@ -410,7 +454,36 @@ Retorne JSON estruturado com análise completa.`,
         {/* Insights Tab */}
         <TabsContent value="insights">
           {aiInsights ? (
-            <AIInsightsPanel insights={aiInsights} />
+            <div className="space-y-6">
+              {/* Suggested Visualizations */}
+              {suggestedVisualizations.length > 0 && (
+                <SuggestedVisualizationsPanel 
+                  suggestions={suggestedVisualizations}
+                  data={consolidatedData}
+                  onApply={(viz) => toast.success(`Visualização "${viz.title}" aplicada!`)}
+                />
+              )}
+
+              {/* AI Task Suggestions */}
+              {(aiInsights.suggestedTasks?.length > 0 || aiInsights.recommendations?.length > 0) && (
+                <AITaskSuggestions
+                  suggestions={aiInsights.suggestedTasks || aiInsights.recommendations?.map((r, i) => ({
+                    id: `rec-${i}`,
+                    title: r.action,
+                    description: r.rationale,
+                    priority: r.priority || 'medium',
+                    expectedImpact: r.expectedImpact,
+                    timeframe: r.timeframe
+                  }))}
+                  sourceType="data_analysis"
+                  sourceId={`analysis-${Date.now()}`}
+                  users={users}
+                />
+              )}
+
+              {/* Main Insights Panel */}
+              <AIInsightsPanel insights={aiInsights} />
+            </div>
           ) : (
             <Card className="bg-white/5 border-white/10">
               <CardContent className="py-16 text-center">

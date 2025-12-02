@@ -1,9 +1,9 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, Loader2, TrendingUp, AlertTriangle, CheckCircle, Trash2, Eye } from "lucide-react";
+import { FileText, Loader2, TrendingUp, AlertTriangle, CheckCircle, Trash2, Eye, X, Target, Share2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import SecureFileUpload from "@/components/ui/SecureFileUpload";
 import { LoadingCard } from "@/components/ui/LoadingState";
@@ -12,6 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { toast } from "sonner";
+import SuggestedVisualizationsPanel from "@/components/analysis/SuggestedVisualizationsPanel";
+import AITaskSuggestions from "@/components/analysis/AITaskSuggestions";
+import ShareAnalysisDialog from "@/components/collaboration/ShareAnalysisDialog";
 
 export default function FileAnalyzer() {
   const queryClient = useQueryClient();
@@ -19,6 +22,11 @@ export default function FileAnalyzer() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [analysisToDelete, setAnalysisToDelete] = useState(null);
+
+  const { data: users = [] } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => base44.entities.User.list()
+  });
 
   const { data: analyses = [], isLoading } = useQuery({
     queryKey: ['fileAnalyses'],
@@ -149,9 +157,29 @@ Return VALID JSON with ALL fields populated:
   
   "visualizations": [
     {
+      "id": "viz-1",
       "type": "line",
       "title": "Revenue vs CAC Trend (12 months)",
-      "insight": "Shows unit economics trajectory"
+      "insight": "Shows unit economics trajectory",
+      "reason": "Trend data detected - line chart ideal for showing progression"
+    },
+    {
+      "id": "viz-2",
+      "type": "scatter",
+      "title": "CAC vs LTV Correlation",
+      "insight": "Identify customer acquisition efficiency",
+      "reason": "Two numeric variables - scatter plot shows correlation"
+    }
+  ],
+  
+  "suggested_tasks": [
+    {
+      "id": "task-1",
+      "title": "Revisar estrutura de custos",
+      "description": "CAC trending up - investigar eficiência de marketing",
+      "priority": "high",
+      "expectedImpact": "Potential 15% cost reduction",
+      "framework": "EVA"
     }
   ],
   
@@ -207,7 +235,30 @@ Execute now.`;
             },
             visualizations: {
               type: "array",
-              items: { type: "object" }
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  type: { type: "string", enum: ["line", "bar", "scatter", "area", "pie"] },
+                  title: { type: "string" },
+                  insight: { type: "string" },
+                  reason: { type: "string" }
+                }
+              }
+            },
+            suggested_tasks: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  id: { type: "string" },
+                  title: { type: "string" },
+                  description: { type: "string" },
+                  priority: { type: "string", enum: ["low", "medium", "high", "critical"] },
+                  expectedImpact: { type: "string" },
+                  framework: { type: "string" }
+                }
+              }
             },
             confidence_score: { type: "number", minimum: 0, maximum: 100 },
             confidence_justification: { type: "string" }
@@ -230,6 +281,7 @@ Execute now.`;
         key_insights: result.key_insights,
         suggested_actions: result.suggested_actions,
         visualizations: result.visualizations || [],
+        suggested_tasks: result.suggested_tasks || [],
         confidence_score: result.confidence_score,
         status: 'completed'
       });
@@ -490,6 +542,30 @@ Execute now.`;
                 </div>
               )}
 
+              {/* Suggested Visualizations */}
+              {selectedAnalysis.visualizations && selectedAnalysis.visualizations.length > 0 && (
+                <SuggestedVisualizationsPanel 
+                  suggestions={selectedAnalysis.visualizations}
+                  onApply={(viz) => toast.success(`Visualização "${viz.title}" aplicada!`)}
+                />
+              )}
+
+              {/* AI Task Suggestions */}
+              {(selectedAnalysis.suggested_tasks?.length > 0 || selectedAnalysis.suggested_actions?.length > 0) && (
+                <AITaskSuggestions
+                  suggestions={selectedAnalysis.suggested_tasks || selectedAnalysis.suggested_actions?.map((a, i) => ({
+                    id: `action-${i}`,
+                    title: a.title,
+                    description: a.description,
+                    priority: a.priority,
+                    framework: a.framework
+                  }))}
+                  sourceType="file_analysis"
+                  sourceId={selectedAnalysis.id}
+                  users={users}
+                />
+              )}
+
               {/* Confidence Score */}
               {selectedAnalysis.confidence_score && (
                 <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30">
@@ -501,6 +577,15 @@ Execute now.`;
                   </div>
                 </div>
               )}
+
+              {/* Share Button */}
+              <div className="flex justify-end pt-4 border-t border-white/10">
+                <ShareAnalysisDialog
+                  analysisType="file_analysis"
+                  analysisId={selectedAnalysis.id}
+                  analysisTitle={selectedAnalysis.file_name}
+                />
+              </div>
             </div>
           )}
         </DialogContent>
