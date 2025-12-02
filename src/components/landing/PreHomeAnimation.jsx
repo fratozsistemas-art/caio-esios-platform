@@ -39,7 +39,8 @@ export default function PreHomeAnimation({ onComplete }) {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1 }}
-          className="fixed inset-0 z-50 bg-[#0A1628] flex items-center justify-center overflow-hidden"
+          className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden"
+          style={{ backgroundColor: '#0A1628' }}
         >
           {/* Animated logo with glow effect */}
           <div className="relative flex items-center justify-center">
