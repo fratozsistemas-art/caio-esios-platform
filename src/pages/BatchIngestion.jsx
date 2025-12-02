@@ -47,18 +47,18 @@ export default function BatchIngestion() {
       return file_url;
     },
     onSuccess: (fileUrl) => {
-      setUploadedFile(fileUrl);
-      toast.success('File uploaded successfully');
+      setUploadedFileUrl(fileUrl);
+      toast.success('Arquivo enviado com sucesso');
     },
     onError: () => {
-      toast.error('File upload failed');
+      toast.error('Falha no upload');
     }
   });
 
   const processFileMutation = useMutation({
     mutationFn: async () => {
       const { data } = await base44.functions.invoke('bulkUploadCVMData', {
-        file_url: uploadedFile
+        file_url: uploadedFileUrl
       });
       return data;
     },
@@ -67,11 +67,122 @@ export default function BatchIngestion() {
       toast.success(data.message);
     },
     onError: (error) => {
-      toast.error('Processing failed: ' + error.message);
+      toast.error('Erro no processamento: ' + error.message);
     }
   });
 
-  const handleFileSelect = async (e) => {
+  const extractDataMutation = useMutation({
+    mutationFn: async () => {
+      const schema = getSchemaForMode(extractionMode, customSchema);
+      
+      const result = await base44.integrations.Core.ExtractDataFromUploadedFile({
+        file_url: uploadedFileUrl,
+        json_schema: schema
+      });
+      
+      return result;
+    },
+    onSuccess: (data) => {
+      if (data.status === 'success') {
+        setExtractedData(data.output);
+        toast.success('Dados extraídos com sucesso!');
+      } else {
+        toast.error('Erro na extração: ' + data.details);
+      }
+    },
+    onError: (error) => {
+      toast.error('Erro na extração: ' + error.message);
+    }
+  });
+
+  const getSchemaForMode = (mode, custom) => {
+    switch (mode) {
+      case 'cvm_companies':
+        return {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              cnpj: { type: "string", description: "CNPJ da empresa" },
+              razao_social: { type: "string", description: "Razão social" },
+              nome_fantasia: { type: "string", description: "Nome fantasia" },
+              setor: { type: "string", description: "Setor de atuação" },
+              capital_social: { type: "number", description: "Capital social" },
+              situacao: { type: "string", description: "Situação cadastral" },
+              uf: { type: "string", description: "Estado" },
+              municipio: { type: "string", description: "Município" }
+            }
+          }
+        };
+      case 'financial_data':
+        return {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              company_name: { type: "string" },
+              period: { type: "string" },
+              revenue: { type: "number" },
+              net_income: { type: "number" },
+              ebitda: { type: "number" },
+              total_assets: { type: "number" },
+              total_liabilities: { type: "number" },
+              equity: { type: "number" }
+            }
+          }
+        };
+      case 'contacts':
+        return {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              email: { type: "string" },
+              phone: { type: "string" },
+              company: { type: "string" },
+              position: { type: "string" },
+              linkedin: { type: "string" }
+            }
+          }
+        };
+      case 'custom':
+        try {
+          return JSON.parse(custom);
+        } catch {
+          return { type: "object", properties: {} };
+        }
+      case 'auto':
+      default:
+        return {
+          type: "object",
+          properties: {
+            extracted_data: { type: "array", items: { type: "object" } },
+            summary: { type: "string" },
+            data_type: { type: "string" },
+            row_count: { type: "number" }
+          }
+        };
+    }
+  };
+
+  const handleFileSelect = async (e, allowedMimeTypes) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setFileName(file.name);
+    setIsUploading(true);
+    setExtractedData(null);
+    setProcessingResults(null);
+    
+    try {
+      await uploadFileMutation.mutateAsync(file);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleStructuredFileSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -82,10 +193,11 @@ export default function BatchIngestion() {
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error('Please upload a CSV or XLSX file');
+      toast.error('Por favor, envie um arquivo CSV ou XLSX');
       return;
     }
 
+    setFileName(file.name);
     setIsUploading(true);
     await uploadFileMutation.mutateAsync(file);
     setIsUploading(false);
