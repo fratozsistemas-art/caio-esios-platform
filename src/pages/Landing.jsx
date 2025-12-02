@@ -1382,6 +1382,11 @@ export default function Landing() {
                   </a>
                 </li>
                 <li>
+                  <a href={createPageUrl("FounderProfile")} className="text-slate-200 hover:text-[#FFB800] transition-colors">
+                    Founder
+                  </a>
+                </li>
+                <li>
                   <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Blog
                   </a>
