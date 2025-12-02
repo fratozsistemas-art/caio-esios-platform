@@ -163,7 +163,7 @@ export default function Landing() {
           "contactPoint": {
             "@type": "ContactPoint",
             "contactType": "Sales",
-            "email": "demo@caiovision.com.br"
+            "email": "contato@caiovision.com.br"
           }
         },
         {
