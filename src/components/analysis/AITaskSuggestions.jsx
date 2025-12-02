@@ -9,17 +9,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Target, Calendar, User, Flag, Loader2, Check, 
-  Clock, Sparkles, ChevronDown, ChevronUp
+  Clock, Sparkles, ChevronDown, ChevronUp, 
+  AlertCircle, ArrowUp, Minus
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { format, addDays } from 'date-fns';
 
 const priorityConfig = {
-  critical: { color: 'bg-red-500', label: 'Crítica', days: 2 },
-  high: { color: 'bg-orange-500', label: 'Alta', days: 5 },
-  medium: { color: 'bg-blue-500', label: 'Média', days: 10 },
-  low: { color: 'bg-slate-500', label: 'Baixa', days: 20 }
+  critical: { color: 'bg-red-500', label: 'Crítica', days: 2, icon: AlertCircle },
+  high: { color: 'bg-orange-500', label: 'Alta', days: 5, icon: ArrowUp },
+  medium: { color: 'bg-blue-500', label: 'Média', days: 10, icon: Flag },
+  low: { color: 'bg-slate-500', label: 'Baixa', days: 20, icon: Minus }
 };
 
 export default function AITaskSuggestions({ suggestions, sourceType, sourceId, users = [] }) {
@@ -149,7 +150,10 @@ export default function AITaskSuggestions({ suggestions, sourceType, sourceId, u
                         {isCreated ? (
                           <Check className="w-4 h-4 text-green-400" />
                         ) : (
-                          <Flag className="w-4 h-4 text-white opacity-70" />
+                          (() => {
+                            const PriorityIcon = priorityConfig[priority]?.icon || Flag;
+                            return <PriorityIcon className="w-4 h-4 text-white opacity-70" />;
+                          })()
                         )}
                       </div>
                       <div className="flex-1 min-w-0">

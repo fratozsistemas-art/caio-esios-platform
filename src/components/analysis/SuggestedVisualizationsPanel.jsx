@@ -8,18 +8,19 @@ import {
 } from 'recharts';
 import { 
   TrendingUp, Activity, GitBranch, Eye, Check, 
-  ChevronRight, Sparkles, BarChart3
+  ChevronRight, Sparkles, BarChart3, LineChart, 
+  ScatterChart, PieChart as PieChartIcon, AreaChart as AreaChartIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const COLORS = ['#00D4FF', '#FFB800', '#22C55E', '#EF4444', '#A855F7', '#EC4899'];
 
 const chartTypeIcons = {
-  line: TrendingUp,
+  line: LineChart,
   bar: BarChart3,
-  scatter: GitBranch,
-  area: Activity,
-  pie: Activity
+  scatter: ScatterChart,
+  area: AreaChartIcon,
+  pie: PieChartIcon
 };
 
 export default function SuggestedVisualizationsPanel({ suggestions, data, onApply }) {

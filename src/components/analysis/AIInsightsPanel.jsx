@@ -6,7 +6,8 @@ import { Progress } from "@/components/ui/progress";
 import { 
   TrendingUp, TrendingDown, Minus, AlertTriangle, 
   Lightbulb, Target, ArrowUpRight, ArrowDownRight,
-  Activity, Sparkles, CheckCircle, Clock, Share2
+  Activity, Sparkles, CheckCircle, Clock, Share2,
+  Zap, LineChart, GitCompare, Brain
 } from "lucide-react";
 import { motion } from "framer-motion";
 import CreateTaskFromInsightDialog from "@/components/collaboration/CreateTaskFromInsightDialog";
@@ -106,7 +107,7 @@ export default function AIInsightsPanel({ insights }) {
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-green-400" />
+                <LineChart className="w-5 h-5 text-green-400" />
                 Tendências Identificadas
               </CardTitle>
             </CardHeader>
@@ -143,7 +144,7 @@ export default function AIInsightsPanel({ insights }) {
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-amber-400" />
+                <Zap className="w-5 h-5 text-amber-400" />
                 Anomalias Detectadas
               </CardTitle>
             </CardHeader>
@@ -180,7 +181,7 @@ export default function AIInsightsPanel({ insights }) {
         <Card className="bg-white/5 border-white/10">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-400" />
+              <GitCompare className="w-5 h-5 text-blue-400" />
               Correlações Descobertas
             </CardTitle>
           </CardHeader>
@@ -233,7 +234,7 @@ export default function AIInsightsPanel({ insights }) {
         <Card className="bg-white/5 border-white/10">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Lightbulb className="w-5 h-5 text-amber-400" />
+              <Brain className="w-5 h-5 text-amber-400" />
               Insights Estratégicos
             </CardTitle>
           </CardHeader>
@@ -291,7 +292,7 @@ export default function AIInsightsPanel({ insights }) {
         <Card className="bg-white/5 border-white/10">
           <CardHeader>
             <CardTitle className="text-white flex items-center gap-2">
-              <Target className="w-5 h-5 text-green-400" />
+              <CheckCircle className="w-5 h-5 text-green-400" />
               Recomendações
             </CardTitle>
           </CardHeader>

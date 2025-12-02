@@ -5,16 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
-  MessageSquare, Brain, TrendingUp, AlertTriangle, Smile, 
-  Frown, Meh, Hash, Users, Loader2, Sparkles, RefreshCw
+  MessageSquare, Brain, TrendingUp, AlertTriangle, ThumbsUp, 
+  ThumbsDown, Minus, Hash, Users, Loader2, Sparkles, RefreshCw
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
 const sentimentIcons = {
-  positive: { icon: Smile, color: 'text-green-400', bg: 'bg-green-500/20' },
-  negative: { icon: Frown, color: 'text-red-400', bg: 'bg-red-500/20' },
-  neutral: { icon: Meh, color: 'text-slate-400', bg: 'bg-slate-500/20' }
+  positive: { icon: ThumbsUp, color: 'text-green-400', bg: 'bg-green-500/20' },
+  negative: { icon: ThumbsDown, color: 'text-red-400', bg: 'bg-red-500/20' },
+  neutral: { icon: Minus, color: 'text-slate-400', bg: 'bg-slate-500/20' }
 };
 
 export default function UnstructuredTextAnalysis({ texts = [], onAnalysisComplete }) {
