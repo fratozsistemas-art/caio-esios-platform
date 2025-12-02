@@ -1320,7 +1320,7 @@ export default function Landing() {
             ))}
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-2 gap-12 items-start">
             <div>
               <h3 className="text-2xl font-bold text-white mb-6">Investment Thesis</h3>
               <div className="space-y-4">
