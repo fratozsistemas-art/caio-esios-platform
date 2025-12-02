@@ -5,18 +5,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Search, Filter, ZoomIn, ZoomOut, Maximize2, Eye, Minimize2,
+  Search, Filter, ZoomIn, ZoomOut, Maximize2, Minimize2,
   Network, Building2, Users, Target, ExternalLink, Loader2,
   Code, TrendingUp, DollarSign, Database, GitMerge, Sparkles,
-  ChevronRight, Info, X, Play, Pause, RotateCcw
+  ChevronRight, Info, X, Play, Pause, RotateCcw, Plus, Minus,
+  Eye, Route, MoreHorizontal, Focus, Trash2, Link2, MousePointer
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { toast } from "sonner";
 
 const NODE_CONFIG = {
   company: { color: '#3b82f6', icon: Building2, label: 'Company' },
@@ -36,13 +38,14 @@ export default function EmbeddableKnowledgeGraph({
   title = "Strategic Connections",
   height = 500,
   showFullScreenButton = true,
-  onEntitySelect
+  onEntitySelect,
+  highlightedInsights = []
 }) {
   const svgRef = useRef(null);
   const containerRef = useRef(null);
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [selectedNode, setSelectedNode] = useState(null);
+  const [selectedNodes, setSelectedNodes] = useState(new Set());
   const [hoveredNode, setHoveredNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -50,30 +53,42 @@ export default function EmbeddableKnowledgeGraph({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [nodePositions, setNodePositions] = useState({});
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(true);
-  const [activeTab, setActiveTab] = useState("graph");
-  const animationRef = useRef(null);
+  const [expandedNodes, setExpandedNodes] = useState(new Set());
+  const [highlightedPath, setHighlightedPath] = useState([]);
+  const [contextMenu, setContextMenu] = useState(null);
+  const [multiSelectMode, setMultiSelectMode] = useState(false);
+  const [insightFilters, setInsightFilters] = useState([]);
 
   const width = 900;
   const graphHeight = height - 60;
 
   // Fetch graph data
-  const { data: nodes = [], isLoading: nodesLoading } = useQuery({
+  const { data: allNodes = [], isLoading: nodesLoading } = useQuery({
     queryKey: ['embeddable_graph_nodes'],
-    queryFn: () => base44.entities.KnowledgeGraphNode.list('-created_date', 200)
+    queryFn: () => base44.entities.KnowledgeGraphNode.list('-created_date', 300)
   });
 
-  const { data: relationships = [], isLoading: relsLoading } = useQuery({
+  const { data: allRelationships = [], isLoading: relsLoading } = useQuery({
     queryKey: ['embeddable_graph_relationships'],
-    queryFn: () => base44.entities.KnowledgeGraphRelationship.list('-created_date', 500)
+    queryFn: () => base44.entities.KnowledgeGraphRelationship.list('-created_date', 800)
   });
 
-  // Filter nodes based on context
+  // Get connected nodes for expansion
+  const getConnectedNodes = useCallback((nodeId) => {
+    const connected = new Set();
+    allRelationships.forEach(r => {
+      if (r.from_node_id === nodeId) connected.add(r.to_node_id);
+      if (r.to_node_id === nodeId) connected.add(r.from_node_id);
+    });
+    return connected;
+  }, [allRelationships]);
+
+  // Filter nodes based on context, expansion, and insight filters
   const relevantNodes = React.useMemo(() => {
-    if (contextEntities.length === 0) return nodes;
+    const contextLabels = [...contextEntities, ...insightFilters].map(e => e?.toLowerCase()).filter(Boolean);
     
-    const contextLabels = contextEntities.map(e => e.toLowerCase());
-    const directMatches = nodes.filter(n => 
+    // Start with context matches
+    let directMatches = allNodes.filter(n => 
       contextLabels.some(label => 
         n.label?.toLowerCase().includes(label) || 
         label.includes(n.label?.toLowerCase())
@@ -81,21 +96,70 @@ export default function EmbeddableKnowledgeGraph({
     );
 
     const directIds = new Set(directMatches.map(n => n.id));
-    const connectedIds = new Set();
     
-    relationships.forEach(r => {
+    // Add expanded nodes' connections
+    const expandedConnections = new Set();
+    expandedNodes.forEach(nodeId => {
+      const connected = getConnectedNodes(nodeId);
+      connected.forEach(id => expandedConnections.add(id));
+    });
+
+    // Get first-level connections for context nodes
+    const connectedIds = new Set();
+    allRelationships.forEach(r => {
       if (directIds.has(r.from_node_id)) connectedIds.add(r.to_node_id);
       if (directIds.has(r.to_node_id)) connectedIds.add(r.from_node_id);
     });
 
-    const connectedNodes = nodes.filter(n => connectedIds.has(n.id) && !directIds.has(n.id));
-    return [...directMatches, ...connectedNodes.slice(0, 30)];
-  }, [nodes, relationships, contextEntities]);
+    // Combine all relevant nodes
+    const allRelevantIds = new Set([...directIds, ...connectedIds, ...expandedConnections, ...expandedNodes]);
+    
+    let result = allNodes.filter(n => allRelevantIds.has(n.id));
+    
+    // If no context, show top nodes
+    if (result.length === 0) {
+      result = allNodes.slice(0, 50);
+    }
+
+    return result.slice(0, 100);
+  }, [allNodes, allRelationships, contextEntities, expandedNodes, insightFilters, getConnectedNodes]);
 
   const relevantNodeIds = new Set(relevantNodes.map(n => n.id));
-  const relevantRelationships = relationships.filter(r => 
+  const relevantRelationships = allRelationships.filter(r => 
     relevantNodeIds.has(r.from_node_id) && relevantNodeIds.has(r.to_node_id)
   );
+
+  // Find path between two nodes (BFS)
+  const findPath = useCallback((startId, endId) => {
+    if (!startId || !endId) return [];
+    
+    const queue = [[startId]];
+    const visited = new Set([startId]);
+    
+    while (queue.length > 0) {
+      const path = queue.shift();
+      const current = path[path.length - 1];
+      
+      if (current === endId) return path;
+      
+      const neighbors = [];
+      allRelationships.forEach(r => {
+        if (r.from_node_id === current && !visited.has(r.to_node_id)) {
+          neighbors.push(r.to_node_id);
+        }
+        if (r.to_node_id === current && !visited.has(r.from_node_id)) {
+          neighbors.push(r.from_node_id);
+        }
+      });
+      
+      for (const neighbor of neighbors) {
+        visited.add(neighbor);
+        queue.push([...path, neighbor]);
+      }
+    }
+    
+    return [];
+  }, [allRelationships]);
 
   // Force-directed layout
   useEffect(() => {
@@ -169,25 +233,6 @@ export default function EmbeddableKnowledgeGraph({
     setNodePositions(nodeMap);
   }, [relevantNodes, relevantRelationships, width, graphHeight]);
 
-  // Animation for pulse effect
-  useEffect(() => {
-    if (!isAnimating) {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      return;
-    }
-    
-    let time = 0;
-    const animate = () => {
-      time += 0.02;
-      animationRef.current = requestAnimationFrame(animate);
-    };
-    animate();
-    
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
-  }, [isAnimating]);
-
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.25, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.25, 0.4));
   const handleResetView = () => { setZoom(1); setPan({ x: 0, y: 0 }); };
@@ -197,6 +242,7 @@ export default function EmbeddableKnowledgeGraph({
       setIsDragging(true);
       setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
     }
+    setContextMenu(null);
   };
 
   const handleMouseMove = (e) => {
@@ -207,9 +253,93 @@ export default function EmbeddableKnowledgeGraph({
 
   const handleMouseUp = () => setIsDragging(false);
 
-  const handleNodeClick = (node) => {
-    setSelectedNode(node);
-    if (onEntitySelect) onEntitySelect(node);
+  const handleNodeClick = (node, e) => {
+    e.stopPropagation();
+    
+    if (multiSelectMode) {
+      setSelectedNodes(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(node.id)) {
+          newSet.delete(node.id);
+        } else {
+          newSet.add(node.id);
+        }
+        return newSet;
+      });
+    } else {
+      setSelectedNodes(new Set([node.id]));
+      if (onEntitySelect) onEntitySelect(node);
+    }
+  };
+
+  const handleNodeDoubleClick = (node, e) => {
+    e.stopPropagation();
+    toggleNodeExpansion(node.id);
+  };
+
+  const handleNodeContextMenu = (node, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      node,
+      type: 'node'
+    });
+  };
+
+  const handleEdgeContextMenu = (rel, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      relationship: rel,
+      type: 'edge'
+    });
+  };
+
+  const toggleNodeExpansion = (nodeId) => {
+    setExpandedNodes(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(nodeId)) {
+        newSet.delete(nodeId);
+        toast.info("Node collapsed");
+      } else {
+        newSet.add(nodeId);
+        toast.success("Node expanded - showing connections");
+      }
+      return newSet;
+    });
+  };
+
+  const showPathBetweenSelected = () => {
+    const selectedArray = Array.from(selectedNodes);
+    if (selectedArray.length === 2) {
+      const path = findPath(selectedArray[0], selectedArray[1]);
+      if (path.length > 0) {
+        setHighlightedPath(path);
+        toast.success(`Path found: ${path.length} nodes`);
+      } else {
+        toast.error("No path found between selected nodes");
+      }
+    }
+  };
+
+  const clearSelection = () => {
+    setSelectedNodes(new Set());
+    setHighlightedPath([]);
+  };
+
+  const addInsightFilter = (insight) => {
+    if (!insightFilters.includes(insight)) {
+      setInsightFilters(prev => [...prev, insight]);
+      toast.success("Filter added from insight");
+    }
+  };
+
+  const removeInsightFilter = (insight) => {
+    setInsightFilters(prev => prev.filter(f => f !== insight));
   };
 
   const filteredNodes = Object.values(nodePositions).filter(node => {
@@ -224,19 +354,21 @@ export default function EmbeddableKnowledgeGraph({
   );
 
   const nodeTypes = [...new Set(relevantNodes.map(n => n.node_type))].filter(Boolean);
+  const isLoading = nodesLoading || relsLoading;
 
-  const getConnectedNodes = (nodeId) => {
+  const getNodeConnections = (nodeId) => {
     return relevantRelationships.filter(r => 
       r.from_node_id === nodeId || r.to_node_id === nodeId
-    ).map(r => r.from_node_id === nodeId ? r.to_node_id : r.from_node_id);
+    ).map(r => ({
+      ...r,
+      connectedId: r.from_node_id === nodeId ? r.to_node_id : r.from_node_id
+    }));
   };
-
-  const isLoading = nodesLoading || relsLoading;
 
   const GraphContent = ({ fullScreen = false }) => (
     <div className={`relative ${fullScreen ? 'h-full' : ''}`}>
       {/* Controls */}
-      <div className="absolute top-3 left-3 z-10 flex gap-2">
+      <div className="absolute top-3 left-3 z-10 flex gap-2 flex-wrap">
         <div className="flex bg-slate-800/95 rounded-lg border border-white/10 overflow-hidden">
           <Button variant="ghost" size="icon" onClick={handleZoomIn} className="text-white hover:bg-white/10 h-8 w-8 rounded-none">
             <ZoomIn className="w-4 h-4" />
@@ -248,14 +380,40 @@ export default function EmbeddableKnowledgeGraph({
             <RotateCcw className="w-4 h-4" />
           </Button>
         </div>
+        
         <Button
           variant="ghost"
-          size="icon"
-          onClick={() => setIsAnimating(!isAnimating)}
-          className="bg-slate-800/95 border border-white/10 text-white hover:bg-white/10 h-8 w-8"
+          size="sm"
+          onClick={() => setMultiSelectMode(!multiSelectMode)}
+          className={`h-8 px-2 ${multiSelectMode ? 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' : 'bg-slate-800/95 text-white'} border border-white/10`}
         >
-          {isAnimating ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+          <MousePointer className="w-3 h-3 mr-1" />
+          {multiSelectMode ? 'Multi' : 'Single'}
         </Button>
+
+        {selectedNodes.size === 2 && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={showPathBetweenSelected}
+            className="h-8 px-2 bg-purple-500/20 text-purple-400 border border-purple-500/30"
+          >
+            <Route className="w-3 h-3 mr-1" />
+            Find Path
+          </Button>
+        )}
+
+        {(selectedNodes.size > 0 || highlightedPath.length > 0) && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearSelection}
+            className="h-8 px-2 bg-slate-800/95 text-slate-400 border border-white/10"
+          >
+            <X className="w-3 h-3 mr-1" />
+            Clear
+          </Button>
+        )}
       </div>
 
       {/* Search & Filter */}
@@ -293,6 +451,32 @@ export default function EmbeddableKnowledgeGraph({
         )}
       </div>
 
+      {/* Insight Filters */}
+      {(insightFilters.length > 0 || highlightedInsights.length > 0) && (
+        <div className="absolute top-14 left-3 z-10 flex flex-wrap gap-1 max-w-md">
+          {insightFilters.map((filter, idx) => (
+            <Badge 
+              key={idx}
+              className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs cursor-pointer hover:bg-amber-500/30"
+              onClick={() => removeInsightFilter(filter)}
+            >
+              {filter.length > 20 ? filter.substring(0, 20) + '...' : filter}
+              <X className="w-2 h-2 ml-1" />
+            </Badge>
+          ))}
+          {highlightedInsights.slice(0, 3).map((insight, idx) => (
+            <Badge 
+              key={`hi-${idx}`}
+              className="bg-slate-700/80 text-slate-300 border-white/10 text-xs cursor-pointer hover:bg-cyan-500/20 hover:text-cyan-400"
+              onClick={() => addInsightFilter(insight)}
+            >
+              <Plus className="w-2 h-2 mr-1" />
+              {insight.length > 15 ? insight.substring(0, 15) + '...' : insight}
+            </Badge>
+          ))}
+        </div>
+      )}
+
       {/* SVG Canvas */}
       <div 
         className="w-full overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
@@ -301,6 +485,7 @@ export default function EmbeddableKnowledgeGraph({
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onClick={() => setContextMenu(null)}
       >
         {isLoading ? (
           <div className="flex items-center justify-center h-full">
@@ -315,23 +500,20 @@ export default function EmbeddableKnowledgeGraph({
             className="cursor-move"
           >
             <defs>
-              <marker id="arrow-embeddable" markerWidth="8" markerHeight="8" refX="20" refY="3" orient="auto">
+              <marker id="arrow-embed" markerWidth="8" markerHeight="8" refX="20" refY="3" orient="auto">
                 <polygon points="0 0, 8 3, 0 6" fill="#64748b" opacity="0.5" />
               </marker>
-              <filter id="glow-embeddable">
+              <marker id="arrow-highlight" markerWidth="8" markerHeight="8" refX="20" refY="3" orient="auto">
+                <polygon points="0 0, 8 3, 0 6" fill="#22d3ee" opacity="0.8" />
+              </marker>
+              <filter id="glow-embed">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
                 <feMerge>
                   <feMergeNode in="coloredBlur"/>
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
               </filter>
-              <radialGradient id="bg-gradient" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#1e3a5f" stopOpacity="0.1" />
-                <stop offset="100%" stopColor="#0f172a" stopOpacity="0" />
-              </radialGradient>
             </defs>
-
-            <circle cx={width/2} cy={graphHeight/2} r={Math.min(width, graphHeight) * 0.4} fill="url(#bg-gradient)" />
 
             {/* Edges */}
             <g className="edges">
@@ -340,27 +522,29 @@ export default function EmbeddableKnowledgeGraph({
                 const target = nodePositions[rel.to_node_id];
                 if (!source || !target) return null;
 
-                const isHighlighted = selectedNode?.id === rel.from_node_id || selectedNode?.id === rel.to_node_id;
+                const isSelected = selectedNodes.has(rel.from_node_id) || selectedNodes.has(rel.to_node_id);
+                const isInPath = highlightedPath.includes(rel.from_node_id) && highlightedPath.includes(rel.to_node_id);
 
                 return (
                   <g key={idx}>
                     <line
-                      className="graph-edge"
+                      className="graph-edge cursor-pointer"
                       x1={source.x}
                       y1={source.y}
                       x2={target.x}
                       y2={target.y}
-                      stroke={isHighlighted ? "#60a5fa" : "#475569"}
-                      strokeWidth={isHighlighted ? "2" : "1"}
-                      strokeOpacity={isHighlighted ? "0.8" : "0.3"}
-                      markerEnd="url(#arrow-embeddable)"
+                      stroke={isInPath ? "#22d3ee" : isSelected ? "#60a5fa" : "#475569"}
+                      strokeWidth={isInPath ? "3" : isSelected ? "2" : "1"}
+                      strokeOpacity={isInPath ? "0.9" : isSelected ? "0.7" : "0.3"}
+                      markerEnd={isInPath ? "url(#arrow-highlight)" : "url(#arrow-embed)"}
+                      onContextMenu={(e) => handleEdgeContextMenu(rel, e)}
                     />
-                    {isHighlighted && rel.relationship_type && (
+                    {(isSelected || isInPath) && rel.relationship_type && (
                       <text
                         x={(source.x + target.x) / 2}
                         y={(source.y + target.y) / 2 - 5}
                         textAnchor="middle"
-                        fill="#94a3b8"
+                        fill={isInPath ? "#22d3ee" : "#94a3b8"}
                         fontSize="8"
                         className="pointer-events-none"
                       >
@@ -376,29 +560,47 @@ export default function EmbeddableKnowledgeGraph({
             <g className="nodes">
               {filteredNodes.map((node) => {
                 const config = NODE_CONFIG[node.node_type] || { color: '#64748b', icon: Network };
-                const isSelected = selectedNode?.id === node.id;
+                const isSelected = selectedNodes.has(node.id);
                 const isHovered = hoveredNode?.id === node.id;
+                const isExpanded = expandedNodes.has(node.id);
+                const isInPath = highlightedPath.includes(node.id);
                 const isContext = contextEntities.some(e => 
-                  node.label?.toLowerCase().includes(e.toLowerCase())
-                );
-                const radius = isSelected ? 14 : isHovered ? 12 : isContext ? 11 : 9;
+                  node.label?.toLowerCase().includes(e?.toLowerCase())
+                ) || insightFilters.some(f => node.label?.toLowerCase().includes(f?.toLowerCase()));
+                
+                const radius = isSelected ? 14 : isHovered ? 12 : isExpanded ? 12 : isContext ? 11 : 9;
 
                 return (
                   <g
                     key={node.id}
                     className="cursor-pointer"
-                    onClick={() => handleNodeClick(node)}
+                    onClick={(e) => handleNodeClick(node, e)}
+                    onDoubleClick={(e) => handleNodeDoubleClick(node, e)}
+                    onContextMenu={(e) => handleNodeContextMenu(node, e)}
                     onMouseEnter={() => setHoveredNode(node)}
                     onMouseLeave={() => setHoveredNode(null)}
                   >
-                    {(isSelected || isHovered || isContext) && (
+                    {(isSelected || isHovered || isInPath || isExpanded) && (
                       <circle
                         cx={node.x}
                         cy={node.y}
-                        r={radius + 8}
-                        fill={config.color}
-                        opacity={isSelected ? 0.25 : 0.15}
-                        filter="url(#glow-embeddable)"
+                        r={radius + 10}
+                        fill={isInPath ? "#22d3ee" : config.color}
+                        opacity={isSelected ? 0.3 : 0.2}
+                        filter="url(#glow-embed)"
+                      />
+                    )}
+
+                    {isExpanded && (
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={radius + 6}
+                        fill="none"
+                        stroke={config.color}
+                        strokeWidth="1.5"
+                        strokeDasharray="4,2"
+                        opacity="0.6"
                       />
                     )}
 
@@ -406,10 +608,10 @@ export default function EmbeddableKnowledgeGraph({
                       cx={node.x}
                       cy={node.y}
                       r={radius}
-                      fill={config.color}
-                      stroke={isSelected ? '#fff' : isContext ? config.color : '#334155'}
-                      strokeWidth={isSelected ? 2.5 : isContext ? 2 : 1}
-                      opacity={isHovered || isSelected ? 1 : 0.85}
+                      fill={isInPath ? "#22d3ee" : config.color}
+                      stroke={isSelected ? '#fff' : isExpanded ? config.color : '#334155'}
+                      strokeWidth={isSelected ? 2.5 : isExpanded ? 2 : 1}
+                      opacity={isHovered || isSelected || isInPath ? 1 : 0.85}
                     />
 
                     <text
@@ -418,11 +620,23 @@ export default function EmbeddableKnowledgeGraph({
                       textAnchor="middle"
                       fill="#fff"
                       fontSize={isSelected ? "11" : "9"}
-                      fontWeight={isSelected || isContext ? "600" : "normal"}
+                      fontWeight={isSelected || isContext || isInPath ? "600" : "normal"}
                       className="pointer-events-none select-none"
                     >
                       {node.label?.length > 20 ? node.label.substring(0, 20) + '...' : node.label}
                     </text>
+
+                    {isExpanded && (
+                      <text
+                        x={node.x + radius + 3}
+                        y={node.y + 3}
+                        fill={config.color}
+                        fontSize="10"
+                        className="pointer-events-none"
+                      >
+                        ↔
+                      </text>
+                    )}
                   </g>
                 );
               })}
@@ -437,79 +651,230 @@ export default function EmbeddableKnowledgeGraph({
           {filteredNodes.length} nodes
         </Badge>
         <Badge className="bg-slate-800/95 text-slate-300 border-white/10 text-xs">
-          {filteredRelationships.length} connections
+          {filteredRelationships.length} edges
         </Badge>
-        <Badge className="bg-slate-800/95 text-cyan-400 border-cyan-500/30 text-xs">
-          {Math.round(zoom * 100)}%
-        </Badge>
+        {selectedNodes.size > 0 && (
+          <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30 text-xs">
+            {selectedNodes.size} selected
+          </Badge>
+        )}
+        {expandedNodes.size > 0 && (
+          <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
+            {expandedNodes.size} expanded
+          </Badge>
+        )}
+      </div>
+
+      {/* Instructions */}
+      <div className="absolute bottom-3 right-3 bg-slate-800/80 rounded px-2 py-1 text-xs text-slate-400">
+        Click: select • Double-click: expand • Right-click: menu
       </div>
 
       {/* Selected Node Panel */}
       <AnimatePresence>
-        {selectedNode && (
+        {selectedNodes.size === 1 && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="absolute top-3 right-3 w-64 bg-slate-900/95 border border-white/10 rounded-lg p-3 backdrop-blur-sm"
-            style={{ top: 50 }}
+            className="absolute top-16 right-3 w-64 bg-slate-900/95 border border-white/10 rounded-lg p-3 backdrop-blur-sm max-h-80 overflow-y-auto"
           >
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center gap-2">
-                {React.createElement(NODE_CONFIG[selectedNode.node_type]?.icon || Network, {
-                  className: "w-4 h-4",
-                  style: { color: NODE_CONFIG[selectedNode.node_type]?.color }
-                })}
-                <span className="text-white font-semibold text-sm truncate max-w-[160px]">
-                  {selectedNode.label}
-                </span>
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setSelectedNode(null)}
-                className="h-5 w-5 text-slate-400 hover:text-white"
-              >
-                <X className="w-3 h-3" />
-              </Button>
-            </div>
-
-            <Badge 
-              className="text-xs mb-3"
-              style={{ 
-                backgroundColor: NODE_CONFIG[selectedNode.node_type]?.color + '20',
-                color: NODE_CONFIG[selectedNode.node_type]?.color 
-              }}
-            >
-              {selectedNode.node_type}
-            </Badge>
-
-            <div className="space-y-2">
-              <p className="text-xs text-slate-400">
-                {getConnectedNodes(selectedNode.id).length} connections
-              </p>
-
-              {selectedNode.properties && Object.keys(selectedNode.properties).length > 0 && (
-                <div className="space-y-1 pt-2 border-t border-white/10">
-                  {Object.entries(selectedNode.properties).slice(0, 3).map(([key, value]) => (
-                    <div key={key} className="flex justify-between text-xs">
-                      <span className="text-slate-500">{key}:</span>
-                      <span className="text-slate-300 truncate ml-2 max-w-[120px]">
-                        {String(value).substring(0, 25)}
+            {(() => {
+              const nodeId = Array.from(selectedNodes)[0];
+              const node = nodePositions[nodeId];
+              if (!node) return null;
+              
+              const connections = getNodeConnections(nodeId);
+              
+              return (
+                <>
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {React.createElement(NODE_CONFIG[node.node_type]?.icon || Network, {
+                        className: "w-4 h-4",
+                        style: { color: NODE_CONFIG[node.node_type]?.color }
+                      })}
+                      <span className="text-white font-semibold text-sm truncate max-w-[140px]">
+                        {node.label}
                       </span>
                     </div>
-                  ))}
-                </div>
-              )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={clearSelection}
+                      className="h-5 w-5 text-slate-400 hover:text-white"
+                    >
+                      <X className="w-3 h-3" />
+                    </Button>
+                  </div>
 
-              <Link
-                to={createPageUrl("KnowledgeGraph")}
-                className="flex items-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 mt-2"
-              >
-                <ExternalLink className="w-3 h-3" />
-                View in Full Graph
-              </Link>
-            </div>
+                  <div className="flex gap-2 mb-3">
+                    <Badge 
+                      className="text-xs"
+                      style={{ 
+                        backgroundColor: NODE_CONFIG[node.node_type]?.color + '20',
+                        color: NODE_CONFIG[node.node_type]?.color 
+                      }}
+                    >
+                      {node.node_type}
+                    </Badge>
+                    <Badge className="text-xs bg-white/10 text-slate-400">
+                      {connections.length} connections
+                    </Badge>
+                  </div>
+
+                  <div className="flex gap-1 mb-3">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => toggleNodeExpansion(nodeId)}
+                      className={`h-7 px-2 text-xs ${expandedNodes.has(nodeId) ? 'bg-purple-500/20 text-purple-400' : 'bg-white/5 text-slate-400'}`}
+                    >
+                      {expandedNodes.has(nodeId) ? <Minus className="w-3 h-3 mr-1" /> : <Plus className="w-3 h-3 mr-1" />}
+                      {expandedNodes.has(nodeId) ? 'Collapse' : 'Expand'}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => addInsightFilter(node.label)}
+                      className="h-7 px-2 text-xs bg-white/5 text-slate-400"
+                    >
+                      <Filter className="w-3 h-3 mr-1" />
+                      Filter
+                    </Button>
+                  </div>
+
+                  {connections.length > 0 && (
+                    <div className="space-y-1 border-t border-white/10 pt-2">
+                      <p className="text-xs text-slate-500 mb-1">Connected to:</p>
+                      {connections.slice(0, 5).map((conn, idx) => {
+                        const connNode = nodePositions[conn.connectedId];
+                        if (!connNode) return null;
+                        return (
+                          <div 
+                            key={idx}
+                            className="flex items-center justify-between text-xs bg-white/5 rounded px-2 py-1 cursor-pointer hover:bg-white/10"
+                            onClick={() => setSelectedNodes(new Set([conn.connectedId]))}
+                          >
+                            <span className="text-white truncate max-w-[120px]">{connNode.label}</span>
+                            <Badge className="bg-white/10 text-slate-400 text-xs scale-75">
+                              {conn.relationship_type || 'related'}
+                            </Badge>
+                          </div>
+                        );
+                      })}
+                      {connections.length > 5 && (
+                        <p className="text-xs text-slate-500 text-center">+{connections.length - 5} more</p>
+                      )}
+                    </div>
+                  )}
+
+                  <Link
+                    to={createPageUrl("KnowledgeGraph")}
+                    className="flex items-center justify-center gap-1 text-xs text-cyan-400 hover:text-cyan-300 mt-3 pt-2 border-t border-white/10"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    Open in Full Graph
+                  </Link>
+                </>
+              );
+            })()}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Context Menu */}
+      <AnimatePresence>
+        {contextMenu && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="fixed bg-slate-900 border border-white/20 rounded-lg shadow-xl z-50 py-1 min-w-[160px]"
+            style={{ left: contextMenu.x, top: contextMenu.y }}
+          >
+            {contextMenu.type === 'node' && (
+              <>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  onClick={() => { handleNodeClick(contextMenu.node, { stopPropagation: () => {} }); setContextMenu(null); }}
+                >
+                  <Eye className="w-4 h-4 text-cyan-400" />
+                  View Details
+                </button>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  onClick={() => { toggleNodeExpansion(contextMenu.node.id); setContextMenu(null); }}
+                >
+                  {expandedNodes.has(contextMenu.node.id) ? (
+                    <><Minus className="w-4 h-4 text-purple-400" /> Collapse Node</>
+                  ) : (
+                    <><Plus className="w-4 h-4 text-purple-400" /> Expand Node</>
+                  )}
+                </button>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  onClick={() => { addInsightFilter(contextMenu.node.label); setContextMenu(null); }}
+                >
+                  <Filter className="w-4 h-4 text-amber-400" />
+                  Add to Filters
+                </button>
+                {selectedNodes.size === 1 && !selectedNodes.has(contextMenu.node.id) && (
+                  <button
+                    className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                    onClick={() => {
+                      const path = findPath(Array.from(selectedNodes)[0], contextMenu.node.id);
+                      if (path.length > 0) {
+                        setHighlightedPath(path);
+                        toast.success(`Path found: ${path.length} nodes`);
+                      } else {
+                        toast.error("No path found");
+                      }
+                      setContextMenu(null);
+                    }}
+                  >
+                    <Route className="w-4 h-4 text-green-400" />
+                    Find Path to Selected
+                  </button>
+                )}
+                <div className="border-t border-white/10 my-1" />
+                <Link
+                  to={createPageUrl("KnowledgeGraph")}
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  onClick={() => setContextMenu(null)}
+                >
+                  <ExternalLink className="w-4 h-4 text-slate-400" />
+                  Open Full Graph
+                </Link>
+              </>
+            )}
+            {contextMenu.type === 'edge' && (
+              <>
+                <div className="px-3 py-2 text-xs text-slate-400 border-b border-white/10">
+                  {contextMenu.relationship.relationship_type || 'Relationship'}
+                </div>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  onClick={() => {
+                    setSelectedNodes(new Set([contextMenu.relationship.from_node_id, contextMenu.relationship.to_node_id]));
+                    setContextMenu(null);
+                  }}
+                >
+                  <Link2 className="w-4 h-4 text-cyan-400" />
+                  Select Connected Nodes
+                </button>
+                <button
+                  className="w-full px-3 py-2 text-left text-sm text-white hover:bg-white/10 flex items-center gap-2"
+                  onClick={() => {
+                    setHighlightedPath([contextMenu.relationship.from_node_id, contextMenu.relationship.to_node_id]);
+                    setContextMenu(null);
+                  }}
+                >
+                  <Focus className="w-4 h-4 text-purple-400" />
+                  Highlight Connection
+                </button>
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
