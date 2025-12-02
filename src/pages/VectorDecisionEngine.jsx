@@ -13,11 +13,11 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { format, addDays, differenceInDays } from 'date-fns';
-import VectorExternalizationForm from '@/components/vectors/VectorExternalizationForm';
-import VectorCheckpointForm from '@/components/vectors/VectorCheckpointForm';
-import VectorVisualization from '@/components/vectors/VectorVisualization';
-import VectorAIValidation from '@/components/vectors/VectorAIValidation';
-import VectorTimeline from '@/components/vectors/VectorTimeline';
+import VectorExternalizationForm from '@/components/vectors/VectorExternalizationForm.jsx';
+import VectorCheckpointForm from '@/components/vectors/VectorCheckpointForm.jsx';
+import VectorVisualization from '@/components/vectors/VectorVisualization.jsx';
+import VectorAIValidation from '@/components/vectors/VectorAIValidation.jsx';
+import VectorTimeline from '@/components/vectors/VectorTimeline.jsx';
 
 const STATUS_CONFIG = {
   draft: { color: 'bg-slate-500/20 text-slate-400', label: 'Rascunho' },
