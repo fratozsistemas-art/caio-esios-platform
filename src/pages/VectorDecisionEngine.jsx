@@ -31,9 +31,16 @@ const STATUS_CONFIG = {
   redirected: { color: 'bg-orange-500/20 text-orange-400', label: 'Redirecionado' }
 };
 
+import { Rocket, ShieldCheck, Zap as ZapIcon, RefreshCw, Swords, Building as BuildingIcon, ArrowLeft } from 'lucide-react';
+
 const DIRECTION_ICONS = {
-  expansion: '🚀', defense: '🛡️', survival: '⚡', repositioning: '🔄',
-  attack: '⚔️', consolidation: '🏛️', retreat: '🔙'
+  expansion: Rocket, 
+  defense: ShieldCheck, 
+  survival: ZapIcon, 
+  repositioning: RefreshCw,
+  attack: Swords, 
+  consolidation: BuildingIcon, 
+  retreat: ArrowLeft
 };
 
 export default function VectorDecisionEngine() {
@@ -380,9 +387,10 @@ function DecisionCard({ decision, onSelect, onCheckpoint }) {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-lg">
-              {DIRECTION_ICONS[decision.primary_vector?.direction] || '🎯'}
-            </span>
+            {(() => {
+              const Icon = DIRECTION_ICONS[decision.primary_vector?.direction] || Target;
+              return <Icon className="w-5 h-5 text-cyan-400" />;
+            })()}
             <h3 className="font-medium text-white">{decision.title}</h3>
             <Badge className={STATUS_CONFIG[decision.status]?.color}>
               {STATUS_CONFIG[decision.status]?.label}
@@ -429,9 +437,10 @@ function DetailedDecisionCard({ decision, onSelect, onCheckpoint, showHistory })
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xl">
-                {DIRECTION_ICONS[decision.primary_vector?.direction] || '🎯'}
-              </span>
+              {(() => {
+                const Icon = DIRECTION_ICONS[decision.primary_vector?.direction] || Target;
+                return <Icon className="w-6 h-6 text-cyan-400" />;
+              })()}
               <h3 className="text-lg font-medium text-white">{decision.title}</h3>
               <Badge className={STATUS_CONFIG[decision.status]?.color}>
                 {STATUS_CONFIG[decision.status]?.label}

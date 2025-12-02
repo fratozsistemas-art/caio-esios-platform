@@ -12,31 +12,33 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   X, Save, Plus, Trash2, Compass, TrendingUp, Shield, 
-  Zap, AlertTriangle, Sparkles, Brain, Loader2, Target, ArrowRight
+  Zap, AlertTriangle, Sparkles, Brain, Loader2, Target, ArrowRight,
+  Rocket, ShieldCheck, Activity, RefreshCw, Swords, Building, ArrowLeft,
+  Crosshair, Scale, DollarSign, Settings, Siren, Handshake, Globe, RotateCcw
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import { addDays, format } from 'date-fns';
 
 const CONTEXT_TYPES = [
-  { value: 'strategic_initiative', label: 'Iniciativa Estratégica', icon: '🎯' },
-  { value: 'conflict_resolution', label: 'Resolução de Conflito', icon: '⚖️' },
-  { value: 'investment_decision', label: 'Decisão de Investimento', icon: '💰' },
-  { value: 'operational_change', label: 'Mudança Operacional', icon: '⚙️' },
-  { value: 'crisis_response', label: 'Resposta a Crise', icon: '🚨' },
-  { value: 'partnership', label: 'Parceria', icon: '🤝' },
-  { value: 'market_entry', label: 'Entrada em Mercado', icon: '🚀' },
-  { value: 'restructuring', label: 'Reestruturação', icon: '🔄' }
+  { value: 'strategic_initiative', label: 'Iniciativa Estratégica', icon: Crosshair, color: 'text-cyan-400' },
+  { value: 'conflict_resolution', label: 'Resolução de Conflito', icon: Scale, color: 'text-purple-400' },
+  { value: 'investment_decision', label: 'Decisão de Investimento', icon: DollarSign, color: 'text-green-400' },
+  { value: 'operational_change', label: 'Mudança Operacional', icon: Settings, color: 'text-slate-400' },
+  { value: 'crisis_response', label: 'Resposta a Crise', icon: Siren, color: 'text-red-400' },
+  { value: 'partnership', label: 'Parceria', icon: Handshake, color: 'text-amber-400' },
+  { value: 'market_entry', label: 'Entrada em Mercado', icon: Rocket, color: 'text-blue-400' },
+  { value: 'restructuring', label: 'Reestruturação', icon: RotateCcw, color: 'text-orange-400' }
 ];
 
 const DIRECTIONS = [
-  { value: 'expansion', label: 'Expansão', icon: '🚀', color: 'bg-green-500' },
-  { value: 'defense', label: 'Defesa', icon: '🛡️', color: 'bg-blue-500' },
-  { value: 'survival', label: 'Sobrevivência', icon: '⚡', color: 'bg-red-500' },
-  { value: 'repositioning', label: 'Reposicionamento', icon: '🔄', color: 'bg-purple-500' },
-  { value: 'attack', label: 'Ataque', icon: '⚔️', color: 'bg-orange-500' },
-  { value: 'consolidation', label: 'Consolidação', icon: '🏛️', color: 'bg-cyan-500' },
-  { value: 'retreat', label: 'Recuo Estratégico', icon: '🔙', color: 'bg-slate-500' }
+  { value: 'expansion', label: 'Expansão', icon: Rocket, color: 'bg-green-500', iconColor: 'text-green-400' },
+  { value: 'defense', label: 'Defesa', icon: ShieldCheck, color: 'bg-blue-500', iconColor: 'text-blue-400' },
+  { value: 'survival', label: 'Sobrevivência', icon: Zap, color: 'bg-red-500', iconColor: 'text-red-400' },
+  { value: 'repositioning', label: 'Reposicionamento', icon: RefreshCw, color: 'bg-purple-500', iconColor: 'text-purple-400' },
+  { value: 'attack', label: 'Ataque', icon: Swords, color: 'bg-orange-500', iconColor: 'text-orange-400' },
+  { value: 'consolidation', label: 'Consolidação', icon: Building, color: 'bg-cyan-500', iconColor: 'text-cyan-400' },
+  { value: 'retreat', label: 'Recuo Estratégico', icon: ArrowLeft, color: 'bg-slate-500', iconColor: 'text-slate-400' }
 ];
 
 const RELATIONS = [
@@ -245,20 +247,23 @@ Forneça análise em JSON:`,
                   <div>
                     <Label className="text-slate-300">Tipo de Contexto</Label>
                     <div className="grid grid-cols-4 gap-2 mt-2">
-                      {CONTEXT_TYPES.map(type => (
-                        <div
-                          key={type.value}
-                          onClick={() => setFormData({ ...formData, context_type: type.value })}
-                          className={`p-3 rounded-lg border cursor-pointer transition-all text-center ${
-                            formData.context_type === type.value
-                              ? 'bg-cyan-500/20 border-cyan-500/50'
-                              : 'bg-white/5 border-white/10 hover:border-white/20'
-                          }`}
-                        >
-                          <span className="text-2xl">{type.icon}</span>
-                          <p className="text-xs text-white mt-1">{type.label}</p>
-                        </div>
-                      ))}
+                      {CONTEXT_TYPES.map(type => {
+                        const Icon = type.icon;
+                        return (
+                          <div
+                            key={type.value}
+                            onClick={() => setFormData({ ...formData, context_type: type.value })}
+                            className={`p-3 rounded-lg border cursor-pointer transition-all text-center ${
+                              formData.context_type === type.value
+                                ? 'bg-cyan-500/20 border-cyan-500/50'
+                                : 'bg-white/5 border-white/10 hover:border-white/20'
+                            }`}
+                          >
+                            <Icon className={`w-6 h-6 mx-auto ${type.color}`} />
+                            <p className="text-xs text-white mt-1">{type.label}</p>
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -325,23 +330,26 @@ Forneça análise em JSON:`,
                       <div>
                         <Label className="text-slate-300">Direção Estratégica</Label>
                         <div className="grid grid-cols-4 gap-2 mt-2">
-                          {DIRECTIONS.map(dir => (
-                            <div
-                              key={dir.value}
-                              onClick={() => setFormData({
-                                ...formData,
-                                primary_vector: { ...formData.primary_vector, direction: dir.value }
-                              })}
-                              className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
-                                formData.primary_vector.direction === dir.value
-                                  ? 'bg-cyan-500/20 border-cyan-500/50'
-                                  : 'bg-white/5 border-white/10 hover:border-white/20'
-                              }`}
-                            >
-                              <span className="text-xl">{dir.icon}</span>
-                              <p className="text-xs text-white mt-1">{dir.label}</p>
-                            </div>
-                          ))}
+                          {DIRECTIONS.map(dir => {
+                            const Icon = dir.icon;
+                            return (
+                              <div
+                                key={dir.value}
+                                onClick={() => setFormData({
+                                  ...formData,
+                                  primary_vector: { ...formData.primary_vector, direction: dir.value }
+                                })}
+                                className={`p-2 rounded-lg border cursor-pointer transition-all text-center ${
+                                  formData.primary_vector.direction === dir.value
+                                    ? 'bg-cyan-500/20 border-cyan-500/50'
+                                    : 'bg-white/5 border-white/10 hover:border-white/20'
+                                }`}
+                              >
+                                <Icon className={`w-5 h-5 mx-auto ${dir.iconColor}`} />
+                                <p className="text-xs text-white mt-1">{dir.label}</p>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
 
