@@ -1,11 +1,11 @@
-import { Network, Users, Shield, GitMerge, MessageSquare, Zap } from "lucide-react";
+import { Network, Users, Shield, GitMerge, MessageSquare, Zap, Brain, Share2 } from "lucide-react";
 
 export const advancedCapabilities = [
   {
     icon: Network,
-    title: "Knowledge Graph",
-    description: "Inteligência estratégica baseada em grafos. Encontre padrões de sucesso, conexões ocultas e estratégias similares em 10K+ relações mapeadas.",
-    metric: "10,000+ relações estratégicas",
+    title: "Interactive Knowledge Graph",
+    description: "Explore 10K+ strategic connections with node expansion, multi-select pathfinding, and intelligent clustering. Double-click to expand, right-click for quick actions.",
+    metric: "10,000+ strategic connections",
   },
   {
     icon: Users,
@@ -20,10 +20,22 @@ export const advancedCapabilities = [
     metric: "Análise contínua de integridade",
   },
   {
+    icon: Brain,
+    title: "AI Strategic Pathfinding",
+    description: "Discover the most strategically relevant connections between any two entities. AI analyzes all paths and scores by business relevance, not just shortest distance.",
+    metric: "AI-scored strategic paths",
+  },
+  {
     icon: GitMerge,
     title: "Multi-Agent Orchestration",
-    description: "Orquestração hierárquica de agentes especializados. Execute workflows complexos com coordenação automática e validação em cascata.",
-    metric: "Workflows hierárquicos de agentes",
+    description: "Hierarchical agent orchestration. Execute complex workflows with automatic coordination, cascade validation, and self-correction capabilities.",
+    metric: "Hierarchical agent workflows",
+  },
+  {
+    icon: Share2,
+    title: "Save & Share Views",
+    description: "Save discovered paths, expanded nodes, and filtered views. Share strategic insights with your team via shareable links or saved reports.",
+    metric: "Collaborative intelligence",
   },
   {
     icon: MessageSquare,
