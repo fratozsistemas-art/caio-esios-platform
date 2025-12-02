@@ -104,6 +104,12 @@ Focus on actionable synergies that create compounding strategic value.`,
       });
 
       setSynergies(result);
+      
+      // Merge with existing insights for Dashboard
+      const existing = JSON.parse(localStorage.getItem('caio_insights_data') || '{}');
+      const merged = { ...existing, synergies: result.synergies, synergy_opportunities: result.synergies };
+      localStorage.setItem('caio_insights_data', JSON.stringify(merged));
+      
       onSynergyGenerated?.(result);
     } catch (error) {
       console.error("Error generating synergies:", error);

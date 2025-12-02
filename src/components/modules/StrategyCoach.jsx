@@ -145,6 +145,10 @@ Be specific, actionable, and focus on creating strategic value through integrati
 
       setCoachInsights(result);
       setLastAnalyzedCount(availableModules.length);
+      
+      // Persist insights for the Insights Dashboard
+      localStorage.setItem('caio_insights_data', JSON.stringify(result));
+      
       onRecommendation?.(result);
     } catch (error) {
       console.error("Error running coach analysis:", error);

@@ -52,6 +52,7 @@ function LayoutInner({ children, currentPageName }) {
     {
                 title: t('nav.analysis', 'Analysis'),
                             items: [
+                              { name: t('nav.insightsDashboard', 'Insights Dashboard'), icon: BarChart3, path: 'InsightsDashboard', badge: 'NEW' },
                               { name: t('nav.aiModules', 'AI Modules'), icon: Sparkles, path: 'AIModules', badge: 'AI' },
                               { name: t('nav.vectorDecision', 'Vector Decision Engine'), icon: Compass, path: 'VectorDecisionEngine', badge: 'VEC' },
                               { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject', badge: 'v6.0' },
