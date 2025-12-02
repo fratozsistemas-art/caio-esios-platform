@@ -84,6 +84,7 @@ function LayoutInner({ children, currentPageName }) {
       items: [
         { name: t('nav.workspaces', 'Workspaces'), icon: Briefcase, path: 'Workspaces' },
         { name: t('nav.strategies', 'Strategies'), icon: Target, path: 'Strategies' },
+              { name: t('nav.playbooks', 'Strategy Playbooks'), icon: BookOpen, path: 'StrategyPlaybooks', badge: 'AI' },
         { name: t('nav.collaboration', 'Collaboration'), icon: Users, path: 'Collaboration', badge: 'NEW' }
       ]
     },

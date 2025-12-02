@@ -67,6 +67,7 @@ import UserProfile from './pages/UserProfile';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
 import AIModules from './pages/AIModules';
 import InsightsDashboard from './pages/InsightsDashboard';
+import StrategyPlaybooks from './pages/StrategyPlaybooks';
 import __Layout from './Layout.jsx';
 
 
@@ -140,6 +141,7 @@ export const PAGES = {
     "VectorDecisionEngine": VectorDecisionEngine,
     "AIModules": AIModules,
     "InsightsDashboard": InsightsDashboard,
+    "StrategyPlaybooks": StrategyPlaybooks,
 }
 
 export const pagesConfig = {
