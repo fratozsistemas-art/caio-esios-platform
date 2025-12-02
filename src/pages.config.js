@@ -65,6 +65,7 @@ import AdvancedDataAnalysis from './pages/AdvancedDataAnalysis';
 import FounderProfile from './pages/FounderProfile';
 import UserProfile from './pages/UserProfile';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
+import AIModules from './pages/AIModules';
 import __Layout from './Layout.jsx';
 
 
@@ -136,6 +137,7 @@ export const PAGES = {
     "FounderProfile": FounderProfile,
     "UserProfile": UserProfile,
     "VectorDecisionEngine": VectorDecisionEngine,
+    "AIModules": AIModules,
 }
 
 export const pagesConfig = {
