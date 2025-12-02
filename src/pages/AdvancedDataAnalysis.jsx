@@ -18,6 +18,7 @@ import ExportReportDialog from "@/components/analysis/ExportReportDialog";
 import ShareAnalysisDialog from "@/components/collaboration/ShareAnalysisDialog";
 import SuggestedVisualizationsPanel from "@/components/analysis/SuggestedVisualizationsPanel";
 import AITaskSuggestions from "@/components/analysis/AITaskSuggestions";
+import EmbeddableKnowledgeGraph from "@/components/graph/EmbeddableKnowledgeGraph";
 import { useQuery } from '@tanstack/react-query';
 
 export default function AdvancedDataAnalysis() {
@@ -483,6 +484,18 @@ Retorne JSON estruturado com análise completa.`,
 
               {/* Main Insights Panel */}
               <AIInsightsPanel insights={aiInsights} />
+
+              {/* Strategic Connections from Knowledge Graph */}
+              <EmbeddableKnowledgeGraph
+                contextEntities={[
+                  ...uploadedFiles.map(f => f.name.replace(/\.[^/.]+$/, '')),
+                  ...(aiInsights?.strategicInsights?.map(i => i.title) || []),
+                  ...(aiInsights?.recommendations?.map(r => r.action?.split(' ').slice(0, 3).join(' ')) || [])
+                ].filter(Boolean)}
+                contextType="data_analysis"
+                title="Related Strategic Connections"
+                height={450}
+              />
             </div>
           ) : (
             <Card className="bg-white/5 border-white/10">

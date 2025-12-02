@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import SuggestedVisualizationsPanel from "@/components/analysis/SuggestedVisualizationsPanel";
 import AITaskSuggestions from "@/components/analysis/AITaskSuggestions";
 import ShareAnalysisDialog from "@/components/collaboration/ShareAnalysisDialog";
+import StrategicConnectionsExplorer from "@/components/graph/StrategicConnectionsExplorer";
 
 export default function FileAnalyzer() {
   const queryClient = useQueryClient();
@@ -574,6 +575,15 @@ Execute now.`;
                   users={users}
                 />
               )}
+
+              {/* Strategic Connections */}
+              <StrategicConnectionsExplorer
+                contextEntities={[
+                  selectedAnalysis.file_name?.replace(/\.[^/.]+$/, ''),
+                  ...(selectedAnalysis.key_insights?.slice(0, 3).map(i => i.split(' ').slice(0, 4).join(' ')) || []),
+                  ...(selectedAnalysis.extracted_data?.entities_mentioned || [])
+                ].filter(Boolean)}
+              />
 
               {/* Confidence Score */}
               {selectedAnalysis.confidence_score && (
