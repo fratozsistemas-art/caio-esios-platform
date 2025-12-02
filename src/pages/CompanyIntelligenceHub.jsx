@@ -402,6 +402,144 @@ export default function CompanyIntelligenceHub() {
           </Card>
         );
       }
+
+      if (data.ai_analysis.emerging_trends?.length > 0) {
+        sections.push(
+          <Card key="trends" className="bg-slate-800/30 border-slate-700">
+            <CardContent className="p-4">
+              <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-purple-400" />
+                Tendências Emergentes
+              </h4>
+              <ul className="space-y-1">
+                {data.ai_analysis.emerging_trends.map((trend, idx) => (
+                  <li key={idx} className="text-sm text-slate-300 flex items-start gap-2">
+                    <span className="text-purple-400">•</span>
+                    {trend}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        );
+      }
+
+      if (data.ai_analysis.global_opportunities?.length > 0) {
+        sections.push(
+          <Card key="global-opp" className="bg-slate-800/30 border-slate-700">
+            <CardContent className="p-4">
+              <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+                <Globe className="w-4 h-4 text-cyan-400" />
+                Oportunidades Globais
+              </h4>
+              <ul className="space-y-1">
+                {data.ai_analysis.global_opportunities.map((opp, idx) => (
+                  <li key={idx} className="text-sm text-slate-300 flex items-start gap-2">
+                    <span className="text-cyan-400">•</span>
+                    {opp}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        );
+      }
+    }
+
+    // ESG Data
+    if (data.esg_data) {
+      sections.push(
+        <Card key="esg" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <Leaf className="w-4 h-4 text-green-400" />
+              Dados ESG
+            </h4>
+            <div className="grid grid-cols-4 gap-2">
+              {data.esg_data.total_score && (
+                <div className="text-center p-2 bg-green-500/10 rounded">
+                  <p className="text-lg font-bold text-green-400">{data.esg_data.total_score}</p>
+                  <p className="text-xs text-slate-400">Total</p>
+                </div>
+              )}
+              {data.esg_data.environment_score && (
+                <div className="text-center p-2 bg-emerald-500/10 rounded">
+                  <p className="text-lg font-bold text-emerald-400">{data.esg_data.environment_score}</p>
+                  <p className="text-xs text-slate-400">Ambiente</p>
+                </div>
+              )}
+              {data.esg_data.social_score && (
+                <div className="text-center p-2 bg-blue-500/10 rounded">
+                  <p className="text-lg font-bold text-blue-400">{data.esg_data.social_score}</p>
+                  <p className="text-xs text-slate-400">Social</p>
+                </div>
+              )}
+              {data.esg_data.governance_score && (
+                <div className="text-center p-2 bg-purple-500/10 rounded">
+                  <p className="text-lg font-bold text-purple-400">{data.esg_data.governance_score}</p>
+                  <p className="text-xs text-slate-400">Governança</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Global Filings
+    if (data.global_filings && data.global_filings.length > 0) {
+      sections.push(
+        <Card key="filings" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-amber-400" />
+              Filings Regulatórios
+            </h4>
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {data.global_filings.slice(0, 5).map((filing, idx) => (
+                <div key={idx} className="flex items-center justify-between p-2 bg-slate-900/50 rounded text-sm">
+                  <div className="flex items-center gap-2">
+                    <Badge className="bg-amber-500/20 text-amber-400">{filing.form}</Badge>
+                    <span className="text-slate-300">{filing.filed_date}</span>
+                  </div>
+                  {filing.report_url && (
+                    <a href={filing.report_url} target="_blank" rel="noopener noreferrer" className="text-cyan-400 hover:underline text-xs">
+                      Ver
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Market Indicators
+    if (data.market_indicators && Object.keys(data.market_indicators).length > 0) {
+      sections.push(
+        <Card key="market" className="bg-slate-800/30 border-slate-700">
+          <CardContent className="p-4">
+            <h4 className="text-white font-semibold mb-2 flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-cyan-400" />
+              Indicadores de Mercado
+            </h4>
+            {data.market_indicators.current_price && (
+              <div className="p-2 bg-cyan-500/10 rounded mb-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-400">Preço Atual</span>
+                  <span className="text-white font-bold">${data.market_indicators.current_price.price}</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-sm ${parseFloat(data.market_indicators.current_price.change) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                    {data.market_indicators.current_price.change} ({data.market_indicators.current_price.change_percent})
+                  </span>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      );
     }
 
     // Mostrar outros dados não processados
