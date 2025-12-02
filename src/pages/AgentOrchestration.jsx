@@ -24,6 +24,7 @@ import VersionCompare from "../components/orchestration/VersionCompare";
 import AgentTrainingHub from "../components/orchestration/AgentTrainingHub";
 import HermesAnalyzeButton from "../components/hermes/HermesAnalyzeButton";
 import HermesInsightBadge from "../components/hermes/HermesInsightBadge";
+import PerformanceFeedbackPanel from "../components/orchestration/PerformanceFeedbackPanel";
 
 export default function AgentOrchestration() {
   const [showBuilder, setShowBuilder] = useState(false);
@@ -330,6 +331,12 @@ export default function AgentOrchestration() {
       {/* Enhanced Workflow Visualization with Debug Mode & Version Control */}
       {selectedWorkflow && !showBuilder && !showHierarchyBuilder && !showExecutionMonitor && !showTrainingHub && (
         <>
+          {/* Performance & Feedback Panel */}
+          <PerformanceFeedbackPanel 
+            workflowId={selectedWorkflow.id}
+            executions={executions.filter(e => e.workflow_id === selectedWorkflow.id)}
+          />
+
           {/* Compare Versions Dialog */}
           {compareVersions && (
             <VersionCompare
