@@ -66,6 +66,7 @@ import FounderProfile from './pages/FounderProfile';
 import UserProfile from './pages/UserProfile';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
 import AIModules from './pages/AIModules';
+import InsightsDashboard from './pages/InsightsDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -138,6 +139,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "VectorDecisionEngine": VectorDecisionEngine,
     "AIModules": AIModules,
+    "InsightsDashboard": InsightsDashboard,
 }
 
 export const pagesConfig = {
