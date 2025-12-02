@@ -520,29 +520,29 @@ export default function BatchIngestion() {
         </TabsContent>
       </Tabs>
 
-      {/* Results Section */}
-      {processingResults && (
+      {/* Results Section for Structured Data */}
+      {processingResults && activeTab === 'structured' && (
         <Card className="bg-white/5 border-white/10">
           <CardHeader>
-            <CardTitle className="text-white">Processing Results</CardTitle>
+            <CardTitle className="text-white">Resultados do Processamento</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-4 gap-4">
               <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 text-center">
                 <p className="text-3xl font-bold text-white">{processingResults.total}</p>
-                <p className="text-sm text-slate-400 mt-1">Total Records</p>
+                <p className="text-sm text-slate-400 mt-1">Total</p>
               </div>
               <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 text-center">
                 <p className="text-3xl font-bold text-green-400">{processingResults.success}</p>
-                <p className="text-sm text-slate-400 mt-1">Success</p>
+                <p className="text-sm text-slate-400 mt-1">Sucesso</p>
               </div>
               <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4 text-center">
                 <p className="text-3xl font-bold text-purple-400">{processingResults.created}</p>
-                <p className="text-sm text-slate-400 mt-1">Created</p>
+                <p className="text-sm text-slate-400 mt-1">Criados</p>
               </div>
               <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-4 text-center">
                 <p className="text-3xl font-bold text-orange-400">{processingResults.updated}</p>
-                <p className="text-sm text-slate-400 mt-1">Updated</p>
+                <p className="text-sm text-slate-400 mt-1">Atualizados</p>
               </div>
             </div>
 
@@ -552,7 +552,7 @@ export default function BatchIngestion() {
                   <div className="flex items-center gap-2">
                     <AlertCircle className="w-5 h-5 text-red-400" />
                     <span className="text-white font-medium">
-                      {processingResults.failed} errors found
+                      {processingResults.failed} erros encontrados
                     </span>
                   </div>
                   <Button
@@ -562,19 +562,19 @@ export default function BatchIngestion() {
                     className="bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Download Error Report
+                    Baixar Relatório de Erros
                   </Button>
                 </div>
                 <div className="max-h-48 overflow-y-auto space-y-2">
                   {processingResults.errors.slice(0, 5).map((error, idx) => (
                     <div key={idx} className="bg-white/5 rounded p-2 text-sm">
-                      <span className="text-red-400">Row {error.row}:</span>{' '}
+                      <span className="text-red-400">Linha {error.row}:</span>{' '}
                       <span className="text-slate-300">{error.error}</span>
                     </div>
                   ))}
                   {processingResults.errors.length > 5 && (
                     <p className="text-xs text-slate-400 text-center pt-2">
-                      +{processingResults.errors.length - 5} more errors (download full report)
+                      +{processingResults.errors.length - 5} erros adicionais (baixar relatório completo)
                     </p>
                   )}
                 </div>
@@ -583,27 +583,6 @@ export default function BatchIngestion() {
           </CardContent>
         </Card>
       )}
-
-      {/* Instructions */}
-      <Card className="bg-white/5 border-white/10">
-        <CardHeader>
-          <CardTitle className="text-white text-sm">Expected File Format</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-slate-400 text-sm mb-3">Your CSV/XLSX file should contain these columns:</p>
-          <div className="bg-slate-900/50 rounded-lg p-4 font-mono text-xs text-slate-300 space-y-1">
-            <p><span className="text-blue-400">cnpj</span> (required) - Company tax ID</p>
-            <p><span className="text-blue-400">razao_social</span> (required) - Legal company name</p>
-            <p><span className="text-slate-500">nome_fantasia</span> - Trade name</p>
-            <p><span className="text-slate-500">setor</span> - Industry sector</p>
-            <p><span className="text-slate-500">capital_social</span> - Share capital</p>
-            <p><span className="text-slate-500">data_registro</span> - Registration date</p>
-            <p><span className="text-slate-500">situacao</span> - Status</p>
-            <p><span className="text-slate-500">uf</span> - State</p>
-            <p><span className="text-slate-500">municipio</span> - City</p>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
