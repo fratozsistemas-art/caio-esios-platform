@@ -543,7 +543,7 @@ export default function CompanyIntelligenceHub() {
     }
 
     // Mostrar outros dados não processados
-    const processedKeys = ['summary', 'description', 'key_insights', 'insights', 'executives', 'leadership', 'competitors', 'competition', 'competitors_mentioned', 'news', 'sentiment_analysis', 'ai_analysis', 'market_trends', 'financial_data', 'errors'];
+    const processedKeys = ['summary', 'description', 'key_insights', 'insights', 'executives', 'leadership', 'competitors', 'competition', 'competitors_mentioned', 'news', 'sentiment_analysis', 'ai_analysis', 'market_trends', 'financial_data', 'errors', 'esg_data', 'global_filings', 'market_indicators', 'insider_transactions', 'sector_trends', 'regulatory_filings'];
     const otherData = Object.entries(data).filter(([key]) => !processedKeys.includes(key));
     
     if (otherData.length > 0) {
