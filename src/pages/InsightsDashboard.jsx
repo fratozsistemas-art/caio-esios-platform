@@ -19,10 +19,18 @@ import ConflictTracker from "../components/insights/ConflictTracker";
 import SynergyMap from "../components/insights/SynergyMap";
 import RecommendationTracker from "../components/insights/RecommendationTracker";
 import StrategicHealthGauge from "../components/insights/StrategicHealthGauge";
+import ProactiveAIMonitor from "../components/insights/ProactiveAIMonitor";
 
 export default function InsightsDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [priorityFilter, setPriorityFilter] = useState("all");
+
+  // Handle URL params for tab navigation
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tab = params.get('tab');
+    if (tab) setActiveTab(tab);
+  }, []);
 
   // Load stored insights from localStorage (in real app, would be from database)
   const [storedInsights, setStoredInsights] = useState(() => {
@@ -162,9 +170,14 @@ export default function InsightsDashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="mt-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Proactive AI Monitor */}
+            <div className="lg:col-span-1">
+              <ProactiveAIMonitor onAlertClick={(alert) => console.log('Alert clicked:', alert)} />
+            </div>
+
             {/* Recent Insights */}
-            <Card className="bg-white/5 border-white/10">
+            <Card className="lg:col-span-1 bg-white/5 border-white/10">
               <CardHeader className="pb-3">
                 <CardTitle className="text-white text-sm flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-cyan-400" />
@@ -183,7 +196,7 @@ export default function InsightsDashboard() {
             </Card>
 
             {/* Module Interconnections */}
-            <Card className="bg-white/5 border-white/10">
+            <Card className="lg:col-span-1 bg-white/5 border-white/10">
               <CardHeader className="pb-3">
                 <CardTitle className="text-white text-sm flex items-center gap-2">
                   <Network className="w-4 h-4 text-purple-400" />
