@@ -230,71 +230,295 @@ export default function BatchIngestion() {
       <div>
         <h1 className="text-3xl font-bold text-white flex items-center gap-3">
           <Upload className="w-8 h-8 text-blue-400" />
-          Batch Ingestion - CVM Data
+          Batch Ingestion
+          <Badge className="bg-cyan-500/20 text-cyan-400">Multi-formato</Badge>
         </h1>
-        <p className="text-slate-400 mt-1">Upload CSV or XLSX files with CVM company data</p>
+        <p className="text-slate-400 mt-1">
+          Extraia dados estruturados e não-estruturados de diversos tipos de arquivos
+        </p>
       </div>
 
-      {/* Upload Section */}
-      <Card className="bg-white/5 border-white/10">
-        <CardHeader>
-          <CardTitle className="text-white">Upload File</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="border-2 border-dashed border-white/20 rounded-lg p-12 text-center">
-            <input
-              type="file"
-              accept=".csv,.xlsx,.xls"
-              onChange={handleFileSelect}
-              className="hidden"
-              id="file-upload"
-              disabled={isUploading || processFileMutation.isPending}
-            />
-            <label
-              htmlFor="file-upload"
-              className="cursor-pointer flex flex-col items-center gap-4"
-            >
-              {isUploading ? (
-                <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />
-              ) : (
-                <FileText className="w-12 h-12 text-slate-400" />
-              )}
-              <div>
-                <p className="text-white font-medium mb-1">
-                  {uploadedFile ? 'File uploaded' : 'Click to upload or drag and drop'}
-                </p>
-                <p className="text-sm text-slate-400">CSV or XLSX (max 10MB)</p>
-              </div>
-            </label>
-          </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="bg-white/5">
+          <TabsTrigger value="structured" className="data-[state=active]:bg-green-500/20 data-[state=active]:text-green-400">
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
+            Dados Estruturados (CSV/Excel)
+          </TabsTrigger>
+          <TabsTrigger value="unstructured" className="data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400">
+            <Brain className="w-4 h-4 mr-2" />
+            Extração IA (PDF/Imagem/Texto)
+          </TabsTrigger>
+        </TabsList>
 
-          {uploadedFile && (
-            <div className="mt-4 flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-              <div className="flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <span className="text-white">File ready for processing</span>
+        {/* Structured Data Tab */}
+        <TabsContent value="structured" className="mt-6 space-y-6">
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white">Upload de Arquivo Estruturado</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="border-2 border-dashed border-white/20 rounded-lg p-12 text-center">
+                <input
+                  type="file"
+                  accept=".csv,.xlsx,.xls"
+                  onChange={handleStructuredFileSelect}
+                  className="hidden"
+                  id="structured-file-upload"
+                  disabled={isUploading || processFileMutation.isPending}
+                />
+                <label
+                  htmlFor="structured-file-upload"
+                  className="cursor-pointer flex flex-col items-center gap-4"
+                >
+                  {isUploading ? (
+                    <Loader2 className="w-12 h-12 text-blue-400 animate-spin" />
+                  ) : (
+                    <FileSpreadsheet className="w-12 h-12 text-green-400" />
+                  )}
+                  <div>
+                    <p className="text-white font-medium mb-1">
+                      {uploadedFileUrl && activeTab === 'structured' ? `Arquivo: ${fileName}` : 'Clique para enviar ou arraste'}
+                    </p>
+                    <p className="text-sm text-slate-400">CSV ou XLSX (máx 10MB)</p>
+                  </div>
+                </label>
               </div>
-              <Button
-                onClick={() => processFileMutation.mutate()}
-                disabled={processFileMutation.isPending}
-                className="bg-blue-600 hover:bg-blue-700"
-              >
-                {processFileMutation.isPending ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Upload className="w-4 h-4 mr-2" />
-                    Process Data
-                  </>
-                )}
-              </Button>
-            </div>
+
+              {uploadedFileUrl && activeTab === 'structured' && (
+                <div className="mt-4 flex items-center justify-between bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-green-400" />
+                    <span className="text-white">Arquivo pronto para processamento</span>
+                  </div>
+                  <Button
+                    onClick={() => processFileMutation.mutate()}
+                    disabled={processFileMutation.isPending}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    {processFileMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      <>
+                        <Database className="w-4 h-4 mr-2" />
+                        Processar Dados CVM
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Instructions for Structured */}
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white text-sm">Formato Esperado</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-slate-400 text-sm mb-3">Seu arquivo CSV/XLSX deve conter estas colunas:</p>
+              <div className="bg-slate-900/50 rounded-lg p-4 font-mono text-xs text-slate-300 space-y-1">
+                <p><span className="text-blue-400">cnpj</span> (obrigatório) - CNPJ da empresa</p>
+                <p><span className="text-blue-400">razao_social</span> (obrigatório) - Nome legal</p>
+                <p><span className="text-slate-500">nome_fantasia</span> - Nome fantasia</p>
+                <p><span className="text-slate-500">setor</span> - Setor de atuação</p>
+                <p><span className="text-slate-500">capital_social</span> - Capital social</p>
+                <p><span className="text-slate-500">data_registro</span> - Data de registro</p>
+                <p><span className="text-slate-500">situacao</span> - Situação</p>
+                <p><span className="text-slate-500">uf</span> - Estado</p>
+                <p><span className="text-slate-500">municipio</span> - Cidade</p>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Unstructured Data Tab */}
+        <TabsContent value="unstructured" className="mt-6 space-y-6">
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-400" />
+                Extração Inteligente com IA
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* File Upload */}
+              <div className="border-2 border-dashed border-white/20 rounded-lg p-8 text-center">
+                <input
+                  type="file"
+                  accept=".csv,.xlsx,.xls,.pdf,.png,.jpg,.jpeg,.webp,.json,.txt,.md,.doc,.docx"
+                  onChange={(e) => handleFileSelect(e)}
+                  className="hidden"
+                  id="unstructured-file-upload"
+                  disabled={isUploading || extractDataMutation.isPending}
+                />
+                <label
+                  htmlFor="unstructured-file-upload"
+                  className="cursor-pointer flex flex-col items-center gap-4"
+                >
+                  {isUploading ? (
+                    <Loader2 className="w-12 h-12 text-purple-400 animate-spin" />
+                  ) : (
+                    <Brain className="w-12 h-12 text-purple-400" />
+                  )}
+                  <div>
+                    <p className="text-white font-medium mb-1">
+                      {uploadedFileUrl && activeTab === 'unstructured' ? `Arquivo: ${fileName}` : 'Clique para enviar qualquer arquivo'}
+                    </p>
+                    <p className="text-sm text-slate-400">PDF, Imagem, CSV, Excel, JSON, Texto</p>
+                  </div>
+                </label>
+              </div>
+
+              {/* Extraction Mode Selection */}
+              {uploadedFileUrl && activeTab === 'unstructured' && (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-slate-300">Modo de Extração</Label>
+                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mt-2">
+                      {EXTRACTION_MODES.map(mode => {
+                        const Icon = mode.icon;
+                        return (
+                          <div
+                            key={mode.value}
+                            onClick={() => setExtractionMode(mode.value)}
+                            className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                              extractionMode === mode.value
+                                ? 'bg-purple-500/20 border-purple-500/50'
+                                : 'bg-white/5 border-white/10 hover:border-white/20'
+                            }`}
+                          >
+                            <Icon className="w-5 h-5 text-purple-400 mb-2" />
+                            <p className="text-sm text-white font-medium">{mode.label}</p>
+                            <p className="text-xs text-slate-500 mt-1">{mode.description}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {extractionMode === 'custom' && (
+                    <div>
+                      <Label className="text-slate-300">Schema JSON Customizado</Label>
+                      <textarea
+                        value={customSchema}
+                        onChange={(e) => setCustomSchema(e.target.value)}
+                        placeholder='{"type": "object", "properties": {...}}'
+                        className="w-full mt-2 p-3 bg-slate-900/50 border border-white/10 rounded-lg text-white font-mono text-sm h-32"
+                      />
+                    </div>
+                  )}
+
+                  <Button
+                    onClick={() => extractDataMutation.mutate()}
+                    disabled={extractDataMutation.isPending}
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                  >
+                    {extractDataMutation.isPending ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Extraindo dados com IA...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Extrair Dados
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Extracted Data Preview */}
+          {extractedData && (
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-400" />
+                  Dados Extraídos
+                  <Badge className="bg-green-500/20 text-green-400">
+                    {Array.isArray(extractedData) ? `${extractedData.length} registros` : 'Objeto'}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-slate-900/50 rounded-lg p-4 max-h-96 overflow-auto">
+                  <pre className="text-xs text-slate-300 font-mono whitespace-pre-wrap">
+                    {JSON.stringify(extractedData, null, 2)}
+                  </pre>
+                </div>
+                <div className="flex gap-3 mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const blob = new Blob([JSON.stringify(extractedData, null, 2)], { type: 'application/json' });
+                      const url = window.URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = 'extracted_data.json';
+                      a.click();
+                      window.URL.revokeObjectURL(url);
+                    }}
+                    className="bg-white/5 border-white/10 text-white"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download JSON
+                  </Button>
+                  {Array.isArray(extractedData) && extractedData.length > 0 && (
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        const headers = Object.keys(extractedData[0]);
+                        const csv = [
+                          headers.join(','),
+                          ...extractedData.map(row => 
+                            headers.map(h => JSON.stringify(row[h] ?? '')).join(',')
+                          )
+                        ].join('\n');
+                        const blob = new Blob([csv], { type: 'text/csv' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'extracted_data.csv';
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                      }}
+                      className="bg-white/5 border-white/10 text-white"
+                    >
+                      <FileSpreadsheet className="w-4 h-4 mr-2" />
+                      Download CSV
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
           )}
-        </CardContent>
-      </Card>
+
+          {/* Supported Formats */}
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white text-sm">Formatos Suportados</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                {Object.entries(FILE_TYPES).map(([key, config]) => {
+                  const Icon = config.icon;
+                  return (
+                    <div key={key} className="flex items-center gap-2 p-3 bg-slate-900/50 rounded-lg">
+                      <Icon className={`w-5 h-5 ${config.color}`} />
+                      <span className="text-sm text-slate-300">{config.label}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Results Section */}
       {processingResults && (
