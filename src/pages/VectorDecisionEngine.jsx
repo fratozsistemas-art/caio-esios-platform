@@ -18,6 +18,9 @@ import VectorCheckpointForm from '@/components/vectors/VectorCheckpointForm.jsx'
 import VectorVisualization from '@/components/vectors/VectorVisualization.jsx';
 import VectorAIValidation from '@/components/vectors/VectorAIValidation.jsx';
 import VectorTimeline from '@/components/vectors/VectorTimeline.jsx';
+import VectorProjectionEngine from '@/components/vectors/VectorProjectionEngine.jsx';
+import VectorGovernancePanel from '@/components/vectors/VectorGovernancePanel.jsx';
+import VectorLearningEngine from '@/components/vectors/VectorLearningEngine.jsx';
 
 const STATUS_CONFIG = {
   draft: { color: 'bg-slate-500/20 text-slate-400', label: 'Rascunho' },
@@ -177,6 +180,18 @@ export default function VectorDecisionEngine() {
             <Clock className="w-4 h-4 mr-2" />
             Histórico
           </TabsTrigger>
+          <TabsTrigger value="projection" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Projeção
+          </TabsTrigger>
+          <TabsTrigger value="governance" className="data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400">
+            <Shield className="w-4 h-4 mr-2" />
+            Governança
+          </TabsTrigger>
+          <TabsTrigger value="learning" className="data-[state=active]:bg-amber-500/20 data-[state=active]:text-amber-400">
+            <Brain className="w-4 h-4 mr-2" />
+            Aprendizado
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="mt-6">
@@ -267,6 +282,49 @@ export default function VectorDecisionEngine() {
               />
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="projection" className="mt-6">
+          {selectedDecision ? (
+            <VectorProjectionEngine 
+              decision={selectedDecision} 
+              checkpoints={checkpoints}
+            />
+          ) : (
+            <Card className="bg-white/5 border-white/10">
+              <CardContent className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <TrendingUp className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                  <p className="text-slate-500">Selecione uma decisão ativa para gerar projeções</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="governance" className="mt-6">
+          {selectedDecision ? (
+            <VectorGovernancePanel 
+              decision={selectedDecision}
+              onApprovalChange={() => queryClient.invalidateQueries(['vector_decisions'])}
+            />
+          ) : (
+            <Card className="bg-white/5 border-white/10">
+              <CardContent className="flex items-center justify-center h-64">
+                <div className="text-center">
+                  <Shield className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                  <p className="text-slate-500">Selecione uma decisão para gerenciar governança</p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="learning" className="mt-6">
+          <VectorLearningEngine 
+            decisions={decisions} 
+            checkpoints={checkpoints}
+          />
         </TabsContent>
       </Tabs>
 
