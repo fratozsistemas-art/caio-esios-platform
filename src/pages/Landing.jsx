@@ -788,9 +788,6 @@ export default function Landing() {
                         >
                           <Icon className={`${isFeatured ? 'w-8 h-8' : 'w-6 h-6'}`} style={{ color: moduleColor }} />
                         </div>
-                        <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/30 text-xs font-mono font-bold">
-                          {module.id}
-                        </Badge>
                         {isFeatured && (
                           <Badge className="bg-[#FFC247]/20 text-[#FFC247] border-[#FFC247]/30 text-[10px]">
                             CORE
@@ -798,7 +795,10 @@ export default function Landing() {
                         )}
                       </div>
                       <div className={`flex-1 ${isFeatured ? 'text-left' : 'text-center'}`}>
-                        <h3 className={`font-bold text-[#EAF6FF] ${isFeatured ? 'text-xl' : 'text-sm'} mb-2`}>
+                        <h3 className={`font-bold text-[#EAF6FF] ${isFeatured ? 'text-xl' : 'text-sm'} mb-2 flex items-center ${isFeatured ? 'justify-start' : 'justify-center'} gap-2 flex-wrap`}>
+                          <Badge className="bg-[#00C8FF]/20 text-[#00C8FF] border-[#00C8FF]/30 text-xs font-mono font-bold">
+                            {module.id}
+                          </Badge>
                           {module.name}
                         </h3>
                         <p className={`${isFeatured ? 'text-sm' : 'text-xs'} text-[#A7B2C4] leading-relaxed mb-2 font-light`}>
