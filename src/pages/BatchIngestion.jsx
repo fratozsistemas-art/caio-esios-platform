@@ -4,13 +4,42 @@ import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Upload, FileText, Loader2, CheckCircle, XCircle, AlertCircle, Download } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { 
+  Upload, FileText, Loader2, CheckCircle, AlertCircle, Download, 
+  Database, FileSpreadsheet, Image, FileJson, Sparkles, Brain,
+  Table, List, Building2
+} from 'lucide-react';
 import { toast } from 'sonner';
 
+const FILE_TYPES = {
+  csv: { icon: FileSpreadsheet, label: 'CSV/Excel', accept: '.csv,.xlsx,.xls', color: 'text-green-400' },
+  pdf: { icon: FileText, label: 'PDF', accept: '.pdf', color: 'text-red-400' },
+  image: { icon: Image, label: 'Imagem', accept: '.png,.jpg,.jpeg,.webp', color: 'text-blue-400' },
+  json: { icon: FileJson, label: 'JSON', accept: '.json', color: 'text-yellow-400' },
+  text: { icon: FileText, label: 'Texto', accept: '.txt,.md,.doc,.docx', color: 'text-purple-400' }
+};
+
+const EXTRACTION_MODES = [
+  { value: 'cvm_companies', label: 'Empresas CVM', icon: Building2, description: 'Dados de empresas listadas na CVM' },
+  { value: 'financial_data', label: 'Dados Financeiros', icon: Table, description: 'Balanços, DRE, fluxo de caixa' },
+  { value: 'contacts', label: 'Contatos/Leads', icon: List, description: 'Lista de contatos ou leads' },
+  { value: 'custom', label: 'Schema Customizado', icon: FileJson, description: 'Defina seu próprio schema' },
+  { value: 'auto', label: 'Detecção Automática', icon: Brain, description: 'IA detecta estrutura automaticamente' }
+];
+
 export default function BatchIngestion() {
+  const [activeTab, setActiveTab] = useState('structured');
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [uploadedFileUrl, setUploadedFileUrl] = useState(null);
+  const [fileName, setFileName] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [processingResults, setProcessingResults] = useState(null);
+  const [extractionMode, setExtractionMode] = useState('cvm_companies');
+  const [extractedData, setExtractedData] = useState(null);
+  const [customSchema, setCustomSchema] = useState('');
 
   const uploadFileMutation = useMutation({
     mutationFn: async (file) => {
