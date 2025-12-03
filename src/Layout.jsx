@@ -83,7 +83,8 @@ function LayoutInner({ children, currentPageName }) {
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
         { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets' },
         { name: t('nav.qualityValidation', 'Quality Validation'), icon: Target, path: 'QualityValidation', badge: 'TEST' },
-        { name: t('nav.simulationLab', 'Simulation Lab'), icon: Layers, path: 'SimulationLab', badge: 'ESIOS' }
+        { name: t('nav.simulationLab', 'Simulation Lab'), icon: Layers, path: 'SimulationLab', badge: 'ESIOS' },
+        { name: t('nav.phase3', 'Phase 3 Dashboard'), icon: Sparkles, path: 'Phase3Dashboard', badge: 'v12.5' }
         ]
         },
     {

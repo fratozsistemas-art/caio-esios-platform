@@ -11,11 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Languages, Eye, BookOpen, Network, Sparkles, RefreshCw,
   Target, ArrowRight, Layers, Brain, MessageSquare, Play,
-  FileText, Users, Lightbulb, Link2, Search, Zap, Sun, Library
+  FileText, Users, Lightbulb, Link2, Search, Zap, Sun, Library, Crown
 } from "lucide-react";
 import NarrativeVersionGenerator from "./NarrativeVersionGenerator";
 import NarrativeTemplateLibrary from "./NarrativeTemplateLibrary";
 import NarrativeGraphIntegration from "./NarrativeGraphIntegration";
+import MultiStakeholderTranslator from "./MultiStakeholderTranslator";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -499,7 +500,11 @@ Return JSON:
             <Link2 className="w-4 h-4 mr-2" />
             Integração KG
           </TabsTrigger>
-        </TabsList>
+          <TabsTrigger value="stakeholder" className="data-[state=active]:bg-amber-500/20">
+            <Users className="w-4 h-4 mr-2" />
+            Multi-Stakeholder
+          </TabsTrigger>
+          </TabsList>
 
         {/* SEMIOTIC TAB */}
         <TabsContent value="semiotic" className="mt-6 space-y-4">
@@ -594,7 +599,19 @@ Return JSON:
             }}
           />
         </TabsContent>
-      </Tabs>
+
+        {/* MULTI-STAKEHOLDER TAB */}
+        <TabsContent value="stakeholder" className="mt-6">
+          <MultiStakeholderTranslator
+            sourceContent={inputText}
+            sourceContext={CULTURAL_CONTEXTS.find(c => c.value === culturalContext)?.label}
+            onTranslationsGenerated={(translations) => {
+              setAnalysisResult({ ...analysisResult, stakeholder_translations: translations });
+              onAnalysisComplete?.({ type: 'stakeholder', ...translations });
+            }}
+          />
+        </TabsContent>
+        </Tabs>
     </div>
   );
 }
