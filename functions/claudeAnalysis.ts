@@ -1,5 +1,5 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
-import Anthropic from 'npm:@anthropic-ai/sdk@0.27.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import Anthropic from 'npm:@anthropic-ai/sdk@0.39.0';
 
 /**
  * Direct integration with Anthropic Claude API
