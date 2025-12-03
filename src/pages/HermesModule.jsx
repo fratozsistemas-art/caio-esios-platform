@@ -116,7 +116,7 @@ export default function HermesModule() {
               </div>
             </div>
             <Link to={createPageUrl("InsightsDashboard")}>
-              <Button size="sm" variant="outline" className="border-white/20 text-white hover:bg-white/5">
+              <Button size="sm" variant="outline" className="border-cyan-500/50 text-cyan-300 hover:bg-cyan-500/10 hover:border-cyan-400">
                 Ver Insights Dashboard
               </Button>
             </Link>
