@@ -102,6 +102,7 @@ function LayoutInner({ children, currentPageName }) {
       title: t('nav.monitoring', 'Monitoring'),
       items: [
         { name: t('nav.analytics', 'Analytics'), icon: BarChart3, path: 'Analytics', badge: 'NEW' },
+        { name: t('nav.alerts', 'Alert System'), icon: Bell, path: 'AlertsManagement', badge: 'AI' },
         { name: t('nav.notifications', 'Notifications'), icon: Bell, path: 'Notifications' },
         { name: t('nav.systemHealth', 'System Health'), icon: Activity, path: 'SystemHealth', badge: 'NEW' },
         { name: t('nav.integrationHealth', 'Integration Health'), icon: HeartPulse, path: 'IntegrationHealth', badge: 'NEW' }
