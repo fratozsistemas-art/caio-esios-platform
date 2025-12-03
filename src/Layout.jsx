@@ -81,9 +81,10 @@ function LayoutInner({ children, currentPageName }) {
         { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard' },
         { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
-        { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets' }
-      ]
-    },
+        { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets' },
+        { name: t('nav.qualityValidation', 'Quality Validation'), icon: Target, path: 'QualityValidation', badge: 'TEST' }
+        ]
+        },
     {
       title: t('nav.projects', 'Projects'),
       items: [

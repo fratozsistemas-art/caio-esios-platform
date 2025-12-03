@@ -73,6 +73,7 @@ import CognitiveArchitecture from './pages/CognitiveArchitecture';
 import ArchitectureAudit from './pages/ArchitectureAudit';
 import NeuralIntelligenceArchive from './pages/NeuralIntelligenceArchive';
 import TISInterpretation from './pages/TISInterpretation';
+import QualityValidation from './pages/QualityValidation';
 import __Layout from './Layout.jsx';
 
 
@@ -152,6 +153,7 @@ export const PAGES = {
     "ArchitectureAudit": ArchitectureAudit,
     "NeuralIntelligenceArchive": NeuralIntelligenceArchive,
     "TISInterpretation": TISInterpretation,
+    "QualityValidation": QualityValidation,
 }
 
 export const pagesConfig = {
