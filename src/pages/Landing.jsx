@@ -1320,10 +1320,10 @@ export default function Landing() {
             ))}
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-start">
-            <div>
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="flex flex-col">
               <h3 className="text-2xl font-bold text-white mb-6">Investment Thesis</h3>
-              <div className="space-y-4">
+              <div className="space-y-4 flex-1">
                 {[
                   {
                     title: "Proprietary Methodology",
@@ -1353,9 +1353,9 @@ export default function Landing() {
               </div>
             </div>
 
-            <div>
+            <div className="flex flex-col">
               <h3 className="text-2xl font-bold text-white mb-6">Competitive Moat</h3>
-              <div className="space-y-4">
+              <div className="space-y-4 flex-1">
                 {[
                   {
                     title: "vs. Generic AI (ChatGPT, Claude)",
