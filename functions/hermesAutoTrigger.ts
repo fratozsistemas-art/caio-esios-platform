@@ -1,5 +1,12 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
+/**
+ * HERMES AUTO-TRIGGER FUNCTION
+ * 
+ * Executes HERMES analysis based on trigger rules
+ * Can be called manually or by scheduled checks
+ */
+
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
@@ -9,161 +16,148 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { entity_type, entity_id, event_type, entity_data } = await req.json();
+    const { rule_id, manual = false, entity_data } = await req.json();
 
-    // Fetch active trigger rules for this entity type and event
-    const triggerRules = await base44.asServiceRole.entities.HermesTriggerRule.filter({
-      entity_type,
-      trigger_event: event_type,
-      is_active: true
-    });
+    // Get the trigger rule
+    let rule = null;
+    if (rule_id) {
+      const rules = await base44.entities.HermesTriggerRule.filter({ id: rule_id });
+      rule = rules[0];
+    }
 
-    const triggeredAnalyses = [];
+    if (!rule && !manual) {
+      return Response.json({ error: 'Rule not found' }, { status: 404 });
+    }
 
-    for (const rule of triggerRules) {
-      // Check if conditions are met
-      if (!checkTriggerConditions(rule.trigger_conditions, entity_data)) {
-        continue;
-      }
+    // Determine which HERMES modules to run
+    const modulesToRun = rule?.hermes_modules_to_trigger || ['FULL'];
 
-      // Execute Hermes analysis
-      const analysisResult = await base44.functions.invoke('hermesAnalyzeIntegrity', {
-        target_entity_type: entity_type,
-        target_entity_id: entity_id,
-        analysis_types: rule.analysis_types
-      });
+    // Build HERMES analysis prompt based on modules
+    let analysisPrompt = `You are HERMES, the Cognitive Intermediation and Strategic Translation framework.
 
-      triggeredAnalyses.push({
-        rule_id: rule.id,
-        rule_name: rule.name,
-        analysis_result: analysisResult.data
-      });
+Perform a governance analysis on the following context:
+${entity_data ? JSON.stringify(entity_data) : 'General system health check'}
 
-      // Update trigger rule stats
-      await base44.asServiceRole.entities.HermesTriggerRule.update(rule.id, {
-        triggered_count: (rule.triggered_count || 0) + 1,
-        last_triggered_at: new Date().toISOString()
-      });
+Trigger reason: ${manual ? 'Manual trigger by user' : `Rule: ${rule?.name} - ${rule?.description}`}
+Modules requested: ${modulesToRun.join(', ')}
 
-      // Check for critical issues and send notifications
-      if (rule.notification_config?.notify_on_critical) {
-        const hasCritical = analysisResult.data?.analyses?.some(a =>
-          (a.inconsistencies_detected || []).some(i => i.severity === 'critical')
-        );
+`;
 
-        if (hasCritical) {
-          await sendCriticalNotification(rule, entity_type, entity_id, analysisResult.data, base44);
+    if (modulesToRun.includes('H1') || modulesToRun.includes('FULL')) {
+      analysisPrompt += `
+H1 - VECTORIAL TRANSLATION: Translate high-level vision into actionable vectors and tasks.`;
+    }
+
+    if (modulesToRun.includes('H2') || modulesToRun.includes('FULL')) {
+      analysisPrompt += `
+H2 - COGNITIVE CLARITY: Rewrite complex concepts for operational execution.`;
+    }
+
+    if (modulesToRun.includes('H3') || modulesToRun.includes('FULL')) {
+      analysisPrompt += `
+H3 - EMOTIONAL BUFFER: Identify friction points and political risks.`;
+    }
+
+    if (modulesToRun.includes('H4') || modulesToRun.includes('FULL')) {
+      analysisPrompt += `
+H4 - COHERENCE AUDIT: Check vision-execution alignment and detect deviations.`;
+    }
+
+    analysisPrompt += `
+
+Return JSON:
+{
+  "trigger_analysis": {
+    "trigger_valid": true,
+    "severity": "info|warning|critical",
+    "findings": ["finding1", "finding2"]
+  },
+  "h1_vectors": {
+    "primary_vector": "main direction",
+    "operational_tasks": ["task1", "task2"]
+  },
+  "h2_clarification": {
+    "simplified_message": "clear message",
+    "execution_readiness": 0-100
+  },
+  "h3_buffer": {
+    "friction_points": ["point1"],
+    "recommended_tone": "description"
+  },
+  "h4_audit": {
+    "alignment_score": 0-100,
+    "deviations": ["deviation1"],
+    "checkpoints": ["checkpoint1"]
+  },
+  "immediate_actions": ["action1", "action2"],
+  "escalation_needed": false,
+  "escalation_reason": "if needed"
+}`;
+
+    // Call LLM for analysis
+    const analysisResult = await base44.integrations.Core.InvokeLLM({
+      prompt: analysisPrompt,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          trigger_analysis: { type: "object" },
+          h1_vectors: { type: "object" },
+          h2_clarification: { type: "object" },
+          h3_buffer: { type: "object" },
+          h4_audit: { type: "object" },
+          immediate_actions: { type: "array", items: { type: "string" } },
+          escalation_needed: { type: "boolean" },
+          escalation_reason: { type: "string" }
         }
       }
+    });
 
-      // Update entity with Hermes results
-      await updateEntityWithHermesResults(entity_type, entity_id, analysisResult.data, base44);
+    // Create HERMES analysis record
+    const analysisRecord = await base44.entities.HermesAnalysis.create({
+      entity_type: rule?.target_entity_types?.[0] || 'system',
+      entity_id: entity_data?.id || 'system_check',
+      trigger_type: manual ? 'manual' : 'auto_rule',
+      trigger_rule_id: rule?.id,
+      analysis_result: analysisResult,
+      severity: analysisResult.trigger_analysis?.severity || 'info',
+      status: 'completed'
+    });
+
+    // Update trigger rule stats
+    if (rule) {
+      await base44.entities.HermesTriggerRule.update(rule.id, {
+        trigger_count: (rule.trigger_count || 0) + 1,
+        last_triggered_at: new Date().toISOString()
+      });
+    }
+
+    // Create notification if critical
+    if (analysisResult.trigger_analysis?.severity === 'critical' || analysisResult.escalation_needed) {
+      await base44.entities.Notification.create({
+        type: 'hermes_alert',
+        title: 'HERMES Critical Alert',
+        message: analysisResult.escalation_reason || 'Critical issue detected requiring attention',
+        severity: 'critical',
+        target_email: user.email,
+        is_read: false,
+        metadata: {
+          analysis_id: analysisRecord.id,
+          rule_id: rule?.id,
+          findings: analysisResult.trigger_analysis?.findings
+        }
+      });
     }
 
     return Response.json({
       success: true,
-      triggered_rules: triggeredAnalyses.length,
-      analyses: triggeredAnalyses
+      analysis_id: analysisRecord.id,
+      result: analysisResult,
+      severity: analysisResult.trigger_analysis?.severity,
+      escalation_needed: analysisResult.escalation_needed
     });
 
   } catch (error) {
+    console.error('HERMES Auto-Trigger error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
-
-function checkTriggerConditions(conditions, entityData) {
-  if (!conditions) return true;
-
-  if (conditions.status_equals && entityData.status !== conditions.status_equals) {
-    return false;
-  }
-
-  if (conditions.error_count_exceeds && (entityData.errors_count || 0) <= conditions.error_count_exceeds) {
-    return false;
-  }
-
-  if (conditions.duration_exceeds && (entityData.duration_seconds || 0) <= conditions.duration_exceeds) {
-    return false;
-  }
-
-  if (conditions.confidence_below && (entityData.confidence_score || 100) >= conditions.confidence_below) {
-    return false;
-  }
-
-  if (conditions.custom_field && conditions.custom_value) {
-    if (entityData[conditions.custom_field] !== conditions.custom_value) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-async function sendCriticalNotification(rule, entityType, entityId, analysisData, base44) {
-  const criticalIssues = [];
-  
-  analysisData.analyses?.forEach(analysis => {
-    (analysis.inconsistencies_detected || [])
-      .filter(i => i.severity === 'critical')
-      .forEach(issue => criticalIssues.push(issue));
-  });
-
-  const notificationMessage = `Hermes detectou ${criticalIssues.length} questão(ões) crítica(s) em ${entityType} (${entityId}):\n\n${
-    criticalIssues.map(i => `• ${i.type}: ${i.description}`).join('\n')
-  }`;
-
-  await base44.asServiceRole.entities.Notification.create({
-    title: `🛡️ Hermes: Questões Críticas Detectadas`,
-    message: notificationMessage,
-    type: 'alert',
-    severity: 'critical',
-    data_snapshot: {
-      entity_type: entityType,
-      entity_id: entityId,
-      critical_issues: criticalIssues,
-      cognitive_health_score: analysisData.cognitive_health_score
-    },
-    action_required: true,
-    action_url: `/HermesTrustBroker`
-  });
-
-  // Send emails if configured
-  if (rule.notification_config?.notify_users?.length > 0) {
-    for (const userEmail of rule.notification_config.notify_users) {
-      await base44.integrations.Core.SendEmail({
-        to: userEmail,
-        from_name: 'Hermes Trust-Broker',
-        subject: 'Alerta Crítico: Questões de Integridade Detectadas',
-        body: notificationMessage
-      });
-    }
-  }
-}
-
-async function updateEntityWithHermesResults(entityType, entityId, analysisData, base44) {
-  const entityMap = {
-    'strategy': 'Strategy',
-    'analysis': 'Analysis',
-    'workspace': 'Workspace',
-    'tsi_project': 'TSIProject',
-    'workflow': 'AgentWorkflow',
-    'workflow_execution': 'WorkflowExecution',
-    'enrichment_suggestion': 'EnrichmentSuggestion',
-    'knowledge_item': 'KnowledgeItem'
-  };
-
-  const entityName = entityMap[entityType];
-  if (!entityName) return;
-
-  const hermesMetadata = {
-    last_hermes_analysis: new Date().toISOString(),
-    hermes_integrity_score: analysisData.cognitive_health_score,
-    hermes_critical_issues: analysisData.analyses?.reduce((sum, a) => 
-      sum + (a.inconsistencies_detected || []).filter(i => i.severity === 'critical').length, 0
-    ),
-    hermes_status: analysisData.cognitive_health_score >= 80 ? 'healthy' : 
-                   analysisData.cognitive_health_score >= 60 ? 'warning' : 'critical'
-  };
-
-  await base44.asServiceRole.entities[entityName].update(entityId, hermesMetadata);
-}
