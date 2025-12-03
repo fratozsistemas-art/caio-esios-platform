@@ -63,6 +63,7 @@ export default function ConversationList({
     onSuccess: () => {
       queryClient.invalidateQueries(['conversations']);
       onDeleteConversation?.();
+      onSelectConversation(null);
       toast.success("Conversa deletada");
     },
     onError: (error) => {
