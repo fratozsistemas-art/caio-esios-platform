@@ -126,12 +126,24 @@ Be specific with numbers, percentages, and actionable insights.`,
       });
 
       setScenarios(result);
+      setIsSaved(false);
       onScenariosGenerated?.(result);
     } catch (error) {
       console.error("Error generating scenarios:", error);
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleSaveAnalysis = () => {
+    if (!scenarios) return;
+    saveAnalysisMutation.mutate({
+      industry,
+      geography: geography || "Global",
+      time_horizon: timeHorizon,
+      context,
+      ...scenarios
+    });
   };
 
   const getScenarioConfig = (type) => scenarioTypes.find(s => s.value === type) || scenarioTypes[1];
