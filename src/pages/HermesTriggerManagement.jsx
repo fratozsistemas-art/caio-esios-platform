@@ -1,42 +1,7 @@
-import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { base44 } from "@/api/base44Client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Zap, Plus, Trash2, Play, Pause, Shield, Bell } from "lucide-react";
-import { toast } from "sonner";
-
-const ENTITY_TYPES = [
-  { value: 'strategy', label: 'Estratégia' },
-  { value: 'workspace', label: 'Workspace' },
-  { value: 'tsi_project', label: 'TSI Project' },
-  { value: 'workflow', label: 'Workflow' },
-  { value: 'workflow_execution', label: 'Execução de Workflow' },
-  { value: 'enrichment_suggestion', label: 'Sugestão de Enriquecimento' }
-];
-
-const TRIGGER_EVENTS = [
-  { value: 'on_create', label: 'Ao Criar' },
-  { value: 'on_update', label: 'Ao Atualizar' },
-  { value: 'on_complete', label: 'Ao Completar' },
-  { value: 'on_error', label: 'Ao Encontrar Erro' },
-  { value: 'on_threshold', label: 'Ao Atingir Threshold' }
-];
-
-const ANALYSIS_TYPES = [
-  { value: 'narrative_integrity', label: 'Integridade Narrativa' },
-  { value: 'board_management_gap', label: 'Gap Board-Management' },
-  { value: 'silo_reconciliation', label: 'Reconciliação de Silos' },
-  { value: 'tension_analysis', label: 'Análise de Tensões' },
-  { value: 'coherence_check', label: 'Verificação de Coerência' },
-  { value: 'reasoning_audit', label: 'Auditoria de Raciocínio' }
-];
+import { Shield, Sparkles } from "lucide-react";
+import HermesTriggerManager from "../components/hermes/HermesTriggerManager";
 
 export default function HermesTriggerManagement() {
   const [showForm, setShowForm] = useState(false);
