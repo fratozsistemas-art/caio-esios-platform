@@ -75,6 +75,7 @@ function LayoutInner({ children, currentPageName }) {
       items: [
         { name: t('nav.cognitiveHub', 'NIA + TRU Hub'), icon: Brain, path: 'CognitiveArchitecture', badge: 'CODEX' },
         { name: t('nav.hermesModule', 'HERMES Core'), icon: Shield, path: 'HermesModule', badge: 'CODEX' },
+        { name: t('nav.archAudit', 'Architecture Audit'), icon: Layers, path: 'ArchitectureAudit', badge: 'v12.3' },
         { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard' },
         { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
