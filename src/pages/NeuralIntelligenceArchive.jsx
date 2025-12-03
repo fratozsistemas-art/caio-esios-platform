@@ -1,19 +1,22 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Database, Sparkles } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Brain, Database, Sparkles, Lightbulb } from "lucide-react";
 import NeuralIntelligenceArchive from "../components/nia/NeuralIntelligenceArchive";
+import NIALearningEngine from "../components/nia/NIALearningEngine";
 
 /**
  * NIA PAGE — Neural Intelligence Archive
  * 
- * Página dedicada à camada de Memória Institucional
+ * Página dedicada à camada de Memória Institucional + Motor de Aprendizado
  */
 
 export default function NeuralIntelligenceArchivePage() {
+  const [activeTab, setActiveTab] = useState("archive");
+
   const handlePrecedentSelect = (precedent) => {
     console.log('Precedent selected:', precedent);
-    // Could navigate to related decision or open detail modal
   };
 
   return (
@@ -61,8 +64,31 @@ export default function NeuralIntelligenceArchivePage() {
         </CardContent>
       </Card>
 
-      {/* Main NIA Component */}
-      <NeuralIntelligenceArchive onPrecedentSelect={handlePrecedentSelect} />
+      {/* Tabs for Archive vs Learning Engine */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="bg-white/5 border border-white/10">
+          <TabsTrigger value="archive" className="data-[state=active]:bg-indigo-500/20">
+            <Database className="w-4 h-4 mr-2" />
+            Arquivo de Memórias
+          </TabsTrigger>
+          <TabsTrigger value="learning" className="data-[state=active]:bg-purple-500/20">
+            <Lightbulb className="w-4 h-4 mr-2" />
+            Motor de Aprendizado
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="archive" className="mt-6">
+          <NeuralIntelligenceArchive onPrecedentSelect={handlePrecedentSelect} />
+        </TabsContent>
+
+        <TabsContent value="learning" className="mt-6">
+          <NIALearningEngine 
+            onInsightGenerated={(insights) => {
+              console.log('Learning insights:', insights);
+            }}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
