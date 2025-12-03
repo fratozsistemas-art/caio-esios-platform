@@ -359,5 +359,8 @@ Be specific with numbers, percentages, and actionable insights.`,
         )}
       </CardContent>
     </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
