@@ -118,51 +118,34 @@ export default function HermesNeuralMap({ cognitiveMetrics, hermesAnalyses }) {
   return (
     <div className="space-y-6">
       {/* Neural Map */}
-      {viewMode === 'neural_map' && (
-        <Card className="bg-white/5 border-white/10">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <Brain className="w-6 h-6 text-cyan-400" />
-              Neural Map - Saúde Cognitiva Organizacional
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <canvas
-              ref={canvasRef}
-              className="w-full h-96 rounded-lg"
-            />
-            <div className="mt-4 grid grid-cols-3 gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                <span className="text-xs text-slate-400">Zona Saudável (80-100%)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-blue-400" />
-                <span className="text-xs text-slate-400">Zona Neutra (60-79%)</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <span className="text-xs text-slate-400">Zona de Tensão (&lt;60%)</span>
-              </div>
+      <Card className="bg-white/5 border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Brain className="w-6 h-6 text-cyan-400" />
+            Neural Map - Saúde Cognitiva Organizacional
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <canvas
+            ref={canvasRef}
+            className="w-full h-96 rounded-lg"
+          />
+          <div className="mt-4 grid grid-cols-3 gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-400" />
+              <span className="text-xs text-slate-400">Zona Saudável (80-100%)</span>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Integrity Analysis */}
-      {viewMode === 'analyses' && (
-        <IntegrityAnalysisPanel
-          hermesAnalyses={hermesAnalyses}
-          onSelectEntity={setSelectedEntity}
-        />
-      )}
-
-      {/* Board Management Bridge */}
-      {viewMode === 'board_bridge' && (
-        <BoardManagementBridge
-          hermesAnalyses={hermesAnalyses.filter(a => a.analysis_type === 'board_management_gap')}
-        />
-      )}
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-400" />
+              <span className="text-xs text-slate-400">Zona Neutra (60-79%)</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-400" />
+              <span className="text-xs text-slate-400">Zona de Tensão (&lt;60%)</span>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Recent Critical Issues */}
       <Card className="bg-white/5 border-white/10">
