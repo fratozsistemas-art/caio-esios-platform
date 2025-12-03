@@ -79,6 +79,7 @@ import Phase3Dashboard from './pages/Phase3Dashboard';
 import CAIOArchitectureDoc from './pages/CAIOArchitectureDoc';
 import ArchitectureDashboard from './pages/ArchitectureDashboard';
 import MissionVision from './pages/MissionVision';
+import AlertsManagement from './pages/AlertsManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -164,6 +165,7 @@ export const PAGES = {
     "CAIOArchitectureDoc": CAIOArchitectureDoc,
     "ArchitectureDashboard": ArchitectureDashboard,
     "MissionVision": MissionVision,
+    "AlertsManagement": AlertsManagement,
 }
 
 export const pagesConfig = {

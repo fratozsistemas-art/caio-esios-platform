@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Globe, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, CheckCircle, Save } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Globe, TrendingUp, TrendingDown, Minus, Loader2, Sparkles, AlertTriangle, CheckCircle, Save, GitCompare, Tag } from "lucide-react";
 import { toast } from "sonner";
+import ScenarioComparisonViewer from "./ScenarioComparisonViewer";
 
 const scenarioTypes = [
   { value: "optimistic", label: "Optimistic", icon: TrendingUp, color: "text-green-400" },
