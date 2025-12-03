@@ -5,7 +5,8 @@ import { ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 export default function EnhancedForceDirectedGraph({ 
   graphData, 
   onNodeClick, 
-  selectedNode 
+  selectedNode,
+  viewMode = 'force'
 }) {
   const svgRef = useRef(null);
   const [zoom, setZoom] = useState(1);
