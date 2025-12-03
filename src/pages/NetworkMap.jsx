@@ -119,7 +119,7 @@ export default function NetworkMap() {
           <Button
             onClick={() => setShowTemporal(!showTemporal)}
             variant="outline"
-            className="border-white/10 text-white hover:bg-white/10"
+            className="border-slate-500 bg-slate-800/80 text-white hover:bg-slate-700 hover:border-slate-400"
           >
             {showTemporal ? 'Hide' : 'Show'} Timeline
           </Button>
