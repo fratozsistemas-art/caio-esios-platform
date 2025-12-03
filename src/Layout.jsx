@@ -73,6 +73,7 @@ function LayoutInner({ children, currentPageName }) {
     {
       title: t('nav.governance', 'Governance'),
       items: [
+        { name: t('nav.hermesModule', 'HERMES Core'), icon: Shield, path: 'HermesModule', badge: 'CODEX' },
         { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard', badge: 'NEW' },
         { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
