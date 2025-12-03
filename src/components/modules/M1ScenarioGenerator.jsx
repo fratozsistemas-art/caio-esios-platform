@@ -357,8 +357,8 @@ Be specific with numbers, percentages, and actionable insights.`,
             </Card>
           </div>
         )}
-      </CardContent>
-    </Card>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>
