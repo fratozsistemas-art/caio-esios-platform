@@ -24,6 +24,30 @@ export default function M1ScenarioGenerator({ onScenariosGenerated }) {
   const [context, setContext] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [scenarios, setScenarios] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
+  const queryClient = useQueryClient();
+
+  const saveAnalysisMutation = useMutation({
+    mutationFn: async (data) => {
+      return await base44.entities.Analysis.create({
+        title: `M1 Market Intelligence: ${industry}`,
+        type: "market",
+        status: "completed",
+        framework_used: "M1-ScenarioGenerator",
+        results: data,
+        confidence_score: 85,
+        completed_at: new Date().toISOString()
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['analyses']);
+      setIsSaved(true);
+      toast.success("Análise salva com sucesso! Acesse em 'Analyses' para visualizar.");
+    },
+    onError: (error) => {
+      toast.error("Erro ao salvar análise: " + error.message);
+    }
+  });
 
   const generateScenarios = async () => {
     if (!industry) return;
