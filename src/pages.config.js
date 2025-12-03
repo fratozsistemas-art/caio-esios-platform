@@ -71,6 +71,8 @@ import StrategyPlaybooks from './pages/StrategyPlaybooks';
 import HermesModule from './pages/HermesModule';
 import CognitiveArchitecture from './pages/CognitiveArchitecture';
 import ArchitectureAudit from './pages/ArchitectureAudit';
+import NeuralIntelligenceArchive from './pages/NeuralIntelligenceArchive';
+import TISInterpretation from './pages/TISInterpretation';
 import __Layout from './Layout.jsx';
 
 
@@ -148,6 +150,8 @@ export const PAGES = {
     "HermesModule": HermesModule,
     "CognitiveArchitecture": CognitiveArchitecture,
     "ArchitectureAudit": ArchitectureAudit,
+    "NeuralIntelligenceArchive": NeuralIntelligenceArchive,
+    "TISInterpretation": TISInterpretation,
 }
 
 export const pagesConfig = {
