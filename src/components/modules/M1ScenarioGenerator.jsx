@@ -227,6 +227,35 @@ Be specific with numbers, percentages, and actionable insights.`,
 
         {scenarios && (
           <div className="space-y-4 mt-6">
+            {/* Save Button */}
+            <div className="flex justify-end">
+              <Button
+                onClick={handleSaveAnalysis}
+                disabled={saveAnalysisMutation.isPending || isSaved}
+                className={isSaved 
+                  ? "bg-green-600 hover:bg-green-700" 
+                  : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                }
+              >
+                {saveAnalysisMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Salvando...
+                  </>
+                ) : isSaved ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Salvo
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Salvar Análise
+                  </>
+                )}
+              </Button>
+            </div>
+
             {/* Market Overview */}
             <Card className="bg-blue-500/10 border-blue-500/30">
               <CardContent className="p-4">
