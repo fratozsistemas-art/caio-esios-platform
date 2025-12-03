@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -76,6 +76,8 @@ function LayoutInner({ children, currentPageName }) {
         { name: t('nav.cognitiveHub', 'NIA + TRU Hub'), icon: Brain, path: 'CognitiveArchitecture', badge: 'CODEX' },
         { name: t('nav.hermesModule', 'HERMES Core'), icon: Shield, path: 'HermesModule', badge: 'CODEX' },
         { name: t('nav.archAudit', 'Architecture Audit'), icon: Layers, path: 'ArchitectureAudit', badge: 'v12.3' },
+        { name: t('nav.niaArchive', 'NIA Memory Archive'), icon: Database, path: 'NeuralIntelligenceArchive', badge: 'NEW' },
+        { name: t('nav.tisInterpret', 'TIS Interpretation'), icon: Languages, path: 'TISInterpretation', badge: 'NEW' },
         { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard' },
         { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
