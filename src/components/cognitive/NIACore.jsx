@@ -9,9 +9,10 @@ import { Progress } from "@/components/ui/progress";
 import { 
   Layers, Loader2, Sparkles, ArrowRight, Target, 
   CheckCircle, AlertTriangle, Clock, Zap, GitBranch,
-  Box, Workflow, FileCode, Users
+  Box, Workflow, FileCode, Users, Network
 } from "lucide-react";
 import { motion } from "framer-motion";
+import OrganizationalBlueprintVisualizer from "../nia/OrganizationalBlueprintVisualizer";
 
 /**
  * NIA — NÚCLEO DE INTELIGÊNCIA ARQUITETURAL
@@ -470,6 +471,15 @@ Be precise and actionable. Create architectures that can be executed.`,
                 </div>
               </div>
             )}
+
+            {/* Organizational Blueprint Visualizer */}
+            <div className="pt-4 border-t border-white/10">
+              <div className="flex items-center gap-2 mb-4">
+                <Network className="w-5 h-5 text-indigo-400" />
+                <h4 className="text-white font-semibold">Visualização Organizacional Interativa</h4>
+              </div>
+              <OrganizationalBlueprintVisualizer blueprint={blueprint} />
+            </div>
           </motion.div>
         )}
       </CardContent>
