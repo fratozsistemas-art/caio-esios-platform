@@ -76,6 +76,7 @@ import TISInterpretation from './pages/TISInterpretation';
 import QualityValidation from './pages/QualityValidation';
 import SimulationLab from './pages/SimulationLab';
 import Phase3Dashboard from './pages/Phase3Dashboard';
+import CAIOArchitectureDoc from './pages/CAIOArchitectureDoc';
 import __Layout from './Layout.jsx';
 
 
@@ -158,6 +159,7 @@ export const PAGES = {
     "QualityValidation": QualityValidation,
     "SimulationLab": SimulationLab,
     "Phase3Dashboard": Phase3Dashboard,
+    "CAIOArchitectureDoc": CAIOArchitectureDoc,
 }
 
 export const pagesConfig = {
