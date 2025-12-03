@@ -82,7 +82,8 @@ function LayoutInner({ children, currentPageName }) {
         { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
         { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets' },
-        { name: t('nav.qualityValidation', 'Quality Validation'), icon: Target, path: 'QualityValidation', badge: 'TEST' }
+        { name: t('nav.qualityValidation', 'Quality Validation'), icon: Target, path: 'QualityValidation', badge: 'TEST' },
+        { name: t('nav.simulationLab', 'Simulation Lab'), icon: Layers, path: 'SimulationLab', badge: 'ESIOS' }
         ]
         },
     {
