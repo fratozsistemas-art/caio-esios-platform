@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function ConversationList({ 
-  conversations, 
+  conversations = [], 
   selectedConversation, 
   onSelectConversation,
   onDeleteConversation 
