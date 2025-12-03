@@ -73,6 +73,7 @@ function LayoutInner({ children, currentPageName }) {
     {
       title: t('nav.cognitiveArch', 'Cognitive Architecture'),
       items: [
+        { name: t('nav.archDoc', 'Architecture v12.x Doc'), icon: BookOpen, path: 'CAIOArchitectureDoc', badge: 'UNIFIED' },
         { name: t('nav.cognitiveHub', 'NIA + TRU Hub'), icon: Brain, path: 'CognitiveArchitecture', badge: 'CODEX' },
         { name: t('nav.hermesModule', 'HERMES Core'), icon: Shield, path: 'HermesModule', badge: 'CODEX' },
         { name: t('nav.archAudit', 'Architecture Audit'), icon: Layers, path: 'ArchitectureAudit', badge: 'v12.3' },
