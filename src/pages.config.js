@@ -75,6 +75,7 @@ import NeuralIntelligenceArchive from './pages/NeuralIntelligenceArchive';
 import TISInterpretation from './pages/TISInterpretation';
 import QualityValidation from './pages/QualityValidation';
 import SimulationLab from './pages/SimulationLab';
+import Phase3Dashboard from './pages/Phase3Dashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -156,6 +157,7 @@ export const PAGES = {
     "TISInterpretation": TISInterpretation,
     "QualityValidation": QualityValidation,
     "SimulationLab": SimulationLab,
+    "Phase3Dashboard": Phase3Dashboard,
 }
 
 export const pagesConfig = {
