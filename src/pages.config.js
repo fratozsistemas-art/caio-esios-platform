@@ -70,6 +70,7 @@ import InsightsDashboard from './pages/InsightsDashboard';
 import StrategyPlaybooks from './pages/StrategyPlaybooks';
 import HermesModule from './pages/HermesModule';
 import CognitiveArchitecture from './pages/CognitiveArchitecture';
+import ArchitectureAudit from './pages/ArchitectureAudit';
 import __Layout from './Layout.jsx';
 
 
@@ -146,6 +147,7 @@ export const PAGES = {
     "StrategyPlaybooks": StrategyPlaybooks,
     "HermesModule": HermesModule,
     "CognitiveArchitecture": CognitiveArchitecture,
+    "ArchitectureAudit": ArchitectureAudit,
 }
 
 export const pagesConfig = {
