@@ -71,13 +71,14 @@ function LayoutInner({ children, currentPageName }) {
       ]
     },
     {
-      title: t('nav.governance', 'Governance'),
+      title: t('nav.cognitiveArch', 'Cognitive Architecture'),
       items: [
+        { name: t('nav.cognitiveHub', 'NIA + TRU Hub'), icon: Brain, path: 'CognitiveArchitecture', badge: 'CODEX' },
         { name: t('nav.hermesModule', 'HERMES Core'), icon: Shield, path: 'HermesModule', badge: 'CODEX' },
-        { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard', badge: 'NEW' },
+        { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard' },
         { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
         { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
-        { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets', badge: 'NEW' }
+        { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets' }
       ]
     },
     {
