@@ -11,8 +11,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Languages, Eye, BookOpen, Network, Sparkles, RefreshCw,
   Target, ArrowRight, Layers, Brain, MessageSquare, Play,
-  FileText, Users, Lightbulb, Link2, Search, Zap
+  FileText, Users, Lightbulb, Link2, Search, Zap, Sun, Library
 } from "lucide-react";
+import NarrativeVersionGenerator from "./NarrativeVersionGenerator";
+import NarrativeTemplateLibrary from "./NarrativeTemplateLibrary";
+import NarrativeGraphIntegration from "./NarrativeGraphIntegration";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -484,6 +487,18 @@ Return JSON:
             <Network className="w-4 h-4 mr-2" />
             Padrões Ocultos
           </TabsTrigger>
+          <TabsTrigger value="versions" className="data-[state=active]:bg-emerald-500/20">
+            <Sun className="w-4 h-4 mr-2" />
+            Versões Narrativas
+          </TabsTrigger>
+          <TabsTrigger value="templates" className="data-[state=active]:bg-indigo-500/20">
+            <Library className="w-4 h-4 mr-2" />
+            Templates
+          </TabsTrigger>
+          <TabsTrigger value="graph" className="data-[state=active]:bg-pink-500/20">
+            <Link2 className="w-4 h-4 mr-2" />
+            Integração KG
+          </TabsTrigger>
         </TabsList>
 
         {/* SEMIOTIC TAB */}
@@ -541,6 +556,43 @@ Return JSON:
           {analysisResult?.pattern_discovery && (
             <PatternResultsDisplay result={analysisResult} />
           )}
+        </TabsContent>
+
+        {/* NARRATIVE VERSIONS TAB */}
+        <TabsContent value="versions" className="mt-6">
+          <NarrativeVersionGenerator
+            scenario={inputText}
+            culturalContext={CULTURAL_CONTEXTS.find(c => c.value === culturalContext)?.label}
+            audiences={selectedAudiences}
+            onVersionsGenerated={(versions) => {
+              setAnalysisResult({ ...analysisResult, narrative_versions: versions });
+              onAnalysisComplete?.({ type: 'versions', versions });
+            }}
+          />
+        </TabsContent>
+
+        {/* TEMPLATES TAB */}
+        <TabsContent value="templates" className="mt-6">
+          <NarrativeTemplateLibrary
+            onTemplateSelect={(template) => {
+              console.log('Template selected:', template);
+            }}
+            onNarrativeGenerated={(data) => {
+              setAnalysisResult({ ...analysisResult, template_narrative: data });
+              onAnalysisComplete?.({ type: 'template', ...data });
+            }}
+          />
+        </TabsContent>
+
+        {/* GRAPH INTEGRATION TAB */}
+        <TabsContent value="graph" className="mt-6">
+          <NarrativeGraphIntegration
+            narrativeData={analysisResult?.narrative_model || analysisResult?.template_narrative?.result}
+            onGraphSaved={(graphData) => {
+              toast.success('Narrativa integrada ao Knowledge Graph!');
+              onAnalysisComplete?.({ type: 'graph', ...graphData });
+            }}
+          />
         </TabsContent>
       </Tabs>
     </div>
