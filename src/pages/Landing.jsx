@@ -1523,8 +1523,8 @@ export default function Landing() {
               <h4 className="text-white font-body font-semibold mb-4">Company</h4>
               <ul className="space-y-2 text-sm font-body">
                 <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
-                    About
+                  <a href={createPageUrl("MissionVision")} className="text-slate-200 hover:text-[#FFB800] transition-colors">
+                    Missão & Visão
                   </a>
                 </li>
                 <li>
@@ -1533,7 +1533,7 @@ export default function Landing() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="text-slate-200 hover:text-[#FFB800] transition-colors">
+                  <a href={createPageUrl("BlogResources")} className="text-slate-200 hover:text-[#FFB800] transition-colors">
                     Blog
                   </a>
                 </li>

@@ -77,6 +77,8 @@ import QualityValidation from './pages/QualityValidation';
 import SimulationLab from './pages/SimulationLab';
 import Phase3Dashboard from './pages/Phase3Dashboard';
 import CAIOArchitectureDoc from './pages/CAIOArchitectureDoc';
+import ArchitectureDashboard from './pages/ArchitectureDashboard';
+import MissionVision from './pages/MissionVision';
 import __Layout from './Layout.jsx';
 
 
@@ -160,6 +162,8 @@ export const PAGES = {
     "SimulationLab": SimulationLab,
     "Phase3Dashboard": Phase3Dashboard,
     "CAIOArchitectureDoc": CAIOArchitectureDoc,
+    "ArchitectureDashboard": ArchitectureDashboard,
+    "MissionVision": MissionVision,
 }
 
 export const pagesConfig = {
