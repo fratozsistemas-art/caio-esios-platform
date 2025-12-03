@@ -51,14 +51,13 @@ export default function ConversationList({
 
   const deleteSingleMutation = useMutation({
     mutationFn: async (conversationId) => {
-      const conv = conversations.find(c => c.id === conversationId);
-      await base44.agents.updateConversation(conversationId, {
-        metadata: {
-          ...conv.metadata,
-          deleted: true,
-          deleted_at: new Date().toISOString()
-        }
+      const { data } = await base44.functions.invoke('deleteConversation', {
+        conversation_id: conversationId
       });
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['conversations']);
