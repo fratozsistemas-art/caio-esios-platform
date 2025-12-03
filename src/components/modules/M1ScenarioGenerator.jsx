@@ -151,6 +151,24 @@ Be specific with numbers, percentages, and actionable insights.`,
   const getScenarioConfig = (type) => scenarioTypes.find(s => s.value === type) || scenarioTypes[1];
 
   return (
+    <div className="space-y-6">
+      <Tabs defaultValue="generate" className="w-full">
+        <TabsList className="bg-white/5 border border-white/10 mb-4">
+          <TabsTrigger value="generate" className="data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">
+            <Sparkles className="w-4 h-4 mr-2" />
+            Gerar Cenários
+          </TabsTrigger>
+          <TabsTrigger value="compare" className="data-[state=active]:bg-purple-500/20 data-[state=active]:text-purple-400">
+            <GitCompare className="w-4 h-4 mr-2" />
+            Comparar
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="compare">
+          <ScenarioComparisonViewer />
+        </TabsContent>
+
+        <TabsContent value="generate">
     <Card className="bg-white/5 border-white/10">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-white">
