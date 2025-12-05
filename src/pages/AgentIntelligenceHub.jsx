@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
-import { Network, TrendingUp, Brain, Database, Cpu } from "lucide-react";
+import { Network, TrendingUp, Brain, Database } from "lucide-react";
 import ImprovedKnowledgeGraph from "@/components/agents/ImprovedKnowledgeGraph";
 import PredictiveScalingEngine from "@/components/agents/PredictiveScalingEngine";
 import TrainingDataManager from "@/components/agents/TrainingDataManager";
-import FeedbackAnalysisEngine from "@/components/agents/FeedbackAnalysisEngine";
 
 export default function AgentIntelligenceHub() {
   return (
@@ -30,12 +28,7 @@ export default function AgentIntelligenceHub() {
             <Database className="w-4 h-4 mr-2" />
             Training Data
           </TabsTrigger>
-          <TabsTrigger value="retraining" className="data-[state=active]:bg-cyan-500/20">
-            <Cpu className="w-4 h-4 mr-2" />
-            Analysis & Retraining
-            <Badge className="ml-2 bg-cyan-500/20 text-cyan-400 text-[10px]">NEW</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="predictive-scaling" className="data-[state=active]:bg-green-500/20">
+          <TabsTrigger value="predictive-scaling" className="data-[state=active]:bg-cyan-500/20">
             <TrendingUp className="w-4 h-4 mr-2" />
             Predictive Scaling
           </TabsTrigger>
@@ -47,10 +40,6 @@ export default function AgentIntelligenceHub() {
 
         <TabsContent value="training-data" className="mt-6">
           <TrainingDataManager />
-        </TabsContent>
-
-        <TabsContent value="retraining" className="mt-6">
-          <FeedbackAnalysisEngine />
         </TabsContent>
 
         <TabsContent value="predictive-scaling" className="mt-6">
