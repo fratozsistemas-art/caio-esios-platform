@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import AgentCollaborationLayer from "./AgentCollaborationLayer";
+import AgentFeedbackWidget from "./AgentFeedbackWidget";
 
 const AGENTS = [
   {
@@ -404,29 +405,39 @@ export default function AutonomousAgentsDashboard() {
                       animate={{ opacity: 1, y: 0 }}
                       className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-[80%] p-3 rounded-lg ${
-                        msg.role === 'user'
-                          ? 'bg-blue-500/20 text-white'
-                          : `bg-${currentAgent?.color}-500/10 text-slate-300`
-                      }`}>
-                        {msg.role === 'agent' && typeof msg.content === 'object' ? (
-                          <div className="space-y-2">
-                            {msg.content.summary && (
-                              <p className="text-sm">{msg.content.summary}</p>
-                            )}
-                            {msg.content.recommendations?.slice(0, 3).map((rec, j) => (
-                              <p key={j} className="text-xs text-slate-400">• {rec}</p>
-                            ))}
-                            {msg.content.health_score && (
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className="text-xs text-slate-500">Health Score:</span>
-                                <Progress value={msg.content.health_score} className="flex-1 h-2" />
-                                <span className="text-xs text-emerald-400">{msg.content.health_score}%</span>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-sm">{typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content).slice(0, 200)}</p>
+                      <div className="flex flex-col gap-2">
+                        <div className={`max-w-[80%] p-3 rounded-lg ${
+                          msg.role === 'user'
+                            ? 'bg-blue-500/20 text-white'
+                            : `bg-${currentAgent?.color}-500/10 text-slate-300`
+                        }`}>
+                          {msg.role === 'agent' && typeof msg.content === 'object' ? (
+                            <div className="space-y-2">
+                              {msg.content.summary && (
+                                <p className="text-sm">{msg.content.summary}</p>
+                              )}
+                              {msg.content.recommendations?.slice(0, 3).map((rec, j) => (
+                                <p key={j} className="text-xs text-slate-400">• {rec}</p>
+                              ))}
+                              {msg.content.health_score && (
+                                <div className="flex items-center gap-2 mt-2">
+                                  <span className="text-xs text-slate-500">Health Score:</span>
+                                  <Progress value={msg.content.health_score} className="flex-1 h-2" />
+                                  <span className="text-xs text-emerald-400">{msg.content.health_score}%</span>
+                                </div>
+                              )}
+                            </div>
+                          ) : (
+                            <p className="text-sm">{typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content).slice(0, 200)}</p>
+                          )}
+                        </div>
+                        {msg.role === 'agent' && (
+                          <AgentFeedbackWidget 
+                            agentId={activeAgent}
+                            output={msg.content}
+                            inputContext={{ message: conversations[activeAgent]?.[conversations[activeAgent].length - 2]?.content }}
+                            compact
+                          />
                         )}
                       </div>
                     </motion.div>
