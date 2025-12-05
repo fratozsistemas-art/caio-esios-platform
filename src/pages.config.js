@@ -85,6 +85,7 @@ import V13ImplementationHub from './pages/V13ImplementationHub';
 import AutonomousAgents from './pages/AutonomousAgents';
 import AgentCollaborationHub from './pages/AgentCollaborationHub';
 import AgentIntelligenceHub from './pages/AgentIntelligenceHub';
+import WorkflowDesigner from './pages/WorkflowDesigner';
 import __Layout from './Layout.jsx';
 
 
@@ -176,6 +177,7 @@ export const PAGES = {
     "AutonomousAgents": AutonomousAgents,
     "AgentCollaborationHub": AgentCollaborationHub,
     "AgentIntelligenceHub": AgentIntelligenceHub,
+    "WorkflowDesigner": WorkflowDesigner,
 }
 
 export const pagesConfig = {

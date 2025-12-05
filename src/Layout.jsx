@@ -9,6 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import GlobalSearch from './components/GlobalSearch';
+import AgentNotificationCenter from './components/agents/AgentNotificationCenter';
 import { TutorialProvider } from './components/tutorial/TutorialSystem';
 import TutorialLauncher from './components/tutorial/TutorialLauncher';
 import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext';
@@ -67,6 +68,7 @@ function LayoutInner({ children, currentPageName }) {
       items: [
         { name: t('nav.autonomousAgents', 'Autonomous Agents'), icon: Bot, path: 'AutonomousAgents', badge: 'AUTO' },
         { name: t('nav.collaborationHub', 'Collaboration Hub'), icon: Network, path: 'AgentCollaborationHub', badge: 'NEW' },
+        { name: t('nav.workflowDesigner', 'Workflow Designer'), icon: GitMerge, path: 'WorkflowDesigner', badge: 'VISUAL' },
         { name: t('nav.agentOrchestration', 'Agent Orchestration'), icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' },
         { name: t('nav.workflowTemplates', 'Workflow Templates'), icon: Layers, path: 'WorkflowTemplates', badge: 'NEW' },
         { name: t('nav.agentPerformance', 'Agent Performance'), icon: TrendingUp, path: 'AgentPerformance', badge: 'NEW' },
@@ -200,6 +202,7 @@ function LayoutInner({ children, currentPageName }) {
             <span className="text-white font-bold text-lg">CAIO·AI</span>
           </div>
           <div className="flex items-center gap-2">
+            <AgentNotificationCenter />
             <Button
               variant="ghost"
               size="icon"
