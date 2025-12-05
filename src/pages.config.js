@@ -80,6 +80,7 @@ import CAIOArchitectureDoc from './pages/CAIOArchitectureDoc';
 import ArchitectureDashboard from './pages/ArchitectureDashboard';
 import MissionVision from './pages/MissionVision';
 import AlertsManagement from './pages/AlertsManagement';
+import AnalysesDashboard from './pages/AnalysesDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -166,6 +167,7 @@ export const PAGES = {
     "ArchitectureDashboard": ArchitectureDashboard,
     "MissionVision": MissionVision,
     "AlertsManagement": AlertsManagement,
+    "AnalysesDashboard": AnalysesDashboard,
 }
 
 export const pagesConfig = {
