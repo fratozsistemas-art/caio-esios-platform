@@ -370,7 +370,7 @@ export default function ArchitectureAudit() {
                 Estas representam <strong className="text-cyan-400">~35% de funcionalidade adicional</strong> não mapeada na arquitetura cognitiva.
               </p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {FEATURES_BEYOND_V12_3.map((cat, idx) => {
+                {FEATURES_V10.map((cat, idx) => {
                   const Icon = cat.icon;
                   return (
                     <div key={idx} className="p-3 bg-white/5 rounded-lg border border-white/10">
@@ -488,7 +488,7 @@ export default function ArchitectureAudit() {
             </CardContent>
           </Card>
 
-          {FEATURES_BEYOND_V12_3.map((category, idx) => {
+          {FEATURES_V10.map((category, idx) => {
             const Icon = category.icon;
             return (
               <Card key={idx} className={`bg-${category.color}-500/10 border-${category.color}-500/30`}>
