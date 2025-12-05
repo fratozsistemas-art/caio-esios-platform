@@ -17,16 +17,6 @@ import EnhancedM5Synthesis from "@/components/modules/EnhancedM5Synthesis";
 import CRVAutoScoringEngine from "@/components/crv/CRVAutoScoringEngine";
 import PatternRecognitionEngine from "@/components/nia/PatternRecognitionEngine";
 
-/**
- * v13.0 Implementation Hub
- * 
- * Central hub for accessing all v13.0 enhanced components:
- * - CRV Validation Gate (complete 3-component implementation)
- * - M5 Enhanced Strategic Synthesis (with Mental Models)
- * - Confidence Evolution Engine (Pattern Synthesis)
- * - Pattern Recognition Engine (NIA)
- */
-
 const MATURITY_TARGETS = [
   { component: 'CRV Validation Gate', current: 1.5, target: 4, priority: 'critical' },
   { component: 'M5 Strategic Synthesis', current: 2, target: 4, priority: 'critical' },
@@ -136,11 +126,11 @@ export default function V13ImplementationHub() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
-                  { name: 'CRV Validation Gate', desc: 'Full 3-component validation (Skepticism + Structure + Empirical)', icon: Shield, color: 'purple', status: 'NEW' },
-                  { name: 'M5 Enhanced Synthesis', desc: 'Mental Models + Options A/B/C + Hybrid + Trade-offs', icon: GitMerge, color: 'yellow', status: 'NEW' },
-                  { name: 'Confidence Evolution', desc: 'HYPOTHESIS → MATURE pattern evolution protocol', icon: Target, color: 'emerald', status: 'NEW' },
-                  { name: 'Pattern Recognition', desc: 'NIA historical pattern analysis with predictive indicators', icon: Brain, color: 'cyan', status: 'ENHANCED' },
-                  { name: 'CRV Auto-Scoring', desc: 'Automated C/R/V scoring with factor analysis', icon: Scale, color: 'green', status: 'ENHANCED' }
+                  { name: 'CRV Validation Gate', desc: 'Full 3-component validation (Skepticism + Structure + Empirical)', icon: Shield, color: 'purple', status: 'NEW', tab: 'crv-gate' },
+                  { name: 'M5 Enhanced Synthesis', desc: 'Mental Models + Options A/B/C + Hybrid + Trade-offs', icon: GitMerge, color: 'yellow', status: 'NEW', tab: 'm5-synthesis' },
+                  { name: 'Confidence Evolution', desc: 'HYPOTHESIS → MATURE pattern evolution protocol', icon: Target, color: 'emerald', status: 'NEW', tab: 'confidence' },
+                  { name: 'Pattern Recognition', desc: 'NIA historical pattern analysis with predictive indicators', icon: Brain, color: 'cyan', status: 'ENHANCED', tab: 'patterns' },
+                  { name: 'CRV Auto-Scoring', desc: 'Automated C/R/V scoring with factor analysis', icon: Scale, color: 'green', status: 'ENHANCED', tab: 'crv-scoring' }
                 ].map((component, i) => (
                   <motion.div
                     key={i}
@@ -163,12 +153,7 @@ export default function V13ImplementationHub() {
                       size="sm"
                       variant="outline"
                       className={`border-${component.color}-500/30 text-${component.color}-400`}
-                      onClick={() => setActiveTab(
-                        component.name.includes('CRV Validation') ? 'crv-gate' :
-                        component.name.includes('M5') ? 'm5-synthesis' :
-                        component.name.includes('Confidence') ? 'confidence' :
-                        component.name.includes('Pattern') ? 'patterns' : 'crv-scoring'
-                      )}
+                      onClick={() => setActiveTab(component.tab)}
                     >
                       <Eye className="w-4 h-4 mr-1" />
                       Open
