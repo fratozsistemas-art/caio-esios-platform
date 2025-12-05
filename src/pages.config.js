@@ -81,6 +81,7 @@ import ArchitectureDashboard from './pages/ArchitectureDashboard';
 import MissionVision from './pages/MissionVision';
 import AlertsManagement from './pages/AlertsManagement';
 import AnalysesDashboard from './pages/AnalysesDashboard';
+import V13ImplementationHub from './pages/V13ImplementationHub';
 import __Layout from './Layout.jsx';
 
 
@@ -168,6 +169,7 @@ export const PAGES = {
     "MissionVision": MissionVision,
     "AlertsManagement": AlertsManagement,
     "AnalysesDashboard": AnalysesDashboard,
+    "V13ImplementationHub": V13ImplementationHub,
 }
 
 export const pagesConfig = {
