@@ -58,78 +58,76 @@ export default function ImprovedKnowledgeGraph() {
     queryFn: () => base44.entities.AgentFeedback.list('-created_date', 100)
   });
 
-  // Generate graph with fixed layout
+  // Generate graph with compact layout
   const generateGraph = async () => {
     setIsGenerating(true);
     try {
       const graphNodes = [];
       const graphEdges = [];
-      const centerX = 400;
-      const centerY = 250;
 
-      // Add agent nodes in center - fixed positions
-      const agentPositions = [
-        { x: centerX, y: centerY - 80 },
-        { x: centerX - 100, y: centerY + 60 },
-        { x: centerX + 100, y: centerY + 60 }
-      ];
+      // Compact layout - all nodes within visible area
+      const width = 750;
+      const height = 420;
+      const padding = 50;
+
+      // Add agent nodes in center row
       const agentIds = ['market_monitor', 'strategy_doc_generator', 'knowledge_curator'];
       agentIds.forEach((agentId, idx) => {
         graphNodes.push({
           id: `agent-${agentId}`,
           type: 'agent',
           label: agentId.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-          x: agentPositions[idx].x,
-          y: agentPositions[idx].y,
-          size: 30,
+          x: padding + 120 + idx * 220,
+          y: height / 2,
+          size: 28,
           data: { agentId }
         });
       });
 
-      // Add analysis nodes in a grid on the left
-      const maxAnalyses = Math.min(analyses.length, 8);
+      // Add analysis nodes - top row, evenly spaced
+      const maxAnalyses = Math.min(analyses.length, 6);
+      const analysisSpacing = (width - padding * 2) / Math.max(maxAnalyses, 1);
       analyses.slice(0, maxAnalyses).forEach((analysis, idx) => {
-        const col = idx % 2;
-        const row = Math.floor(idx / 2);
         graphNodes.push({
           id: `analysis-${analysis.id}`,
           type: 'analysis',
-          label: (analysis.title || 'Analysis').slice(0, 15),
-          x: 80 + col * 80,
-          y: 80 + row * 70,
-          size: 22,
+          label: (analysis.title || 'Analysis').slice(0, 12),
+          x: padding + analysisSpacing * idx + analysisSpacing / 2,
+          y: padding + 30,
+          size: 20,
           data: analysis
         });
       });
 
-      // Add knowledge items in a grid on the right
-      const maxKnowledge = Math.min(knowledgeItems.length, 8);
+      // Add knowledge items - bottom row, evenly spaced
+      const maxKnowledge = Math.min(knowledgeItems.length, 6);
+      const knowledgeSpacing = (width - padding * 2) / Math.max(maxKnowledge, 1);
       knowledgeItems.slice(0, maxKnowledge).forEach((item, idx) => {
-        const col = idx % 2;
-        const row = Math.floor(idx / 2);
         graphNodes.push({
           id: `knowledge-${item.id}`,
           type: 'knowledge_item',
-          label: (item.title || 'Knowledge').slice(0, 15),
-          x: 640 + col * 80,
-          y: 80 + row * 70,
-          size: 20,
+          label: (item.title || 'Knowledge').slice(0, 12),
+          x: padding + knowledgeSpacing * idx + knowledgeSpacing / 2,
+          y: height - padding - 20,
+          size: 18,
           data: item
         });
       });
 
-      // Add feedback nodes below agents
-      const maxFeedback = Math.min(agentFeedback.length, 9);
+      // Add feedback nodes - around agents
+      const maxFeedback = Math.min(agentFeedback.length, 6);
       agentFeedback.slice(0, maxFeedback).forEach((fb, idx) => {
-        const col = idx % 3;
-        const row = Math.floor(idx / 3);
+        const agentNode = graphNodes.find(n => n.id === `agent-${fb.agent_id}`);
+        const baseX = agentNode ? agentNode.x : padding + 120 + (idx % 3) * 220;
+        const offsetX = (idx % 2 === 0 ? -50 : 50);
+        const offsetY = (idx < 3 ? -60 : 60);
         graphNodes.push({
           id: `feedback-${fb.id}`,
           type: 'agent_feedback',
-          label: `${fb.feedback_type} ${fb.rating ? `(${fb.rating}★)` : ''}`,
-          x: 300 + col * 100,
-          y: 380 + row * 60,
-          size: 16,
+          label: `${fb.feedback_type?.slice(0, 6) || 'fb'} ${fb.rating ? `${fb.rating}★` : ''}`,
+          x: baseX + offsetX,
+          y: height / 2 + offsetY,
+          size: 14,
           data: fb
         });
       });
@@ -302,10 +300,10 @@ export default function ImprovedKnowledgeGraph() {
 
       {/* Graph Container */}
       <Card className="bg-slate-900/50 border-white/10 overflow-hidden">
-        <CardContent className="p-0">
+        <CardContent className="p-2">
           <div
             ref={containerRef}
-            className="relative w-full h-[500px] bg-slate-950 cursor-grab active:cursor-grabbing"
+            className="relative w-full h-[420px] bg-slate-950 rounded-lg cursor-grab active:cursor-grabbing"
             style={{ backgroundImage: 'radial-gradient(circle, #1e293b 1px, transparent 1px)', backgroundSize: '20px 20px' }}
             onMouseDown={(e) => handleMouseDown(e)}
             onMouseMove={handleMouseMove}
