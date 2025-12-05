@@ -1,359 +1,608 @@
 import { 
   MessageSquare, Brain, Zap, FileText, Briefcase, Network, Target, 
-  Upload, Search, TrendingUp, Users, Settings, Compass, Building2, Code,
-  GitMerge, Layers, Shield, BarChart3, Database, BookOpen, Cpu
+  Upload, Search, TrendingUp, Users, Settings, Compass, Building2,
+  GitMerge, Layers, Shield, BarChart3, Database, BookOpen, Cpu, Bot,
+  Activity, Bell, Plug, Eye, Sparkles
 } from 'lucide-react';
 
-export const TUTORIALS = {
-  navigation: {
-    id: 'navigation',
-    title: 'Platform Navigation',
-    category: 'Getting Started',
-    description: 'Explore the main sections of CAIO·AI',
-    steps: [
-      {
-        title: 'Welcome to CAIO·AI! 🚀',
-        content: 'Let\'s take a quick tour of the platform. You\'ll discover how to access all powerful features organized in logical sections.',
-        icon: Brain,
-      },
-      {
-        title: 'Core Section 🎯',
-        content: 'Essential tools: Dashboard for overview, Chat with CAIO for AI interactions, and Quick Actions for rapid strategic analysis.',
-        icon: Zap,
-        highlightSection: 'Core'
-      },
-      {
-        title: 'Intelligence Section 🧠',
-        content: 'Advanced features: Company Intelligence Hub, Behavioral Intelligence, Knowledge Management, Knowledge Graph, Network Map, Agent Memory, and CVM Graph.',
-        icon: Brain,
-        highlightSection: 'Intelligence'
-      },
-      {
-        title: 'Companies Section 🏢',
-        content: 'Manage company data: discover new companies (ESIOS), ingest CVM data from Brazilian securities, and perform batch operations.',
-        icon: Building2,
-        highlightSection: 'Companies'
-      },
-      {
-        title: 'Analysis Section 📊',
-        content: 'Deep analysis: TSI Projects for strategic intelligence methodology, File Analyzer for documents, and Tech Intelligence for technology stack discovery.',
-        icon: FileText,
-        highlightSection: 'Analysis'
-      },
-      {
-        title: 'AI Workflows Section ⚡',
-        content: 'Orchestrate AI agents: create workflows, use templates, monitor performance, and train custom agents for specialized tasks.',
-        icon: GitMerge,
-        highlightSection: 'AI Workflows'
-      },
-      {
-        title: 'Governance Section 🛡️',
-        content: 'Cognitive governance with Hermes Trust-Broker: monitor AI decisions, set auto-trigger rules, track integrity, and manage support tickets.',
-        icon: Shield,
-        highlightSection: 'Governance'
-      },
-      {
-        title: 'You\'re All Set! ✨',
-        content: 'Use ⌘K (Ctrl+K) for global search anytime. Click the tutorial button in the sidebar to replay or explore other tutorials.',
-        icon: Search
-      }
-    ]
-  },
+/**
+ * CAIO·AI Tutorial System v11.0
+ * Reorganized by user journey and complexity
+ */
 
+export const TUTORIAL_CATEGORIES = {
+  onboarding: {
+    id: 'onboarding',
+    label: 'Primeiros Passos',
+    labelEn: 'Getting Started',
+    icon: Compass,
+    color: '#C7A763',
+    order: 1
+  },
+  core: {
+    id: 'core',
+    label: 'Funcionalidades Core',
+    labelEn: 'Core Features',
+    icon: Zap,
+    color: '#3b82f6',
+    order: 2
+  },
+  intelligence: {
+    id: 'intelligence',
+    label: 'Inteligência Estratégica',
+    labelEn: 'Strategic Intelligence',
+    icon: Brain,
+    color: '#a855f7',
+    order: 3
+  },
+  agents: {
+    id: 'agents',
+    label: 'Agentes & Workflows',
+    labelEn: 'Agents & Workflows',
+    icon: Bot,
+    color: '#10b981',
+    order: 4
+  },
   collaboration: {
     id: 'collaboration',
-    title: 'Collaboration Tools',
-    category: 'Teamwork',
-    description: 'Learn to collaborate with your team in real-time',
-    steps: [
-      {
-        title: 'Real-Time Collaboration 👥',
-        content: 'CAIO·AI enables seamless teamwork. See who\'s online, what they\'re working on, and collaborate in real-time across all strategic initiatives.',
-        icon: Users,
-      },
-      {
-        title: 'User Presence 🟢',
-        content: 'The presence indicator shows team members currently viewing the same entity. Avatars display status (online, away, busy) for instant awareness.',
-        icon: Users,
-        targetSelector: '[data-tour="user-presence"]'
-      },
-      {
-        title: 'Comments & Discussions 💬',
-        content: 'Add comments to any strategy, analysis, or workspace. Reply to create threads, @mention colleagues, and add emoji reactions. Resolve threads when done.',
-        icon: MessageSquare,
-        targetSelector: '[data-tour="comments"]'
-      },
-      {
-        title: 'Task Assignments ✅',
-        content: 'Create tasks directly from any entity. Assign to team members, set priority and due dates. Track progress and receive notifications on updates.',
-        icon: Target,
-        targetSelector: '[data-tour="tasks"]'
-      },
-      {
-        title: 'Activity Feed 📋',
-        content: 'The activity feed shows all team actions: comments, task completions, insights shared. Filter by entity or user. Click to jump to the source.',
-        icon: TrendingUp,
-        targetSelector: '[data-tour="activity-feed"]'
-      },
-      {
-        title: 'Share Insights 🔗',
-        content: 'Use the Share Insight feature to create summaries from any analysis. Control visibility (private, team, public) and add tags for easy discovery.',
-        icon: Network,
-      }
-    ]
+    label: 'Colaboração',
+    labelEn: 'Collaboration',
+    icon: Users,
+    color: '#f59e0b',
+    order: 5
   },
+  advanced: {
+    id: 'advanced',
+    label: 'Recursos Avançados',
+    labelEn: 'Advanced Features',
+    icon: Sparkles,
+    color: '#ec4899',
+    order: 6
+  }
+};
 
-  aiInsights: {
-    id: 'aiInsights',
-    title: 'AI-Powered Insights',
-    category: 'Intelligence',
-    description: 'Discover how CAIO generates strategic insights',
+export const TUTORIALS = {
+  // ═══════════════════════════════════════════════════════════════
+  // ONBOARDING — Primeiros Passos
+  // ═══════════════════════════════════════════════════════════════
+  
+  platformTour: {
+    id: 'platformTour',
+    title: 'Tour pela Plataforma',
+    titleEn: 'Platform Tour',
+    category: 'onboarding',
+    description: 'Conheça as principais seções do CAIO·AI',
+    descriptionEn: 'Explore the main sections of CAIO·AI',
+    duration: '3 min',
+    difficulty: 'beginner',
     steps: [
       {
-        title: 'Proactive Intelligence 🧠',
-        content: 'CAIO doesn\'t wait—it continuously monitors data sources, identifies patterns, and surfaces insights before you ask. Strategic intelligence on autopilot.',
+        title: 'Bem-vindo ao CAIO·AI! 🚀',
+        content: 'Esta é sua plataforma de Inteligência Estratégica Executiva. Vamos fazer um tour rápido pelas principais funcionalidades.',
         icon: Brain,
       },
       {
-        title: 'Dashboard Widgets 📊',
-        content: 'Your dashboard displays real-time analytics: active users, live conversations, analyses completed, and key performance indicators—all customizable.',
-        icon: BarChart3,
-        targetSelector: '[data-tour="quick-stats"]'
-      },
-      {
-        title: 'Knowledge Graph 🕸️',
-        content: 'The Knowledge Graph connects 10K+ entities: companies, executives, technologies, frameworks. Query in natural language to discover hidden relationships.',
-        icon: Network,
-      },
-      {
-        title: 'Quick Actions ⚡',
-        content: 'Pre-configured analyses execute in seconds. Filter by C-level role or strategic theme. Each action uses specific TSI modules for structured outputs.',
-        icon: Zap,
-      },
-      {
-        title: 'Predictive Analysis 🔮',
-        content: 'CAIO predicts market shifts, identifies opportunities, and suggests strategic moves based on historical patterns and real-time signals.',
-        icon: TrendingUp,
-      },
-      {
-        title: 'Cross-Platform Insights 🌐',
-        content: 'Insights aggregate from multiple sources: CVM data, financial APIs, news sentiment, and your internal analyses—unified in one intelligent view.',
+        title: 'Navegação Principal 📍',
+        content: 'O menu lateral organiza tudo em seções lógicas: Core, AI Agents, Intelligence, Analysis, Architecture, Projects, Data e Monitoring.',
         icon: Compass,
+        highlightSection: 'sidebar'
+      },
+      {
+        title: 'Busca Global (⌘K) 🔍',
+        content: 'Pressione ⌘K (ou Ctrl+K) a qualquer momento para buscar estratégias, análises, empresas, pessoas e muito mais.',
+        icon: Search,
+      },
+      {
+        title: 'Central de Notificações 🔔',
+        content: 'O sino no topo mostra alertas dos agentes, atualizações de workflows e notificações importantes em tempo real.',
+        icon: Bell,
+      },
+      {
+        title: 'Você está pronto! ✨',
+        content: 'Explore os tutoriais específicos para aprofundar em cada funcionalidade. Clique no botão "Tutorials" no menu para acessar todos.',
+        icon: Sparkles
       }
     ]
   },
 
   dashboard: {
     id: 'dashboard',
-    title: 'Dashboard Overview',
-    category: 'Core',
-    description: 'Learn how to use the CAIO·AI Dashboard',
+    title: 'Dashboard Executivo',
+    titleEn: 'Executive Dashboard',
+    category: 'onboarding',
+    description: 'Centro de comando com métricas em tempo real',
+    descriptionEn: 'Command center with real-time metrics',
+    duration: '2 min',
+    difficulty: 'beginner',
     steps: [
       {
-        title: 'Bem-vindo ao Dashboard! 🎯',
-        content: 'Este é seu centro de comando do CAIO·AI. Aqui você monitora todas as atividades, insights e métricas em tempo real.',
-        icon: Brain,
-      },
-      {
-        title: 'Métricas em Tempo Real 📡',
-        content: 'Acompanhe usuários ativos, conversas ao vivo, análises do dia e tempo médio de resposta. Os dados são atualizados automaticamente.',
-        icon: TrendingUp,
-      },
-      {
-        title: 'Indicadores Principais 📈',
-        content: 'Visualize conversas totais, insights de IA gerados, entidades no Knowledge Graph e ações pendentes - tudo em uma visão consolidada.',
+        title: 'Seu Centro de Comando 🎯',
+        content: 'O Dashboard é sua visão consolidada de todas as atividades, insights e métricas do CAIO·AI.',
         icon: BarChart3,
       },
       {
-        title: 'Personalize seu Dashboard 🎨',
-        content: 'Use o botão "Customize" no topo para reorganizar widgets, mostrar/ocultar seções e criar sua visualização ideal. As mudanças são salvas automaticamente!',
+        title: 'Métricas em Tempo Real 📡',
+        content: 'Acompanhe usuários ativos, conversas ao vivo, análises do dia e tempo médio de resposta — atualizados automaticamente.',
+        icon: Activity,
+      },
+      {
+        title: 'Widgets Personalizáveis 🎨',
+        content: 'Clique em "Customize" para reorganizar widgets, mostrar/ocultar seções e criar sua visualização ideal.',
         icon: Layers,
       },
       {
-        title: 'Biblioteca de Widgets 📚',
-        content: 'Widgets disponíveis: Histórico de Conversas, Insights de Análise, Estatísticas do Knowledge Graph, Itens de Ação, Monitoramento Proativo, Análise Preditiva e mais.',
-        icon: Database
+        title: 'Insights Proativos 💡',
+        content: 'O CAIO monitora continuamente e exibe insights estratégicos, alertas e oportunidades detectadas.',
+        icon: Sparkles,
       }
     ]
   },
 
-  chat: {
-    id: 'chat',
-    title: 'Chat with CAIO',
-    category: 'Core',
-    description: 'Master AI-powered strategic conversations',
+  // ═══════════════════════════════════════════════════════════════
+  // CORE — Funcionalidades Essenciais
+  // ═══════════════════════════════════════════════════════════════
+
+  chatWithCaio: {
+    id: 'chatWithCaio',
+    title: 'Chat com CAIO',
+    titleEn: 'Chat with CAIO',
+    category: 'core',
+    description: 'Conversas estratégicas com IA',
+    descriptionEn: 'AI-powered strategic conversations',
+    duration: '3 min',
+    difficulty: 'beginner',
     steps: [
       {
-        title: 'AI Conversations 💬',
-        content: 'CAIO is your strategic partner. Ask questions about market analysis, strategy, finance, competitive intelligence, and more.',
+        title: 'Seu Parceiro Estratégico 💬',
+        content: 'O CAIO é seu advisor de inteligência artificial. Pergunte sobre mercado, estratégia, finanças, competidores e muito mais.',
         icon: MessageSquare,
-        targetSelector: '.space-y-4 > div:first-child',
       },
       {
-        title: 'Conversation List 📋',
-        content: 'Your previous conversations are saved here. CAIO maintains context and memory of everything discussed.',
+        title: 'Histórico de Conversas 📋',
+        content: 'Suas conversas anteriores ficam salvas no painel lateral. O CAIO mantém contexto e memória de tudo que foi discutido.',
         icon: Brain,
-        targetSelector: 'aside.fixed.right-0',
       },
       {
-        title: 'Input Area ✍️',
-        content: 'Type your question here. Use markdown, attach files, or select Quick Actions for specific analyses.',
-        icon: Target,
-        targetSelector: 'textarea',
-      },
-      {
-        title: 'File Upload 📎',
-        content: 'Click the attachment icon to send documents, spreadsheets, or PDFs. CAIO extracts data and generates insights automatically.',
+        title: 'Upload de Arquivos 📎',
+        content: 'Envie documentos, planilhas ou PDFs. O CAIO extrai dados e gera insights automaticamente.',
         icon: Upload,
       },
-    ],
+      {
+        title: 'Seleção de Persona 🎭',
+        content: 'Escolha diferentes personas de agente (Market Monitor, Strategy Doc, Knowledge Curator) para respostas especializadas.',
+        icon: Bot,
+      }
+    ]
   },
 
-  tsi: {
-    id: 'tsi',
-    title: 'TSI Methodology',
-    category: 'Analysis',
-    description: 'Understand the TSI v9.3 Framework',
-    steps: [
-      {
-        title: 'TSI v9.3 Framework 🧠',
-        content: 'The TSI (Total Strategic Intelligence) methodology comprises 11 modules covering all strategic dimensions.',
-        icon: Brain,
-      },
-      {
-        title: 'Specialized Modules 🔬',
-        content: 'M1: Market Context, M2: Competitive Intelligence, M3: Tech & Innovation, M4: Financial Model, M5: Strategic Synthesis, and 6 more modules.',
-        icon: Zap,
-      },
-      {
-        title: 'TSI Projects 📊',
-        content: 'Create complete TSI projects for deep analysis. The system orchestrates multiple agents to generate insights in each module.',
-        icon: FileText,
-      },
-      {
-        title: 'Automated Deliverables 📄',
-        content: 'Generate executive reports, investment memos, competitive analyses, and roadmaps automatically.',
-        icon: Target,
-      },
-    ],
-  },
-
-  workspaces: {
-    id: 'workspaces',
-    title: 'Collaborative Workspaces',
-    category: 'Projects',
-    description: 'Organize strategic initiatives',
-    steps: [
-      {
-        title: 'Project Organization 🗂️',
-        content: 'Workspaces allow you to organize analyses, documents, and conversations by project or strategic initiative.',
-        icon: Briefcase,
-      },
-      {
-        title: 'Ready Templates 📋',
-        content: 'Choose from templates like M&A Due Diligence, Market Entry, Digital Transformation, and more.',
-        icon: Target,
-      },
-      {
-        title: 'Real-Time Collaboration 👥',
-        content: 'Invite team members, share insights, and track progress in real-time.',
-        icon: Users,
-      },
-      {
-        title: 'Phases & Deliverables 🎯',
-        content: 'Each workspace has defined phases with suggested Quick Actions and expected deliverables.',
-        icon: TrendingUp,
-      },
-    ],
-  },
-
-  quickactions: {
-    id: 'quickactions',
+  quickActions: {
+    id: 'quickActions',
     title: 'Quick Actions',
-    category: 'Productivity',
-    description: 'Rapid strategic analysis',
+    titleEn: 'Quick Actions',
+    category: 'core',
+    description: 'Análises estratégicas instantâneas',
+    descriptionEn: 'Instant strategic analyses',
+    duration: '2 min',
+    difficulty: 'beginner',
     steps: [
       {
-        title: 'Analysis Library ⚡',
-        content: 'Quick Actions are pre-configured analyses that trigger specific TSI frameworks in seconds.',
+        title: 'Análises Pré-Configuradas ⚡',
+        content: 'Quick Actions são análises que acionam frameworks TSI específicos em segundos. Escolha uma e execute.',
         icon: Zap,
-        targetSelector: '.grid.md\\:grid-cols-2.lg\\:grid-cols-3',
       },
       {
-        title: 'Filters by Role & Theme 🎯',
-        content: 'Use filters to find analyses relevant to your role (CEO, CFO, CTO) or strategic theme.',
-        icon: Search,
-        targetSelector: '.flex.flex-wrap.gap-2',
+        title: 'Filtros por Cargo e Tema 🎯',
+        content: 'Use filtros para encontrar análises relevantes para seu cargo (CEO, CFO, CTO) ou tema estratégico.',
+        icon: Target,
       },
       {
-        title: 'View Action Details 👁️',
-        content: 'Click any card to see details: frameworks used, required inputs, and expected outputs.',
+        title: 'Detalhes da Ação 👁️',
+        content: 'Clique em qualquer card para ver: frameworks utilizados, inputs necessários e outputs esperados.',
+        icon: Eye,
+      },
+      {
+        title: 'Execução e Resultados 🚀',
+        content: 'Preencha os campos e execute. O CAIO processa usando múltiplos módulos TSI e retorna insights estruturados.',
+        icon: Sparkles,
+      }
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // INTELLIGENCE — Inteligência Estratégica
+  // ═══════════════════════════════════════════════════════════════
+
+  tsiMethodology: {
+    id: 'tsiMethodology',
+    title: 'Metodologia TSI v9.3',
+    titleEn: 'TSI v9.3 Methodology',
+    category: 'intelligence',
+    description: 'Framework de 11 módulos cognitivos',
+    descriptionEn: '11-module cognitive framework',
+    duration: '4 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Framework TSI v9.3 🧠',
+        content: 'O TSI (Total Strategic Intelligence) é a metodologia proprietária do CAIO com 11 módulos cobrindo todas as dimensões estratégicas.',
         icon: Brain,
-        targetSelector: '.grid.md\\:grid-cols-2.lg\\:grid-cols-3 > div:first-child',
       },
       {
-        title: 'Execute Analysis 🚀',
-        content: 'Fill in the form fields and execute. CAIO processes using multiple TSI modules and returns structured insights.',
-        icon: Settings,
+        title: 'Módulos M1-M4 📊',
+        content: 'M1: Contexto de Mercado, M2: Inteligência Competitiva, M3: Tech & Inovação, M4: Modelo Financeiro — análise fundamental.',
+        icon: BarChart3,
       },
-    ],
+      {
+        title: 'Módulos M5-M7 🎯',
+        content: 'M5: Síntese Estratégica (core), M6: Matriz de Oportunidades, M7: Planejamento de Implementação — convergência e execução.',
+        icon: Target,
+      },
+      {
+        title: 'Módulos M8-M11 🔮',
+        content: 'M8: Reframing Maiêutico, M9: Funding Intelligence, M10: Behavioral Intelligence, M11: Hermes Governance — camadas avançadas.',
+        icon: Sparkles,
+      },
+      {
+        title: 'Projetos TSI Completos 📄',
+        content: 'Crie projetos TSI para análises profundas. O sistema orquestra múltiplos agentes para gerar deliverables completos.',
+        icon: FileText,
+      }
+    ]
   },
 
   knowledgeGraph: {
     id: 'knowledgeGraph',
     title: 'Knowledge Graph',
-    category: 'Intelligence',
-    description: 'Explore strategic connections',
+    titleEn: 'Knowledge Graph',
+    category: 'intelligence',
+    description: 'Grafo de conexões estratégicas',
+    descriptionEn: 'Strategic connections graph',
+    duration: '3 min',
+    difficulty: 'intermediate',
     steps: [
       {
-        title: 'Strategic Connections 🕸️',
-        content: 'The Knowledge Graph connects companies, executives, technologies, frameworks, and metrics in a semantic network.',
+        title: 'Rede de Conexões 🕸️',
+        content: 'O Knowledge Graph conecta empresas, executivos, tecnologias, frameworks e métricas em uma rede semântica com 10K+ entidades.',
         icon: Network,
       },
       {
-        title: 'Pattern Discovery 🔍',
-        content: 'Visualize hidden relationships, identify success patterns, and explore similar cases.',
+        title: 'Descoberta de Padrões 🔍',
+        content: 'Visualize relacionamentos ocultos, identifique padrões de sucesso e explore casos similares.',
         icon: Search,
       },
       {
-        title: 'Auto-Enrichment 🤖',
-        content: 'The system automatically enriches the graph with data from CVM, LinkedIn, financial APIs, and more.',
+        title: 'Auto-Enriquecimento 🤖',
+        content: 'O sistema enriquece automaticamente o grafo com dados de CVM, LinkedIn, APIs financeiras e mais.',
         icon: Zap,
       },
       {
-        title: 'Advanced Queries 💡',
-        content: 'Ask questions in natural language and CAIO queries the graph to bring relevant insights.',
+        title: 'Queries em Linguagem Natural 💡',
+        content: 'Faça perguntas em português e o CAIO consulta o grafo para trazer insights relevantes.',
+        icon: MessageSquare,
+      }
+    ]
+  },
+
+  vectorDecisionEngine: {
+    id: 'vectorDecisionEngine',
+    title: 'Vector Decision Engine',
+    titleEn: 'Vector Decision Engine',
+    category: 'intelligence',
+    description: 'Decisões vetoriais com validação AI',
+    descriptionEn: 'Vectorial decisions with AI validation',
+    duration: '4 min',
+    difficulty: 'advanced',
+    steps: [
+      {
+        title: 'Decisões Vetoriais 🧭',
+        content: 'Externalize decisões estratégicas como vetores com direção, intensidade e horizonte temporal.',
+        icon: Compass,
+      },
+      {
+        title: 'Forças e Contraforças ⚔️',
+        content: 'Mapeie forças aceleradoras e opostas. Visualize o campo de forças que influencia sua decisão.',
+        icon: Target,
+      },
+      {
+        title: 'Validação por IA 🤖',
+        content: 'O CAIO valida consistência, identifica blind spots e sugere vetores alternativos.',
+        icon: Shield,
+      },
+      {
+        title: 'Checkpoints de Monitoramento 📍',
+        content: 'Defina checkpoints para reavaliar a decisão. Receba alertas quando condições mudarem.',
+        icon: Bell,
+      }
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // AGENTS — Agentes e Workflows
+  // ═══════════════════════════════════════════════════════════════
+
+  autonomousAgents: {
+    id: 'autonomousAgents',
+    title: 'Agentes Autônomos',
+    titleEn: 'Autonomous Agents',
+    category: 'agents',
+    description: 'Três agentes especializados do CAIO',
+    descriptionEn: 'Three specialized CAIO agents',
+    duration: '3 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Market Monitor 📊',
+        content: 'Monitora mercados, detecta sinais fracos, analisa tendências e gera alertas sobre oportunidades e ameaças.',
+        icon: Eye,
+      },
+      {
+        title: 'Strategy Doc Generator 📄',
+        content: 'Gera documentos estratégicos, relatórios executivos, investment memos e playbooks automaticamente.',
+        icon: FileText,
+      },
+      {
+        title: 'Knowledge Curator 🧠',
+        content: 'Curadoria do Knowledge Graph, enriquece entidades, sugere conexões e mantém a base de conhecimento atualizada.',
         icon: Brain,
       },
-    ],
+      {
+        title: 'Colaboração entre Agentes 🤝',
+        content: 'Os agentes colaboram automaticamente, passando contexto e acionando uns aos outros quando necessário.',
+        icon: Network,
+      }
+    ]
+  },
+
+  workflowDesigner: {
+    id: 'workflowDesigner',
+    title: 'Workflow Designer',
+    titleEn: 'Workflow Designer',
+    category: 'agents',
+    description: 'Construa workflows visuais multi-agente',
+    descriptionEn: 'Build visual multi-agent workflows',
+    duration: '4 min',
+    difficulty: 'advanced',
+    steps: [
+      {
+        title: 'Designer Visual 🎨',
+        content: 'Arraste e solte nodes para criar workflows que orquestram múltiplos agentes em sequência ou paralelo.',
+        icon: GitMerge,
+      },
+      {
+        title: 'Tipos de Nodes 🔷',
+        content: 'Nodes de agente, condição, loop, agregação e transformação. Conecte-os para criar fluxos complexos.',
+        icon: Layers,
+      },
+      {
+        title: 'Triggers e Schedules ⏰',
+        content: 'Configure triggers (evento, schedule, webhook) para executar workflows automaticamente.',
+        icon: Zap,
+      },
+      {
+        title: 'Monitoramento em Tempo Real 📡',
+        content: 'Acompanhe execuções ao vivo, veja logs, identifique gargalos e otimize performance.',
+        icon: Activity,
+      }
+    ]
   },
 
   agentTraining: {
     id: 'agentTraining',
-    title: 'Agent Training',
-    category: 'AI Workflows',
-    description: 'Train custom AI agents',
+    title: 'Treinamento de Agentes',
+    titleEn: 'Agent Training',
+    category: 'agents',
+    description: 'Retreine agentes com feedback',
+    descriptionEn: 'Retrain agents with feedback',
+    duration: '4 min',
+    difficulty: 'advanced',
     steps: [
       {
-        title: 'Custom AI Agents 🤖',
-        content: 'Train specialized agents for your specific use cases: research, analysis, synthesis, data analysis, code generation, and more.',
+        title: 'Feedback Loop 🔄',
+        content: 'Colete feedback (thumbs up/down, ratings, edições) sobre outputs dos agentes para melhorar continuamente.',
+        icon: TrendingUp,
+      },
+      {
+        title: 'Curadoria de Dados 📊',
+        content: 'Revise, aprove ou rejeite samples de feedback. Gere dados sintéticos para augmentação.',
+        icon: Database,
+      },
+      {
+        title: 'Análise e Retreinamento 🤖',
+        content: 'O sistema analisa feedback, identifica áreas de melhoria e aciona retreinamento automático.',
         icon: Cpu,
       },
       {
-        title: 'Upload Training Data 📊',
-        content: 'Upload datasets in JSONL, CSV, or JSON format. The system validates and prepares them for fine-tuning.',
+        title: 'Versionamento de Modelos 📦',
+        content: 'Cada retreinamento gera nova versão. Compare métricas pré/pós e faça rollback se necessário.',
+        icon: GitMerge,
+      }
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // COLLABORATION — Colaboração
+  // ═══════════════════════════════════════════════════════════════
+
+  teamCollaboration: {
+    id: 'teamCollaboration',
+    title: 'Colaboração em Equipe',
+    titleEn: 'Team Collaboration',
+    category: 'collaboration',
+    description: 'Trabalhe em tempo real com seu time',
+    descriptionEn: 'Work in real-time with your team',
+    duration: '3 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Presença em Tempo Real 🟢',
+        content: 'Veja quem está online, o que estão visualizando e colabore simultaneamente em estratégias e análises.',
+        icon: Users,
+      },
+      {
+        title: 'Comentários e Threads 💬',
+        content: 'Adicione comentários em qualquer entidade. Crie threads, mencione colegas com @ e reaja com emojis.',
+        icon: MessageSquare,
+      },
+      {
+        title: 'Tarefas e Atribuições ✅',
+        content: 'Crie tarefas a partir de qualquer insight. Atribua responsáveis, defina prioridade e prazo.',
+        icon: Target,
+      },
+      {
+        title: 'Feed de Atividades 📋',
+        content: 'Acompanhe todas as ações da equipe: comentários, tarefas concluídas, insights compartilhados.',
+        icon: Activity,
+      }
+    ]
+  },
+
+  workspaces: {
+    id: 'workspaces',
+    title: 'Workspaces',
+    titleEn: 'Workspaces',
+    category: 'collaboration',
+    description: 'Organize iniciativas estratégicas',
+    descriptionEn: 'Organize strategic initiatives',
+    duration: '2 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Organização por Projeto 🗂️',
+        content: 'Workspaces agrupam análises, documentos e conversas por projeto ou iniciativa estratégica.',
+        icon: Briefcase,
+      },
+      {
+        title: 'Templates Prontos 📋',
+        content: 'Use templates para M&A Due Diligence, Market Entry, Digital Transformation e mais.',
+        icon: Layers,
+      },
+      {
+        title: 'Fases e Deliverables 🎯',
+        content: 'Cada workspace tem fases definidas com Quick Actions sugeridas e deliverables esperados.',
+        icon: Target,
+      }
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // ADVANCED — Recursos Avançados
+  // ═══════════════════════════════════════════════════════════════
+
+  hermesGovernance: {
+    id: 'hermesGovernance',
+    title: 'HERMES Governance',
+    titleEn: 'HERMES Governance',
+    category: 'advanced',
+    description: 'Governança cognitiva e trust-brokering',
+    descriptionEn: 'Cognitive governance and trust-brokering',
+    duration: '4 min',
+    difficulty: 'advanced',
+    steps: [
+      {
+        title: 'Trust-Broker 🛡️',
+        content: 'O HERMES é a camada de governança que garante consistência, rastreabilidade e integridade das decisões de IA.',
+        icon: Shield,
+      },
+      {
+        title: 'Módulos H1-H4 🔷',
+        content: 'H1: Tradução Vetorial, H2: Clareza Cognitiva, H3: Buffer Emocional, H4: Auditoria de Coerência.',
+        icon: Layers,
+      },
+      {
+        title: 'Auto-Triggers 🚨',
+        content: 'Configure regras que acionam análises HERMES automaticamente quando thresholds são atingidos.',
+        icon: Bell,
+      },
+      {
+        title: 'Remediação Automática 🔧',
+        content: 'O sistema pode executar ações corretivas automaticamente ou sugerir intervenções humanas.',
+        icon: Settings,
+      }
+    ]
+  },
+
+  integrations: {
+    id: 'integrations',
+    title: 'Integrações',
+    titleEn: 'Integrations',
+    category: 'advanced',
+    description: 'Conecte fontes de dados externas',
+    descriptionEn: 'Connect external data sources',
+    duration: '3 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Hub de Integrações 🔌',
+        content: 'Conecte APIs financeiras, CVM, LinkedIn, news feeds e outras fontes para enriquecer análises.',
+        icon: Plug,
+      },
+      {
+        title: 'Ingestão de Dados 📥',
+        content: 'Faça upload em batch de empresas, execute scraping de CVM e sincronize dados automaticamente.',
         icon: Upload,
       },
       {
-        title: 'Fine-Tuning Process ⚙️',
-        content: 'Configure training parameters and start fine-tuning. Monitor progress and performance metrics in real-time.',
-        icon: Settings,
+        title: 'Monitoramento de Saúde 💚',
+        content: 'Acompanhe status de cada integração, taxa de sucesso e receba alertas de falhas.',
+        icon: Activity,
+      }
+    ]
+  },
+
+  architectureAudit: {
+    id: 'architectureAudit',
+    title: 'Auditoria Arquitetural',
+    titleEn: 'Architecture Audit',
+    category: 'advanced',
+    description: 'Conformidade com arquitetura v10.0',
+    descriptionEn: 'v10.0 architecture compliance',
+    duration: '3 min',
+    difficulty: 'advanced',
+    steps: [
+      {
+        title: 'Camadas Cognitivas 🧠',
+        content: 'Visualize a implementação das 5 camadas: CAIO, TSI, TIS, ESIOS e HERMES com scores de maturidade.',
+        icon: Layers,
       },
       {
-        title: 'Deploy & Monitor 🚀',
-        content: 'Deploy trained agents to production, run A/B tests, monitor performance, and auto-rollback if needed.',
+        title: 'Gaps e Roadmap 🗺️',
+        content: 'Identifique funções não implementadas e veja o roadmap sugerido para evolução.',
         icon: TrendingUp,
       },
-    ],
-  },
+      {
+        title: 'Funcionalidades v10.0 ✨',
+        content: 'Explore features além da arquitetura original: Agent Workflows, Knowledge Graph, Training Hub.',
+        icon: Sparkles,
+      }
+    ]
+  }
 };
+
+// Helper para obter tutoriais por categoria
+export const getTutorialsByCategory = () => {
+  const result = {};
+  
+  Object.values(TUTORIAL_CATEGORIES).forEach(cat => {
+    result[cat.id] = {
+      ...cat,
+      tutorials: Object.values(TUTORIALS).filter(t => t.category === cat.id)
+    };
+  });
+  
+  return result;
+};
+
+// Helper para obter tutorial específico
+export const getTutorial = (id) => TUTORIALS[id];
+
+// Ordem recomendada para novos usuários
+export const RECOMMENDED_ORDER = [
+  'platformTour',
+  'dashboard', 
+  'chatWithCaio',
+  'quickActions',
+  'tsiMethodology',
+  'autonomousAgents',
+  'knowledgeGraph',
+  'teamCollaboration'
+];
