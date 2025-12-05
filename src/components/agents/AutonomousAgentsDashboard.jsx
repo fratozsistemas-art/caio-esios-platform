@@ -11,10 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Bot, Eye, FileText, Brain, Zap, RefreshCw, Play, Pause,
   Bell, CheckCircle, AlertTriangle, Clock, ArrowRight, Sparkles,
-  TrendingUp, Shield, Lightbulb, MessageSquare, Send
+  TrendingUp, Shield, Lightbulb, MessageSquare, Send, GitMerge
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import AgentCollaborationLayer from "./AgentCollaborationLayer";
 
 const AGENTS = [
   {
@@ -45,6 +46,7 @@ const AGENTS = [
 
 export default function AutonomousAgentsDashboard() {
   const [activeAgent, setActiveAgent] = useState('market_monitor');
+  const [activeTab, setActiveTab] = useState('agents');
   const [chatMessage, setChatMessage] = useState('');
   const [conversations, setConversations] = useState({});
   const [isProcessing, setIsProcessing] = useState({});
@@ -208,6 +210,24 @@ export default function AutonomousAgentsDashboard() {
         </CardHeader>
       </Card>
 
+      {/* Main Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="bg-white/5 border border-white/10 grid grid-cols-2 w-64">
+          <TabsTrigger value="agents" className="data-[state=active]:bg-blue-500/20">
+            <Bot className="w-4 h-4 mr-2" />
+            Agents
+          </TabsTrigger>
+          <TabsTrigger value="collaboration" className="data-[state=active]:bg-purple-500/20">
+            <GitMerge className="w-4 h-4 mr-2" />
+            Collaboration
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="collaboration" className="mt-6">
+          <AgentCollaborationLayer />
+        </TabsContent>
+
+        <TabsContent value="agents" className="mt-6">
       {/* Agent Selection */}
       <div className="grid grid-cols-3 gap-4">
         {AGENTS.map((agent) => {
@@ -506,6 +526,8 @@ export default function AutonomousAgentsDashboard() {
           </CardContent>
         </Card>
       </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
