@@ -6,9 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
   Layers, Shield, Brain, Target, Zap, BarChart3, CheckCircle,
-  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye
+  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Database, Workflow
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 
 // Import enhanced components
 import CRVMethodologicalValidation from "@/components/crv/CRVMethodologicalValidation";
@@ -18,11 +20,11 @@ import CRVAutoScoringEngine from "@/components/crv/CRVAutoScoringEngine";
 import PatternRecognitionEngine from "@/components/nia/PatternRecognitionEngine";
 
 const MATURITY_TARGETS = [
-  { component: 'CRV Validation Gate', current: 1.5, target: 4, priority: 'critical' },
-  { component: 'M5 Strategic Synthesis', current: 2, target: 4, priority: 'critical' },
-  { component: 'Pattern Synthesis', current: 1.5, target: 3.5, priority: 'high' },
-  { component: 'NIA Pattern Recognition', current: 2, target: 3, priority: 'high' },
-  { component: 'M11 Hermes', current: 2, target: 4, priority: 'medium' }
+  { component: 'CRV Validation Gate', current: 3.5, target: 4, priority: 'critical' },
+  { component: 'M5 Strategic Synthesis', current: 3, target: 4, priority: 'critical' },
+  { component: 'Agent Workflows', current: 3.5, target: 4, priority: 'high' },
+  { component: 'Knowledge Graph', current: 3, target: 4, priority: 'high' },
+  { component: 'Training Data Mgmt', current: 3, target: 4, priority: 'medium' }
 ];
 
 export default function V13ImplementationHub() {
@@ -40,30 +42,30 @@ export default function V13ImplementationHub() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-cyan-600 flex items-center justify-center">
               <Layers className="w-6 h-6 text-white" />
             </div>
-            v13.0 Implementation Hub
+            v10.0 Implementation Hub
           </h1>
-          <p className="text-slate-400 mt-1">Enhanced Core Intelligence Components</p>
+          <p className="text-slate-400 mt-1">Enhanced Core Intelligence & Agent Automation</p>
         </div>
-        <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-lg px-4 py-2">
-          <Sparkles className="w-4 h-4 mr-2" />
-          v13.0 ACTIVE
+        <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-lg px-4 py-2">
+          <CheckCircle className="w-4 h-4 mr-2" />
+          v10.0 LIVE
         </Badge>
       </div>
 
       {/* Maturity Progress */}
-      <Card className="bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-blue-500/10 border-purple-500/30">
+      <Card className="bg-gradient-to-r from-green-500/10 via-cyan-500/10 to-blue-500/10 border-green-500/30">
         <CardContent className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-xl font-bold text-white">Architecture Maturity Progress</h3>
-              <p className="text-slate-400">Current: {avgCurrentMaturity.toFixed(1)}/5 → Target: {avgTargetMaturity.toFixed(1)}/5</p>
+              <h3 className="text-xl font-bold text-white">v10.0 Implementation Progress</h3>
+              <p className="text-slate-400">Current: {avgCurrentMaturity.toFixed(1)}/4 → Target: {avgTargetMaturity.toFixed(1)}/4</p>
             </div>
             <div className="text-right">
-              <p className="text-3xl font-bold text-cyan-400">{Math.round((avgCurrentMaturity / avgTargetMaturity) * 100)}%</p>
-              <p className="text-sm text-slate-500">of v13.0 target</p>
+              <p className="text-3xl font-bold text-green-400">{Math.round((avgCurrentMaturity / avgTargetMaturity) * 100)}%</p>
+              <p className="text-sm text-slate-500">Complete</p>
             </div>
           </div>
-          <Progress value={(avgCurrentMaturity / 5) * 100} className="h-3 mb-4" />
+          <Progress value={(avgCurrentMaturity / 4) * 100} className="h-3 mb-4" />
           <div className="grid grid-cols-5 gap-3">
             {MATURITY_TARGETS.map((target, i) => (
               <div key={i} className={`p-3 rounded-lg ${
@@ -116,122 +118,112 @@ export default function V13ImplementationHub() {
         {/* Overview Tab */}
         <TabsContent value="overview" className="mt-6">
           <div className="grid grid-cols-2 gap-6">
-            {/* v13.0 Components */}
+            {/* v10.0 Core Components */}
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Layers className="w-5 h-5 text-purple-400" />
-                  v13.0 Enhanced Components
+                  <Layers className="w-5 h-5 text-green-400" />
+                  v10.0 Core Components
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {[
-                  { name: 'CRV Validation Gate', desc: 'Full 3-component validation (Skepticism + Structure + Empirical)', icon: Shield, color: 'purple', status: 'NEW', tab: 'crv-gate' },
-                  { name: 'M5 Enhanced Synthesis', desc: 'Mental Models + Options A/B/C + Hybrid + Trade-offs', icon: GitMerge, color: 'yellow', status: 'NEW', tab: 'm5-synthesis' },
-                  { name: 'Confidence Evolution', desc: 'HYPOTHESIS → MATURE pattern evolution protocol', icon: Target, color: 'emerald', status: 'NEW', tab: 'confidence' },
-                  { name: 'Pattern Recognition', desc: 'NIA historical pattern analysis with predictive indicators', icon: Brain, color: 'cyan', status: 'ENHANCED', tab: 'patterns' },
-                  { name: 'CRV Auto-Scoring', desc: 'Automated C/R/V scoring with factor analysis', icon: Scale, color: 'green', status: 'ENHANCED', tab: 'crv-scoring' }
+                  { name: 'CRV Validation Gate', desc: 'Full 3-component validation', icon: Shield, color: 'purple', status: 'LIVE', tab: 'crv-gate' },
+                  { name: 'M5 Enhanced Synthesis', desc: 'Mental Models + Options A/B/C', icon: GitMerge, color: 'yellow', status: 'LIVE', tab: 'm5-synthesis' },
+                  { name: 'Confidence Evolution', desc: 'Pattern evolution protocol', icon: Target, color: 'emerald', status: 'LIVE', tab: 'confidence' },
+                  { name: 'Pattern Recognition', desc: 'NIA historical pattern analysis', icon: Brain, color: 'cyan', status: 'LIVE', tab: 'patterns' },
+                  { name: 'CRV Auto-Scoring', desc: 'Automated C/R/V scoring', icon: Scale, color: 'green', status: 'LIVE', tab: 'crv-scoring' }
                 ].map((component, i) => (
                   <motion.div
                     key={i}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    className={`flex items-center gap-3 p-3 rounded-lg bg-${component.color}-500/10 border border-${component.color}-500/30`}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-white/5 border border-white/10 hover:border-white/20"
                   >
-                    <component.icon className={`w-8 h-8 text-${component.color}-400`} />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium text-white">{component.name}</p>
-                        <Badge className={`bg-${component.color}-500/20 text-${component.color}-400 text-xs`}>
-                          {component.status}
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-slate-400">{component.desc}</p>
+                    <component.icon className="w-6 h-6 text-slate-400" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-white text-sm truncate">{component.name}</p>
+                      <p className="text-xs text-slate-500 truncate">{component.desc}</p>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className={`border-${component.color}-500/30 text-${component.color}-400`}
-                      onClick={() => setActiveTab(component.tab)}
-                    >
-                      <Eye className="w-4 h-4 mr-1" />
-                      Open
-                    </Button>
+                    <Badge className="bg-green-500/20 text-green-400 text-[10px]">{component.status}</Badge>
                   </motion.div>
                 ))}
               </CardContent>
             </Card>
 
-            {/* Architecture Levels */}
+            {/* New v10.0 Features */}
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-yellow-400" />
-                  Architecture Implementation Status
+                  <Sparkles className="w-5 h-5 text-cyan-400" />
+                  New in v10.0
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {[
-                  { level: 'NÍVEL 0', name: 'Meta-Cognitive Layer', status: 'PLANNED', maturity: 0.5, color: 'purple' },
-                  { level: 'NÍVEL 1', name: 'Cognitive Reasoning', status: 'IN PROGRESS', maturity: 1.5, color: 'blue' },
-                  { level: 'NÍVEL 2', name: 'Core Intelligence', status: 'ACTIVE', maturity: 2.5, color: 'cyan' },
-                  { level: 'NÍVEL 3', name: 'Operational Layer', status: 'ACTIVE', maturity: 2, color: 'amber' }
-                ].map((level, i) => (
-                  <div key={i} className={`p-3 rounded-lg bg-${level.color}-500/10 border border-${level.color}-500/30`}>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Badge className={`bg-${level.color}-500/20 text-${level.color}-400`}>{level.level}</Badge>
-                        <span className="text-white font-medium">{level.name}</span>
-                      </div>
-                      <Badge className={
-                        level.status === 'ACTIVE' ? 'bg-green-500/20 text-green-400' :
-                        level.status === 'IN PROGRESS' ? 'bg-yellow-500/20 text-yellow-400' :
-                        'bg-slate-500/20 text-slate-400'
-                      }>
-                        {level.status}
-                      </Badge>
+                  { name: 'Visual Workflow Designer', desc: 'Drag-and-drop multi-agent workflows', icon: Workflow, path: 'WorkflowDesigner', status: 'NEW' },
+                  { name: 'Agent Notification Center', desc: 'Real-time critical alerts from agents', icon: Zap, path: null, status: 'NEW' },
+                  { name: 'Training Data Manager', desc: 'Review, curate & augment training data', icon: Database, path: 'AgentIntelligenceHub', status: 'NEW' },
+                  { name: 'Improved Knowledge Graph', desc: 'Interactive drag-and-drop visualization', icon: Network, path: 'AgentIntelligenceHub', status: 'IMPROVED' },
+                  { name: 'Agent Collaboration Hub', desc: 'Cross-agent task orchestration', icon: Bot, path: 'AgentCollaborationHub', status: 'ENHANCED' }
+                ].map((feature, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-cyan-500/5 border border-cyan-500/20 hover:border-cyan-500/40"
+                  >
+                    <feature.icon className="w-6 h-6 text-cyan-400" />
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-white text-sm truncate">{feature.name}</p>
+                      <p className="text-xs text-slate-500 truncate">{feature.desc}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Progress value={(level.maturity / 5) * 100} className="flex-1 h-2" />
-                      <span className="text-sm text-slate-400">{level.maturity}/5</span>
-                    </div>
-                  </div>
+                    {feature.path ? (
+                      <Link to={createPageUrl(feature.path)}>
+                        <Button size="sm" variant="ghost" className="text-cyan-400 h-7 px-2">
+                          <Eye className="w-3 h-3" />
+                        </Button>
+                      </Link>
+                    ) : (
+                      <Badge className="bg-cyan-500/20 text-cyan-400 text-[10px]">{feature.status}</Badge>
+                    )}
+                  </motion.div>
                 ))}
               </CardContent>
             </Card>
           </div>
 
           {/* Quick Actions */}
-          <Card className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border-yellow-500/30 mt-6">
+          <Card className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border-cyan-500/30 mt-6">
             <CardHeader>
-              <CardTitle className="text-yellow-400 flex items-center gap-2">
+              <CardTitle className="text-cyan-400 flex items-center gap-2">
                 <Zap className="w-5 h-5" />
-                Quick Start Guide
+                Quick Actions
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <Button
-                  onClick={() => setActiveTab('crv-gate')}
-                  className="bg-purple-600 hover:bg-purple-700 flex flex-col h-auto py-4"
-                >
-                  <Shield className="w-6 h-6 mb-2" />
-                  <span className="text-sm">Start CRV Validation</span>
+              <div className="grid grid-cols-4 gap-3">
+                <Link to={createPageUrl('WorkflowDesigner')}>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700 flex flex-col h-auto py-3">
+                    <Workflow className="w-5 h-5 mb-1" />
+                    <span className="text-xs">Design Workflow</span>
+                  </Button>
+                </Link>
+                <Link to={createPageUrl('AgentIntelligenceHub')}>
+                  <Button className="w-full bg-blue-600 hover:bg-blue-700 flex flex-col h-auto py-3">
+                    <Network className="w-5 h-5 mb-1" />
+                    <span className="text-xs">Knowledge Graph</span>
+                  </Button>
+                </Link>
+                <Button onClick={() => setActiveTab('crv-gate')} className="bg-green-600 hover:bg-green-700 flex flex-col h-auto py-3">
+                  <Shield className="w-5 h-5 mb-1" />
+                  <span className="text-xs">CRV Validation</span>
                 </Button>
-                <Button
-                  onClick={() => setActiveTab('m5-synthesis')}
-                  className="bg-yellow-600 hover:bg-yellow-700 flex flex-col h-auto py-4"
-                >
-                  <GitMerge className="w-6 h-6 mb-2" />
-                  <span className="text-sm">Generate Options A/B/C</span>
-                </Button>
-                <Button
-                  onClick={() => setActiveTab('confidence')}
-                  className="bg-emerald-600 hover:bg-emerald-700 flex flex-col h-auto py-4"
-                >
-                  <Target className="w-6 h-6 mb-2" />
-                  <span className="text-sm">Evolve Patterns</span>
+                <Button onClick={() => setActiveTab('m5-synthesis')} className="bg-yellow-600 hover:bg-yellow-700 flex flex-col h-auto py-3">
+                  <GitMerge className="w-5 h-5 mb-1" />
+                  <span className="text-xs">M5 Synthesis</span>
                 </Button>
               </div>
             </CardContent>

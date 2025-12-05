@@ -93,7 +93,7 @@ function LayoutInner({ children, currentPageName }) {
         { name: t('nav.qualityValidation', 'Quality Validation'), icon: Target, path: 'QualityValidation', badge: 'TEST' },
         { name: t('nav.simulationLab', 'Simulation Lab'), icon: Layers, path: 'SimulationLab', badge: 'ESIOS' },
         { name: t('nav.phase3', 'Phase 3 Dashboard'), icon: Sparkles, path: 'Phase3Dashboard', badge: 'v12.5' },
-        { name: t('nav.v13hub', 'v13.0 Hub'), icon: Layers, path: 'V13ImplementationHub', badge: 'v13.0' }
+        { name: t('nav.v10hub', 'v10.0 Hub'), icon: Layers, path: 'V13ImplementationHub', badge: 'v10.0' }
         ]
         },
     {
