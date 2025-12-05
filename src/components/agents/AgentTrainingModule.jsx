@@ -8,7 +8,8 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, TrendingUp, Zap, RefreshCw, Play, CheckCircle, AlertTriangle,
-  BarChart3, Star, Target, Sparkles, Eye, FileText, Award, ArrowUpRight
+  BarChart3, Star, Target, Sparkles, Eye, FileText, Award, ArrowUpRight,
+  MessageSquare, ThumbsUp, Edit
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
