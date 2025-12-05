@@ -70,7 +70,8 @@ function LayoutInner({ children, currentPageName }) {
         { name: t('nav.agentOrchestration', 'Agent Orchestration'), icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' },
         { name: t('nav.workflowTemplates', 'Workflow Templates'), icon: Layers, path: 'WorkflowTemplates', badge: 'NEW' },
         { name: t('nav.agentPerformance', 'Agent Performance'), icon: TrendingUp, path: 'AgentPerformance', badge: 'NEW' },
-        { name: t('nav.agentTraining', 'Agent Training'), icon: Cpu, path: 'AgentTraining', badge: 'ML' }
+        { name: t('nav.agentTraining', 'Agent Training'), icon: Cpu, path: 'AgentTraining', badge: 'ML' },
+        { name: t('nav.agentIntelligence', 'Agent Intelligence'), icon: Brain, path: 'AgentIntelligenceHub', badge: 'AI' }
       ]
     },
     {

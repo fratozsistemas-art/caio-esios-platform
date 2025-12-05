@@ -84,6 +84,7 @@ import AnalysesDashboard from './pages/AnalysesDashboard';
 import V13ImplementationHub from './pages/V13ImplementationHub';
 import AutonomousAgents from './pages/AutonomousAgents';
 import AgentCollaborationHub from './pages/AgentCollaborationHub';
+import AgentIntelligenceHub from './pages/AgentIntelligenceHub';
 import __Layout from './Layout.jsx';
 
 
@@ -174,6 +175,7 @@ export const PAGES = {
     "V13ImplementationHub": V13ImplementationHub,
     "AutonomousAgents": AutonomousAgents,
     "AgentCollaborationHub": AgentCollaborationHub,
+    "AgentIntelligenceHub": AgentIntelligenceHub,
 }
 
 export const pagesConfig = {
