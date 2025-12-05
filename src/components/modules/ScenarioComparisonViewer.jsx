@@ -16,8 +16,12 @@ import {
   Lightbulb,
   ArrowRight,
   BarChart3,
-  Loader2
+  Loader2,
+  FileDown,
+  ExternalLink
 } from "lucide-react";
+import ScenarioDrillDown from "../analysis/ScenarioDrillDown";
+import ComparisonPDFExport from "../analysis/ComparisonPDFExport";
 
 const scenarioTypeConfig = {
   optimistic: { icon: TrendingUp, color: "text-green-400", bg: "bg-green-500/20" },
@@ -30,6 +34,8 @@ export default function ScenarioComparisonViewer({ onClose }) {
   const [selectedAnalyses, setSelectedAnalyses] = useState([]);
   const [isComparing, setIsComparing] = useState(false);
   const [comparisonResult, setComparisonResult] = useState(null);
+  const [drillDownScenario, setDrillDownScenario] = useState(null);
+  const [showPDFExport, setShowPDFExport] = useState(false);
 
   const { data: analyses = [], isLoading } = useQuery({
     queryKey: ['market-analyses'],
@@ -274,6 +280,49 @@ Provide a comprehensive comparison in JSON format:
         {/* Comparison Results */}
         {comparisonResult && (
           <div className="space-y-4 mt-6 pt-6 border-t border-white/10">
+            {/* Export Button */}
+            <div className="flex justify-end">
+              <Button
+                onClick={() => setShowPDFExport(true)}
+                variant="outline"
+                className="border-white/10 text-white hover:bg-white/10"
+              >
+                <FileDown className="w-4 h-4 mr-2" />
+                Export PDF Report
+              </Button>
+            </div>
+
+            {/* Interactive Scenario Cards */}
+            <div className="grid grid-cols-2 gap-3">
+              {comparisonResult.selectedData?.flatMap(analysis => 
+                analysis.results?.scenarios?.map((scenario, idx) => {
+                  const config = scenarioTypeConfig[scenario.type] || scenarioTypeConfig.baseline;
+                  const Icon = config.icon;
+                  return (
+                    <Card 
+                      key={`${analysis.id}-${idx}`}
+                      className={`${config.bg} cursor-pointer hover:scale-[1.02] transition-all`}
+                      onClick={() => setDrillDownScenario({ scenario, analysis })}
+                    >
+                      <CardContent className="p-3">
+                        <div className="flex items-center gap-2">
+                          <Icon className={`w-4 h-4 ${config.color}`} />
+                          <span className="text-white text-sm font-medium truncate">{scenario.name}</span>
+                          <Badge className="ml-auto bg-white/10 text-white text-xs">
+                            {Math.round((scenario.probability || 0.25) * 100)}%
+                          </Badge>
+                          <ExternalLink className="w-3 h-3 text-slate-400" />
+                        </div>
+                        <p className="text-slate-400 text-xs mt-1 truncate">
+                          {analysis.title}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  );
+                })
+              )}
+            </div>
+
             {/* Key Differences */}
             <Card className="bg-amber-500/10 border-amber-500/30">
               <CardContent className="p-4">
@@ -370,6 +419,24 @@ Provide a comprehensive comparison in JSON format:
               </CardContent>
             </Card>
           </div>
+        )}
+
+        {/* Drill Down Modal */}
+        {drillDownScenario && (
+          <ScenarioDrillDown
+            scenario={drillDownScenario.scenario}
+            analysisContext={drillDownScenario.analysis}
+            onClose={() => setDrillDownScenario(null)}
+          />
+        )}
+
+        {/* PDF Export Modal */}
+        {showPDFExport && (
+          <ComparisonPDFExport
+            comparisonResult={comparisonResult}
+            selectedAnalyses={analyses.filter(a => selectedAnalyses.includes(a.id))}
+            onClose={() => setShowPDFExport(false)}
+          />
         )}
       </CardContent>
     </Card>
