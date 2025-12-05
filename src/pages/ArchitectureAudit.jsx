@@ -91,30 +91,29 @@ const V12_3_ARCHITECTURE = {
   }
 };
 
-// Features NOT captured in v12.3 but implemented
-const FEATURES_BEYOND_V12_3 = [
+// Features implemented in v10.0
+const FEATURES_V10 = [
+  {
+    category: "Agent Automation",
+    icon: GitBranch,
+    color: "purple",
+    features: [
+      { name: "Visual Workflow Designer", description: "Drag-and-drop para construir workflows multi-agente", impact: "HIGH" },
+      { name: "Agent Notification Center", description: "Alertas críticos em tempo real dos agentes", impact: "HIGH" },
+      { name: "Training Data Manager", description: "Curadoria e augmentação de dados de treino", impact: "HIGH" },
+      { name: "Predictive Scaling Engine", description: "Previsão de demanda e auto-scaling", impact: "HIGH" },
+      { name: "Agent Collaboration Hub", description: "Orquestração de tarefas cross-agent", impact: "HIGH" }
+    ]
+  },
   {
     category: "Knowledge Infrastructure",
     icon: Network,
     color: "blue",
     features: [
-      { name: "Knowledge Graph Interativo", description: "Grafo de conhecimento com 10K+ conexões, AI-powered", impact: "HIGH" },
-      { name: "Neo4j Integration", description: "Integração com banco de grafos Neo4j para CVM", impact: "HIGH" },
+      { name: "Improved Knowledge Graph", description: "Visualização interativa com drag-and-drop", impact: "HIGH" },
+      { name: "Neo4j Integration", description: "Integração com banco de grafos Neo4j", impact: "HIGH" },
       { name: "Relationship Inference", description: "Inferência automática de relações por IA", impact: "MEDIUM" },
-      { name: "Auto-Enrichment", description: "Enriquecimento automático de entidades", impact: "MEDIUM" },
-      { name: "Graph AI Assistant", description: "Assistente de IA para navegação no grafo", impact: "HIGH" }
-    ]
-  },
-  {
-    category: "Multi-Agent Orchestration",
-    icon: GitBranch,
-    color: "purple",
-    features: [
-      { name: "Hierarchical Agent Builder", description: "Construtor visual de hierarquias de agentes", impact: "HIGH" },
-      { name: "Workflow Version Control", description: "Versionamento completo de workflows", impact: "MEDIUM" },
-      { name: "Real-time Execution Graph", description: "Visualização em tempo real de execução", impact: "HIGH" },
-      { name: "Inter-Agent Communication Log", description: "Log de comunicação entre agentes", impact: "MEDIUM" },
-      { name: "Agent Training Hub", description: "Hub de treinamento e fine-tuning de agentes", impact: "HIGH" }
+      { name: "Auto-Enrichment", description: "Enriquecimento automático de entidades", impact: "MEDIUM" }
     ]
   },
   {
@@ -237,10 +236,10 @@ export default function ArchitectureAudit() {
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
             <Layers className="w-8 h-8 text-purple-400" />
-            Auditoria Arquitetural v12.3
+            Auditoria Arquitetural v10.0
           </h1>
           <p className="text-slate-400 mt-1">
-            Comparação diligente entre arquitetura cognitiva v12.3 e implementação atual
+            Análise de conformidade e maturidade da arquitetura cognitiva v10.0
           </p>
         </div>
         <div className="flex items-center gap-3">

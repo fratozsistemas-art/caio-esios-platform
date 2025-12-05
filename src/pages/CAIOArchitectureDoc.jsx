@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Layers, Target, Shield, Network, Eye, Database,
   Zap, TrendingUp, Users, FileText, CheckCircle, AlertCircle,
-  Clock, ArrowRight, BookOpen, Download, ChevronDown, ChevronRight
+  Clock, ArrowRight, BookOpen, Download, ChevronDown, ChevronRight, Sparkles
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -62,21 +62,27 @@ export default function CAIOArchitectureDoc() {
               <h1 className="text-4xl font-bold text-white">
                 CAIO·AI Cognitive Architecture
               </h1>
-              <p className="text-xl text-[#00D4FF]">v12.x UNIFIED FINAL</p>
+              <p className="text-xl text-[#00D4FF]">v10.0 UNIFIED</p>
             </div>
           </div>
           <p className="text-slate-400 max-w-3xl mx-auto">
             Sistema Cognitivo Integrador Completo — Documento de Arquitetura Unificada
           </p>
-          <div className="flex justify-center gap-2 mt-4">
+          <div className="flex flex-wrap justify-center gap-2 mt-4">
             <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/30">
               ESIOS v1.0 + v12.5 Convergido
             </Badge>
             <Badge className="bg-[#FFB800]/20 text-[#FFB800] border-[#FFB800]/30">
-              9 Mental Models Mapeados
+              9 Mental Models
             </Badge>
             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
               11 Módulos TSI v9.3
+            </Badge>
+            <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+              Visual Workflow Builder
+            </Badge>
+            <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+              Agent Intelligence
             </Badge>
           </div>
         </motion.div>
@@ -773,17 +779,49 @@ export default function CAIOArchitectureDoc() {
           </CardContent>
         </Card>
 
+        {/* v10.0 New Features */}
+        <Card className="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border-purple-500/30">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Sparkles className="w-6 h-6 text-purple-400" />
+              Novidades v10.0 — Agent Intelligence & Automation
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { name: "Visual Workflow Designer", desc: "Drag-and-drop para construir workflows multi-agente", status: "NEW" },
+                { name: "Agent Notification Center", desc: "Alertas críticos em tempo real dos agentes", status: "NEW" },
+                { name: "Training Data Manager", desc: "Curadoria e augmentação de dados de treino", status: "NEW" },
+                { name: "Improved Knowledge Graph", desc: "Visualização interativa com drag-and-drop", status: "IMPROVED" },
+                { name: "Agent Collaboration Hub", desc: "Orquestração de tarefas cross-agent", status: "ENHANCED" },
+                { name: "Predictive Scaling Engine", desc: "Previsão de demanda e auto-scaling de agentes", status: "NEW" }
+              ].map((feature, idx) => (
+                <div key={idx} className="p-3 bg-white/5 rounded-lg border border-white/10">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-white font-medium">{feature.name}</span>
+                    <Badge className={feature.status === 'NEW' ? 'bg-purple-500/20 text-purple-400' : 'bg-cyan-500/20 text-cyan-400'}>
+                      {feature.status}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-slate-400">{feature.desc}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Version & Metadata */}
         <Card className="bg-white/5 border-white/10">
           <CardContent className="p-4">
             <div className="flex items-center justify-between text-sm text-slate-400">
               <div className="flex items-center gap-4">
-                <span>CAIO-Cognitive-Architecture-v12.x-UNIFIED-FINAL</span>
+                <span>CAIO-Cognitive-Architecture-v10.0-UNIFIED</span>
                 <Badge className="bg-white/10">Data: {new Date().toLocaleDateString('pt-BR')}</Badge>
               </div>
               <div className="flex items-center gap-2">
-                <span>Decisão Arquitetural:</span>
-                <Badge className="bg-amber-500/20 text-amber-400">NIA Layer → NIMR (Opção 2)</Badge>
+                <Badge className="bg-green-500/20 text-green-400">v10.0 LIVE</Badge>
+                <Badge className="bg-amber-500/20 text-amber-400">NIA Layer → NIMR</Badge>
               </div>
             </div>
           </CardContent>

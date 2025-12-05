@@ -461,8 +461,8 @@ export default function ArchitectureDashboard() {
               className="w-12 h-12 object-contain"
             />
             <div>
-              <h1 className="text-2xl font-bold text-white">Architecture Dashboard</h1>
-              <p className="text-slate-400 text-sm">Real-time System Maturity Overview</p>
+              <h1 className="text-2xl font-bold text-white">Architecture Dashboard v10.0</h1>
+              <p className="text-slate-400 text-sm">Real-time System Maturity & Agent Intelligence</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -568,10 +568,10 @@ export default function ArchitectureDashboard() {
               <CardContent>
                 <div className="space-y-4">
                   {[
-                    { level: 0, name: "Meta-Cognitive", desc: "Triple-Substrate + Meta-Capabilities", maturity: 2, color: "purple" },
-                    { level: 1, name: "Cognitive Reasoning", desc: "4 Metamodels + CRV Gate", maturity: 2, color: "blue" },
-                    { level: 2, name: "Core Intelligence", desc: "7 Layers + M1-M11", maturity: 3, color: "cyan" },
-                    { level: 3, name: "Operational", desc: "CAIO-COS + Pattern Synthesis", maturity: 3, color: "amber" }
+                    { level: 0, name: "Meta-Cognitive", desc: "Triple-Substrate + Meta-Capabilities", maturity: 3, color: "purple" },
+                    { level: 1, name: "Cognitive Reasoning", desc: "4 Metamodels + CRV Gate", maturity: 3, color: "blue" },
+                    { level: 2, name: "Core Intelligence", desc: "7 Layers + M1-M11 + Agent Intelligence", maturity: 4, color: "cyan" },
+                    { level: 3, name: "Operational", desc: "Workflows + Pattern Synthesis + Training", maturity: 4, color: "amber" }
                   ].map((level, idx) => (
                     <motion.div
                       key={idx}
@@ -613,10 +613,10 @@ export default function ArchitectureDashboard() {
                 <CardContent>
                   <div className="space-y-2">
                     {[
-                      { item: "ESIOS v1.0 → v12.x", status: "complete" },
-                      { item: "9 Mental Models", status: "complete" },
-                      { item: "NIA → NIMR Rename", status: "complete" },
-                      { item: "SIU v2.0 Integration", status: "complete" }
+                      { item: "Visual Workflow Builder", status: "complete" },
+                      { item: "Agent Notification Center", status: "complete" },
+                      { item: "Training Data Manager", status: "complete" },
+                      { item: "Knowledge Graph v2", status: "complete" }
                     ].map((item, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
                         <span className="text-slate-400">{item.item}</span>
@@ -637,9 +637,9 @@ export default function ArchitectureDashboard() {
                 <CardContent>
                   <div className="space-y-2">
                     {[
-                      { item: "CAIO-COS 8 Axioms Doc", priority: "medium" },
-                      { item: "C-Suite Platform (40+ fw)", priority: "high" },
-                      { item: "Pattern Synthesis 100%", priority: "high" }
+                      { item: "Predictive Scaling v2", priority: "medium" },
+                      { item: "Auto-remediation Engine", priority: "high" },
+                      { item: "Cross-agent Learning", priority: "medium" }
                     ].map((item, idx) => (
                       <div key={idx} className="flex items-center justify-between text-sm">
                         <span className="text-slate-400">{item.item}</span>
