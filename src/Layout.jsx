@@ -30,105 +30,79 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' }
               ]
             },
-    {
-      title: t('nav.intelligence', 'Intelligence'),
-      items: [
-        { name: t('nav.companyHub', 'Company Intelligence Hub'), icon: Compass, path: 'CompanyIntelligenceHub', badge: 'NEW' },
-        { name: t('nav.behavioral', 'Behavioral Intelligence'), icon: Brain, path: 'BehavioralIntelligence', badge: 'NEW' },
-        { name: t('nav.knowledge', 'Knowledge Management'), icon: BookOpen, path: 'KnowledgeManagement' },
-        { name: t('nav.knowledgeGraph', 'Knowledge Graph'), icon: Network, path: 'KnowledgeGraph' },
-        { name: t('nav.networkMap', 'Network Map'), icon: Network, path: 'NetworkMap', badge: 'AI' },
-        { name: t('nav.agentMemory', 'Agent Memory'), icon: Brain, path: 'AgentMemory', badge: 'NEW' },
-        { name: t('nav.cvmGraph', 'CVM Graph'), icon: Database, path: 'CVMGraph', badge: 'Neo4j' }
-      ]
-    },
-    {
-      title: t('nav.companies', 'Companies'),
-      items: [
-        { name: t('nav.companyDiscovery', 'Company Discovery'), icon: Building2, path: 'CompanyDiscovery', badge: 'ESIOS' },
-        { name: t('nav.cvmIngestion', 'CVM Ingestion'), icon: Database, path: 'CVMIngestion', badge: 'CVM' },
-        { name: t('nav.batchIngestion', 'Batch Ingestion'), icon: Upload, path: 'BatchIngestion', badge: 'BULK' }
-      ]
-    },
-    {
-      title: t('nav.analysis', 'Analysis'),
-                  items: [
-                    { name: t('nav.analysesDashboard', 'Analyses Dashboard'), icon: BarChart3, path: 'AnalysesDashboard', badge: 'NEW' },
-                    { name: t('nav.insightsDashboard', 'Insights Dashboard'), icon: BarChart3, path: 'InsightsDashboard', badge: 'NEW' },
-                              { name: t('nav.aiModules', 'AI Modules'), icon: Sparkles, path: 'AIModules', badge: 'AI' },
-                              { name: t('nav.vectorDecision', 'Vector Decision Engine'), icon: Compass, path: 'VectorDecisionEngine', badge: 'VEC' },
-                              { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject', badge: 'v6.0' },
-                              { name: t('nav.fileAnalyzer', 'File Analyzer'), icon: FileText, path: 'FileAnalyzer' },
-                              { name: t('nav.advancedAnalysis', 'Advanced Data Analysis'), icon: BarChart3, path: 'AdvancedDataAnalysis', badge: 'NEW' },
-                              { name: t('nav.techIntelligence', 'Tech Intelligence'), icon: Code, path: 'TechIntelligence' }
-                            ]
-                          },
-    {
-      title: t('nav.aiWorkflows', 'AI Workflows'),
-      items: [
-        { name: t('nav.autonomousAgents', 'Autonomous Agents'), icon: Bot, path: 'AutonomousAgents', badge: 'AUTO' },
-        { name: t('nav.collaborationHub', 'Collaboration Hub'), icon: Network, path: 'AgentCollaborationHub', badge: 'NEW' },
-        { name: t('nav.workflowDesigner', 'Workflow Designer'), icon: GitMerge, path: 'WorkflowDesigner', badge: 'VISUAL' },
-        { name: t('nav.agentOrchestration', 'Agent Orchestration'), icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' },
-        { name: t('nav.workflowTemplates', 'Workflow Templates'), icon: Layers, path: 'WorkflowTemplates', badge: 'NEW' },
-        { name: t('nav.agentPerformance', 'Agent Performance'), icon: TrendingUp, path: 'AgentPerformance', badge: 'NEW' },
-        { name: t('nav.agentTraining', 'Agent Training'), icon: Cpu, path: 'AgentTraining', badge: 'ML' },
-        { name: t('nav.agentIntelligence', 'Agent Intelligence'), icon: Brain, path: 'AgentIntelligenceHub', badge: 'AI' }
-      ]
-    },
-    {
-      title: t('nav.cognitiveArch', 'Cognitive Architecture'),
-      items: [
-        { name: t('nav.archDashboard', 'Architecture Dashboard'), icon: BarChart3, path: 'ArchitectureDashboard', badge: 'LIVE' },
-        { name: t('nav.archDoc', 'Architecture v12.x Doc'), icon: BookOpen, path: 'CAIOArchitectureDoc', badge: 'UNIFIED' },
-        { name: t('nav.cognitiveHub', 'NIA + TRU Hub'), icon: Brain, path: 'CognitiveArchitecture', badge: 'CODEX' },
-        { name: t('nav.hermesModule', 'HERMES Core'), icon: Shield, path: 'HermesModule', badge: 'CODEX' },
-        { name: t('nav.archAudit', 'Architecture Audit'), icon: Layers, path: 'ArchitectureAudit', badge: 'v12.3' },
-        { name: t('nav.niaArchive', 'NIA Memory Archive'), icon: Database, path: 'NeuralIntelligenceArchive', badge: 'NEW' },
-        { name: t('nav.tisInterpret', 'TIS Interpretation'), icon: Languages, path: 'TISInterpretation', badge: 'NEW' },
-        { name: t('nav.hermesDashboard', 'Hermes Dashboard'), icon: Shield, path: 'HermesDashboard' },
-        { name: t('nav.hermesTrust', 'Hermes Trust-Broker'), icon: Shield, path: 'HermesTrustBroker' },
-        { name: t('nav.autoTrigger', 'Auto-Trigger Rules'), icon: Zap, path: 'HermesTriggerManagement' },
-        { name: t('nav.supportTickets', 'Support Tickets'), icon: Ticket, path: 'SupportTickets' },
-        { name: t('nav.qualityValidation', 'Quality Validation'), icon: Target, path: 'QualityValidation', badge: 'TEST' },
-        { name: t('nav.simulationLab', 'Simulation Lab'), icon: Layers, path: 'SimulationLab', badge: 'ESIOS' },
-        { name: t('nav.phase3', 'Phase 3 Dashboard'), icon: Sparkles, path: 'Phase3Dashboard', badge: 'v12.5' },
-        { name: t('nav.v10hub', 'v10.0 Hub'), icon: Layers, path: 'V13ImplementationHub', badge: 'v10.0' }
-        ]
-        },
-    {
-      title: t('nav.projects', 'Projects'),
-      items: [
-        { name: t('nav.workspaces', 'Workspaces'), icon: Briefcase, path: 'Workspaces' },
-        { name: t('nav.strategies', 'Strategies'), icon: Target, path: 'Strategies' },
-              { name: t('nav.playbooks', 'Strategy Playbooks'), icon: BookOpen, path: 'StrategyPlaybooks', badge: 'AI' },
-        { name: t('nav.collaboration', 'Collaboration'), icon: Users, path: 'Collaboration', badge: 'NEW' }
-      ]
-    },
-    {
-      title: t('nav.monitoring', 'Monitoring'),
-      items: [
-        { name: t('nav.analytics', 'Analytics'), icon: BarChart3, path: 'Analytics', badge: 'NEW' },
-        { name: t('nav.alerts', 'Alert System'), icon: Bell, path: 'AlertsManagement', badge: 'AI' },
-        { name: t('nav.notifications', 'Notifications'), icon: Bell, path: 'Notifications' },
-        { name: t('nav.systemHealth', 'System Health'), icon: Activity, path: 'SystemHealth', badge: 'NEW' },
-        { name: t('nav.integrationHealth', 'Integration Health'), icon: HeartPulse, path: 'IntegrationHealth', badge: 'NEW' }
-      ]
-    },
-    {
-      title: t('nav.settings', 'Settings'),
-                  items: [
-                    { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations', badge: 'NEW' },
-                    { name: t('nav.userManagement', 'User Management'), icon: Users, path: 'UserManagement', adminOnly: true }
-                  ]
-                },
-                {
-                  title: t('nav.support', 'Support'),
-                  items: [
-                    { name: t('nav.helpCenter', 'Help Center'), icon: BookOpen, path: 'HelpCenter' }
-                  ]
-                }
-              ];
+            {
+              title: t('nav.aiAgents', 'AI Agents'),
+              items: [
+                { name: t('nav.autonomousAgents', 'Autonomous Agents'), icon: Bot, path: 'AutonomousAgents' },
+                { name: t('nav.workflowDesigner', 'Workflow Designer'), icon: GitMerge, path: 'WorkflowDesigner', badge: 'NEW' },
+                { name: t('nav.collaborationHub', 'Agent Collaboration'), icon: Network, path: 'AgentCollaborationHub' },
+                { name: t('nav.agentIntelligence', 'Agent Intelligence'), icon: Brain, path: 'AgentIntelligenceHub' },
+                { name: t('nav.agentTraining', 'Agent Training'), icon: Cpu, path: 'AgentTraining' }
+              ]
+            },
+            {
+              title: t('nav.intelligence', 'Intelligence'),
+              items: [
+                { name: t('nav.companyHub', 'Company Hub'), icon: Compass, path: 'CompanyIntelligenceHub' },
+                { name: t('nav.knowledgeGraph', 'Knowledge Graph'), icon: Network, path: 'KnowledgeGraph' },
+                { name: t('nav.knowledge', 'Knowledge Base'), icon: BookOpen, path: 'KnowledgeManagement' },
+                { name: t('nav.behavioral', 'Behavioral Intel'), icon: Brain, path: 'BehavioralIntelligence' }
+              ]
+            },
+            {
+              title: t('nav.analysis', 'Analysis'),
+              items: [
+                { name: t('nav.analysesDashboard', 'Analyses'), icon: BarChart3, path: 'AnalysesDashboard' },
+                { name: t('nav.aiModules', 'AI Modules'), icon: Sparkles, path: 'AIModules' },
+                { name: t('nav.vectorDecision', 'Vector Engine'), icon: Compass, path: 'VectorDecisionEngine' },
+                { name: t('nav.fileAnalyzer', 'File Analyzer'), icon: FileText, path: 'FileAnalyzer' },
+                { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject' }
+              ]
+            },
+            {
+              title: t('nav.architecture', 'Architecture'),
+              items: [
+                { name: t('nav.v10hub', 'v10.0 Hub'), icon: Layers, path: 'V13ImplementationHub', badge: 'NEW' },
+                { name: t('nav.archDashboard', 'Dashboard'), icon: BarChart3, path: 'ArchitectureDashboard' },
+                { name: t('nav.archDoc', 'Documentation'), icon: BookOpen, path: 'CAIOArchitectureDoc' },
+                { name: t('nav.archAudit', 'Audit'), icon: Shield, path: 'ArchitectureAudit' },
+                { name: t('nav.hermesModule', 'HERMES'), icon: Shield, path: 'HermesModule' }
+              ]
+            },
+            {
+              title: t('nav.projects', 'Projects'),
+              items: [
+                { name: t('nav.workspaces', 'Workspaces'), icon: Briefcase, path: 'Workspaces' },
+                { name: t('nav.strategies', 'Strategies'), icon: Target, path: 'Strategies' },
+                { name: t('nav.playbooks', 'Playbooks'), icon: BookOpen, path: 'StrategyPlaybooks' },
+                { name: t('nav.collaboration', 'Collaboration'), icon: Users, path: 'Collaboration' }
+              ]
+            },
+            {
+              title: t('nav.dataIngestion', 'Data'),
+              items: [
+                { name: t('nav.companyDiscovery', 'Company Discovery'), icon: Building2, path: 'CompanyDiscovery' },
+                { name: t('nav.batchIngestion', 'Batch Ingestion'), icon: Upload, path: 'BatchIngestion' },
+                { name: t('nav.cvmGraph', 'CVM Graph'), icon: Database, path: 'CVMGraph' }
+              ]
+            },
+            {
+              title: t('nav.monitoring', 'Monitoring'),
+              items: [
+                { name: t('nav.analytics', 'Analytics'), icon: BarChart3, path: 'Analytics' },
+                { name: t('nav.alerts', 'Alerts'), icon: Bell, path: 'AlertsManagement' },
+                { name: t('nav.systemHealth', 'System Health'), icon: Activity, path: 'SystemHealth' }
+              ]
+            },
+            {
+              title: t('nav.settings', 'Settings'),
+              items: [
+                { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations' },
+                { name: t('nav.userManagement', 'Users'), icon: Users, path: 'UserManagement', adminOnly: true },
+                { name: t('nav.helpCenter', 'Help'), icon: BookOpen, path: 'HelpCenter' }
+              ]
+            }
+          ];
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [user, setUser] = useState(null);
