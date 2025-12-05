@@ -3,9 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
-  LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages
-} from 'lucide-react';
+        LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
+        Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages, Bot
+      } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import GlobalSearch from './components/GlobalSearch';
@@ -65,6 +65,7 @@ function LayoutInner({ children, currentPageName }) {
     {
       title: t('nav.aiWorkflows', 'AI Workflows'),
       items: [
+        { name: t('nav.autonomousAgents', 'Autonomous Agents'), icon: Bot, path: 'AutonomousAgents', badge: 'AUTO' },
         { name: t('nav.agentOrchestration', 'Agent Orchestration'), icon: GitMerge, path: 'AgentOrchestration', badge: 'NEW' },
         { name: t('nav.workflowTemplates', 'Workflow Templates'), icon: Layers, path: 'WorkflowTemplates', badge: 'NEW' },
         { name: t('nav.agentPerformance', 'Agent Performance'), icon: TrendingUp, path: 'AgentPerformance', badge: 'NEW' },
