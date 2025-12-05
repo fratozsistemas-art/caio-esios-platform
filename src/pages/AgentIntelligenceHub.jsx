@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Network, TrendingUp, Brain } from "lucide-react";
-import AgentKnowledgeGraph from "@/components/agents/AgentKnowledgeGraph";
+import { Network, TrendingUp, Brain, Database } from "lucide-react";
+import ImprovedKnowledgeGraph from "@/components/agents/ImprovedKnowledgeGraph";
 import PredictiveScalingEngine from "@/components/agents/PredictiveScalingEngine";
+import TrainingDataManager from "@/components/agents/TrainingDataManager";
 
 export default function AgentIntelligenceHub() {
   return (
@@ -14,7 +15,7 @@ export default function AgentIntelligenceHub() {
           </div>
           Agent Intelligence Hub
         </h1>
-        <p className="text-slate-400 mt-1">Knowledge graph visualization & predictive scaling</p>
+        <p className="text-slate-400 mt-1">Knowledge graph, training data management & predictive scaling</p>
       </div>
 
       <Tabs defaultValue="knowledge-graph">
@@ -23,6 +24,10 @@ export default function AgentIntelligenceHub() {
             <Network className="w-4 h-4 mr-2" />
             Knowledge Graph
           </TabsTrigger>
+          <TabsTrigger value="training-data" className="data-[state=active]:bg-purple-500/20">
+            <Database className="w-4 h-4 mr-2" />
+            Training Data
+          </TabsTrigger>
           <TabsTrigger value="predictive-scaling" className="data-[state=active]:bg-cyan-500/20">
             <TrendingUp className="w-4 h-4 mr-2" />
             Predictive Scaling
@@ -30,7 +35,11 @@ export default function AgentIntelligenceHub() {
         </TabsList>
 
         <TabsContent value="knowledge-graph" className="mt-6">
-          <AgentKnowledgeGraph />
+          <ImprovedKnowledgeGraph />
+        </TabsContent>
+
+        <TabsContent value="training-data" className="mt-6">
+          <TrainingDataManager />
         </TabsContent>
 
         <TabsContent value="predictive-scaling" className="mt-6">
