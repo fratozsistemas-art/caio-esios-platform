@@ -2,60 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
+/* CAIO·AI Design System v10.0 */
+/* Paleta: Azul #0A1E3A, Azul neutro #112A4D, Azul profundo #06101F */
+/* Dourado #C7A763, Dourado metálico #E3C37B, Branco técnico #EAEFF7 */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Inter+Tight:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* CAIO Brand Colors */
+  --caio-blue: #0A1E3A;
+  --caio-blue-neutral: #112A4D;
+  --caio-blue-deep: #06101F;
+  --caio-gold: #C7A763;
+  --caio-gold-metallic: #E3C37B;
+  --caio-white: #EAEFF7;
+  
+  /* Semantic mappings */
+  --caio-primary: var(--caio-gold);
+  --caio-primary-hover: var(--caio-gold-metallic);
+  --caio-bg-primary: var(--caio-blue-deep);
+  --caio-bg-secondary: var(--caio-blue);
+  --caio-bg-card: var(--caio-blue-neutral);
+  --caio-text-primary: var(--caio-white);
+  --caio-text-muted: #8A9AB0;
+  --caio-border: rgba(199, 167, 99, 0.2);
+  --caio-border-hover: rgba(199, 167, 99, 0.4);
+}
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --background: 214 62% 11%;
+    --foreground: 216 33% 95%;
+    --card: 213 54% 17%;
+    --card-foreground: 216 33% 95%;
+    --popover: 214 62% 11%;
+    --popover-foreground: 216 33% 95%;
+    --primary: 41 45% 58%;
+    --primary-foreground: 214 62% 11%;
+    --secondary: 213 54% 17%;
+    --secondary-foreground: 216 33% 95%;
+    --muted: 213 54% 17%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 41 45% 58%;
+    --accent-foreground: 214 62% 11%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 41 45% 58% / 0.2;
+    --input: 213 54% 17%;
+    --ring: 41 45% 58%;
     --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
+    --chart-1: 41 45% 58%;
+    --chart-2: 213 54% 50%;
+    --chart-3: 41 60% 70%;
+    --chart-4: 200 60% 50%;
+    --chart-5: 160 50% 45%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --background: 214 62% 11%;
+    --foreground: 216 33% 95%;
+    --card: 213 54% 17%;
+    --card-foreground: 216 33% 95%;
+    --popover: 214 62% 11%;
+    --popover-foreground: 216 33% 95%;
+    --primary: 41 45% 58%;
+    --primary-foreground: 214 62% 11%;
+    --secondary: 213 54% 17%;
+    --secondary-foreground: 216 33% 95%;
+    --muted: 213 54% 17%;
+    --muted-foreground: 215 20% 55%;
+    --accent: 41 45% 58%;
+    --accent-foreground: 214 62% 11%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --border: 41 45% 58% / 0.2;
+    --input: 213 54% 17%;
+    --ring: 41 45% 58%;
+    --chart-1: 41 45% 58%;
+    --chart-2: 213 54% 50%;
+    --chart-3: 41 60% 70%;
+    --chart-4: 200 60% 50%;
+    --chart-5: 160 50% 45%;
   }
 }
 
@@ -63,15 +90,27 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(135deg, var(--caio-blue-deep) 0%, var(--caio-blue) 50%, var(--caio-blue-neutral) 100%);
+    min-height: 100vh;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter Tight', 'IBM Plex Sans', system-ui, sans-serif;
+    font-weight: 600;
   }
 }
 
 /* Tutorial highlight animation */
 .tutorial-highlight {
   animation: tutorialPulse 2s ease-in-out infinite;
-  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(255, 184, 0, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(199, 167, 99, 0.1) 0%, rgba(227, 195, 123, 0.1) 100%);
   border-radius: 0.5rem;
   padding: 0.5rem;
   margin: -0.5rem;
@@ -79,10 +118,10 @@
 
 @keyframes tutorialPulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(199, 167, 99, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(0, 212, 255, 0);
+    box-shadow: 0 0 0 10px rgba(199, 167, 99, 0);
   }
 }
 
@@ -100,4 +139,133 @@
     opacity: 0.1;
     transform: scale(0.8);
   }
+}
+
+/* CAIO Gold Pulse Animation */
+@keyframes caioPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(199, 167, 99, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px rgba(199, 167, 99, 0.3);
+  }
+}
+
+.caio-pulse {
+  animation: caioPulse 2s ease-in-out infinite;
+}
+
+/* Fade In Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Vector Flow Animation */
+@keyframes vectorFlow {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.vector-flow {
+  stroke-dasharray: 100;
+  animation: vectorFlow 2s ease-in-out infinite;
+}
+
+/* Ascensão Vetorial Animation */
+@keyframes ascensaoVetorial {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.ascensao-vetorial {
+  animation: ascensaoVetorial 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Gold Highlight */
+.gold-highlight {
+  background: linear-gradient(90deg, transparent 0%, rgba(199, 167, 99, 0.15) 50%, transparent 100%);
+  animation: goldSweep 3s ease-in-out infinite;
+}
+
+@keyframes goldSweep {
+  0%, 100% {
+    background-position: -200% center;
+  }
+  50% {
+    background-position: 200% center;
+  }
+}
+
+/* Card hover effects */
+.caio-card {
+  background: var(--caio-bg-card);
+  border: 1px solid var(--caio-border);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.caio-card:hover {
+  border-color: var(--caio-border-hover);
+  box-shadow: 0 8px 32px rgba(199, 167, 99, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Button styles */
+.caio-btn-primary {
+  background: linear-gradient(135deg, var(--caio-gold) 0%, var(--caio-gold-metallic) 100%);
+  color: var(--caio-blue-deep);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.caio-btn-primary:hover {
+  box-shadow: 0 4px 20px rgba(199, 167, 99, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Text gradient */
+.text-gold-gradient {
+  background: linear-gradient(135deg, var(--caio-gold) 0%, var(--caio-gold-metallic) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--caio-blue-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--caio-blue-neutral);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(199, 167, 99, 0.5);
 }

@@ -164,8 +164,8 @@ function LayoutInner({ children, currentPageName }) {
 
   return (
     <TutorialProvider>
-      <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0A1628]/95 backdrop-blur-lg border-b border-[#00D4FF]/20">
+      <div className="min-h-screen bg-gradient-to-br from-[#06101F] via-[#0A1E3A] to-[#112A4D]">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-[#0A1E3A]/95 backdrop-blur-lg border-b border-[#C7A763]/20">
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <img 
@@ -197,7 +197,7 @@ function LayoutInner({ children, currentPageName }) {
         </div>
       </div>
 
-      <aside className={`fixed top-0 left-0 h-screen w-64 bg-[#0A1628]/95 backdrop-blur-xl border-r border-[#00D4FF]/20 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <aside className={`fixed top-0 left-0 h-screen w-64 bg-[#0A1E3A]/95 backdrop-blur-xl border-r border-[#C7A763]/20 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <img 
@@ -244,14 +244,14 @@ function LayoutInner({ children, currentPageName }) {
                     const isActive = currentPageName === item.path;
                     return (
                       <Link
-                        key={item.path}
-                        to={createPageUrl(item.path)}
-                        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-[#00D4FF]/20 text-[#00D4FF] border border-[#00D4FF]/30 font-medium' : 'text-slate-300 hover:bg-white/10 hover:text-white border border-transparent'}`}
-                      >
+                          key={item.path}
+                          to={createPageUrl(item.path)}
+                          className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-[#C7A763]/20 text-[#E3C37B] border border-[#C7A763]/30 font-medium' : 'text-[#EAEFF7]/70 hover:bg-white/10 hover:text-[#EAEFF7] border border-transparent'}`}
+                        >
                         <Icon className="w-5 h-5 flex-shrink-0" />
                         <span className="text-sm font-medium flex-1 truncate">{item.name}</span>
                         {item.badge && (
-                          <Badge className="text-xs bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/30">
+                          <Badge className="text-xs bg-[#C7A763]/20 text-[#E3C37B] border-[#C7A763]/30">
                             {item.badge}
                           </Badge>
                         )}
@@ -267,14 +267,14 @@ function LayoutInner({ children, currentPageName }) {
         {user && (
           <div className="p-4 border-t border-white/10">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#FFB800] flex items-center justify-center">
-                <span className="text-white font-bold text-sm">
-                  {user.full_name?.charAt(0) || 'U'}
-                </span>
-              </div>
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#C7A763] to-[#E3C37B] flex items-center justify-center">
+                  <span className="text-[#06101F] font-bold text-sm">
+                    {user.full_name?.charAt(0) || 'U'}
+                  </span>
+                </div>
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">{user.full_name}</p>
-                <p className="text-slate-400 text-xs truncate">{user.email}</p>
+                <p className="text-[#EAEFF7] text-sm font-medium truncate">{user.full_name}</p>
+                      <p className="text-[#8A9AB0] text-xs truncate">{user.email}</p>
               </div>
             </div>
             <div className="space-y-2">
