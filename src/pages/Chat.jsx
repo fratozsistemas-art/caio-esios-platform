@@ -4,12 +4,14 @@ import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap, GitMerge, Activity } from "lucide-react";
+import { Send, Paperclip, X, Loader2, Plus, Menu, MessageSquare, Zap, GitMerge, Activity, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { createPageUrl } from "../utils";
 import { Link } from "react-router-dom";
 import ConversationList from "../components/chat/ConversationList";
 import MessageBubble from "../components/chat/MessageBubble";
+import BulkConversationManager from "../components/chat/BulkConversationManager";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import AgentPersonaSelector from "../components/chat/AgentPersonaSelector";
 import MessageFeedback from "../components/chat/MessageFeedback";
 import ConversationSummary from "../components/chat/ConversationSummary";
@@ -42,6 +44,7 @@ export default function Chat() {
   const [showOrchestrationDashboard, setShowOrchestrationDashboard] = useState(false);
   const [activeOrchestration, setActiveOrchestration] = useState(null);
   const [selectedModel, setSelectedModel] = useState('standard');
+  const [showBulkManager, setShowBulkManager] = useState(false);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -303,13 +306,28 @@ export default function Chat() {
         className={`${sidebarOpen ? 'block' : 'hidden'} lg:block border-r border-white/10 bg-slate-900/50 backdrop-blur-xl flex flex-col relative`}
         style={{ width: sidebarOpen ? `${sidebarWidth}px` : '0px' }}>
 
-        <div className="p-4 border-b border-white/10">
+        <div className="p-4 border-b border-white/10 space-y-2">
           <Button
             onClick={() => handleCreateConversation()}
             className="w-full bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
             <Plus className="w-4 h-4 mr-2" />
             New Conversation
           </Button>
+          
+          <Dialog open={showBulkManager} onOpenChange={setShowBulkManager}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="w-full border-white/10 text-slate-300 hover:bg-white/10">
+                <Settings className="w-4 h-4 mr-2" />
+                Manage Conversations
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-[#06101F] to-[#0A1E3A] border-[#C7A763]/30">
+              <DialogHeader>
+                <DialogTitle className="text-white">Bulk Conversation Manager</DialogTitle>
+              </DialogHeader>
+              <BulkConversationManager />
+            </DialogContent>
+          </Dialog>
         </div>
 
         <ConversationList
