@@ -87,6 +87,7 @@ import AgentCollaborationHub from './pages/AgentCollaborationHub';
 import AgentIntelligenceHub from './pages/AgentIntelligenceHub';
 import WorkflowDesigner from './pages/WorkflowDesigner';
 import TSIModulesHub from './pages/TSIModulesHub';
+import AccessibilityTree from './pages/AccessibilityTree';
 import __Layout from './Layout.jsx';
 
 
@@ -180,6 +181,7 @@ export const PAGES = {
     "AgentIntelligenceHub": AgentIntelligenceHub,
     "WorkflowDesigner": WorkflowDesigner,
     "TSIModulesHub": TSIModulesHub,
+    "AccessibilityTree": AccessibilityTree,
 }
 
 export const pagesConfig = {
