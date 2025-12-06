@@ -6,18 +6,180 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Brain, Layers, Target, Shield, Network, Eye, Database,
   Zap, TrendingUp, Users, FileText, CheckCircle, AlertCircle,
-  Clock, ArrowRight, BookOpen, Download, ChevronDown, ChevronRight, Sparkles
+  Clock, ArrowRight, BookOpen, Download, ChevronDown, ChevronRight, Sparkles, RefreshCw, FileDown, Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
 export default function CAIOArchitectureDoc() {
   const [expandedSections, setExpandedSections] = useState({});
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [documentationContent, setDocumentationContent] = useState(null);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
       ...prev,
       [section]: !prev[section]
     }));
+  };
+
+  const handleUpdateDocumentation = async () => {
+    setIsUpdating(true);
+    try {
+      // Gather all architectural data
+      const architectureData = {
+        version: '10.x',
+        updated_at: new Date().toISOString(),
+        levels: [
+          {
+            level: 0,
+            name: 'Meta-Cognitive Layer',
+            components: ['Triple-Substrate Intelligence', 'Meta-Capabilities (TV, EAA, IDC)'],
+            maturity: 2
+          },
+          {
+            level: 1,
+            name: 'Cognitive Reasoning Layer',
+            components: ['4 Metamodels (ABR, NIA, HYB, SOC)', 'CRV Validation Gate'],
+            maturity: 3
+          },
+          {
+            level: 2,
+            name: 'Core Intelligence Layer',
+            components: ['M1-M11 Modules', '7 Core Layers (CAIO, TSI, TIS, ESIOS, HERMES, NIMR, EVA)'],
+            maturity: 4
+          },
+          {
+            level: 3,
+            name: 'Operational Layer',
+            components: ['CAIO-COS 8 Axioms', 'Pattern Synthesis System'],
+            maturity: 3
+          }
+        ],
+        mental_models: ['EVA', 'CSI', 'VTE', 'IA+', 'CAIO', 'TRUST-BROKER', 'GAYA', 'TRY', 'C-SUITES'],
+        modules: ['M1-Market', 'M2-Competitive', 'M3-Tech', 'M4-Financial', 'M5-Synthesis', 'M6-Opportunity', 'M7-Implementation', 'M8-Maieutic', 'M9-Funding', 'M10-Behavioral', 'M11-Hermes'],
+        v10_features: [
+          'Visual Workflow Designer',
+          'Agent Notification Center',
+          'Training Data Manager',
+          'Improved Knowledge Graph',
+          'Agent Collaboration Hub',
+          'Predictive Scaling Engine'
+        ]
+      };
+
+      // Use LLM to generate comprehensive documentation
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate a comprehensive, highly detailed technical architecture documentation for CAIO·AI Base v10.x.
+
+Architecture Data:
+${JSON.stringify(architectureData, null, 2)}
+
+Create a detailed markdown document following this structure:
+
+# CAIO·AI Base v10.x — Documentação Técnica Completa
+
+## 1. Visão Executiva
+- Síntese da arquitetura
+- Principais capacidades
+- Diferenciais competitivos
+
+## 2. Estrutura em 4 Níveis
+Para cada nível (0-3), detalhe:
+- Propósito e responsabilidades
+- Componentes e módulos
+- Integração com outros níveis
+- Nível de maturidade atual
+- Exemplos práticos de uso
+
+## 3. Mental Models (9 Total)
+- Mapeamento completo de cada mental model
+- Relação com layers e módulos
+- Casos de uso específicos
+
+## 4. Módulos M1-M11 (TSI v9.3)
+Detalhe cada módulo com:
+- Propósito e capabilities
+- Frameworks utilizados
+- Outputs esperados
+- Integrações
+
+## 5. v10.0 Features & Innovations
+- Descrição detalhada das novas features
+- Impacto arquitetural
+- Casos de uso
+
+## 6. Fluxos de Dados e Integração
+- Como os componentes se comunicam
+- Padrões de orquestração
+- Governança de dados
+
+## 7. Maturidade e Roadmap
+- Estado atual de cada componente
+- Gaps identificados
+- Próximos passos
+
+## 8. Anexos Técnicos
+- Glossário
+- Referências cruzadas
+- Diagramas conceituais (em texto)
+
+Use linguagem técnica profissional, seja extremamente detalhado, inclua tabelas e exemplos concretos.`,
+      });
+
+      setDocumentationContent(response);
+      toast.success('Documentação atualizada com sucesso via IA');
+    } catch (error) {
+      console.error('Update error:', error);
+      toast.error('Falha ao atualizar documentação: ' + error.message);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleExportReport = async () => {
+    setIsExporting(true);
+    try {
+      const contentToExport = documentationContent || 'CAIO·AI Base v10.x Architecture Documentation (static version)';
+      
+      // Generate enhanced report
+      const { content } = await base44.integrations.Core.InvokeLLM({
+        prompt: `Create a comprehensive, executive-ready architecture documentation report for CAIO·AI Base v10.x.
+
+${documentationContent ? 'Use this updated documentation as base:\n\n' + documentationContent : 'Generate from scratch based on the v10.x architecture with 4 cognitive levels, 9 mental models, M1-M11 modules, and new v10.0 features.'}
+
+Format as professional markdown with:
+- Executive summary
+- Technical deep-dives
+- Architecture diagrams (ASCII/text-based)
+- Implementation status
+- Maturity assessment
+- Roadmap recommendations
+- Appendices
+
+Target audience: CTOs, Solution Architects, Technical Leadership.`,
+      });
+
+      // Create downloadable file
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `CAIO-AI-Base-v10.x-Architecture-${new Date().toISOString().split('T')[0]}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success('Relatório exportado com sucesso');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Falha ao exportar relatório: ' + error.message);
+    } finally {
+      setIsExporting(false);
+    }
   };
 
   const maturityBadge = (level) => {
@@ -60,14 +222,50 @@ export default function CAIOArchitectureDoc() {
             />
             <div>
               <h1 className="text-4xl font-bold text-white">
-                CAIO·AI Cognitive Architecture
+                CAIO·AI Base v10.x
               </h1>
-              <p className="text-xl text-[#00D4FF]">v10.0 UNIFIED</p>
+              <p className="text-xl text-[#00D4FF]">Documentação Técnica Completa</p>
             </div>
           </div>
           <p className="text-slate-400 max-w-3xl mx-auto">
             Sistema Cognitivo Integrador Completo — Documento de Arquitetura Unificada
           </p>
+          <div className="flex gap-3 justify-center mt-6">
+            <Button
+              onClick={handleUpdateDocumentation}
+              disabled={isUpdating}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
+            >
+              {isUpdating ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Atualizando...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  Atualizar Documentação via IA
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleExportReport}
+              disabled={isExporting}
+              className="bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700"
+            >
+              {isExporting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Exportando...
+                </>
+              ) : (
+                <>
+                  <FileDown className="w-4 h-4 mr-2" />
+                  Exportar Relatório Completo
+                </>
+              )}
+            </Button>
+          </div>
           <div className="flex flex-wrap justify-center gap-2 mt-4">
             <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/30">
               ESIOS v1.0 + v12.5 Convergido
@@ -86,6 +284,23 @@ export default function CAIOArchitectureDoc() {
             </Badge>
           </div>
         </motion.div>
+
+        {/* AI-Generated Documentation (if available) */}
+        {documentationContent && (
+          <Card className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 border-purple-500/30">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-400" />
+                Documentação Gerada por IA
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="prose prose-invert prose-sm max-w-none bg-black/20 rounded-lg p-6 max-h-96 overflow-y-auto">
+                <pre className="whitespace-pre-wrap text-slate-300 text-sm">{documentationContent}</pre>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Table of Contents */}
         <Card className="bg-white/5 border-white/10">
