@@ -1,17 +1,12 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { MessageSquare, Trash2, MoreVertical } from "lucide-react";
+import { MessageSquare, Trash2, FolderOpen } from "lucide-react";
 import { format } from "date-fns";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import ConversationActions from "./ConversationActions";
 
 export default function ConversationList({ 
   conversations = [], 
@@ -51,13 +46,10 @@ export default function ConversationList({
 
   const deleteSingleMutation = useMutation({
     mutationFn: async (conversationId) => {
-      const { data } = await base44.functions.invoke('deleteConversation', {
+      const result = await base44.functions.invoke('deleteConversation', {
         conversation_id: conversationId
       });
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      return data;
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries(['conversations']);
@@ -102,6 +94,7 @@ export default function ConversationList({
           const isActive = selectedConversation?.id === conv.id;
           const displayName = conv.metadata?.name || 'Nova conversa';
           const messageCount = conv.messages?.length || 0;
+          const project = conv.metadata?.project;
 
           return (
             <div
@@ -114,7 +107,7 @@ export default function ConversationList({
             >
               <div
                 onClick={() => handleSelectConversation(conv)}
-                className="p-3"
+                className="p-3 pr-12"
               >
                 <div className="flex items-start gap-2">
                   <MessageSquare className={`w-4 h-4 flex-shrink-0 mt-0.5 ${isActive ? 'text-blue-400' : 'text-slate-400'}`} />
@@ -122,7 +115,7 @@ export default function ConversationList({
                     <p className={`text-sm font-medium truncate ${isActive ? 'text-white' : 'text-slate-300'}`}>
                       {displayName}
                     </p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <p className="text-xs text-slate-500">
                         {format(new Date(conv.metadata?.created_at || conv.created_date), 'dd/MM HH:mm')}
                       </p>
@@ -131,35 +124,24 @@ export default function ConversationList({
                           {messageCount}
                         </Badge>
                       )}
+                      {project && (
+                        <Badge className="bg-purple-500/20 text-purple-400 text-xs flex items-center gap-1">
+                          <FolderOpen className="w-3 h-3" />
+                          {project}
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-2 right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <MoreVertical className="w-4 h-4 text-slate-400" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteSingleMutation.mutate(conv.id);
-                    }}
-                    className="text-red-400"
-                    disabled={deleteSingleMutation.isPending}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Deletar
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <ConversationActions 
+                  conversation={conv}
+                  onDelete={() => deleteSingleMutation.mutate(conv.id)}
+                  compact
+                />
+              </div>
             </div>
           );
         })}

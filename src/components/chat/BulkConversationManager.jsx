@@ -14,15 +14,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MessageSquare, Trash2, Search, CheckCircle, AlertTriangle, Loader2 } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { MessageSquare, Trash2, Search, CheckCircle, AlertTriangle, Loader2, FolderOpen } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import ConversationActions from "./ConversationActions";
 
 export default function BulkConversationManager() {
   const [selectedConversations, setSelectedConversations] = useState([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [projectFilter, setProjectFilter] = useState("all");
   const queryClient = useQueryClient();
 
   const { data: conversations = [], isLoading } = useQuery({
@@ -39,10 +42,25 @@ export default function BulkConversationManager() {
   });
 
   const filteredConversations = conversations.filter(conv => {
-    if (!searchQuery) return true;
-    const name = conv.metadata?.name || conv.id;
-    return name.toLowerCase().includes(searchQuery.toLowerCase());
+    if (searchQuery) {
+      const name = conv.metadata?.name || conv.id;
+      if (!name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    }
+    if (projectFilter !== "all") {
+      if (projectFilter === "no_project") {
+        return !conv.metadata?.project;
+      }
+      return conv.metadata?.project === projectFilter;
+    }
+    return true;
   });
+
+  // Get unique projects
+  const projects = [...new Set(
+    conversations
+      .filter(c => c.metadata?.project)
+      .map(c => c.metadata.project)
+  )];
 
   const toggleConversation = (id) => {
     setSelectedConversations(prev =>
@@ -141,11 +159,11 @@ export default function BulkConversationManager() {
         </CardHeader>
       </Card>
 
-      {/* Search & Select All */}
+      {/* Search & Filters */}
       <Card className="bg-white/5 border-white/10">
         <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="relative flex-1 min-w-[200px]">
               <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <Input
                 placeholder="Buscar conversas..."
@@ -154,6 +172,23 @@ export default function BulkConversationManager() {
                 className="pl-10 bg-white/5 border-white/10 text-white"
               />
             </div>
+            <Select value={projectFilter} onValueChange={setProjectFilter}>
+              <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+                <SelectValue placeholder="Todos os projetos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os projetos</SelectItem>
+                <SelectItem value="no_project">Sem projeto</SelectItem>
+                {projects.map(project => (
+                  <SelectItem key={project} value={project}>
+                    <div className="flex items-center gap-2">
+                      <FolderOpen className="w-3 h-3" />
+                      {project}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button
               variant="outline"
               onClick={toggleSelectAll}
@@ -202,7 +237,7 @@ export default function BulkConversationManager() {
                   transition={{ duration: 0.2 }}
                 >
                   <Card
-                    className={`cursor-pointer transition-all ${
+                    className={`cursor-pointer transition-all group ${
                       isSelected
                         ? 'bg-[#C7A763]/10 border-[#C7A763]/40'
                         : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-[#C7A763]/20'
@@ -218,21 +253,39 @@ export default function BulkConversationManager() {
                           onClick={(e) => e.stopPropagation()}
                         />
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center gap-2 mb-1 flex-wrap">
                             <h3 className="text-white font-medium truncate">
                               {conversationName}
                             </h3>
                             <Badge className="bg-blue-500/20 text-blue-400 text-xs">
                               {messageCount} msg
                             </Badge>
+                            {conversation.metadata?.project && (
+                              <Badge className="bg-purple-500/20 text-purple-400 text-xs flex items-center gap-1">
+                                <FolderOpen className="w-3 h-3" />
+                                {conversation.metadata.project}
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-xs text-slate-400">
                             Última atividade: {lastActivity}
                           </p>
                         </div>
-                        {isSelected && (
-                          <CheckCircle className="w-5 h-5 text-[#C7A763] flex-shrink-0" />
-                        )}
+                        <div className="flex items-center gap-2">
+                          {isSelected && (
+                            <CheckCircle className="w-5 h-5 text-[#C7A763] flex-shrink-0" />
+                          )}
+                          <div 
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <ConversationActions 
+                              conversation={conversation}
+                              onDelete={() => {}}
+                              compact
+                            />
+                          </div>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
