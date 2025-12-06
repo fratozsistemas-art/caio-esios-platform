@@ -42,6 +42,7 @@ import QuickActionAssistantModal from "../components/quickactions/QuickActionAss
 export default function QuickActions() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedFunctionalArea, setSelectedFunctionalArea] = useState("all");
   const [isAssistantModalOpen, setIsAssistantModalOpen] = useState(false);
   const [selectedQuickAction, setSelectedQuickAction] = useState(null);
 
@@ -53,13 +54,18 @@ export default function QuickActions() {
   const allCategories = [...new Set(quickActions?.map(action => action.category))];
   const categories = allCategories.map(cat => ({ id: cat, label: cat.replace(/_/g, ' ') }));
 
+  const allFunctionalAreas = [...new Set(quickActions?.map(action => action.functional_area).filter(Boolean))];
+  const functionalAreas = allFunctionalAreas.map(area => ({ id: area, label: area }));
+
   const filteredActions = quickActions?.filter(action => {
     const matchesSearch = action.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          action.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         action.category?.toLowerCase().includes(searchQuery.toLowerCase());
+                         action.category?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         action.functional_area?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || action.category === selectedCategory;
+    const matchesFunctionalArea = selectedFunctionalArea === "all" || action.functional_area === selectedFunctionalArea;
 
-    return matchesSearch && matchesCategory;
+    return matchesSearch && matchesCategory && matchesFunctionalArea;
   });
 
   const handleExecuteAction = (action) => {
@@ -101,24 +107,54 @@ export default function QuickActions() {
         </CardContent>
       </Card>
 
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-        <Button
-          variant={selectedCategory === "all" ? "default" : "outline"}
-          onClick={() => setSelectedCategory("all")}
-          className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
-        >
-          All
-        </Button>
-        {categories.map((cat) => (
-          <Button
-            key={cat.id}
-            variant={selectedCategory === cat.id ? "default" : "outline"}
-            onClick={() => setSelectedCategory(cat.id)}
-            className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
-          >
-            {cat.label}
-          </Button>
-        ))}
+      <div className="space-y-4 mb-8">
+        <div>
+          <p className="text-sm text-slate-400 mb-2">Filter by Category</p>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            <Button
+              variant={selectedCategory === "all" ? "default" : "outline"}
+              onClick={() => setSelectedCategory("all")}
+              className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+            >
+              All Categories
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat.id}
+                variant={selectedCategory === cat.id ? "default" : "outline"}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+              >
+                {cat.label}
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {functionalAreas.length > 0 && (
+          <div>
+            <p className="text-sm text-slate-400 mb-2">Filter by Functional Area</p>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              <Button
+                variant={selectedFunctionalArea === "all" ? "default" : "outline"}
+                onClick={() => setSelectedFunctionalArea("all")}
+                className={selectedFunctionalArea === "all" ? "bg-purple-600 text-white hover:bg-purple-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+              >
+                All Areas
+              </Button>
+              {functionalAreas.map((area) => (
+                <Button
+                  key={area.id}
+                  variant={selectedFunctionalArea === area.id ? "default" : "outline"}
+                  onClick={() => setSelectedFunctionalArea(area.id)}
+                  className={selectedFunctionalArea === area.id ? "bg-purple-600 text-white hover:bg-purple-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+                >
+                  {area.label}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {filteredActions?.length === 0 ? (
@@ -205,16 +241,30 @@ function QuickActionCard({ action, index, onClick }) {
                   <p>Framework: {action.primary_framework}</p>
                 </TooltipContent>
               </Tooltip>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30 cursor-help">
-                    {action.category?.replace(/_/g, ' ')}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Categoria de análise estratégica</p>
-                </TooltipContent>
-              </Tooltip>
+              <div className="flex flex-col gap-1 items-end">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30 cursor-help">
+                      {action.category?.replace(/_/g, ' ')}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Categoria de análise estratégica</p>
+                  </TooltipContent>
+                </Tooltip>
+                {action.functional_area && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="px-2 py-1 rounded-lg text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 cursor-help">
+                        {action.functional_area}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Área funcional</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
               </div>
               <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
               {action.title}
