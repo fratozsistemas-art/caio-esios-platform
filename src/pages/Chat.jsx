@@ -45,6 +45,8 @@ export default function Chat() {
   const [activeOrchestration, setActiveOrchestration] = useState(null);
   const [selectedModel, setSelectedModel] = useState('standard');
   const [showBulkManager, setShowBulkManager] = useState(false);
+  const [pinnedMessages, setPinnedMessages] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
 
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -82,6 +84,7 @@ export default function Chat() {
       selectedConversation.id,
       (data) => {
         setMessages(data.messages || []);
+        setPinnedMessages(data.metadata?.pinned_messages || []);
       }
     );
 
@@ -154,6 +157,31 @@ export default function Chat() {
     }
   };
 
+  const handlePinMessage = async (message) => {
+    if (!selectedConversation) return;
+    
+    const messageId = message.id || message.timestamp;
+    const isPinned = pinnedMessages.includes(messageId);
+    
+    const newPinnedMessages = isPinned
+      ? pinnedMessages.filter(id => id !== messageId)
+      : [...pinnedMessages, messageId];
+    
+    setPinnedMessages(newPinnedMessages);
+    
+    try {
+      await base44.asServiceRole.agents.updateConversation(selectedConversation.id, {
+        metadata: {
+          ...selectedConversation.metadata,
+          pinned_messages: newPinnedMessages
+        }
+      });
+      toast.success(isPinned ? 'Message unpinned' : 'Message pinned');
+    } catch (error) {
+      toast.error('Failed to pin message');
+    }
+  };
+
   const sendMessageWithContent = async (content, conversation = selectedConversation) => {
     if (!conversation || isSending) return;
 
@@ -163,6 +191,7 @@ export default function Chat() {
     setUserInput("");
     setUploadedFiles([]);
     setIsSending(true);
+    setIsTyping(false);
 
     try {
       if (useOrchestration) {
@@ -287,6 +316,15 @@ export default function Chat() {
 
   const handleSuggestedPrompt = (prompt) => {
     setUserInput(prompt);
+  };
+
+  const handleInputChange = (e) => {
+    setUserInput(e.target.value);
+    if (!isTyping && e.target.value.length > 0) {
+      setIsTyping(true);
+    } else if (isTyping && e.target.value.length === 0) {
+      setIsTyping(false);
+    }
   };
 
   return (
@@ -461,9 +499,30 @@ export default function Chat() {
               </div> :
 
             <div className="max-w-4xl mx-auto space-y-6">
+                {pinnedMessages.length > 0 && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Pin className="w-4 h-4 text-yellow-400" />
+                      <span className="text-sm font-medium text-yellow-400">Pinned Messages</span>
+                    </div>
+                    <div className="space-y-2">
+                      {messages.filter(m => pinnedMessages.includes(m.id || m.timestamp)).map((message, idx) => (
+                        <div key={idx} className="text-sm text-slate-300 bg-white/5 rounded p-2">
+                          {message.content?.substring(0, 100)}...
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
                 {messages.map((message, idx) =>
               <div key={idx}>
-                    <MessageBubble message={message} />
+                    <MessageBubble 
+                      message={message}
+                      onPin={handlePinMessage}
+                      isPinned={pinnedMessages.includes(message.id || message.timestamp)}
+                      showReadReceipt={idx === messages.length - 1 && message.role === 'user'}
+                    />
                     {message.role === 'assistant' &&
                 <MessageFeedback
                   conversationId={selectedConversation.id}
@@ -484,6 +543,16 @@ export default function Chat() {
                     </span>
                   </div>
               }
+                {!isSending && isTyping && messages.length > 0 && (
+                  <div className="flex items-center gap-3 text-slate-400">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '0ms' }} />
+                      <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '150ms' }} />
+                      <div className="w-2 h-2 rounded-full bg-slate-500 animate-bounce" style={{ animationDelay: '300ms' }} />
+                    </div>
+                    <span className="text-sm">CAIO is typing...</span>
+                  </div>
+                )}
                 {lastOrchestration && isSending &&
               <AgentOrchestrationPanel orchestrationData={lastOrchestration} />
               }
@@ -532,7 +601,7 @@ export default function Chat() {
 
                   <Textarea
                   value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
+                  onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask CAIO anything..."
                   className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-slate-500 resize-none"

@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from "@/components/ui/button";
-import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock, BookOpen, ExternalLink } from 'lucide-react';
+import { Copy, Zap, CheckCircle2, AlertCircle, Loader2, ChevronRight, Clock, BookOpen, ExternalLink, Pin, Check } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { format } from 'date-fns';
 
 const FunctionDisplay = ({ toolCall }) => {
     const [expanded, setExpanded] = useState(false);
@@ -142,17 +143,25 @@ const CitationBadge = ({ citation }) => {
     );
 };
 
-export default function MessageBubble({ message }) {
+export default function MessageBubble({ message, onPin, isPinned, showReadReceipt }) {
     const isUser = message.role === 'user';
+    const timestamp = message.created_date || message.timestamp || new Date();
     
     return (
-        <div className={cn("flex gap-3", isUser ? "justify-end" : "justify-start")}>
+        <div className={cn("flex gap-3 group", isUser ? "justify-end" : "justify-start")}>
             {!isUser && (
                 <div className="h-8 w-8 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center mt-0.5 flex-shrink-0">
                     <div className="h-2 w-2 rounded-full bg-white" />
                 </div>
             )}
-            <div className={cn("max-w-[85%]", isUser && "flex flex-col items-end")}>
+            <div className={cn("max-w-[85%] relative", isUser && "flex flex-col items-end")}>
+                {isPinned && (
+                    <div className="absolute -top-2 -left-2 z-10">
+                        <div className="bg-yellow-500 rounded-full p-1">
+                            <Pin className="w-3 h-3 text-white" />
+                        </div>
+                    </div>
+                )}
                 {message.content && (
                     <div className={cn(
                         "rounded-2xl px-4 py-2.5",
@@ -230,6 +239,25 @@ export default function MessageBubble({ message }) {
                         ))}
                     </div>
                 )}
+                
+                <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs text-slate-500">
+                        {format(new Date(timestamp), 'HH:mm')}
+                    </span>
+                    {isUser && showReadReceipt && (
+                        <Check className="w-3 h-3 text-blue-400" />
+                    )}
+                    {onPin && (
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onPin(message)}
+                            className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                            <Pin className={cn("w-3 h-3", isPinned ? "text-yellow-400" : "text-slate-400")} />
+                        </Button>
+                    )}
+                </div>
             </div>
         </div>
     );
