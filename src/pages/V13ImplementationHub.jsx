@@ -6,11 +6,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
   Layers, Shield, Brain, Target, Zap, BarChart3, CheckCircle,
-  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Database, Workflow
+  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Database, Workflow, Save, FileDown, Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 // Import enhanced components
 import CRVMethodologicalValidation from "@/components/crv/CRVMethodologicalValidation";
@@ -29,9 +32,118 @@ const MATURITY_TARGETS = [
 
 export default function V13ImplementationHub() {
   const [activeTab, setActiveTab] = useState("overview");
+  const [maturityTargets, setMaturityTargets] = useState(MATURITY_TARGETS);
+  const [isExporting, setIsExporting] = useState(false);
+  const queryClient = useQueryClient();
 
-  const avgCurrentMaturity = MATURITY_TARGETS.reduce((sum, t) => sum + t.current, 0) / MATURITY_TARGETS.length;
-  const avgTargetMaturity = MATURITY_TARGETS.reduce((sum, t) => sum + t.target, 0) / MATURITY_TARGETS.length;
+  const avgCurrentMaturity = maturityTargets.reduce((sum, t) => sum + t.current, 0) / maturityTargets.length;
+  const avgTargetMaturity = maturityTargets.reduce((sum, t) => sum + t.target, 0) / maturityTargets.length;
+
+  const saveProgressMutation = useMutation({
+    mutationFn: async () => {
+      const user = await base44.auth.me();
+      
+      // Save progress to a database entity or user metadata
+      await base44.auth.updateMe({
+        v10_implementation_progress: {
+          maturity_targets: maturityTargets,
+          avg_current: avgCurrentMaturity,
+          avg_target: avgTargetMaturity,
+          last_updated: new Date().toISOString(),
+          updated_by: user.email
+        }
+      });
+      
+      return { success: true };
+    },
+    onSuccess: () => {
+      toast.success('Implementation progress saved successfully');
+      queryClient.invalidateQueries(['user-profile']);
+    },
+    onError: (error) => {
+      toast.error('Failed to save progress: ' + error.message);
+    }
+  });
+
+  const handleExportReport = async () => {
+    setIsExporting(true);
+    try {
+      const user = await base44.auth.me();
+      
+      // Generate comprehensive report
+      const reportData = {
+        title: 'v10.0 Implementation Report',
+        generated_at: new Date().toISOString(),
+        generated_by: user.full_name || user.email,
+        version: '10.0',
+        summary: {
+          overall_completion: Math.round((avgCurrentMaturity / avgTargetMaturity) * 100),
+          current_maturity: avgCurrentMaturity.toFixed(2),
+          target_maturity: avgTargetMaturity.toFixed(2),
+          components_tracked: maturityTargets.length
+        },
+        components: maturityTargets.map(target => ({
+          name: target.component,
+          current_maturity: target.current,
+          target_maturity: target.target,
+          completion_percentage: Math.round((target.current / target.target) * 100),
+          priority: target.priority,
+          gap: (target.target - target.current).toFixed(1)
+        })),
+        features: [
+          'CRV Validation Gate - Full 3-component validation',
+          'M5 Enhanced Synthesis - Mental Models + Options A/B/C',
+          'Confidence Evolution - Pattern evolution protocol',
+          'Pattern Recognition - NIA historical pattern analysis',
+          'CRV Auto-Scoring - Automated C/R/V scoring',
+          'Visual Workflow Designer - Drag-and-drop multi-agent workflows',
+          'Agent Notification Center - Real-time critical alerts',
+          'Training Data Manager - Review, curate & augment training data',
+          'Improved Knowledge Graph - Interactive drag-and-drop visualization',
+          'Agent Collaboration Hub - Cross-agent task orchestration'
+        ],
+        recommendations: maturityTargets
+          .filter(t => t.current < t.target)
+          .map(t => `Focus on ${t.component}: Gap of ${(t.target - t.current).toFixed(1)} points (${t.priority} priority)`)
+      };
+
+      // Use LLM to generate formatted documentation
+      const { content } = await base44.integrations.Core.InvokeLLM({
+        prompt: `Generate a comprehensive, professional implementation report for v10.0 of CAIO·AI platform.
+
+Report Data:
+${JSON.stringify(reportData, null, 2)}
+
+Create a detailed markdown document with the following sections:
+1. Executive Summary
+2. Implementation Overview & Metrics
+3. Component Maturity Analysis (detailed breakdown)
+4. Feature Highlights & Capabilities
+5. Gap Analysis & Recommendations
+6. Next Steps & Roadmap
+
+Make it professional, data-driven, and actionable. Use tables, bullet points, and clear formatting.`,
+      });
+
+      // Create downloadable file
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `v10-implementation-report-${new Date().toISOString().split('T')[0]}.md`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      toast.success('Implementation report exported successfully');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export report: ' + error.message);
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -46,10 +158,36 @@ export default function V13ImplementationHub() {
           </h1>
           <p className="text-slate-400 mt-1">Enhanced Core Intelligence & Agent Automation</p>
         </div>
-        <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-lg px-4 py-2">
-          <CheckCircle className="w-4 h-4 mr-2" />
-          v10.0 LIVE
-        </Badge>
+        <div className="flex items-center gap-3">
+          <Button
+            onClick={() => saveProgressMutation.mutate()}
+            disabled={saveProgressMutation.isPending}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            {saveProgressMutation.isPending ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="w-4 h-4 mr-2" />
+            )}
+            Save Progress
+          </Button>
+          <Button
+            onClick={handleExportReport}
+            disabled={isExporting}
+            className="bg-purple-600 hover:bg-purple-700"
+          >
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <FileDown className="w-4 h-4 mr-2" />
+            )}
+            Export Report
+          </Button>
+          <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-lg px-4 py-2">
+            <CheckCircle className="w-4 h-4 mr-2" />
+            v10.0 LIVE
+          </Badge>
+        </div>
       </div>
 
       {/* Maturity Progress */}
