@@ -89,6 +89,8 @@ import WorkflowDesigner from './pages/WorkflowDesigner';
 import TSIModulesHub from './pages/TSIModulesHub';
 import AccessibilityTree from './pages/AccessibilityTree';
 import LandingLight from './pages/LandingLight';
+import RoleManagement from './pages/RoleManagement';
+import RBACDemo from './pages/RBACDemo';
 import __Layout from './Layout.jsx';
 
 
@@ -184,6 +186,8 @@ export const PAGES = {
     "TSIModulesHub": TSIModulesHub,
     "AccessibilityTree": AccessibilityTree,
     "LandingLight": LandingLight,
+    "RoleManagement": RoleManagement,
+    "RBACDemo": RBACDemo,
 }
 
 export const pagesConfig = {
