@@ -33,6 +33,7 @@ import PreHomeAnimation from "../components/landing/PreHomeAnimation";
 import PricingSection from "../components/landing/PricingSection";
 import InteractiveDemo from "../components/landing/InteractiveDemo";
 import AccessibilityEnhancer from "../components/AccessibilityEnhancer";
+import ThemeToggle from "../components/theme/ThemeToggle";
 import {
   tsiModules,
   advancedCapabilities,
@@ -419,6 +420,7 @@ export default function Landing() {
               </a>
 
               <div className="flex items-center gap-3 ml-4 pl-4 border-l border-white/10">
+                <ThemeToggle variant="ghost" />
                 {isAuthenticated ? (
                   <Button
                     onClick={() => navigate(createPageUrl("Dashboard"))}

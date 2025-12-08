@@ -24,6 +24,7 @@ import {
 import { motion } from "framer-motion";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
 import InteractiveDemo from "../components/landing/InteractiveDemo";
+import ThemeToggle from "../components/theme/ThemeToggle";
 import {
   tsiModules,
   advancedCapabilities,
@@ -101,6 +102,7 @@ export default function LandingLight() {
               </a>
 
               <div className="flex items-center gap-3 ml-4 pl-4 border-l border-slate-200">
+                <ThemeToggle variant="ghost" />
                 {isAuthenticated ? (
                   <Button
                     onClick={() => navigate(createPageUrl("Dashboard"))}
