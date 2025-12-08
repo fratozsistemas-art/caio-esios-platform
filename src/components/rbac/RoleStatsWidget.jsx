@@ -25,13 +25,6 @@ export default function RoleStatsWidget() {
     queryFn: () => base44.entities.EntityAccess.list()
   });
 
-  const roleCount = {
-    admin: userRoles.filter(r => r.role_name === 'admin' && r.is_active).length,
-    executive: userRoles.filter(r => r.role_name === 'executive' && r.is_active).length,
-    analyst: userRoles.filter(r => r.role_name === 'analyst' && r.is_active).length,
-    guest: users.length - userRoles.filter(r => r.is_active).length
-  };
-
   const stats = [
     {
       icon: Shield,

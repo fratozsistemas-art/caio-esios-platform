@@ -29,7 +29,6 @@ export function RBACProvider({ children }) {
       const currentRole = userRoles.length > 0 ? userRoles[0].role_name : 'guest';
       setRole(currentRole);
 
-      // Load all permissions for this role
       const rolePermissions = await base44.entities.Permission.filter({
         role_name: currentRole
       });
@@ -74,7 +73,6 @@ export function useRBAC() {
   return useContext(RBACContext);
 }
 
-// CRUD wrapper with RBAC checks
 export const rbacCRUD = {
   async read(entity, query = {}) {
     const response = await base44.functions.invoke('checkPermission', {

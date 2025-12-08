@@ -3,15 +3,13 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, XCircle, Edit, Save, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 export default function PermissionManager() {
   const [selectedRole, setSelectedRole] = useState("executive");
-  const [editingPermission, setEditingPermission] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: permissions = [] } = useQuery({
@@ -24,7 +22,6 @@ export default function PermissionManager() {
     onSuccess: () => {
       queryClient.invalidateQueries(['permissions']);
       toast.success('Permission updated');
-      setEditingPermission(null);
     }
   });
 

@@ -91,6 +91,7 @@ import AccessibilityTree from './pages/AccessibilityTree';
 import LandingLight from './pages/LandingLight';
 import RoleManagement from './pages/RoleManagement';
 import RBACDemo from './pages/RBACDemo';
+import CompaniesPage from './pages/CompaniesPage';
 import __Layout from './Layout.jsx';
 
 
@@ -188,6 +189,7 @@ export const PAGES = {
     "LandingLight": LandingLight,
     "RoleManagement": RoleManagement,
     "RBACDemo": RBACDemo,
+    "CompaniesPage": CompaniesPage,
 }
 
 export const pagesConfig = {

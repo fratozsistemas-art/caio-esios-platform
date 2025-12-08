@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { UserPlus, Trash2, Search, Shield, Calendar } from "lucide-react";
+import { UserPlus, Trash2, Search, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 export default function UserRoleManager() {
@@ -30,6 +30,7 @@ export default function UserRoleManager() {
 
   const assignRoleMutation = useMutation({
     mutationFn: async ({ email, role }) => {
+      const currentUser = await base44.auth.me();
       const existing = await base44.entities.UserRole.filter({
         user_email: email,
         is_active: true
@@ -38,13 +39,13 @@ export default function UserRoleManager() {
       if (existing.length > 0) {
         return base44.entities.UserRole.update(existing[0].id, {
           role_name: role,
-          assigned_by: (await base44.auth.me()).email
+          assigned_by: currentUser.email
         });
       } else {
         return base44.entities.UserRole.create({
           user_email: email,
           role_name: role,
-          assigned_by: (await base44.auth.me()).email,
+          assigned_by: currentUser.email,
           is_active: true
         });
       }

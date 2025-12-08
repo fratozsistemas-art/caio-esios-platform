@@ -15,6 +15,7 @@ import TutorialLauncher from './components/tutorial/TutorialLauncher';
 import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext';
 import LanguageSwitcher from './components/i18n/LanguageSwitcher';
 import WelcomeModal from './components/onboarding/WelcomeModal';
+import { RBACProvider } from './components/rbac/RBACWrapper';
 
 function LayoutInner({ children, currentPageName }) {
   const { t } = useLanguage();
@@ -324,7 +325,9 @@ function LayoutInner({ children, currentPageName }) {
 export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
-      <LayoutInner children={children} currentPageName={currentPageName} />
+      <RBACProvider>
+        <LayoutInner children={children} currentPageName={currentPageName} />
+      </RBACProvider>
     </LanguageProvider>
   );
 }
