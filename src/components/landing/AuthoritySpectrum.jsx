@@ -107,6 +107,25 @@ export default function AuthoritySpectrum() {
                       <h3 className={`text-lg font-bold mb-2 ${level.highlight ? 'text-[#FFC247]' : 'text-[#EAF6FF]'}`}>
                         {level.name}
                       </h3>
+                      
+                      {/* CAIO·AI Status Tag */}
+                      {(level.name === "Institutional Brain" || level.name === "Unwavering Peer") && (
+                        <div className="mb-3 flex justify-center">
+                          <div 
+                            className="inline-block px-3 py-1 rounded-md text-[10px] font-bold tracking-wider"
+                            style={{
+                              background: 'linear-gradient(135deg, #C7A763 0%, #E3C37B 50%, #C7A763 100%)',
+                              color: '#06101F',
+                              boxShadow: '0 0 20px rgba(199, 167, 99, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                              textShadow: '0 1px 0 rgba(255, 255, 255, 0.3)',
+                              border: '1px solid rgba(227, 195, 123, 0.5)'
+                            }}
+                          >
+                            CAIO·AI {level.name}
+                          </div>
+                        </div>
+                      )}
+                      
                       <div className={`text-3xl font-bold mb-3 ${level.highlight ? 'text-[#FFC247]' : 'text-[#00C8FF]'}`}>
                         {level.score}
                       </div>
