@@ -88,6 +88,7 @@ import AgentIntelligenceHub from './pages/AgentIntelligenceHub';
 import WorkflowDesigner from './pages/WorkflowDesigner';
 import TSIModulesHub from './pages/TSIModulesHub';
 import AccessibilityTree from './pages/AccessibilityTree';
+import LandingLight from './pages/LandingLight';
 import __Layout from './Layout.jsx';
 
 
@@ -182,6 +183,7 @@ export const PAGES = {
     "WorkflowDesigner": WorkflowDesigner,
     "TSIModulesHub": TSIModulesHub,
     "AccessibilityTree": AccessibilityTree,
+    "LandingLight": LandingLight,
 }
 
 export const pagesConfig = {
