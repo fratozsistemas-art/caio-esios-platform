@@ -666,8 +666,6 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
               </div>
             </CardContent>
           </Card>
-
-          <div className="grid grid-cols-2 gap-6 mt-6">
         </TabsContent>
 
         {/* CRV Validation Gate */}
