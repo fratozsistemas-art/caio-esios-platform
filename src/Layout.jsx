@@ -102,6 +102,7 @@ function LayoutInner({ children, currentPageName }) {
               items: [
                 { name: t('nav.fileUpload', 'File Upload'), icon: Upload, path: 'FileUpload' },
                 { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations' },
+                { name: t('nav.compliance', 'Compliance'), icon: Shield, path: 'ComplianceMonitoring', adminOnly: true, badge: 'AI' },
                 { name: t('nav.brandManual', 'Brand Manual'), icon: Palette, path: 'BrandManual', adminOnly: true },
                 { name: t('nav.versionWiki', 'Version Wiki'), icon: Archive, path: 'VersionWiki', adminOnly: true },
                 { name: t('nav.apiManagement', 'API Management'), icon: Shield, path: 'APIManagement', adminOnly: true },
