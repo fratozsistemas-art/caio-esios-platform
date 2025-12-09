@@ -500,7 +500,7 @@ Be decisive, evidence-based, and executive-grade.`;
     deliverable_code: 'D5',
     title: 'Strategic Synthesis',
     phase: 'strategy',
-    modules_used: ['M5', ...modulesToExecute],
+    modules_used: ['M5'],
     status: 'completed',
     content: synthesis,
     executive_summary: synthesis.executive_summary,
