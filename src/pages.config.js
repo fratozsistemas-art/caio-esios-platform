@@ -101,6 +101,7 @@ import StrategyAdvisor from './pages/StrategyAdvisor';
 import ComplianceMonitoring from './pages/ComplianceMonitoring';
 import TSIModulesDebug from './pages/TSIModulesDebug';
 import TSICapabilitiesAudit from './pages/TSICapabilitiesAudit';
+import TSIMethodologyAuditReport from './pages/TSIMethodologyAuditReport';
 import __Layout from './Layout.jsx';
 
 
@@ -208,6 +209,7 @@ export const PAGES = {
     "ComplianceMonitoring": ComplianceMonitoring,
     "TSIModulesDebug": TSIModulesDebug,
     "TSICapabilitiesAudit": TSICapabilitiesAudit,
+    "TSIMethodologyAuditReport": TSIMethodologyAuditReport,
 }
 
 export const pagesConfig = {
