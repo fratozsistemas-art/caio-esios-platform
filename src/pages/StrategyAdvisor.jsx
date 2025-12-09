@@ -7,9 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Brain, Sparkles, AlertTriangle, TrendingUp, CheckCircle, Clock, FileText, Upload } from "lucide-react";
+import { Brain, Sparkles, AlertTriangle, TrendingUp, CheckCircle, Clock, FileText, Upload, History } from "lucide-react";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import DocumentAnalysisCard from "../components/strategy/DocumentAnalysisCard";
 
 export default function StrategyAdvisor() {
   const [query, setQuery] = useState("");
@@ -325,36 +326,18 @@ export default function StrategyAdvisor() {
             <Card className="bg-[#1A1D29] border-[#FFB800]/20">
               <CardHeader>
                 <CardTitle className="text-white text-sm flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-[#FFB800]" />
-                  Document Analyses
+                  <History className="w-4 h-4 text-[#FFB800]" />
+                  Analyzed Documents
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 max-h-[400px] overflow-y-auto">
-                {documentAnalyses.map((doc) => (
-                  <div
-                    key={doc.id}
-                    className="p-3 bg-[#0A2540] rounded-lg border border-[#FFB800]/10"
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <p className="text-white text-xs font-medium line-clamp-1">{doc.document_title}</p>
-                      <Badge className="bg-[#FFB800]/20 text-[#FFB800] text-[10px]">
-                        {doc.document_type}
-                      </Badge>
-                    </div>
-                    {doc.hermes_validation && (
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="text-[10px] text-[#94A3B8]">
-                          Integrity: {doc.hermes_validation.integrity_score}/100
-                        </div>
-                      </div>
-                    )}
-                    {doc.temporal_anomalies?.length > 0 && (
-                      <Badge className="bg-red-500/20 text-red-400 text-[10px]">
-                        {doc.temporal_anomalies.length} Anomalies
-                      </Badge>
-                    )}
-                  </div>
-                ))}
+              <CardContent className="space-y-3 max-h-[400px] overflow-y-auto">
+                {documentAnalyses.length === 0 ? (
+                  <p className="text-[#94A3B8] text-xs text-center py-4">No documents analyzed yet</p>
+                ) : (
+                  documentAnalyses.slice(0, 3).map((doc) => (
+                    <DocumentAnalysisCard key={doc.id} analysis={doc} />
+                  ))
+                )}
               </CardContent>
             </Card>
           </div>

@@ -44,6 +44,7 @@ function LayoutInner({ children, currentPageName }) {
             {
               title: t('nav.intelligence', 'Intelligence'),
               items: [
+                { name: t('nav.strategyAdvisor', 'Strategy Advisor'), icon: Brain, path: 'StrategyAdvisor', badge: 'AI' },
                 { name: t('nav.strategicSynthesis', 'Strategic Synthesis'), icon: Sparkles, path: 'StrategicIntelligence', badge: 'AI' },
                 { name: t('nav.companyHub', 'Company Hub'), icon: Compass, path: 'CompanyIntelligenceHub' },
                 { name: t('nav.knowledgeGraph', 'Knowledge Graph'), icon: Network, path: 'KnowledgeGraph' },
