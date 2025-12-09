@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { 
   Upload, FileText, Loader2, CheckCircle, AlertCircle, Download, 
-  Database, FileSpreadsheet, Image, FileJson, Sparkles, Brain,
-  Table, List, Building2
+  FileSpreadsheet, Image, FileJson, Sparkles, Brain,
+  Table, List, Building2, HardDrive
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -302,7 +302,7 @@ export default function BatchIngestion() {
                       </>
                     ) : (
                       <>
-                        <Database className="w-4 h-4 mr-2" />
+                        <HardDrive className="w-4 h-4 mr-2" />
                         Processar Dados CVM
                       </>
                     )}

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Database, TrendingUp, Globe, Twitter, Linkedin, 
+  HardDrive, TrendingUp, Globe, Twitter, Linkedin, 
   Newspaper, DollarSign, BarChart3, Loader2, CheckCircle,
   AlertCircle, Sparkles
 } from 'lucide-react';
@@ -146,7 +146,7 @@ export default function DataSourceHub({ selectedEntity }) {
     <Card className="bg-white/5 border-white/10">
       <CardHeader>
         <CardTitle className="text-white flex items-center gap-2">
-          <Database className="w-5 h-5 text-blue-400" />
+          <HardDrive className="w-5 h-5 text-blue-400" />
           External Data Sources
         </CardTitle>
       </CardHeader>
