@@ -102,6 +102,7 @@ import ComplianceMonitoring from './pages/ComplianceMonitoring';
 import TSIModulesDebug from './pages/TSIModulesDebug';
 import TSICapabilitiesAudit from './pages/TSICapabilitiesAudit';
 import TSIMethodologyAuditReport from './pages/TSIMethodologyAuditReport';
+import GPT51Comparison from './pages/GPT51Comparison';
 import __Layout from './Layout.jsx';
 
 
@@ -210,6 +211,7 @@ export const PAGES = {
     "TSIModulesDebug": TSIModulesDebug,
     "TSICapabilitiesAudit": TSICapabilitiesAudit,
     "TSIMethodologyAuditReport": TSIMethodologyAuditReport,
+    "GPT51Comparison": GPT51Comparison,
 }
 
 export const pagesConfig = {
