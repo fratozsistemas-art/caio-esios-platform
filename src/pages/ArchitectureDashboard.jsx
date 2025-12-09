@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -419,6 +420,43 @@ export default function ArchitectureDashboard() {
   const [selectedLayer, setSelectedLayer] = useState(null);
   const [activeTab, setActiveTab] = useState("overview");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Auto-run assessment on first admin login daily
+  useEffect(() => {
+    const runDailyAssessment = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user.role !== 'admin') return;
+
+        const lastRun = localStorage.getItem('last_arch_assessment');
+        const today = new Date().toDateString();
+        
+        if (lastRun !== today) {
+          setIsRefreshing(true);
+          await base44.functions.invoke('selfAssessCapabilities', {});
+          localStorage.setItem('last_arch_assessment', today);
+          queryClient.invalidateQueries();
+          setIsRefreshing(false);
+        }
+      } catch (error) {
+        console.error('Auto-assessment failed:', error);
+      }
+    };
+
+    runDailyAssessment();
+  }, []);
+
+  // Fetch latest assessment
+  const { data: latestAssessment } = useQuery({
+    queryKey: ['arch-assessment'],
+    queryFn: async () => {
+      const analyses = await base44.entities.Analysis.filter({
+        category: 'Platform Assessment'
+      }, '-created_date', 1);
+      return analyses[0]?.results || null;
+    }
+  });
 
   // Calculate overall metrics
   const calculateOverallMaturity = () => {
@@ -431,7 +469,7 @@ export default function ArchitectureDashboard() {
     return Math.round((total / allComponents.length) * 20);
   };
 
-  const overallMaturity = calculateOverallMaturity();
+  const overallMaturity = latestAssessment?.readiness_score || calculateOverallMaturity();
 
   // Fetch real pattern data if available
   const { data: memories = [] } = useQuery({
@@ -439,9 +477,17 @@ export default function ArchitectureDashboard() {
     queryFn: () => base44.entities.InstitutionalMemory.list('-created_date', 50)
   });
 
-  const handleRefresh = () => {
+  const handleRefresh = async () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1500);
+    try {
+      await base44.functions.invoke('selfAssessCapabilities', {});
+      queryClient.invalidateQueries();
+      toast.success('Architecture assessment refreshed');
+    } catch (error) {
+      toast.error('Refresh failed: ' + error.message);
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   return (
@@ -557,6 +603,24 @@ export default function ArchitectureDashboard() {
 
           {/* OVERVIEW TAB */}
           <TabsContent value="overview" className="mt-6 space-y-6">
+            {/* Live Assessment Banner */}
+            {latestAssessment && (
+              <Card className="bg-gradient-to-r from-[#00D4FF]/10 to-[#C7A763]/10 border-[#00D4FF]/30">
+                <CardContent className="p-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white font-semibold mb-1">Live Platform Assessment Active</p>
+                      <p className="text-[#94A3B8] text-sm">Readiness: {latestAssessment.readiness_score}% | Confidence: {latestAssessment.overall_confidence}% | Risk: {latestAssessment.risk_level}</p>
+                    </div>
+                    <Badge className="bg-green-500/20 text-green-400">
+                      <CheckCircle className="w-3 h-3 mr-1" />
+                      LIVE
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Hierarchical Architecture View */}
             <Card className="bg-white/5 border-white/10">
               <CardHeader>
