@@ -100,6 +100,7 @@ import VersionWiki from './pages/VersionWiki';
 import StrategyAdvisor from './pages/StrategyAdvisor';
 import ComplianceMonitoring from './pages/ComplianceMonitoring';
 import TSIModulesDebug from './pages/TSIModulesDebug';
+import TSICapabilitiesAudit from './pages/TSICapabilitiesAudit';
 import __Layout from './Layout.jsx';
 
 
@@ -206,6 +207,7 @@ export const PAGES = {
     "StrategyAdvisor": StrategyAdvisor,
     "ComplianceMonitoring": ComplianceMonitoring,
     "TSIModulesDebug": TSIModulesDebug,
+    "TSICapabilitiesAudit": TSICapabilitiesAudit,
 }
 
 export const pagesConfig = {
