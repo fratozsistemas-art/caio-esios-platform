@@ -158,6 +158,36 @@
   }
 }
 
+/* Gold Pulse Glow for Unwavering Peer */
+@keyframes goldPulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 40px rgba(199, 167, 99, 0.4),
+      0 0 80px rgba(227, 195, 123, 0.2);
+  }
+  50% {
+    box-shadow: 
+      0 0 80px rgba(199, 167, 99, 0.8),
+      0 0 140px rgba(227, 195, 123, 0.5),
+      0 0 200px rgba(199, 167, 99, 0.3);
+  }
+}
+
+/* Platinum Pulse Glow for Institutional Brain */
+@keyframes platinumPulseGlow {
+  0%, 100% {
+    box-shadow: 
+      0 0 30px rgba(138, 154, 176, 0.3),
+      0 0 60px rgba(168, 182, 200, 0.15);
+  }
+  50% {
+    box-shadow: 
+      0 0 60px rgba(138, 154, 176, 0.6),
+      0 0 110px rgba(168, 182, 200, 0.4),
+      0 0 160px rgba(200, 210, 225, 0.25);
+  }
+}
+
 .caio-pulse {
   animation: caioPulse 2.5s ease-in-out infinite;
 }
