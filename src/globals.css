@@ -118,12 +118,28 @@
   
   html {
     font-family: 'Inter', system-ui, sans-serif;
+    scroll-behavior: smooth;
   }
   
   body {
     @apply bg-background text-foreground;
     background: linear-gradient(135deg, #0A2540 0%, #1A1D29 50%, #0F1419 100%);
     min-height: 100vh;
+  }
+  
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    
+    html {
+      scroll-behavior: auto;
+    }
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -659,10 +675,29 @@
   color: var(--caio-white);
 }
 
-/* Focus ring — Gold */
+/* Focus ring — Enhanced for accessibility */
 :focus-visible {
-  outline: 2px solid rgba(199, 167, 99, 0.5);
+  outline: 2px solid rgba(0, 212, 255, 0.6);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip to main content link (accessibility) */
+.skip-to-main {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--caio-primary);
+  color: var(--caio-bg-primary);
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  font-weight: 600;
+  z-index: 100;
+}
+
+.skip-to-main:focus {
+  top: 0;
 }
 
 /* Loading bar animation — Neural sweep */

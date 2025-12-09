@@ -149,8 +149,10 @@ export default function Videos() {
                   <iframe
                     src={selectedVideo.embedUrl}
                     className="w-full h-full"
+                    title={selectedVideo.title}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
+                    loading="lazy"
                   />
                 </div>
                 <div className="p-6">

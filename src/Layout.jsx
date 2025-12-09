@@ -202,7 +202,7 @@ function LayoutInner({ children, currentPageName }) {
         </div>
       </div>
 
-      <aside className={`fixed top-0 left-0 h-screen w-64 bg-[#0A2540]/95 backdrop-blur-xl border-r border-[#00D4FF]/20 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <aside className={`fixed top-0 left-0 h-screen w-64 bg-[#0A2540]/95 backdrop-blur-xl border-r border-[#00D4FF]/20 transform transition-transform duration-300 z-40 overflow-y-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`} role="navigation" aria-label="Sidebar navigation">
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <img 

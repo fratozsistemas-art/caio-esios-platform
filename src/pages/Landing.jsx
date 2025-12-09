@@ -34,6 +34,7 @@ import PricingSection from "../components/landing/PricingSection";
 import InteractiveDemo from "../components/landing/InteractiveDemo";
 import AccessibilityEnhancer from "../components/AccessibilityEnhancer";
 import ThemeToggle from "../components/theme/ThemeToggle";
+import ScrollProgress from "../components/landing/ScrollProgress";
 import {
   tsiModules,
   advancedCapabilities,
@@ -304,6 +305,28 @@ export default function Landing() {
     if (!hasSeenPreHome && skipIntro !== 'true') {
       setShowPreHome(true);
     }
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Keyboard shortcuts
+    const handleKeyboard = (e) => {
+      if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+        e.preventDefault();
+        document.querySelector('input[type="text"]')?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyboard);
+
+    return () => window.removeEventListener('keydown', handleKeyboard);
   }, []);
 
   const handleLogin = (e) => {
@@ -337,6 +360,10 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen" style={{ background: "radial-gradient(circle at center, #0A1628 0%, #0d2847 40%, #1a2744 70%, #243352 100%)" }}>
+      <a href="#main-content" className="skip-to-main">
+        Skip to main content
+      </a>
+      <ScrollProgress />
       <AccessibilityEnhancer />
       {/* Unauthorized Alert */}
       {showUnauthorizedAlert && (
@@ -377,7 +404,7 @@ export default function Landing() {
       )}
 
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
+      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20" role="navigation" aria-label="Main navigation">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
           <div className="flex justify-between items-center">
             {/* Logo */}
@@ -397,26 +424,37 @@ export default function Landing() {
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-6">
-              <a href="#methodology" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+              <a href="#methodology" className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
                 Methodology
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
               </a>
-              <a href="#capabilities" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+              <a href="#capabilities" className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
                 Capabilities
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
               </a>
-              <a href="#use-cases" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+              <a href="#use-cases" className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
                 Use Cases
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
               </a>
-              <a href="#pricing" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+              <a href="#pricing" className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
                 Pricing
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
               </a>
-              <a href="#investors" className="text-slate-300 hover:text-[#FFB800] transition-colors font-medium text-sm">
+              <a href="#investors" className="text-slate-300 hover:text-[#FFB800] transition-all duration-300 font-medium text-sm relative group">
                 Investors
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#FFB800] transition-all duration-300 group-hover:w-full" />
               </a>
-              <a href={createPageUrl("BlogResources")} className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+              <a href={createPageUrl("Videos")} className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
+                Videos
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
+              </a>
+              <a href={createPageUrl("BlogResources")} className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
                 Blog
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
               </a>
-              <a href="#about" className="text-slate-300 hover:text-[#00D4FF] transition-colors font-medium text-sm">
+              <a href="#about" className="text-slate-300 hover:text-[#00D4FF] transition-all duration-300 font-medium text-sm relative group">
                 About
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-[#00D4FF] transition-all duration-300 group-hover:w-full" />
               </a>
 
               <div className="flex items-center gap-3 ml-4 pl-4 border-l border-white/10">
@@ -535,6 +573,7 @@ export default function Landing() {
       </nav>
 
       {/* Hero Section */}
+      <main id="main-content">
       <section className="relative overflow-hidden py-12 md:py-16" aria-label="Hero Section - Executive Strategic Intelligence" style={{ background: 'linear-gradient(180deg, #0A1628 0%, #0A1628 60%, rgba(11, 15, 26, 0.3) 90%, rgba(11, 15, 26, 0) 100%)' }}>
         <div className="absolute inset-0">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#00C8FF]/10 rounded-full blur-[150px]" />
@@ -1460,6 +1499,7 @@ export default function Landing() {
 
       {/* Interactive Demo Modal */}
       <InteractiveDemo open={showDemo} onClose={() => setShowDemo(false)} />
+      </main>
 
       {/* Footer */}
       <footer className="border-t border-caio-blue/20 py-16 bg-[#0A1628] backdrop-blur-sm" role="contentinfo">
