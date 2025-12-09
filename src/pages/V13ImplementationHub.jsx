@@ -21,6 +21,7 @@ import ConfidenceEvolutionEngine from "@/components/nia/ConfidenceEvolutionEngin
 import EnhancedM5Synthesis from "@/components/modules/EnhancedM5Synthesis";
 import CRVAutoScoringEngine from "@/components/crv/CRVAutoScoringEngine";
 import PatternRecognitionEngine from "@/components/nia/PatternRecognitionEngine";
+import CapabilityAssessmentDisplay from "@/components/implementation/CapabilityAssessmentDisplay";
 
 const IMPLEMENTATION_STATUS = {
   // Protocolos de Proteção IP (Tier 1/2/3)
@@ -163,10 +164,49 @@ export default function V13ImplementationHub() {
   const [activeTab, setActiveTab] = useState("overview");
   const [maturityTargets, setMaturityTargets] = useState(MATURITY_TARGETS);
   const [isExporting, setIsExporting] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const queryClient = useQueryClient();
+
+  // Auto-run assessment on first admin login daily
+  React.useEffect(() => {
+    const runDailyAssessment = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user.role !== 'admin') return;
+
+        const lastRun = localStorage.getItem('last_capability_assessment');
+        const today = new Date().toDateString();
+        
+        if (lastRun !== today) {
+          setIsRefreshing(true);
+          await base44.functions.invoke('selfAssessCapabilities', {});
+          localStorage.setItem('last_capability_assessment', today);
+          queryClient.invalidateQueries();
+          toast.success('Daily capability assessment completed');
+          setIsRefreshing(false);
+        }
+      } catch (error) {
+        console.error('Auto-assessment failed:', error);
+      }
+    };
+
+    runDailyAssessment();
+  }, []);
 
   const avgCurrentMaturity = maturityTargets.reduce((sum, t) => sum + t.current, 0) / maturityTargets.length;
   const avgTargetMaturity = maturityTargets.reduce((sum, t) => sum + t.target, 0) / maturityTargets.length;
+
+  // Fetch latest capability assessment
+  const { data: latestAssessment } = useQuery({
+    queryKey: ['capability-assessment'],
+    queryFn: async () => {
+      const analyses = await base44.entities.Analysis.filter({
+        category: 'Platform Assessment'
+      }, '-created_date', 1);
+      return analyses[0]?.results || null;
+    },
+    refetchInterval: 60000 // Refresh every minute
+  });
 
   const saveProgressMutation = useMutation({
     mutationFn: async () => {
@@ -298,6 +338,29 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
         </div>
         <div className="flex items-center gap-3">
           <Button
+            onClick={async () => {
+              setIsRefreshing(true);
+              try {
+                const response = await base44.functions.invoke('selfAssessCapabilities', {});
+                queryClient.invalidateQueries();
+                toast.success('Platform capabilities refreshed');
+              } catch (error) {
+                toast.error('Refresh failed: ' + error.message);
+              } finally {
+                setIsRefreshing(false);
+              }
+            }}
+            disabled={isRefreshing}
+            className="bg-cyan-600 hover:bg-cyan-700"
+          >
+            {isRefreshing ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Zap className="w-4 h-4 mr-2" />
+            )}
+            Refresh Analysis
+          </Button>
+          <Button
             onClick={() => saveProgressMutation.mutate()}
             disabled={saveProgressMutation.isPending}
             className="bg-blue-600 hover:bg-blue-700"
@@ -393,6 +456,11 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="mt-6">
+          {/* Live Capability Assessment */}
+          {latestAssessment && (
+            <CapabilityAssessmentDisplay assessment={latestAssessment} />
+          )}
+
           {/* Implementation Status Summary */}
           <Card className="bg-gradient-to-br from-purple-500/10 to-cyan-500/10 border-purple-500/30 mb-6">
             <CardHeader>
