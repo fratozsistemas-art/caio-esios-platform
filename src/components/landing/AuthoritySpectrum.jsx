@@ -81,13 +81,22 @@ export default function AuthoritySpectrum() {
                 <Card 
                   className={`${
                     level.highlight 
-                      ? 'bg-gradient-to-br from-[#00C8FF]/20 to-[#FFC247]/20 border-[#FFC247]/60' 
+                      ? 'bg-gradient-to-br from-[#06101F] to-[#112A4D] border-[#C7A763]/60' 
+                      : level.name === "Institutional Brain"
+                      ? 'bg-gradient-to-br from-[#06101F] to-[#0A1E3A] border-[#8A9AB0]/40'
                       : 'bg-[#0B0F1A]/50 border-[#00C8FF]/20'
                   } backdrop-blur-sm hover:scale-105 transition-all duration-200 w-full flex flex-col`}
                   style={{ 
                     boxShadow: level.highlight 
-                      ? '0 0 40px rgba(255, 194, 71, 0.4)' 
-                      : '0 0 20px rgba(0, 200, 255, 0.1)'
+                      ? '0 0 60px rgba(199, 167, 99, 0.6), 0 0 120px rgba(227, 195, 123, 0.3)' 
+                      : level.name === "Institutional Brain"
+                      ? '0 0 50px rgba(138, 154, 176, 0.5), 0 0 100px rgba(168, 182, 200, 0.2)'
+                      : '0 0 20px rgba(0, 200, 255, 0.1)',
+                    animation: level.highlight 
+                      ? 'goldPulseGlow 3s ease-in-out infinite'
+                      : level.name === "Institutional Brain"
+                      ? 'platinumPulseGlow 3.5s ease-in-out infinite'
+                      : 'none'
                   }}
                 >
                   <CardContent className="p-6 text-center flex flex-col h-full">
