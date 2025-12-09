@@ -410,8 +410,8 @@
   animation: synapseGlow 3s ease-in-out infinite;
 }
 
-/* Exu-Executivo Motion — Abertura de caminhos místicos */
-@keyframes exuExecutivo {
+/* Strategic Reveal Motion — Abertura executiva */
+@keyframes strategicReveal {
   0% {
     opacity: 0;
     transform: scale(0.8) rotate(-5deg);
@@ -427,8 +427,8 @@
   }
 }
 
-.exu-executivo {
-  animation: exuExecutivo 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.strategic-reveal {
+  animation: strategicReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Purple Imperial Transition */

@@ -1,152 +1,301 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, Clock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { FileText, Search, Clock, TrendingUp, Sparkles, ExternalLink, BookOpen, Download } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function BlogResources() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    document.documentElement.lang = 'en';
-    document.title = "Strategic Intelligence Resources & Blog | CAIO·AI";
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', 'Resources and insights on strategic intelligence, executive AI platforms, M&A due diligence, market entry strategy, and digital transformation planning.');
-    } else {
-      const meta = document.createElement('meta');
-      meta.name = 'description';
-      meta.content = 'Resources and insights on strategic intelligence, executive AI platforms, M&A due diligence, market entry strategy, and digital transformation planning.';
-      document.head.appendChild(meta);
-    }
-  }, []);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const articles = [
     {
-      title: "What Is Strategic Intelligence? Complete Guide for Executives",
-      category: "Strategic Intelligence",
+      id: 1,
+      title: "Strategic Intelligence Platform Architecture",
+      description: "Deep dive into TSI v9.3 methodology and cognitive module design",
+      category: "methodology",
       readTime: "12 min",
-      date: "Jan 2025",
-      excerpt: "Comprehensive guide to strategic intelligence platforms, TSI methodology, and how executives use AI for data-driven decisions.",
-      slug: "what-is-strategic-intelligence"
+      date: "2025-12-01",
+      views: "5.2K",
+      type: "article",
+      url: "#",
+      featured: true
     },
     {
-      title: "AI vs Traditional Consulting: ROI Comparison",
-      category: "ROI Analysis",
+      id: 2,
+      title: "Financial Modeling with M4 Module",
+      description: "How AI-powered financial modeling transforms M&A due diligence",
+      category: "case-study",
       readTime: "8 min",
-      date: "Jan 2025",
-      excerpt: "Cost-benefit analysis comparing AI-powered strategic intelligence platforms with traditional consulting engagements.",
-      slug: "ai-vs-consulting-roi"
+      date: "2025-11-28",
+      views: "3.8K",
+      type: "article",
+      url: "#"
     },
     {
-      title: "11 Components of Enterprise Strategic Intelligence",
-      category: "TSI Methodology",
+      id: 3,
+      title: "Knowledge Graph Best Practices",
+      description: "Building and maintaining strategic connections at scale",
+      category: "technical",
       readTime: "15 min",
-      date: "Jan 2025",
-      excerpt: "Deep dive into TSI v9.3 framework covering market intelligence, competitive analysis, financial modeling, and more.",
-      slug: "11-components-strategic-intelligence"
+      date: "2025-11-25",
+      views: "4.5K",
+      type: "article",
+      url: "#"
     },
     {
-      title: "How to Choose a Strategic Intelligence Platform",
-      category: "Buyer's Guide",
+      id: 4,
+      title: "Vector Decision Framework Whitepaper",
+      description: "Academic paper on strategic vector analysis methodology",
+      category: "research",
+      readTime: "25 min",
+      date: "2025-11-20",
+      views: "2.1K",
+      type: "pdf",
+      url: "#",
+      downloadable: true
+    },
+    {
+      id: 5,
+      title: "Multi-Agent Orchestration Guide",
+      description: "Complete guide to autonomous agent workflows and collaboration",
+      category: "technical",
+      readTime: "18 min",
+      date: "2025-11-15",
+      views: "6.3K",
+      type: "article",
+      url: "#"
+    },
+    {
+      id: 6,
+      title: "Market Entry Strategy Template",
+      description: "Step-by-step framework for market intelligence and competitive analysis",
+      category: "templates",
       readTime: "10 min",
-      date: "Dec 2024",
-      excerpt: "Evaluation criteria for selecting executive AI platforms: methodology, governance, integration, and scalability.",
-      slug: "choose-strategic-intelligence-platform"
-    },
-    {
-      title: "Financial Modeling Best Practices for M&A",
-      category: "M&A",
-      readTime: "14 min",
-      date: "Dec 2024",
-      excerpt: "DCF analysis, valuation multiples, scenario planning, and risk-adjusted NPV calculation for M&A due diligence.",
-      slug: "financial-modeling-ma"
-    },
-    {
-      title: "The Rise of the Chief AI Officer (CAIO)",
-      category: "Leadership",
-      readTime: "9 min",
-      date: "Dec 2024",
-      excerpt: "Emerging C-suite role focused on AI strategy, governance, and enterprise-wide AI adoption.",
-      slug: "rise-of-chief-ai-officer"
+      date: "2025-11-10",
+      views: "7.8K",
+      type: "pdf",
+      url: "#",
+      downloadable: true,
+      featured: true
     }
   ];
 
+  const books = [
+    {
+      id: 1,
+      title: "Thinking, Fast and Slow",
+      author: "Daniel Kahneman",
+      description: "Essential reading for understanding cognitive biases in strategic decision-making",
+      amazonUrl: "https://amazon.com",
+      relevance: "Cognitive Architecture"
+    },
+    {
+      id: 2,
+      title: "The Lean Startup",
+      author: "Eric Ries",
+      description: "Strategic iteration and validated learning for innovation",
+      amazonUrl: "https://amazon.com",
+      relevance: "Strategic Execution"
+    },
+    {
+      id: 3,
+      title: "Good Strategy Bad Strategy",
+      author: "Richard Rumelt",
+      description: "The difference between coherent action and wishful thinking",
+      amazonUrl: "https://amazon.com",
+      relevance: "Strategic Synthesis"
+    },
+    {
+      id: 4,
+      title: "Zero to One",
+      author: "Peter Thiel",
+      description: "Creating value through innovation and strategic monopoly",
+      amazonUrl: "https://amazon.com",
+      relevance: "Market Intelligence"
+    }
+  ];
+
+  const categories = [
+    { id: "all", label: "All Content" },
+    { id: "methodology", label: "Methodology" },
+    { id: "case-study", label: "Case Studies" },
+    { id: "technical", label: "Technical" },
+    { id: "research", label: "Research" },
+    { id: "templates", label: "Templates" }
+  ];
+
+  const filteredArticles = articles.filter(article => {
+    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         article.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || article.category === selectedCategory;
+    return matchesSearch && matchesCategory;
+  });
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
-      <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-3 cursor-pointer" onClick={() => navigate(createPageUrl("Landing"))}>
-              <img 
-                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI Logo" 
-                className="w-10 h-10 object-contain"
-              />
-              <div className="text-xl font-bold text-white">CAIO·AI</div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419] p-6">
+      <div className="max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00D4FF] to-[#8B5CF6] flex items-center justify-center">
+              <FileText className="w-6 h-6 text-white" />
             </div>
-            <Button onClick={() => navigate(createPageUrl("Landing"))} variant="outline" className="border-[#00D4FF]/40 text-[#00D4FF]">
-              Back to Home
-            </Button>
+            <div>
+              <h1 className="text-4xl font-bold text-white">Blog & Resources</h1>
+              <p className="text-[#94A3B8]">Articles, whitepapers and strategic intelligence insights</p>
+            </div>
           </div>
-        </div>
-      </nav>
+        </motion.div>
 
-      <section className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-6">
-            Resources & Insights
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
-            Strategic Intelligence Resources
-          </h1>
-          <p className="text-xl text-slate-300 mb-12 max-w-3xl">
-            Guides, frameworks, and insights on <span className="text-[#00D4FF] font-semibold">executive AI platforms</span>, <span className="text-[#00D4FF] font-semibold">strategic intelligence</span>, and data-driven decision-making.
-          </p>
+        <Card className="bg-[#1A1D29] border-[#00D4FF]/20 mb-8">
+          <CardContent className="p-6">
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#94A3B8]" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search articles..."
+                className="pl-10 bg-[#0A2540] border-[#00D4FF]/30 text-white placeholder:text-[#94A3B8]"
+              />
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {categories.map((cat) => (
+                <Button
+                  key={cat.id}
+                  variant={selectedCategory === cat.id ? "default" : "outline"}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={selectedCategory === cat.id 
+                    ? "bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6] font-medium whitespace-nowrap" 
+                    : "bg-[#1A1D29] border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50 hover:text-white whitespace-nowrap"}
+                >
+                  {cat.label}
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article, i) => (
-              <Card key={i} className="bg-white/10 border-white/20 hover:bg-white/15 transition-all cursor-pointer group">
-                <CardContent className="p-6">
-                  <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40 mb-4">
-                    {article.category}
-                  </Badge>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-[#00D4FF] transition-colors">
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          {filteredArticles.map((article, idx) => (
+            <motion.div
+              key={article.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: idx * 0.1 }}
+            >
+              <Card 
+                className={`bg-[#1A1D29] border-[#00D4FF]/20 hover:bg-[#0A2540] transition-all duration-300 group h-full ${article.featured ? 'border-[#00D4FF]/50' : ''}`}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between mb-2">
+                    <Badge className={article.featured ? "bg-[#00D4FF]/20 text-[#00D4FF]" : "bg-[#8B5CF6]/20 text-[#8B5CF6]"}>
+                      {article.category}
+                    </Badge>
+                    {article.downloadable && (
+                      <Download className="w-4 h-4 text-[#00D4FF]" />
+                    )}
+                  </div>
+                  <CardTitle className="text-white text-xl group-hover:text-[#00D4FF] transition-colors">
                     {article.title}
-                  </h3>
-                  <p className="text-slate-300 mb-4 text-sm leading-relaxed">
-                    {article.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-slate-400">
+                  </CardTitle>
+                  <CardDescription className="text-[#94A3B8]">
+                    {article.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between text-sm text-[#94A3B8] mb-4">
                     <div className="flex items-center gap-3">
                       <div className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {article.date}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
+                        <Clock className="w-4 h-4" />
                         {article.readTime}
                       </div>
+                      <div className="flex items-center gap-1">
+                        <TrendingUp className="w-4 h-4" />
+                        {article.views}
+                      </div>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-[#00D4FF] group-hover:translate-x-1 transition-transform" />
+                    <span className="text-xs">{article.date}</span>
                   </div>
+                  <Button
+                    className="w-full bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium"
+                    onClick={() => window.open(article.url, '_blank')}
+                  >
+                    {article.downloadable ? (
+                      <>
+                        <Download className="w-4 h-4 mr-2" />
+                        Download {article.type.toUpperCase()}
+                      </>
+                    ) : (
+                      <>
+                        Read Article
+                        <ExternalLink className="w-4 h-4 ml-2" />
+                      </>
+                    )}
+                  </Button>
                 </CardContent>
               </Card>
-            ))}
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8B5CF6] to-[#00D4FF] flex items-center justify-center">
+              <BookOpen className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-bold text-white">Recommended Reading</h2>
+              <p className="text-[#94A3B8]">Essential books for strategic intelligence professionals</p>
+            </div>
           </div>
 
-          <div className="text-center mt-16">
-            <p className="text-slate-400 mb-4">More articles coming soon</p>
-            <Button onClick={() => navigate(createPageUrl("Landing"))} className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] text-[#0A1628] font-semibold">
-              Explore CAIO·AI Platform
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {books.map((book, idx) => (
+              <motion.div
+                key={book.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + idx * 0.1 }}
+              >
+                <Card className="bg-[#1A1D29] border-[#00D4FF]/20 hover:bg-[#0A2540] transition-all duration-300 group h-full">
+                  <CardHeader>
+                    <CardTitle className="text-white text-lg group-hover:text-[#00D4FF] transition-colors">
+                      {book.title}
+                    </CardTitle>
+                    <CardDescription className="text-[#94A3B8] text-sm">
+                      by {book.author}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-[#94A3B8] text-sm mb-3 line-clamp-3">{book.description}</p>
+                    <Badge className="bg-[#8B5CF6]/20 text-[#8B5CF6] mb-4 text-xs">
+                      {book.relevance}
+                    </Badge>
+                    <Button
+                      variant="outline"
+                      className="w-full border-[#00D4FF]/30 text-[#00D4FF] hover:bg-[#00D4FF]/10"
+                      onClick={() => window.open(book.amazonUrl, '_blank')}
+                    >
+                      View on Amazon
+                      <ExternalLink className="w-3 h-3 ml-2" />
+                    </Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            ))}
           </div>
-        </div>
-      </section>
+        </motion.div>
+      </div>
     </div>
   );
 }

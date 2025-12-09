@@ -93,6 +93,7 @@ import RoleManagement from './pages/RoleManagement';
 import RBACDemo from './pages/RBACDemo';
 import CompaniesPage from './pages/CompaniesPage';
 import FileUpload from './pages/FileUpload';
+import Videos from './pages/Videos';
 import __Layout from './Layout.jsx';
 
 
@@ -192,6 +193,7 @@ export const PAGES = {
     "RBACDemo": RBACDemo,
     "CompaniesPage": CompaniesPage,
     "FileUpload": FileUpload,
+    "Videos": Videos,
 }
 
 export const pagesConfig = {
