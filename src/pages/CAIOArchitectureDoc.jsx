@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Brain, Layers, Target, Shield, Network, Eye, Database,
+  Brain, Layers, Target, Shield, Network, Eye,
   Zap, TrendingUp, Users, FileText, CheckCircle, AlertCircle,
   Clock, ArrowRight, BookOpen, Download, ChevronDown, ChevronRight, Sparkles, RefreshCw, FileDown, Loader2
 } from "lucide-react";
