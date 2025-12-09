@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages, Bot, Palette, Archive
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Server, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages, Bot, Palette, Archive
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -86,7 +86,7 @@ function LayoutInner({ children, currentPageName }) {
               items: [
                 { name: t('nav.companyDiscovery', 'Company Discovery'), icon: Building2, path: 'CompanyDiscovery' },
                 { name: t('nav.batchIngestion', 'Batch Ingestion'), icon: Upload, path: 'BatchIngestion' },
-                { name: t('nav.cvmGraph', 'CVM Graph'), icon: Database, path: 'CVMGraph' }
+                { name: t('nav.cvmGraph', 'CVM Graph'), icon: Server, path: 'CVMGraph' }
               ]
             },
             {
