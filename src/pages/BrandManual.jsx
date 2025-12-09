@@ -13,41 +13,45 @@ import { toast } from "sonner";
 const LOGOS = {
   foundation_horizontal: {
     name: "Foundation - Horizontal",
-    url: "https://www.genspark.ai/api/files/s/svnMkxg6?cache_control=3600",
-    format: "16:9 Landscape",
-    usage: "Site público, LinkedIn, pitch decks, apresentações corporativas",
+    url: "https://www.genspark.ai/api/files/s/svnMkxg6",
+    format: "16:9 Landscape (1365×768px)",
+    usage: "Website, LinkedIn, apresentações corporativas",
     tagline: "Augmented Intelligence Platform",
     colors: ["#0A2540", "#00D4FF", "#F59E0B"]
   },
   foundation_vertical: {
     name: "Foundation - Vertical",
-    url: "https://www.genspark.ai/api/files/s/o1856kPz?cache_control=3600",
+    url: "https://www.genspark.ai/api/files/s/o1856kPz",
     format: "9:16 Portrait",
-    usage: "Mobile screens, Instagram Stories, business cards, vertical displays",
+    usage: "Instagram Stories, mobile splash screens, business cards",
+    tagline: "Augmented Intelligence Platform",
     colors: ["#0A2540", "#00D4FF", "#F59E0B"]
   },
   vanguard_premium: {
-    name: "Vanguard - Premium Exclusive",
-    url: "https://www.genspark.ai/api/files/s/IOosW7Or?cache_control=3600",
-    format: "16:9 Landscape",
-    usage: "Comunidade privada, eventos exclusivos, manifesto, inner circle",
+    name: "Vanguard - Premium Exclusive 🔒",
+    url: "https://www.genspark.ai/api/files/s/IOosW7Or",
+    format: "16:9 Landscape (1365×768px)",
+    usage: "Comunidade privada APENAS - eventos exclusivos, manifesto",
     tagline: "Strategic insight at thought speed",
     colors: ["#06101F", "#00D4FF", "#C7A763"],
-    premium: true
+    premium: true,
+    warning: "⚠️ NÃO usar publicamente"
   },
-  icon_only: {
-    name: "Icon Only",
-    url: "https://www.genspark.ai/api/files/s/PWu8XoOt?cache_control=3600",
-    format: "1:1 Square",
-    usage: "App icons (iOS/Android), favicons, profile pictures, browser tabs",
-    sizes: "512px → 32px (scalable)"
+  icon_biotech: {
+    name: "Icon Only - Bio-Tech Neural",
+    url: "https://www.genspark.ai/api/files/s/HUKHaZUi",
+    format: "1:1 Square (1024×1024px)",
+    usage: "App icons (iOS/Android), favicon, profile pictures",
+    sizes: "Tree-branch neural pathways (bio-organic)",
+    special: "Bio-organic neural design"
   },
-  monochrome: {
-    name: "Monochrome",
-    url: "https://www.genspark.ai/api/files/s/TFEE7cxJ?cache_control=3600",
-    format: "16:9 Horizontal",
-    usage: "Print B&W, embroidery, engraving, stamps, watermarks",
-    colors: ["#FFFFFF", "#1A1D29"]
+  monochrome_print: {
+    name: "Monochrome - Print B&W",
+    url: "https://www.genspark.ai/api/files/s/2EUOwV92",
+    format: "16:9 Horizontal (1365×768px)",
+    usage: "Impressão P&B, bordado, alto contraste, engraving",
+    colors: ["#FFFFFF", "#1A1D29"],
+    special: "White on Graphite"
   }
 };
 
@@ -95,6 +99,30 @@ const TYPOGRAPHY = {
     weights: ["400", "500", "600"],
     usage: "Code, technical specs",
     sizes: "12px - 16px"
+  }
+};
+
+const RESOURCES = {
+  brand_manual: {
+    name: "Brand Manual Completo",
+    url: "https://www.genspark.ai/api/files/s/GKSV5UYg",
+    type: "PDF",
+    size: "50+ páginas",
+    description: "Documentação completa do sistema de identidade visual"
+  },
+  logo_kit: {
+    name: "Logo Kit Original",
+    url: "https://www.genspark.ai/api/files/s/nciJOZxj",
+    type: "ZIP",
+    description: "Pacote completo com todos os logos em múltiplos formatos"
+  },
+  video_widescreen: {
+    name: "Vídeo Widescreen Animado",
+    url: "https://www.genspark.ai/api/files/s/cOgDEmOb",
+    type: "MP4",
+    duration: "8 segundos",
+    format: "16:9",
+    description: "Brain bio-tech animado com tagline corrigida"
   }
 };
 
@@ -220,14 +248,25 @@ export default function BrandManual() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-lg p-8 mb-4">
+                    <div className="bg-gradient-to-br from-slate-900 to-slate-950 rounded-lg p-8 mb-4 border border-white/10">
                       <img
                         src={logo.url}
                         alt={logo.name}
                         className="w-full h-auto"
                         style={{ maxHeight: '200px', objectFit: 'contain' }}
+                        loading="lazy"
                       />
                     </div>
+                    {logo.warning && (
+                      <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                        <p className="text-red-400 text-sm font-medium">{logo.warning}</p>
+                      </div>
+                    )}
+                    {logo.special && (
+                      <div className="mb-4 p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                        <p className="text-purple-400 text-sm">✨ {logo.special}</p>
+                      </div>
+                    )}
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       {logo.tagline && (
                         <div>
@@ -423,52 +462,164 @@ export default function BrandManual() {
 
         {/* Downloads Tab */}
         <TabsContent value="downloads" className="mt-6">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Asset Downloads</CardTitle>
-              <CardDescription>
-                High-resolution files for all brand assets
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {Object.entries(LOGOS).map(([key, logo]) => (
-                  <div key={key} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10">
-                    <div className="flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-cyan-400" />
-                      <div>
-                        <p className="text-white font-medium">{logo.name}</p>
-                        <p className="text-xs text-slate-500">{logo.format}</p>
+          <div className="space-y-6">
+            {/* Logo Downloads */}
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Image className="w-5 h-5 text-cyan-400" />
+                  Logo Assets (5 Variações)
+                </CardTitle>
+                <CardDescription>
+                  URLs públicas diretas - compartilháveis sem login
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {Object.entries(LOGOS).map(([key, logo]) => (
+                    <div key={key} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-white/10 hover:border-[#00D4FF]/30 transition-colors">
+                      <div className="flex items-center gap-3 flex-1">
+                        <img 
+                          src={logo.url} 
+                          alt={logo.name}
+                          className="w-12 h-12 object-contain bg-slate-900 rounded border border-white/10"
+                        />
+                        <div className="flex-1">
+                          <p className="text-white font-medium flex items-center gap-2">
+                            {logo.name}
+                            {logo.premium && (
+                              <Badge className="bg-purple-500/20 text-purple-400 text-xs">Premium</Badge>
+                            )}
+                          </p>
+                          <p className="text-xs text-slate-500">{logo.format}</p>
+                          {logo.warning && (
+                            <p className="text-xs text-red-400 mt-1">{logo.warning}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(logo.url);
+                            toast.success('URL copiada!');
+                          }}
+                          className="border-white/20 text-white hover:bg-white/10"
+                        >
+                          <Copy className="w-3 h-3 mr-1" />
+                          URL
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(logo.url, '_blank')}
+                          className="bg-cyan-600 hover:bg-cyan-700"
+                        >
+                          <Download className="w-4 h-4" />
+                        </Button>
                       </div>
                     </div>
-                    <Button
-                      size="sm"
-                      onClick={() => downloadLogo(key, logo)}
-                      className="bg-cyan-600 hover:bg-cyan-700"
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Additional Resources */}
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-purple-400" />
+                  Recursos Adicionais
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {Object.entries(RESOURCES).map(([key, resource]) => (
+                    <div key={key} className="flex items-center justify-between p-4 bg-white/5 rounded-lg border border-white/10">
+                      <div className="flex-1">
+                        <p className="text-white font-medium mb-1">{resource.name}</p>
+                        <p className="text-sm text-slate-400 mb-1">{resource.description}</p>
+                        <div className="flex gap-2">
+                          <Badge className="bg-white/10 text-slate-400 text-xs">
+                            {resource.type}
+                          </Badge>
+                          {resource.size && (
+                            <Badge className="bg-white/10 text-slate-400 text-xs">
+                              {resource.size}
+                            </Badge>
+                          )}
+                          {resource.duration && (
+                            <Badge className="bg-white/10 text-slate-400 text-xs">
+                              {resource.duration}
+                            </Badge>
+                          )}
+                          {resource.format && (
+                            <Badge className="bg-white/10 text-slate-400 text-xs">
+                              {resource.format}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            navigator.clipboard.writeText(resource.url);
+                            toast.success('URL copiada!');
+                          }}
+                          className="border-white/20 text-white hover:bg-white/10"
+                        >
+                          <Copy className="w-3 h-3 mr-1" />
+                          URL
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => window.open(resource.url, '_blank')}
+                          className="bg-purple-600 hover:bg-purple-700"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Complete Package */}
+            <Card className="bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border-purple-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <Layers className="w-8 h-8 text-purple-400 mt-1" />
+                  <div className="flex-1">
+                    <p className="text-white font-bold text-lg mb-2">Complete Brand Package</p>
+                    <p className="text-sm text-slate-300 mb-4">
+                      5 logos + Brand Manual (50+ páginas) + Logo Kit Original + Vídeo Animado
+                    </p>
+                    <p className="text-xs text-slate-400 mb-4">
+                      13 arquivos públicos • Compartilháveis sem login • Persistentes
+                    </p>
+                    <Button 
+                      onClick={() => {
+                        const urls = [
+                          ...Object.values(LOGOS).map(l => l.url),
+                          ...Object.values(RESOURCES).map(r => r.url)
+                        ];
+                        const text = urls.join('\n');
+                        navigator.clipboard.writeText(text);
+                        toast.success('Todas as URLs copiadas!');
+                      }}
+                      className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700"
                     >
-                      <Download className="w-4 h-4 mr-2" />
-                      Download
+                      <Copy className="w-4 h-4 mr-2" />
+                      Copiar Todas as URLs
                     </Button>
                   </div>
-                ))}
-                <div className="mt-6 p-4 bg-gradient-to-r from-purple-500/10 to-cyan-500/10 border border-purple-500/30 rounded-lg">
-                  <div className="flex items-start gap-3">
-                    <Layers className="w-5 h-5 text-purple-400 mt-0.5" />
-                    <div>
-                      <p className="text-white font-semibold mb-1">Complete Brand Package</p>
-                      <p className="text-sm text-slate-400 mb-3">
-                        All logos, color palettes, typography specimens, and usage guidelines in one package
-                      </p>
-                      <Button className="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700">
-                        <Download className="w-4 h-4 mr-2" />
-                        Download Full Package
-                      </Button>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

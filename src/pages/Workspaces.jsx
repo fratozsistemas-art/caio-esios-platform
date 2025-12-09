@@ -1,29 +1,26 @@
-
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Plus, FolderKanban, Users, TrendingUp } from "lucide-react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Link } from "react-router-dom";
-// The createPageUrl import is no longer needed if not used elsewhere,
-// but for this specific change, it's just about modifying the `to` prop.
-// If it's not used at all in the file after this change, it should be removed.
-// For now, I will keep it as the outline didn't explicitly ask for its removal from imports.
-import { createPageUrl } from "@/utils"; 
+import { createPageUrl } from "@/utils";
+import TemplateSelector from "../components/workspace/TemplateSelector";
+import ThemeSelector from "../components/workspace/ThemeSelector"; 
 
 export default function Workspaces() {
   const queryClient = useQueryClient();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [newWorkspace, setNewWorkspace] = useState({
     name: "",
-    template_type: "strategic_planning"
+    template_type: "strategic_planning",
+    themes: []
   });
 
   const { data: workspaces = [] } = useQuery({
@@ -101,7 +98,8 @@ export default function Workspaces() {
     mutationFn: async (data) => {
       const template = templates.find(t => t.value === data.template_type);
       const phases = getTemplatePhases(data.template_type);
-      const suggestedActions = getSuggestedQuickActions(template?.themes || []);
+      const allThemes = [...(template?.themes || []), ...(data.themes || [])];
+      const suggestedActions = getSuggestedQuickActions(allThemes);
       
       return base44.entities.Workspace.create({
         ...data,
@@ -115,7 +113,7 @@ export default function Workspaces() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       setDialogOpen(false);
-      setNewWorkspace({ name: "", template_type: "strategic_planning" });
+      setNewWorkspace({ name: "", template_type: "strategic_planning", themes: [] });
     },
   });
 
@@ -247,49 +245,56 @@ export default function Workspaces() {
               Novo Workspace
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-slate-950 border-white/10 text-white">
+          <DialogContent className="bg-[#0A2540] border-[#00D4FF]/20 text-white max-w-3xl">
             <DialogHeader>
-              <DialogTitle className="text-white">Criar Novo Workspace</DialogTitle>
+              <DialogTitle className="text-white text-2xl font-bold">Criar Novo Workspace</DialogTitle>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <div className="space-y-6 py-4">
               <div>
-                <Label htmlFor="name" className="text-slate-300">Nome do Projeto</Label>
+                <Label htmlFor="name" className="text-slate-300 font-medium mb-2 block">
+                  Nome do Projeto
+                </Label>
                 <Input
                   id="name"
                   value={newWorkspace.name}
                   onChange={(e) => setNewWorkspace(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Ex: Transformação Digital 2025"
-                  className="bg-white/5 border-white/10 text-white mt-2"
+                  className="bg-[#1A1D29] border-[#00D4FF]/30 text-white placeholder:text-slate-500 focus:border-[#00D4FF] h-12 text-base"
                 />
               </div>
+
               <div>
-                <Label htmlFor="template" className="text-slate-300">Template</Label>
-                <Select
-                  value={newWorkspace.template_type}
-                  onValueChange={(value) => setNewWorkspace(prev => ({ ...prev, template_type: value }))}
-                >
-                  <SelectTrigger className="bg-white/5 border-white/10 text-white mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {templates.map(template => (
-                      <SelectItem key={template.value} value={template.value}>
-                        <div className="flex items-center gap-2">
-                          <span>{template.icon}</span>
-                          <div>
-                            <div className="font-medium">{template.label}</div>
-                            <div className="text-xs text-slate-400">{template.description}</div>
-                          </div>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label className="text-slate-300 font-medium mb-3 block">
+                  Selecione um Template
+                </Label>
+                <TemplateSelector
+                  templates={templates}
+                  selectedTemplate={newWorkspace.template_type}
+                  onSelect={(value) => setNewWorkspace(prev => ({ ...prev, template_type: value }))}
+                />
               </div>
+
+              <div>
+                <Label className="text-slate-300 font-medium mb-3 block">
+                  Temas Adicionais (Opcional)
+                </Label>
+                <ThemeSelector
+                  selectedThemes={newWorkspace.themes}
+                  onToggleTheme={(theme) => {
+                    setNewWorkspace(prev => ({
+                      ...prev,
+                      themes: prev.themes.includes(theme)
+                        ? prev.themes.filter(t => t !== theme)
+                        : [...prev.themes, theme]
+                    }));
+                  }}
+                />
+              </div>
+
               <Button
                 onClick={handleCreateWorkspace}
                 disabled={!newWorkspace.name.trim()}
-                className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600"
+                className="w-full bg-gradient-to-r from-[#00D4FF] to-[#8B5CF6] hover:from-[#00E5FF] hover:to-[#A78BFA] h-12 text-base font-semibold"
               >
                 Criar Workspace
               </Button>
