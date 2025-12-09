@@ -30,6 +30,8 @@ Deno.serve(async (req) => {
     const project = await base44.asServiceRole.entities.TSIProject.create({
       title: project_brief.substring(0, 100),
       project_brief,
+      mode: analysis_depth === "rapid" ? "express" : 
+            analysis_depth === "deep" ? "deep_dive" : "standard",
       target: company_url ? { company_name: company_url.split('/').pop(), primary_url: company_url } : {},
       mission: {
         type: "strategic_planning",
