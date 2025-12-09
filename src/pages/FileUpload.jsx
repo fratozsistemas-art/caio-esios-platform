@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SecureFileUpload } from "@/components/ui/SecureFileUpload";
-import { Upload, FileText, Image, Video } from "lucide-react";
+import { Upload, FileText, Image, Video, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
 export default function FileUploadPage() {
@@ -14,6 +15,11 @@ export default function FileUploadPage() {
 
   const handleError = (error, file) => {
     toast.error(`Failed to upload ${file.name}: ${error.message}`);
+  };
+
+  const handleRemove = (idx) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== idx));
+    toast.success('File removed');
   };
 
   return (
@@ -81,6 +87,14 @@ export default function FileUploadPage() {
                       View file
                     </a>
                   </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleRemove(idx)}
+                    className="text-[#94A3B8] hover:text-red-400 hover:bg-red-400/10"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
                 </div>
               ))}
             </div>
