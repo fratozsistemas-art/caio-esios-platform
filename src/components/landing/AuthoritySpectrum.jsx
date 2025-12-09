@@ -12,7 +12,7 @@ export default function AuthoritySpectrum() {
       risk: "High",
       value: "Low",
       checks: 1,
-      description: "Takes orders, no strategic input"
+      description: "Takes orders, no strategic input. Reactive tool for basic tasks."
     },
     {
       name: "Professional",
@@ -20,7 +20,7 @@ export default function AuthoritySpectrum() {
       risk: "Medium",
       value: "Medium",
       checks: 2,
-      description: "Executes well, occasional insights"
+      description: "Executes well, occasional insights. Reliable but limited context."
     },
     {
       name: "C-Suite",
@@ -28,7 +28,7 @@ export default function AuthoritySpectrum() {
       risk: "Low",
       value: "High",
       checks: 2,
-      description: "Strategic contributor, reliable"
+      description: "Strategic contributor, reliable. Understands business context."
     },
     {
       name: "Institutional Brain",
@@ -36,7 +36,7 @@ export default function AuthoritySpectrum() {
       risk: "Minimal",
       value: "Very High",
       checks: 3,
-      description: "Deep institutional knowledge, trusted"
+      description: "Deep institutional knowledge, trusted. Comprehensive strategic memory."
     },
     {
       name: "Unwavering Peer",
@@ -44,7 +44,7 @@ export default function AuthoritySpectrum() {
       risk: "None",
       value: "Maximum",
       checks: 3,
-      description: "Equal strategic partner, full trust",
+      description: "Equal strategic partner, full trust. Cognitive governance included.",
       highlight: true
     }
   ];
@@ -86,8 +86,9 @@ export default function AuthoritySpectrum() {
                       : level.name === "Institutional Brain"
                       ? 'bg-gradient-to-br from-[#06101F] to-[#0A1E3A] border-[#8A9AB0]/40'
                       : 'bg-[#0B0F1A]/50 border-[#00C8FF]/20'
-                  } backdrop-blur-sm hover:scale-105 transition-all duration-200 w-full flex flex-col`}
+                  } backdrop-blur-sm hover:scale-105 transition-all duration-200 w-full`}
                   style={{ 
+                    minHeight: '400px',
                     boxShadow: level.highlight 
                       ? '0 0 60px rgba(199, 167, 99, 0.6), 0 0 120px rgba(227, 195, 123, 0.3)' 
                       : level.name === "Institutional Brain"
@@ -100,7 +101,7 @@ export default function AuthoritySpectrum() {
                       : 'none'
                   }}
                 >
-                  <CardContent className="p-6 text-center flex flex-col h-full">
+                  <CardContent className="p-6 text-center flex flex-col justify-between h-full">
                     <div className="mb-4">
                       <div className="flex justify-center gap-1 mb-3">
                         {Array.from({ length: 3 }).map((_, i) => (
@@ -137,14 +138,16 @@ export default function AuthoritySpectrum() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-[#A7B2C4] font-light leading-relaxed flex-grow">
-                      {level.description}
-                    </p>
+                    <div className="flex-grow flex flex-col justify-center min-h-[80px]">
+                      <p className="text-xs text-[#A7B2C4] font-light leading-relaxed mb-4">
+                        {level.description}
+                      </p>
 
-                    {/* Real-Time Risk Analysis for Institutional Brain & Unwavering Peer */}
-                    {(level.name === "Institutional Brain" || level.name === "Unwavering Peer") && (
-                      <RealTimeRiskAnalysis level={level.name} />
-                    )}
+                      {/* Real-Time Risk Analysis for Institutional Brain & Unwavering Peer */}
+                      {(level.name === "Institutional Brain" || level.name === "Unwavering Peer") && (
+                        <RealTimeRiskAnalysis level={level.name} />
+                      )}
+                    </div>
 
                     {level.highlight && (
                       <div className="mt-4 pt-4 border-t border-[#FFC247]/20">
