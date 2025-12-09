@@ -97,6 +97,7 @@ import Videos from './pages/Videos';
 import APIManagement from './pages/APIManagement';
 import BrandManual from './pages/BrandManual';
 import VersionWiki from './pages/VersionWiki';
+import StrategyAdvisor from './pages/StrategyAdvisor';
 import __Layout from './Layout.jsx';
 
 
@@ -200,6 +201,7 @@ export const PAGES = {
     "APIManagement": APIManagement,
     "BrandManual": BrandManual,
     "VersionWiki": VersionWiki,
+    "StrategyAdvisor": StrategyAdvisor,
 }
 
 export const pagesConfig = {

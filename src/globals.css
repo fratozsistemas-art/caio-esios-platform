@@ -8,13 +8,14 @@
 /* Neutrals: Graphite #1A1D29, Slate #475569, Steel #94A3B8, Mist #F1F5F9 */
 /* Accent Místico: Roxo Imperial #2A1B3D */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans:wght@400;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* CAIO Brand Colors — Enterprise Intelligence */
+  /* CAIO Brand Colors — Enterprise Intelligence (Updated from Brand Guide v2.0) */
   --caio-blue-deep: #0A2540;
   --caio-blue-graphite: #1A1D29;
   --caio-cyan-electric: #00D4FF;
+  --caio-gold-metallic: #C7A763;
   --caio-slate: #475569;
   --caio-steel: #94A3B8;
   --caio-mist: #F1F5F9;
@@ -143,7 +144,7 @@
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Inter', system-ui, sans-serif;
+    font-family: 'Montserrat', system-ui, sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
   }
