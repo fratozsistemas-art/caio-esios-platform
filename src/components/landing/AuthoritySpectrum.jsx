@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check } from "lucide-react";
+import RealTimeRiskAnalysis from "./RealTimeRiskAnalysis";
 
 export default function AuthoritySpectrum() {
   const levels = [
@@ -139,6 +140,11 @@ export default function AuthoritySpectrum() {
                     <p className="text-xs text-[#A7B2C4] font-light leading-relaxed flex-grow">
                       {level.description}
                     </p>
+
+                    {/* Real-Time Risk Analysis for Institutional Brain & Unwavering Peer */}
+                    {(level.name === "Institutional Brain" || level.name === "Unwavering Peer") && (
+                      <RealTimeRiskAnalysis level={level.name} />
+                    )}
 
                     {level.highlight && (
                       <div className="mt-4 pt-4 border-t border-[#FFC247]/20">
