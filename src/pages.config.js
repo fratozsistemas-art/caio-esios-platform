@@ -94,6 +94,7 @@ import RBACDemo from './pages/RBACDemo';
 import CompaniesPage from './pages/CompaniesPage';
 import FileUpload from './pages/FileUpload';
 import Videos from './pages/Videos';
+import APIManagement from './pages/APIManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -194,6 +195,7 @@ export const PAGES = {
     "CompaniesPage": CompaniesPage,
     "FileUpload": FileUpload,
     "Videos": Videos,
+    "APIManagement": APIManagement,
 }
 
 export const pagesConfig = {
