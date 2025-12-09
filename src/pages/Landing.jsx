@@ -602,14 +602,17 @@ export default function Landing() {
             </p>
 
             <div className="flex justify-center mb-5">
-              <img 
-                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI Executive Strategic Intelligence Platform - TSI v9.3 with 11 Cognitive Modules for Market Intelligence, Competitive Analysis, and Financial Modeling" 
-                className="w-40 h-40 object-contain"
-                width="160"
-                height="160"
-                loading="eager"
-              />
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#00D4FF]/20 blur-3xl rounded-full" />
+                <img 
+                  src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                  alt="CAIO·AI Executive Strategic Intelligence Platform - TSI v9.3 with 11 Cognitive Modules for Market Intelligence, Competitive Analysis, and Financial Modeling" 
+                  className="w-40 h-40 object-contain relative z-10"
+                  width="160"
+                  height="160"
+                  loading="eager"
+                />
+              </div>
             </div>
 
             <p className="text-base md:text-lg text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed font-light">

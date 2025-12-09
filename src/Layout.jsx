@@ -4,7 +4,7 @@ import { createPageUrl } from './utils';
 import { base44 } from '@/api/base44Client';
 import { 
   LayoutDashboard, MessageSquare, Zap, FileText, Briefcase,
-  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages, Bot, Palette
+  Brain, Network, Target, LogOut, Menu, X, Sparkles, Code, BookOpen, Users, Database, Plug, Building2, Upload, BarChart3, Bell, Activity, HeartPulse, GitMerge, Shield, Search, Layers, TrendingUp, Ticket, Cpu, Compass, Languages, Bot, Palette, Archive
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -102,6 +102,7 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.fileUpload', 'File Upload'), icon: Upload, path: 'FileUpload' },
                 { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations' },
                 { name: t('nav.brandManual', 'Brand Manual'), icon: Palette, path: 'BrandManual', adminOnly: true },
+                { name: t('nav.versionWiki', 'Version Wiki'), icon: Archive, path: 'VersionWiki', adminOnly: true },
                 { name: t('nav.apiManagement', 'API Management'), icon: Shield, path: 'APIManagement', adminOnly: true },
                 { name: t('nav.userManagement', 'Users'), icon: Users, path: 'UserManagement', adminOnly: true },
                 { name: t('nav.roleManagement', 'Roles & Permissions'), icon: Shield, path: 'RoleManagement', adminOnly: true },

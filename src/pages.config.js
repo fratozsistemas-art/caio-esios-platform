@@ -96,6 +96,7 @@ import FileUpload from './pages/FileUpload';
 import Videos from './pages/Videos';
 import APIManagement from './pages/APIManagement';
 import BrandManual from './pages/BrandManual';
+import VersionWiki from './pages/VersionWiki';
 import __Layout from './Layout.jsx';
 
 
@@ -198,6 +199,7 @@ export const PAGES = {
     "Videos": Videos,
     "APIManagement": APIManagement,
     "BrandManual": BrandManual,
+    "VersionWiki": VersionWiki,
 }
 
 export const pagesConfig = {

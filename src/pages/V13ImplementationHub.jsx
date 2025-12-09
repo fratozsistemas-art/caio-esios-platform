@@ -122,6 +122,16 @@ const IMPLEMENTATION_STATUS = {
     audit_trails: { status: 'partial', progress: 45, notes: 'A-Layer conceitual, sem audit trail explícito' }
   },
   
+  // Mobile Applications
+  mobile: {
+    ios_app: { status: 'not_incorporated', progress: 0, notes: 'Native iOS app com offline sync - v10.0 deliverable' },
+    android_app: { status: 'not_incorporated', progress: 0, notes: 'Native Android app com offline sync - v10.0 deliverable' },
+    push_notifications: { status: 'not_incorporated', progress: 0, notes: 'Push alerts críticos e updates' },
+    offline_mode: { status: 'not_incorporated', progress: 0, notes: 'Acesso offline a dados chave' },
+    mobile_sync: { status: 'not_incorporated', progress: 0, notes: 'Sincronização perfeita web ↔ mobile' },
+    responsive_design: { status: 'incorporated', progress: 90, notes: 'Web app responsivo para mobile' }
+  },
+  
   // Colaboração & Comunicação
   collaboration: {
     shared_insights: { status: 'incorporated', progress: 75, notes: 'ShareDialog + SharedInsight entity' },
@@ -145,7 +155,8 @@ const MATURITY_TARGETS = [
   { component: 'Engine BVI', current: 0, target: 3, priority: 'low', implementation_key: 'architecture.engine_bvi' },
   { component: 'Métricas KPI (ICV/IAS/IDC/etc)', current: 0.5, target: 4, priority: 'critical', implementation_key: 'metrics' },
   { component: 'RBAC & Governança', current: 3.5, target: 4, priority: 'high', implementation_key: 'governance.rbac_system' },
-  { component: 'Acessibilidade (WCAG 2.1)', current: 3.5, target: 4, priority: 'high', implementation_key: 'ux' }
+  { component: 'Acessibilidade (WCAG 2.1)', current: 3.5, target: 4, priority: 'high', implementation_key: 'ux' },
+  { component: 'Mobile Apps (iOS/Android)', current: 0, target: 3.5, priority: 'high', implementation_key: 'mobile' }
 ];
 
 export default function V13ImplementationHub() {
@@ -477,6 +488,7 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
               </CardHeader>
               <CardContent className="space-y-3">
                 {[
+                  { name: 'Mobile Applications', desc: 'iOS & Android native apps with offline sync', icon: Eye, path: null, status: 'NEW' },
                   { name: 'Visual Workflow Designer', desc: 'Drag-and-drop multi-agent workflows', icon: Workflow, path: 'WorkflowDesigner', status: 'NEW' },
                   { name: 'Agent Notification Center', desc: 'Real-time critical alerts from agents', icon: Zap, path: null, status: 'NEW' },
                   { name: 'Training Data Manager', desc: 'Review, curate & augment training data', icon: Database, path: 'AgentIntelligenceHub', status: 'NEW' },
@@ -520,12 +532,13 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="metrics" className="w-full">
-                <TabsList className="bg-white/5 border border-white/10 grid grid-cols-5">
+                <TabsList className="bg-white/5 border border-white/10 grid grid-cols-6">
                   <TabsTrigger value="metrics">Métricas KPI</TabsTrigger>
                   <TabsTrigger value="architecture">Arquitetura</TabsTrigger>
                   <TabsTrigger value="frameworks">Frameworks</TabsTrigger>
                   <TabsTrigger value="agents">Agentes</TabsTrigger>
-                  <TabsTrigger value="ux">UX/Acessibilidade</TabsTrigger>
+                  <TabsTrigger value="ux">UX</TabsTrigger>
+                  <TabsTrigger value="mobile">Mobile</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="metrics" className="space-y-2 mt-4">
@@ -611,6 +624,27 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
 
                 <TabsContent value="ux" className="space-y-2 mt-4">
                   {Object.entries(IMPLEMENTATION_STATUS.ux).map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-white">{key.replace(/_/g, ' ').toUpperCase()}</p>
+                        <p className="text-xs text-slate-500">{value.notes}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Progress value={value.progress} className="w-24 h-2" />
+                        <Badge className={
+                          value.status === 'incorporated' ? 'bg-green-500/20 text-green-400' :
+                          value.status === 'partial' ? 'bg-yellow-500/20 text-yellow-400' :
+                          'bg-slate-500/20 text-slate-400'
+                        }>
+                          {value.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))}
+                </TabsContent>
+
+                <TabsContent value="mobile" className="space-y-2 mt-4">
+                  {Object.entries(IMPLEMENTATION_STATUS.mobile).map(([key, value]) => (
                     <div key={key} className="flex items-center justify-between p-3 rounded-lg bg-white/5 border border-white/10">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-white">{key.replace(/_/g, ' ').toUpperCase()}</p>
