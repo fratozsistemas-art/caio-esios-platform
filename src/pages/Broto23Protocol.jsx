@@ -10,8 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
   Users, Eye, Search, Brain, Target, Zap, CheckCircle, 
-  AlertTriangle, TrendingUp, FileText, MessageSquare, Plus, Loader2, ChevronRight
+  AlertTriangle, TrendingUp, FileText, MessageSquare, Plus, Loader2, ChevronRight, Network
 } from "lucide-react";
+import Broto23KnowledgeGraph from "../components/broto23/Broto23KnowledgeGraph";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -78,6 +79,12 @@ export default function Broto23Protocol() {
   const { data: defensePatterns = [] } = useQuery({
     queryKey: ['defensePatterns'],
     queryFn: () => base44.entities.DefensePattern.list(),
+    initialData: []
+  });
+
+  const { data: strategies = [] } = useQuery({
+    queryKey: ['strategies'],
+    queryFn: () => base44.entities.Strategy.list(),
     initialData: []
   });
 
@@ -282,6 +289,7 @@ export default function Broto23Protocol() {
             <Tabs defaultValue="fases" className="w-full">
               <TabsList className="bg-white/5">
                 <TabsTrigger value="fases">Fases</TabsTrigger>
+                <TabsTrigger value="graph">Knowledge Graph</TabsTrigger>
                 <TabsTrigger value="personas">Self/Persona/Sombra</TabsTrigger>
                 <TabsTrigger value="defesas">Defesas & Padrões</TabsTrigger>
                 <TabsTrigger value="chat">Chat com Broto23</TabsTrigger>
@@ -328,6 +336,15 @@ export default function Broto23Protocol() {
                     </Card>
                   );
                 })}
+              </TabsContent>
+
+              <TabsContent value="graph" className="mt-4">
+                <Broto23KnowledgeGraph
+                  executions={[selectedExecution]}
+                  personas={personas.filter(p => p.broto23_execution_id === selectedExecution.id)}
+                  defensePatterns={defensePatterns.filter(d => d.broto23_execution_id === selectedExecution.id)}
+                  strategies={strategies}
+                />
               </TabsContent>
 
               <TabsContent value="personas" className="mt-4">
