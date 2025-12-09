@@ -10,86 +10,97 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Inter+Tight:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
 
 :root {
-  /* CAIO Brand Colors — Luxury Neural */
-  --caio-blue: #0A1E3A;
-  --caio-blue-neutral: #112A4D;
-  --caio-blue-deep: #06101F;
-  --caio-gold: #C7A763;
-  --caio-gold-metallic: #E3C37B;
-  --caio-gold-dark: #A8864D;
-  --caio-white: #EAEFF7;
-  --caio-purple-imperial: #2A1B3D;
+  /* CAIO Brand Colors — Enterprise Intelligence */
+  --caio-blue-deep: #0A2540;
+  --caio-blue-graphite: #1A1D29;
+  --caio-cyan-electric: #00D4FF;
+  --caio-slate: #475569;
+  --caio-steel: #94A3B8;
+  --caio-mist: #F1F5F9;
+  --caio-white: #FFFFFF;
+  
+  /* Semantic Colors */
+  --caio-success: #10B981;
+  --caio-warning: #F59E0B;
+  --caio-error: #EF4444;
+  --caio-info: #3B82F6;
+  
+  /* Data Visualization */
+  --caio-viz-cyan: #00D4FF;
+  --caio-viz-purple: #8B5CF6;
+  --caio-viz-emerald: #10B981;
+  --caio-viz-rose: #F43F5E;
+  --caio-viz-amber: #F59E0B;
   
   /* Semantic mappings */
-  --caio-primary: var(--caio-gold);
-  --caio-primary-hover: var(--caio-gold-metallic);
+  --caio-primary: var(--caio-cyan-electric);
+  --caio-primary-hover: #00B8E6;
   --caio-bg-primary: var(--caio-blue-deep);
-  --caio-bg-secondary: var(--caio-blue);
-  --caio-bg-card: var(--caio-blue-neutral);
+  --caio-bg-secondary: var(--caio-blue-graphite);
+  --caio-bg-card: #0F1419;
   --caio-text-primary: var(--caio-white);
-  --caio-text-muted: #8A9AB0;
-  --caio-border: rgba(199, 167, 99, 0.2);
-  --caio-border-hover: rgba(199, 167, 99, 0.4);
+  --caio-text-muted: var(--caio-steel);
+  --caio-border: rgba(0, 212, 255, 0.2);
+  --caio-border-hover: rgba(0, 212, 255, 0.4);
   
-  /* Gold Sheen Gradient */
-  --gold-sheen: linear-gradient(135deg, #C7A763 0%, #E3C37B 50%, #C7A763 100%);
-  --gold-liquid: linear-gradient(180deg, #C7A763 0%, #E3C37B 30%, #D4B96A 60%, #C7A763 100%);
+  /* Cyan Gradient */
+  --cyan-gradient: linear-gradient(135deg, #00D4FF 0%, #0099CC 50%, #00D4FF 100%);
 }
 
 @layer base {
   :root {
-    --background: 214 62% 11%;
-    --foreground: 216 33% 95%;
-    --card: 213 54% 17%;
-    --card-foreground: 216 33% 95%;
-    --popover: 214 62% 11%;
-    --popover-foreground: 216 33% 95%;
-    --primary: 41 45% 58%;
-    --primary-foreground: 214 62% 11%;
-    --secondary: 213 54% 17%;
-    --secondary-foreground: 216 33% 95%;
-    --muted: 213 54% 17%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 41 45% 58%;
-    --accent-foreground: 214 62% 11%;
+    --background: 210 50% 10%;
+    --foreground: 0 0% 100%;
+    --card: 212 45% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 210 50% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 193 100% 50%;
+    --primary-foreground: 210 50% 10%;
+    --secondary: 212 45% 8%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 212 45% 8%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 193 100% 50%;
+    --accent-foreground: 210 50% 10%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 41 45% 58% / 0.2;
-    --input: 213 54% 17%;
-    --ring: 41 45% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 193 100% 50% / 0.2;
+    --input: 212 45% 8%;
+    --ring: 193 100% 50%;
     --radius: 0.5rem;
-    --chart-1: 41 45% 58%;
-    --chart-2: 213 54% 50%;
-    --chart-3: 41 60% 70%;
-    --chart-4: 200 60% 50%;
-    --chart-5: 160 50% 45%;
+    --chart-1: 193 100% 50%;
+    --chart-2: 262 83% 58%;
+    --chart-3: 160 84% 39%;
+    --chart-4: 351 83% 61%;
+    --chart-5: 43 96% 56%;
   }
 
   .dark {
-    --background: 214 62% 11%;
-    --foreground: 216 33% 95%;
-    --card: 213 54% 17%;
-    --card-foreground: 216 33% 95%;
-    --popover: 214 62% 11%;
-    --popover-foreground: 216 33% 95%;
-    --primary: 41 45% 58%;
-    --primary-foreground: 214 62% 11%;
-    --secondary: 213 54% 17%;
-    --secondary-foreground: 216 33% 95%;
-    --muted: 213 54% 17%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 41 45% 58%;
-    --accent-foreground: 214 62% 11%;
+    --background: 210 50% 10%;
+    --foreground: 0 0% 100%;
+    --card: 212 45% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 210 50% 10%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 193 100% 50%;
+    --primary-foreground: 210 50% 10%;
+    --secondary: 212 45% 8%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 212 45% 8%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 193 100% 50%;
+    --accent-foreground: 210 50% 10%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 41 45% 58% / 0.2;
-    --input: 213 54% 17%;
-    --ring: 41 45% 58%;
-    --chart-1: 41 45% 58%;
-    --chart-2: 213 54% 50%;
-    --chart-3: 41 60% 70%;
-    --chart-4: 200 60% 50%;
-    --chart-5: 160 50% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 193 100% 50% / 0.2;
+    --input: 212 45% 8%;
+    --ring: 193 100% 50%;
+    --chart-1: 193 100% 50%;
+    --chart-2: 262 83% 58%;
+    --chart-3: 160 84% 39%;
+    --chart-4: 351 83% 61%;
+    --chart-5: 43 96% 56%;
   }
 }
 
@@ -104,7 +115,7 @@
   
   body {
     @apply bg-background text-foreground;
-    background: linear-gradient(135deg, var(--caio-blue-deep) 0%, var(--caio-blue) 50%, var(--caio-blue-neutral) 100%);
+    background: linear-gradient(135deg, #0A2540 0%, #1A1D29 50%, #0F1419 100%);
     min-height: 100vh;
   }
   
