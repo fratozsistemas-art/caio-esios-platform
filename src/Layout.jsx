@@ -99,6 +99,7 @@ function LayoutInner({ children, currentPageName }) {
             {
               title: t('nav.settings', 'Settings'),
               items: [
+                { name: t('nav.fileUpload', 'File Upload'), icon: Upload, path: 'FileUpload' },
                 { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations' },
                 { name: t('nav.userManagement', 'Users'), icon: Users, path: 'UserManagement', adminOnly: true },
                 { name: t('nav.roleManagement', 'Roles & Permissions'), icon: Shield, path: 'RoleManagement', adminOnly: true },

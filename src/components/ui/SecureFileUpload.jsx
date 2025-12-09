@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { Upload, X, FileText, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -135,7 +135,7 @@ export function SecureFileUpload({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      <Card className="bg-white/5 border-white/10 border-2 border-dashed hover:border-blue-500/50 transition-colors cursor-pointer">
+      <Card className="bg-[#0A2540]/30 border-[#00D4FF]/30 border-2 border-dashed hover:border-[#00D4FF] transition-colors cursor-pointer">
         <CardContent className="p-8">
           <input
             ref={fileInputRef}
@@ -150,17 +150,17 @@ export function SecureFileUpload({
             htmlFor="secure-file-upload"
             className="cursor-pointer flex flex-col items-center gap-4"
           >
-            <div className="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center">
-              <Upload className="w-8 h-8 text-blue-400" />
+            <div className="w-16 h-16 rounded-full bg-[#00D4FF]/20 flex items-center justify-center">
+              <Upload className="w-8 h-8 text-[#00D4FF]" />
             </div>
             <div className="text-center">
               <p className="text-white font-medium mb-1">
                 Click to upload or drag files
               </p>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-[#94A3B8]">
                 Allowed types: {accept}
               </p>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-[#475569] mt-1">
                 Max size: {formatFileSize(maxSize)}
               </p>
             </div>
@@ -171,9 +171,9 @@ export function SecureFileUpload({
       {errors.length > 0 && (
         <div className="space-y-2">
           {errors.map((error, index) => (
-            <div key={index} className="flex items-center gap-2 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
-              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
-              <p className="text-sm text-red-400">{error}</p>
+            <div key={index} className="flex items-center gap-2 p-3 rounded-lg bg-[#EF4444]/10 border border-[#EF4444]/30">
+              <AlertCircle className="w-4 h-4 text-[#EF4444] flex-shrink-0" />
+              <p className="text-sm text-[#EF4444]">{error}</p>
             </div>
           ))}
         </div>
@@ -182,38 +182,38 @@ export function SecureFileUpload({
       {files.length > 0 && (
         <div className="space-y-2">
           {files.map(fileData => (
-            <Card key={fileData.id} className="bg-white/5 border-white/10">
+            <Card key={fileData.id} className="bg-[#1A1D29] border-[#00D4FF]/20">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
-                  <FileText className="w-5 h-5 text-blue-400 flex-shrink-0" />
+                  <FileText className="w-5 h-5 text-[#00D4FF] flex-shrink-0" />
                   
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-white truncate">
                       {fileData.file.name}
                     </p>
-                    <p className="text-xs text-slate-400">
+                    <p className="text-xs text-[#94A3B8]">
                       {formatFileSize(fileData.file.size)}
                     </p>
                   </div>
 
                   <div className="flex items-center gap-2">
                     {fileData.status === 'pending' && (
-                      <span className="text-xs text-slate-400">Pending</span>
+                      <span className="text-xs text-[#94A3B8]">Pending</span>
                     )}
                     {fileData.status === 'uploading' && (
-                      <Loader2 className="w-4 h-4 text-blue-400 animate-spin" />
+                      <Loader2 className="w-4 h-4 text-[#00D4FF] animate-spin" />
                     )}
                     {fileData.status === 'completed' && (
-                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      <CheckCircle className="w-4 h-4 text-[#10B981]" />
                     )}
                     {fileData.status === 'error' && (
-                      <AlertCircle className="w-4 h-4 text-red-400" />
+                      <AlertCircle className="w-4 h-4 text-[#EF4444]" />
                     )}
                     
                     {fileData.status !== 'uploading' && (
                       <button
                         onClick={() => removeFile(fileData.id)}
-                        className="text-slate-400 hover:text-red-400 transition-colors"
+                        className="text-[#94A3B8] hover:text-[#EF4444] transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -230,7 +230,7 @@ export function SecureFileUpload({
         <Button
           onClick={handleUpload}
           disabled={uploading}
-          className="w-full bg-blue-500 hover:bg-blue-600"
+          className="w-full bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium"
         >
           {uploading ? (
             <>

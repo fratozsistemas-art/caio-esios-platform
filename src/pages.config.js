@@ -92,6 +92,7 @@ import LandingLight from './pages/LandingLight';
 import RoleManagement from './pages/RoleManagement';
 import RBACDemo from './pages/RBACDemo';
 import CompaniesPage from './pages/CompaniesPage';
+import FileUpload from './pages/FileUpload';
 import __Layout from './Layout.jsx';
 
 
@@ -190,6 +191,7 @@ export const PAGES = {
     "RoleManagement": RoleManagement,
     "RBACDemo": RBACDemo,
     "CompaniesPage": CompaniesPage,
+    "FileUpload": FileUpload,
 }
 
 export const pagesConfig = {
