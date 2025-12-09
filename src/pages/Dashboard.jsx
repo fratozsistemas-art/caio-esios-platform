@@ -23,6 +23,7 @@ import ROIProjectionChart from "../components/dashboard/ROIProjectionChart";
 import FeatureAdoptionChart from "../components/dashboard/FeatureAdoptionChart";
 import RealTimeMetrics from "../components/dashboard/RealTimeMetrics";
 import DashboardCustomizer from "../components/dashboard/DashboardCustomizer";
+import ComplianceWidget from "../components/compliance/ComplianceWidget";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -232,6 +233,8 @@ export default function Dashboard() {
         return <ProactiveInsightsWidget key={widgetId} />;
       case 'predictive':
         return <PredictiveAnalysisWidget key={widgetId} />;
+      case 'compliance':
+        return <ComplianceWidget key={widgetId} />;
       default:
         return null;
     }
@@ -273,7 +276,7 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['stats', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
