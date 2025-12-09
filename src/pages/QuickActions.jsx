@@ -93,15 +93,15 @@ export default function QuickActions() {
         </p>
       </div>
 
-      <Card className="bg-white/5 border-white/10 backdrop-blur-sm mt-8 mb-4">
+      <Card className="bg-[#1A1D29] border-[#00D4FF]/20 backdrop-blur-sm mt-8 mb-4">
         <CardContent className="p-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#94A3B8]" />
             <Input
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by title, description or category..."
-              className="pl-10 bg-white/5 border-white/10 text-white"
+              className="pl-10 bg-[#0A2540] border-[#00D4FF]/30 text-white placeholder:text-[#94A3B8]"
             />
           </div>
         </CardContent>
@@ -114,7 +114,7 @@ export default function QuickActions() {
             <Button
               variant={selectedCategory === "all" ? "default" : "outline"}
               onClick={() => setSelectedCategory("all")}
-              className={selectedCategory === "all" ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+              className={selectedCategory === "all" ? "bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6] font-medium" : "bg-[#1A1D29] border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50 hover:text-white"}
             >
               All Categories
             </Button>
@@ -123,7 +123,7 @@ export default function QuickActions() {
                 key={cat.id}
                 variant={selectedCategory === cat.id ? "default" : "outline"}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={selectedCategory === cat.id ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+                className={selectedCategory === cat.id ? "bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6] font-medium" : "bg-[#1A1D29] border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50 hover:text-white"}
               >
                 {cat.label}
               </Button>
@@ -138,7 +138,7 @@ export default function QuickActions() {
               <Button
                 variant={selectedFunctionalArea === "all" ? "default" : "outline"}
                 onClick={() => setSelectedFunctionalArea("all")}
-                className={selectedFunctionalArea === "all" ? "bg-purple-600 text-white hover:bg-purple-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+                className={selectedFunctionalArea === "all" ? "bg-[#8B5CF6] text-white hover:bg-[#7C3AED] font-medium" : "bg-[#1A1D29] border-[#8B5CF6]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#8B5CF6]/50 hover:text-white"}
               >
                 All Areas
               </Button>
@@ -147,7 +147,7 @@ export default function QuickActions() {
                   key={area.id}
                   variant={selectedFunctionalArea === area.id ? "default" : "outline"}
                   onClick={() => setSelectedFunctionalArea(area.id)}
-                  className={selectedFunctionalArea === area.id ? "bg-purple-600 text-white hover:bg-purple-700" : "bg-slate-800/80 border-slate-600 text-slate-300 hover:bg-slate-700 hover:border-slate-500 hover:text-white"}
+                  className={selectedFunctionalArea === area.id ? "bg-[#8B5CF6] text-white hover:bg-[#7C3AED] font-medium" : "bg-[#1A1D29] border-[#8B5CF6]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#8B5CF6]/50 hover:text-white"}
                 >
                   {area.label}
                 </Button>
@@ -158,13 +158,13 @@ export default function QuickActions() {
       </div>
 
       {filteredActions?.length === 0 ? (
-        <Card className="bg-white/5 border-white/10 backdrop-blur-sm">
+        <Card className="bg-[#1A1D29] border-[#00D4FF]/20 backdrop-blur-sm">
           <CardContent className="p-12 text-center">
-            <Zap className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+            <Zap className="w-16 h-16 text-[#475569] mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">
               No Quick Actions Found
             </h3>
-            <p className="text-slate-400">
+            <p className="text-[#94A3B8]">
               Try adjusting your filters or search query
             </p>
           </CardContent>
@@ -226,10 +226,10 @@ function QuickActionCard({ action, index, onClick }) {
         transition={{ duration: 0.5, delay: index * 0.05 }}
       >
         <Card
-          className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 cursor-pointer transition-all duration-300 group h-full flex flex-col"
+          className="bg-[#1A1D29] border-[#00D4FF]/20 backdrop-blur-sm hover:bg-[#0A2540] cursor-pointer transition-all duration-300 group h-full flex flex-col"
           onClick={() => onClick(action)}
         >
-          <CardHeader className="border-b border-white/10 p-6">
+          <CardHeader className="border-b border-[#00D4FF]/10 p-6">
             <div className="flex items-start justify-between mb-3">
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -244,7 +244,7 @@ function QuickActionCard({ action, index, onClick }) {
               <div className="flex flex-col gap-1 items-end">
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="px-2 py-1 rounded-lg text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30 cursor-help">
+                    <span className="px-2 py-1 rounded-lg text-xs font-medium bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/30 cursor-help">
                       {action.category?.replace(/_/g, ' ')}
                     </span>
                   </TooltipTrigger>
@@ -255,7 +255,7 @@ function QuickActionCard({ action, index, onClick }) {
                 {action.functional_area && (
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <span className="px-2 py-1 rounded-lg text-xs font-medium bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 cursor-help">
+                      <span className="px-2 py-1 rounded-lg text-xs font-medium bg-[#00D4FF]/20 text-[#00D4FF] border border-[#00D4FF]/30 cursor-help">
                         {action.functional_area}
                       </span>
                     </TooltipTrigger>
@@ -266,10 +266,10 @@ function QuickActionCard({ action, index, onClick }) {
                 )}
               </div>
               </div>
-              <CardTitle className="text-white text-lg group-hover:text-blue-400 transition-colors">
+              <CardTitle className="text-white text-lg group-hover:text-[#00D4FF] transition-colors">
               {action.title}
               </CardTitle>
-              <CardDescription className="text-slate-400 text-sm mt-2">
+              <CardDescription className="text-[#94A3B8] text-sm mt-2">
               {action.description}
               </CardDescription>
               </CardHeader>

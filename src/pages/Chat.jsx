@@ -328,7 +328,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-slate-950 via-cyan-950 to-yellow-950">
+    <div className="flex h-[calc(100vh-4rem)] overflow-hidden bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419]">
       {showOrchestrationDashboard && activeOrchestration &&
       <OrchestrationDashboard
         orchestrationData={activeOrchestration}
@@ -341,25 +341,25 @@ export default function Chat() {
       }
 
       <div
-        className={`${sidebarOpen ? 'block' : 'hidden'} lg:block border-r border-white/10 bg-slate-900/50 backdrop-blur-xl flex flex-col relative`}
+        className={`${sidebarOpen ? 'block' : 'hidden'} lg:block border-r border-[#00D4FF]/20 bg-[#0A2540]/50 backdrop-blur-xl flex flex-col relative`}
         style={{ width: sidebarOpen ? `${sidebarWidth}px` : '0px' }}>
 
-        <div className="p-4 border-b border-white/10 space-y-2">
+        <div className="p-4 border-b border-[#00D4FF]/20 space-y-2">
           <Button
             onClick={() => handleCreateConversation()}
-            className="w-full bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
+            className="w-full bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium">
             <Plus className="w-4 h-4 mr-2" />
             New Conversation
           </Button>
           
           <Dialog open={showBulkManager} onOpenChange={setShowBulkManager}>
             <DialogTrigger asChild>
-              <Button variant="outline" className="w-full border-white/10 text-slate-300 hover:bg-white/10">
+              <Button variant="outline" className="w-full border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50">
                 <Settings className="w-4 h-4 mr-2" />
                 Manage Conversations
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-[#06101F] to-[#0A1E3A] border-[#C7A763]/30">
+            <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto bg-gradient-to-br from-[#0A2540] to-[#1A1D29] border-[#00D4FF]/30">
               <DialogHeader>
                 <DialogTitle className="text-white">Bulk Conversation Manager</DialogTitle>
               </DialogHeader>
@@ -382,21 +382,21 @@ export default function Chat() {
 
       <div className="flex-1 flex flex-col lg:flex-row">
         <div className="flex-1 flex flex-col">
-          <div className="border-b border-white/10 bg-slate-900/50 backdrop-blur-xl p-4">
+          <div className="border-b border-[#00D4FF]/20 bg-[#0A2540]/50 backdrop-blur-xl p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => setSidebarOpen(!sidebarOpen)}
-                  className="lg:hidden text-slate-300 hover:bg-white/10 hover:text-white">
+                  className="lg:hidden text-[#94A3B8] hover:bg-[#00D4FF]/20 hover:text-white">
                   <Menu className="w-5 h-5" />
                 </Button>
                 <div>
                   <h2 className="text-white font-semibold">
                     {selectedConversation?.metadata?.name || "CAIO Strategic Intelligence"}
                   </h2>
-                  <p className="text-sm text-slate-400">
+                  <p className="text-sm text-[#94A3B8]">
                     {useOrchestration ? '🤖 Multi-agent orchestration enabled' : 'AI-powered strategic advisor'}
                   </p>
                 </div>
@@ -408,9 +408,9 @@ export default function Chat() {
                   onModelChange={setSelectedModel}
                 />
 
-                <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/10">
-                  <GitMerge className="w-4 h-4 text-purple-400" />
-                  <Label htmlFor="orchestration" className="text-xs text-slate-300 cursor-pointer">
+                <div className="flex items-center gap-2 bg-[#0A2540]/50 rounded-lg px-3 py-2 border border-[#00D4FF]/20">
+                  <GitMerge className="w-4 h-4 text-[#8B5CF6]" />
+                  <Label htmlFor="orchestration" className="text-xs text-[#94A3B8] cursor-pointer">
                     Orchestration
                   </Label>
                   <Switch
@@ -427,7 +427,7 @@ export default function Chat() {
                     setActiveOrchestration(lastOrchestration);
                     setShowOrchestrationDashboard(true);
                   }}
-                  className="bg-purple-500/10 border-purple-500/30 text-purple-300 hover:bg-purple-500/20 hover:text-purple-200">
+                  className="bg-[#8B5CF6]/10 border-[#8B5CF6]/30 text-[#8B5CF6] hover:bg-[#8B5CF6]/20">
                     <Activity className="w-4 h-4 mr-2" />
                     View Dashboard
                   </Button>
@@ -456,24 +456,24 @@ export default function Chat() {
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             {!selectedConversation ?
             <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500 to-yellow-500 flex items-center justify-center">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#00D4FF] to-[#0099CC] flex items-center justify-center">
                   <MessageSquare className="w-10 h-10 text-white" />
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold text-white mb-2">Welcome to CAIO</h3>
-                  <p className="text-slate-400 max-w-md">
+                  <p className="text-[#94A3B8] max-w-md">
                     Your AI-powered strategic intelligence assistant with multi-agent orchestration.
                   </p>
                 </div>
                 <div className="flex gap-3">
                   <Button
                   onClick={() => handleCreateConversation()}
-                  className="bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
+                  className="bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium">
                     <Plus className="w-4 h-4 mr-2" />
                     Start New Conversation
                   </Button>
                   <Link to={createPageUrl('QuickActions')}>
-                    <Button variant="outline" className="bg-slate-800/80 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500">
+                    <Button variant="outline" className="bg-[#1A1D29] border-[#00D4FF]/30 text-white hover:bg-[#0A2540] hover:border-[#00D4FF]/50">
                       <Zap className="w-4 h-4 mr-2" />
                       Browse Quick Actions
                     </Button>
@@ -483,14 +483,14 @@ export default function Chat() {
             messages.length === 0 ?
             <div className="flex items-center justify-center h-full">
                 <div className="text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-yellow-500 flex items-center justify-center mx-auto">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#00D4FF] to-[#0099CC] flex items-center justify-center mx-auto">
                     <MessageSquare className="w-8 h-8 text-white" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold text-white mb-2">Start the conversation</h3>
-                    <p className="text-slate-400">Ask me anything about strategy, markets, or analysis</p>
+                    <p className="text-[#94A3B8]">Ask me anything about strategy, markets, or analysis</p>
                     {useOrchestration &&
-                  <p className="text-purple-400 text-sm mt-2">
+                  <p className="text-[#8B5CF6] text-sm mt-2">
                         ⚡ Multi-agent orchestration active
                       </p>
                   }
@@ -562,17 +562,17 @@ export default function Chat() {
           </div>
 
           {selectedConversation &&
-          <div className="border-t border-white/10 bg-slate-900/50 backdrop-blur-xl p-4">
+          <div className="border-t border-[#00D4FF]/20 bg-[#0A2540]/50 backdrop-blur-xl p-4">
               <div className="max-w-4xl mx-auto">
                 {uploadedFiles.length > 0 &&
               <div className="mb-3 flex flex-wrap gap-2">
                     {uploadedFiles.map((file, idx) =>
-                <div key={idx} className="flex items-center gap-2 bg-blue-500/20 text-blue-400 px-3 py-1 rounded-lg text-sm border border-blue-500/30">
+                <div key={idx} className="flex items-center gap-2 bg-[#00D4FF]/20 text-[#00D4FF] px-3 py-1 rounded-lg text-sm border border-[#00D4FF]/30">
                         <Paperclip className="w-3 h-3" />
                         <span>{file.name}</span>
                         <button
                     onClick={() => setUploadedFiles((prev) => prev.filter((_, i) => i !== idx))}
-                    className="hover:text-blue-300">
+                    className="hover:text-[#00B8E6]">
                           <X className="w-3 h-3" />
                         </button>
                       </div>
@@ -592,7 +592,7 @@ export default function Chat() {
                   size="icon"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
-                  className="bg-slate-800/80 border-slate-600 text-white hover:bg-slate-700 hover:border-slate-500">
+                  className="bg-[#1A1D29] border-[#00D4FF]/30 text-white hover:bg-[#0A2540] hover:border-[#00D4FF]/50">
                     {isUploading ?
                   <Loader2 className="w-5 h-5 animate-spin" /> :
                   <Paperclip className="w-5 h-5" />
@@ -604,13 +604,13 @@ export default function Chat() {
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask CAIO anything..."
-                  className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-slate-500 resize-none"
+                  className="flex-1 bg-[#0A2540] border-[#00D4FF]/30 text-white placeholder:text-[#94A3B8] resize-none focus:border-[#00D4FF]/50"
                   rows={1} />
 
                   <Button
                   onClick={handleSendMessage}
                   disabled={isSending || !userInput.trim() && uploadedFiles.length === 0}
-                  className="bg-gradient-to-r from-cyan-500 to-yellow-500 hover:from-cyan-600 hover:to-yellow-600">
+                  className="bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium">
                     <Send className="w-5 h-5" />
                   </Button>
                 </div>
@@ -620,7 +620,7 @@ export default function Chat() {
         </div>
 
         {selectedConversation && messages.length > 0 &&
-        <div className="lg:w-96 border-t lg:border-t-0 lg:border-l border-white/10 bg-slate-900/50 backdrop-blur-xl overflow-y-auto">
+        <div className="lg:w-96 border-t lg:border-t-0 lg:border-l border-[#00D4FF]/20 bg-[#0A2540]/50 backdrop-blur-xl overflow-y-auto">
             <div className="p-4">
               <AIFeatures
               conversationId={selectedConversation.id}
