@@ -297,7 +297,7 @@ export default function Dashboard() {
   const currentLayout = layoutConfig[userRole] || layoutConfig.default;
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="p-6 md:p-8 space-y-6" role="main" aria-label="Dashboard">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -415,7 +415,7 @@ export default function Dashboard() {
       )}
 
       {/* Dynamic Dashboard Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-tour="dashboard-widgets">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-tour="dashboard-widgets" role="region" aria-label="Dashboard widgets">
         {dashboardLayout.map((widgetId) => renderWidget(widgetId))}
       </div>
 

@@ -150,26 +150,32 @@ export default function PricingSection() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-12 bg-white/5 border border-white/10 p-1 rounded-xl">
+          <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-3 mb-12 bg-white/5 border border-white/10 p-1 rounded-xl" role="tablist" aria-label="Pricing options">
             <TabsTrigger 
               value="plans" 
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#00C8FF] data-[state=active]:to-[#16A9FF] data-[state=active]:text-white text-slate-300 rounded-lg transition-all"
+              role="tab"
+              aria-label="View subscription plans"
             >
-              <Package className="w-4 h-4 mr-2" />
+              <Package className="w-4 h-4 mr-2" aria-hidden="true" />
               Plans
             </TabsTrigger>
             <TabsTrigger 
               value="modules" 
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#16A9FF] data-[state=active]:to-[#FFC247] data-[state=active]:text-white text-slate-300 rounded-lg transition-all"
+              role="tab"
+              aria-label="View individual modules"
             >
-              <Sparkles className="w-4 h-4 mr-2" />
+              <Sparkles className="w-4 h-4 mr-2" aria-hidden="true" />
               Modules
             </TabsTrigger>
             <TabsTrigger 
               value="bundles" 
               className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#FFC247] data-[state=active]:to-[#E0A43C] data-[state=active]:text-white text-slate-300 rounded-lg transition-all"
+              role="tab"
+              aria-label="View module bundles"
             >
-              <Zap className="w-4 h-4 mr-2" />
+              <Zap className="w-4 h-4 mr-2" aria-hidden="true" />
               Bundles
             </TabsTrigger>
           </TabsList>
