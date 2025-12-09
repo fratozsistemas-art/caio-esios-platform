@@ -124,15 +124,42 @@ Deno.serve(async (req) => {
       ? Math.round(completedDeliverables.reduce((sum, d) => sum + (d.crv_score || 0), 0) / completedDeliverables.length)
       : 0;
     
+    // STEP 5: AEGIS PROTOCOL VALIDATION
+    console.log('\n🛡️ STEP 5: AEGIS Protocol Validation...\n');
+    
+    let aegisResult = null;
+    try {
+      const aegisResponse = await base44.functions.invoke('executeAEGISProtocol', {
+        entity_type: 'tsi_project',
+        entity_id: project.id,
+        entity_data: {
+          ...project,
+          deliverables,
+          overall_crv: avgCRV
+        },
+        enforce_hard_stops: true
+      });
+      
+      aegisResult = aegisResponse.data;
+      console.log(`✅ AEGIS Validation: ${aegisResult.status.toUpperCase()} (Score: ${aegisResult.overall_score}%)`);
+      
+      if (aegisResult.hard_stops?.length > 0) {
+        console.log(`⚠️  ${aegisResult.hard_stops.length} issues detected`);
+      }
+    } catch (error) {
+      console.error('❌ AEGIS validation failed:', error.message);
+    }
+    
     // Update project with results
     await base44.asServiceRole.entities.TSIProject.update(project.id, {
-      status: 'completed',
+      status: aegisResult?.status === 'blocked' ? 'blocked' : 'completed',
       sci_ia_score: avgCRV,
       icv_ia_score: avgCRV,
       clq_ia_score: avgCRV,
       gate_0_status: avgCRV >= 65 ? 'passed' : 'failed',
       analysis_results: {
         css_assessment: css,
+        aegis_validation: aegisResult,
         deliverables_summary: deliverables.map(d => ({
           module: d.module_id,
           status: d.status,
@@ -150,10 +177,12 @@ Deno.serve(async (req) => {
       success: true,
       project_id: project.id,
       css_assessment: css,
+      aegis_validation: aegisResult,
       deliverables,
       overall_crv: avgCRV,
       execution_time_seconds: parseFloat(duration),
-      recommended_next_actions: generateNextActions(css, deliverables)
+      recommended_next_actions: generateNextActions(css, deliverables),
+      blocked: aegisResult?.status === 'blocked'
     });
     
   } catch (error) {
