@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createPageUrl } from "@/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -7,6 +9,7 @@ import { FileText, Search, Clock, TrendingUp, Sparkles, ExternalLink, BookOpen, 
 import { motion } from "framer-motion";
 
 export default function BlogResources() {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -14,25 +17,23 @@ export default function BlogResources() {
     {
       id: 1,
       title: "Strategic Intelligence Platform Architecture",
-      description: "Deep dive into TSI v9.3 methodology and cognitive module design",
+      description: "Deep dive into modular cognitive systems and knowledge graph foundations",
       category: "methodology",
       readTime: "12 min",
       date: "2025-12-01",
       views: "5.2K",
       type: "article",
-      url: "#",
       featured: true
     },
     {
       id: 2,
-      title: "Financial Modeling with M4 Module",
+      title: "Financial Modeling with AI-Powered Modules",
       description: "How AI-powered financial modeling transforms M&A due diligence",
       category: "case-study",
       readTime: "8 min",
       date: "2025-11-28",
       views: "3.8K",
-      type: "article",
-      url: "#"
+      type: "article"
     },
     {
       id: 3,
@@ -42,19 +43,17 @@ export default function BlogResources() {
       readTime: "15 min",
       date: "2025-11-25",
       views: "4.5K",
-      type: "article",
-      url: "#"
+      type: "article"
     },
     {
       id: 4,
-      title: "Vector Decision Framework Whitepaper",
-      description: "Academic paper on strategic vector analysis methodology",
+      title: "Strategic Decision-Making Frameworks",
+      description: "Comparative analysis of decision frameworks for executives",
       category: "research",
       readTime: "25 min",
       date: "2025-11-20",
       views: "2.1K",
       type: "pdf",
-      url: "#",
       downloadable: true
     },
     {
@@ -65,21 +64,39 @@ export default function BlogResources() {
       readTime: "18 min",
       date: "2025-11-15",
       views: "6.3K",
-      type: "article",
-      url: "#"
+      type: "article"
     },
     {
       id: 6,
-      title: "Market Entry Strategy Template",
+      title: "Market Entry Strategy Framework",
       description: "Step-by-step framework for market intelligence and competitive analysis",
       category: "templates",
       readTime: "10 min",
       date: "2025-11-10",
       views: "7.8K",
       type: "pdf",
-      url: "#",
       downloadable: true,
       featured: true
+    },
+    {
+      id: 7,
+      title: "AI Governance in Enterprise Strategy",
+      description: "Trust-broker mechanisms and decision traceability for board-level decisions",
+      category: "methodology",
+      readTime: "14 min",
+      date: "2025-11-05",
+      views: "4.1K",
+      type: "article"
+    },
+    {
+      id: 8,
+      title: "Competitive Intelligence Automation",
+      description: "Real-time competitive tracking and strategic positioning analysis",
+      category: "case-study",
+      readTime: "11 min",
+      date: "2025-10-30",
+      views: "5.6K",
+      type: "article"
     }
   ];
 
@@ -224,7 +241,13 @@ export default function BlogResources() {
                   </div>
                   <Button
                     className="w-full bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium"
-                    onClick={() => window.open(article.url, '_blank')}
+                    onClick={() => {
+                      if (article.downloadable) {
+                        window.open(article.url || '#', '_blank');
+                      } else {
+                        navigate(createPageUrl('BlogArticle') + '?id=' + article.id);
+                      }
+                    }}
                   >
                     {article.downloadable ? (
                       <>
