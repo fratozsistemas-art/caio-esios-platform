@@ -104,6 +104,7 @@ import TSICapabilitiesAudit from './pages/TSICapabilitiesAudit';
 import TSIMethodologyAuditReport from './pages/TSIMethodologyAuditReport';
 import GPT51Comparison from './pages/GPT51Comparison';
 import Broto23Protocol from './pages/Broto23Protocol';
+import UserSettings from './pages/UserSettings';
 import __Layout from './Layout.jsx';
 
 
@@ -214,6 +215,7 @@ export const PAGES = {
     "TSIMethodologyAuditReport": TSIMethodologyAuditReport,
     "GPT51Comparison": GPT51Comparison,
     "Broto23Protocol": Broto23Protocol,
+    "UserSettings": UserSettings,
 }
 
 export const pagesConfig = {
