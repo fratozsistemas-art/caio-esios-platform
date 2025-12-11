@@ -321,8 +321,9 @@ export default function Dashboard() {
             )}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <TutorialLauncher />
+          <div className="w-px h-8 bg-white/10" />
           <Button
             variant="outline"
             size="icon"

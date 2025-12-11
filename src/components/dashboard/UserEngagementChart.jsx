@@ -22,7 +22,11 @@ export default function UserEngagementChart({ data }) {
             <Activity className="w-5 h-5 text-blue-400" />
             User Engagement
           </CardTitle>
-          <Badge className={`${trend >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+          <Badge className={`${
+            trend >= 0 
+              ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+              : 'bg-red-500/20 text-red-400 border border-red-500/30'
+          } font-semibold`}>
             <TrendingUp className="w-3 h-3 mr-1" />
             {trend >= 0 ? '+' : ''}{trend}%
           </Badge>
@@ -47,22 +51,22 @@ export default function UserEngagementChart({ data }) {
             <Area type="monotone" dataKey="sessions" stroke="#3b82f6" fillOpacity={1} fill="url(#sessionsGradient)" />
           </AreaChart>
         </ResponsiveContainer>
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-white/10">
           <div>
-            <p className="text-xs text-slate-400">Avg Session</p>
-            <p className="text-xl font-bold text-white">
+            <p className="text-xs font-medium text-slate-400 mb-1">Avg Session</p>
+            <p className="text-2xl font-bold text-white">
               {data ? Math.round(data.reduce((sum, d) => sum + (d.duration || 0), 0) / data.length) : 0}m
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Total Users</p>
-            <p className="text-xl font-bold text-white">
+            <p className="text-xs font-medium text-slate-400 mb-1">Total Users</p>
+            <p className="text-2xl font-bold text-white">
               {data ? data.reduce((sum, d) => sum + (d.users || 0), 0) : 0}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Peak Day</p>
-            <p className="text-xl font-bold text-white">
+            <p className="text-xs font-medium text-slate-400 mb-1">Peak Day</p>
+            <p className="text-2xl font-bold text-white">
               {data && data.length > 0 ? data.reduce((max, d) => d.sessions > max.sessions ? d : max, data[0]).date : '-'}
             </p>
           </div>

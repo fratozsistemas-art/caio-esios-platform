@@ -17,10 +17,10 @@ export default function ROIProjectionChart({ data }) {
             ROI Projection
           </CardTitle>
           <div className="flex gap-2">
-            <Badge className="bg-green-500/20 text-green-400">
+            <Badge className="bg-green-500/20 text-green-400 border border-green-500/30 font-semibold">
               Current: {currentROI}%
             </Badge>
-            <Badge className="bg-blue-500/20 text-blue-400">
+            <Badge className="bg-blue-500/20 text-blue-400 border border-blue-500/30 font-semibold">
               Projected: {projectedROI}%
             </Badge>
           </div>
@@ -41,22 +41,22 @@ export default function ROIProjectionChart({ data }) {
             <Line type="monotone" dataKey="projected_roi" stroke="#3b82f6" strokeWidth={2} strokeDasharray="5 5" name="Projected ROI" />
           </LineChart>
         </ResponsiveContainer>
-        <div className="grid grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-white/10">
           <div>
-            <p className="text-xs text-slate-400">Investment</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-xs font-medium text-slate-400 mb-1">Investment</p>
+            <p className="text-xl font-bold text-white">
               ${data && data.length > 0 ? (data[data.length - 1].investment || 0).toLocaleString() : 0}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Returns</p>
-            <p className="text-lg font-bold text-green-400">
+            <p className="text-xs font-medium text-slate-400 mb-1">Returns</p>
+            <p className="text-xl font-bold text-green-400">
               ${data && data.length > 0 ? (data[data.length - 1].returns || 0).toLocaleString() : 0}
             </p>
           </div>
           <div>
-            <p className="text-xs text-slate-400">Payback Period</p>
-            <p className="text-lg font-bold text-white">
+            <p className="text-xs font-medium text-slate-400 mb-1">Payback Period</p>
+            <p className="text-xl font-bold text-white">
               {data && data.length > 0 ? data[data.length - 1].payback_months || 0 : 0} mo
             </p>
           </div>

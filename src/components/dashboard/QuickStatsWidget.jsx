@@ -14,15 +14,17 @@ export default function QuickStatsWidget({ stats = [] }) {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: idx * 0.1 }}
           >
-            <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 transition-all">
+            <Card className="bg-white/5 border-white/10 backdrop-blur-sm hover:bg-white/10 hover:border-white/20 transition-all duration-300">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                    <Icon className="w-6 h-6 text-white" />
+                  <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
+                    <Icon className="w-7 h-7 text-white" />
                   </div>
                   {stat.trend && (
-                    <div className={`text-xs font-medium ${
-                      stat.trend > 0 ? 'text-green-400' : 'text-red-400'
+                    <div className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${
+                      stat.trend > 0 
+                        ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                        : 'bg-red-500/20 text-red-400 border border-red-500/30'
                     }`}>
                       {stat.trend > 0 ? '+' : ''}{stat.trend}%
                     </div>
