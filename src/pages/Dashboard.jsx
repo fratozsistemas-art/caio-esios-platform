@@ -24,6 +24,7 @@ import FeatureAdoptionChart from "../components/dashboard/FeatureAdoptionChart";
 import RealTimeMetrics from "../components/dashboard/RealTimeMetrics";
 import DashboardCustomizer from "../components/dashboard/DashboardCustomizer";
 import ComplianceWidget from "../components/compliance/ComplianceWidget";
+import OnboardingStatusWidget from "../components/dashboard/OnboardingStatusWidget";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -213,6 +214,8 @@ export default function Dashboard() {
         return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
       case 'stats':
         return <QuickStatsWidget key={widgetId} stats={quickStats} />;
+      case 'onboarding':
+        return <OnboardingStatusWidget key={widgetId} />;
       case 'engagement':
         return <UserEngagementChart key={widgetId} data={engagementData} />;
       case 'roi':
@@ -276,23 +279,23 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['stats', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
-      widgets: ['stats', 'insights', 'graph', 'conversations', 'crossplatform'],
+      widgets: ['stats', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
       focus: 'analysis'
     },
     editor: {
-      widgets: ['stats', 'conversations', 'actions', 'insights', 'crossplatform'],
+      widgets: ['stats', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
       focus: 'content'
     },
     viewer: {
-      widgets: ['stats', 'conversations', 'insights', 'crossplatform'],
+      widgets: ['stats', 'onboarding', 'conversations', 'insights', 'crossplatform'],
       focus: 'consumption'
     },
     default: {
-      widgets: ['stats', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'balanced'
     }
   };
