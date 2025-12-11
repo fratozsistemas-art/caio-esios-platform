@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { 
   Network, Search, Building2, TrendingUp, Users, 
-  Download, Loader2, Database, Filter, Maximize2
+  Download, Loader2, Server, Eye, Filter, Maximize2
 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
@@ -282,7 +282,7 @@ export default function CVMGraph() {
               </div>
             ) : filteredCompanies.length === 0 ? (
               <div className="text-center py-8">
-                <Database className="w-12 h-12 text-slate-600 mx-auto mb-4" />
+                <Server className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                 <p className="text-slate-400 mb-4">No companies found</p>
                 <Button
                   onClick={() => importMutation.mutate()}

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Share2, Mail, Cloud, Database, Briefcase, CheckCircle, Link as LinkIcon } from "lucide-react";
+import { Share2, Mail, Cloud, Server, Briefcase, CheckCircle, Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -57,7 +57,7 @@ export default function Integrations() {
       id: "bloomberg",
       name: "Bloomberg Terminal",
       description: "Professional financial data and analytics",
-      icon: Database,
+      icon: Server,
       category: "data",
       status: "enterprise",
       color: "from-[#FFA500] to-[#FF8C00]"
