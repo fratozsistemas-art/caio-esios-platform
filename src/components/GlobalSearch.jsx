@@ -17,7 +17,23 @@ const ENTITY_ICONS = {
   workspace: Briefcase,
   tsi_project: Brain,
   knowledge_item: FolderOpen,
-  workflow: Workflow
+  workflow: Workflow,
+  analysis: BarChart3,
+  company: Building2,
+  conversation: MessageSquare,
+  wiki_document: BookOpen
+};
+
+const ENTITY_LABELS = {
+  strategy: 'Strategy',
+  workspace: 'Workspace',
+  tsi_project: 'TSI Project',
+  knowledge_item: 'Knowledge',
+  workflow: 'Workflow',
+  analysis: 'Analysis',
+  company: 'Company',
+  conversation: 'Conversation',
+  wiki_document: 'Document'
 };
 
 export default function GlobalSearch({ open, onClose }) {
@@ -82,7 +98,7 @@ export default function GlobalSearch({ open, onClose }) {
                       )}
                       <div className="flex gap-2 mt-2">
                         <Badge className="bg-blue-500/20 text-blue-400 text-xs">
-                          {result.entity_type}
+                          {ENTITY_LABELS[result.entity_type] || result.entity_type}
                         </Badge>
                         {result.tags?.slice(0, 2).map(tag => (
                           <Badge key={tag} variant="outline" className="border-white/20 text-slate-300 text-xs">
@@ -114,7 +130,11 @@ function getEntityUrl(entityType, entityId) {
     workspace: 'Workspaces',
     tsi_project: 'TSIProject',
     knowledge_item: 'KnowledgeManagement',
-    workflow: 'AgentOrchestration'
+    workflow: 'WorkflowDesigner',
+    analysis: 'AnalysesDashboard',
+    company: 'CompanyIntelligenceHub',
+    conversation: 'Chat',
+    wiki_document: 'VersionWiki'
   };
   return createPageUrl(urlMap[entityType] || 'Dashboard');
 }
