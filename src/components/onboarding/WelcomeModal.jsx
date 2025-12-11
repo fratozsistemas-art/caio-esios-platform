@@ -8,6 +8,7 @@ import {
   Brain, Zap, Users, MessageSquare, Network, Shield, 
   ArrowRight, Check, Sparkles, Play, BookOpen
 } from 'lucide-react';
+import PersonalizedOnboarding from './PersonalizedOnboarding';
 
 const ONBOARDING_STEPS = [
   {
@@ -115,16 +116,12 @@ export default function WelcomeModal({ onComplete, onOpenTutorials }) {
   };
 
   const handleComplete = async () => {
-    try {
-      await base44.auth.updateMe({
-        onboarding_completed: true,
-        onboarding_completed_at: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error('Error saving onboarding status:', error);
-    }
-    
     setOpen(false);
+    setShowPersonalized(true);
+  };
+
+  const handlePersonalizedComplete = async () => {
+    setShowPersonalized(false);
     onComplete?.();
   };
 
@@ -158,7 +155,12 @@ export default function WelcomeModal({ onComplete, onOpenTutorials }) {
   const isFirstStep = currentStep === 0;
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <>
+      <PersonalizedOnboarding 
+        open={showPersonalized} 
+        onComplete={handlePersonalizedComplete}
+      />
+      <Dialog open={open} onOpenChange={() => {}}>
       <DialogContent 
         className="max-w-2xl bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410] border-[#00D4FF]/30 p-0 overflow-hidden"
         onPointerDownOutside={(e) => e.preventDefault()}
