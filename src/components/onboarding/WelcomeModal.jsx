@@ -317,6 +317,6 @@ export default function WelcomeModal({ onComplete, onOpenTutorials }) {
         </div>
       </DialogContent>
     </Dialog>
-    </>
+  </>
   );
 }
