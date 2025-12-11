@@ -1,7 +1,7 @@
 import { 
   MessageSquare, Brain, Zap, FileText, Briefcase, Network, Target, 
   Upload, Search, TrendingUp, Users, Settings, Compass, Building2,
-  GitMerge, Layers, Shield, BarChart3, Database, BookOpen, Cpu, Bot,
+  GitMerge, Layers, Shield, BarChart3, Server, BookOpen, Cpu, Bot,
   Activity, Bell, Plug, Eye, Sparkles
 } from 'lucide-react';
 
@@ -404,7 +404,7 @@ export const TUTORIALS = {
       {
         title: 'Curadoria de Dados 📊',
         content: 'Revise, aprove ou rejeite samples de feedback. Gere dados sintéticos para augmentação.',
-        icon: Database,
+        icon: Server,
       },
       {
         title: 'Análise e Retreinamento 🤖',

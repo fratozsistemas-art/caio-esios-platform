@@ -61,6 +61,9 @@ export default function CAIOArchitectureDoc() {
         mental_models: ['EVA', 'CSI', 'VTE', 'IA+', 'CAIO', 'TRUST-BROKER', 'GAYA', 'TRY', 'C-SUITES'],
         modules: ['M1-Market', 'M2-Competitive', 'M3-Tech', 'M4-Financial', 'M5-Synthesis', 'M6-Opportunity', 'M7-Implementation', 'M8-Maieutic', 'M9-Funding', 'M10-Behavioral', 'M11-Hermes'],
         v10_features: [
+          'Comprehensive Onboarding Flow with AI-powered recommendations',
+          'Enhanced Global Search across all entities',
+          'Interactive Tutorial System with contextual tips',
           'Visual Workflow Designer',
           'Agent Notification Center',
           'Training Data Manager',
@@ -1005,12 +1008,15 @@ Target audience: CTOs, Solution Architects, Technical Leadership.`,
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
               {[
-                { name: "Visual Workflow Designer", desc: "Drag-and-drop para construir workflows multi-agente", status: "NEW" },
-                { name: "Agent Notification Center", desc: "Alertas críticos em tempo real dos agentes", status: "NEW" },
-                { name: "Training Data Manager", desc: "Curadoria e augmentação de dados de treino", status: "NEW" },
+                { name: "Comprehensive Onboarding Flow", desc: "AI-powered user onboarding with personalized recommendations", status: "NEW" },
+                { name: "Enhanced Global Search", desc: "Unified search across strategies, analyses, companies, conversations", status: "NEW" },
+                { name: "Interactive Tutorial System", desc: "Contextual tips and guided walkthroughs for all features", status: "NEW" },
+                { name: "Visual Workflow Designer", desc: "Drag-and-drop para construir workflows multi-agente", status: "LIVE" },
+                { name: "Agent Notification Center", desc: "Alertas críticos em tempo real dos agentes", status: "LIVE" },
+                { name: "Training Data Manager", desc: "Curadoria e augmentação de dados de treino", status: "LIVE" },
                 { name: "Improved Knowledge Graph", desc: "Visualização interativa com drag-and-drop", status: "IMPROVED" },
                 { name: "Agent Collaboration Hub", desc: "Orquestração de tarefas cross-agent", status: "ENHANCED" },
-                { name: "Predictive Scaling Engine", desc: "Previsão de demanda e auto-scaling de agentes", status: "NEW" }
+                { name: "Predictive Scaling Engine", desc: "Previsão de demanda e auto-scaling de agentes", status: "LIVE" }
               ].map((feature, idx) => (
                 <div key={idx} className="p-3 bg-white/5 rounded-lg border border-white/10">
                   <div className="flex items-center justify-between mb-1">
@@ -1022,6 +1028,27 @@ Target audience: CTOs, Solution Architects, Technical Leadership.`,
                   <p className="text-xs text-slate-400">{feature.desc}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-6 p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+              <h4 className="text-cyan-400 font-semibold mb-3 flex items-center gap-2">
+                <Sparkles className="w-5 h-5" />
+                Latest Implementation Highlights
+              </h4>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-slate-300 text-sm"><strong>Onboarding Flow:</strong> AI-powered recommendations based on user role and goals</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-slate-300 text-sm"><strong>Global Search:</strong> Real-time indexing across 7+ entity types with relevance scoring</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className="text-slate-300 text-sm"><strong>Tutorial System:</strong> 10+ interactive walkthroughs with contextual tips</span>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>

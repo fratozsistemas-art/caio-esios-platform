@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
   Layers, Shield, Brain, Target, Zap, BarChart3, CheckCircle,
-  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Database, Workflow, Save, FileDown, Loader2
+  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Server, Workflow, Save, FileDown, Loader2, Users, Search, BookOpen
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -93,6 +93,9 @@ const IMPLEMENTATION_STATUS = {
   ux: {
     smooth_scroll: { status: 'incorporated', progress: 100, notes: 'Implementado em Landing + globals.css' },
     keyboard_shortcuts: { status: 'incorporated', progress: 100, notes: '⌘K search, / para busca' },
+    global_search: { status: 'incorporated', progress: 100, notes: 'Enhanced search across all entities with real-time indexing' },
+    onboarding_flow: { status: 'incorporated', progress: 100, notes: 'WelcomeModal + PersonalizedOnboarding + Tutorial System' },
+    interactive_tutorials: { status: 'incorporated', progress: 100, notes: 'TutorialSystem with contextual tips and guided tours' },
     aria_labels: { status: 'incorporated', progress: 80, notes: 'ARIA roles em nav, tabs, widgets' },
     skip_to_main: { status: 'incorporated', progress: 100, notes: 'Skip link implementado na Landing' },
     reduced_motion: { status: 'incorporated', progress: 100, notes: 'Media query prefers-reduced-motion' },
@@ -556,10 +559,13 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
               </CardHeader>
               <CardContent className="space-y-3">
                 {[
-                  { name: 'Mobile Applications', desc: 'iOS & Android native apps with offline sync', icon: Eye, path: null, status: 'NEW' },
-                  { name: 'Visual Workflow Designer', desc: 'Drag-and-drop multi-agent workflows', icon: Workflow, path: 'WorkflowDesigner', status: 'NEW' },
-                  { name: 'Agent Notification Center', desc: 'Real-time critical alerts from agents', icon: Zap, path: null, status: 'NEW' },
-                  { name: 'Training Data Manager', desc: 'Review, curate & augment training data', icon: Database, path: 'AgentIntelligenceHub', status: 'NEW' },
+                  { name: 'Comprehensive Onboarding Flow', desc: 'AI-powered user onboarding with personalized tours', icon: Users, path: 'Dashboard', status: 'NEW' },
+                  { name: 'Enhanced Global Search', desc: 'Unified search across all entities with real-time indexing', icon: Search, path: null, status: 'NEW' },
+                  { name: 'Interactive Tutorial System', desc: 'Contextual tips and guided walkthroughs', icon: BookOpen, path: null, status: 'NEW' },
+                  { name: 'Mobile Applications', desc: 'iOS & Android native apps with offline sync', icon: Eye, path: null, status: 'PLANNED' },
+                  { name: 'Visual Workflow Designer', desc: 'Drag-and-drop multi-agent workflows', icon: Workflow, path: 'WorkflowDesigner', status: 'LIVE' },
+                  { name: 'Agent Notification Center', desc: 'Real-time critical alerts from agents', icon: Zap, path: null, status: 'LIVE' },
+                  { name: 'Training Data Manager', desc: 'Review, curate & augment training data', icon: Database, path: 'AgentIntelligenceHub', status: 'LIVE' },
                   { name: 'Improved Knowledge Graph', desc: 'Interactive drag-and-drop visualization', icon: Network, path: 'AgentIntelligenceHub', status: 'IMPROVED' },
                   { name: 'Agent Collaboration Hub', desc: 'Cross-agent task orchestration', icon: Bot, path: 'AgentCollaborationHub', status: 'ENHANCED' }
                 ].map((feature, i) => (
@@ -582,7 +588,12 @@ Make it professional, data-driven, actionable, and aligned with proprietary meth
                         </Button>
                       </Link>
                     ) : (
-                      <Badge className="bg-cyan-500/20 text-cyan-400 text-[10px]">{feature.status}</Badge>
+                      <Badge className={`text-[10px] ${
+                        feature.status === 'LIVE' ? 'bg-green-500/20 text-green-400' :
+                        feature.status === 'NEW' ? 'bg-cyan-500/20 text-cyan-400' :
+                        feature.status === 'PLANNED' ? 'bg-yellow-500/20 text-yellow-400' :
+                        'bg-cyan-500/20 text-cyan-400'
+                      }`}>{feature.status}</Badge>
                     )}
                   </motion.div>
                 ))}
