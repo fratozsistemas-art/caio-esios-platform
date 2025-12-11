@@ -80,6 +80,7 @@ const ONBOARDING_STEPS = [
 export default function WelcomeModal({ onComplete, onOpenTutorials }) {
   const [open, setOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [showPersonalized, setShowPersonalized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -314,5 +315,6 @@ export default function WelcomeModal({ onComplete, onOpenTutorials }) {
         </div>
       </DialogContent>
     </Dialog>
+    </>
   );
 }
