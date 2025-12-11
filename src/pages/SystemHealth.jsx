@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   CheckCircle, XCircle, AlertCircle, Loader2, RefreshCw,
-  Database, Network, Brain, Zap, FileText, MessageSquare
+  Server, Network, Brain, Zap, FileText, MessageSquare
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -125,7 +125,7 @@ export default function SystemHealth() {
   };
 
   const healthItems = [
-    { key: 'entities', icon: Database, label: 'Entity Database' },
+    { key: 'entities', icon: Server, label: 'Entity Database' },
     { key: 'knowledge_graph', icon: Network, label: 'Knowledge Graph' },
     { key: 'agent_memory', icon: Brain, label: 'Agent Memory' },
     { key: 'integrations', icon: Zap, label: 'Integrations' },

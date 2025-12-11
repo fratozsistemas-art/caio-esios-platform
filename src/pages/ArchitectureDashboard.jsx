@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  Brain, Layers, Target, Shield, Network, Eye, Database,
+  Brain, Layers, Target, Shield, Network, Eye, Server,
   Zap, TrendingUp, Users, CheckCircle, AlertCircle, Clock,
   ArrowRight, ChevronRight, Activity, BarChart3, RefreshCw,
   Sparkles, BookOpen, ArrowUpRight, Info
@@ -189,7 +189,7 @@ const ARCHITECTURE_DATA = {
         layer: 6,
         name: "NIMR",
         fullName: "Neural Intelligence Memory",
-        icon: Database,
+        icon: Server,
         maturity: 3,
         targetMaturity: 5,
         color: "emerald",
