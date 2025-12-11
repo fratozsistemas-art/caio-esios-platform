@@ -19,9 +19,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import WorkspaceControlPanel from "../components/workspace/WorkspaceControlPanel";
 import ProjectTree from "../components/workspace/ProjectTree";
 import TaskManager from "../components/workspace/TaskManager";
+import WorkspaceAccessManager from "../components/workspace/WorkspaceAccessManager";
+import WorkspaceResourcesPanel from "../components/workspace/WorkspaceResourcesPanel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function WorkspaceDetail() {
   const [searchParams] = useSearchParams();
@@ -43,6 +46,18 @@ export default function WorkspaceDetail() {
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => setUser(null));
   }, []);
+
+  // Check user access to workspace
+  const { data: workspaceAccess } = useQuery({
+    queryKey: ['workspace_access_check', workspaceId, user?.email],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('checkWorkspaceAccess', {
+        workspace_id: workspaceId
+      });
+      return data;
+    },
+    enabled: !!workspaceId && !!user
+  });
 
   const { data: workspace, isLoading } = useQuery({
     queryKey: ['workspace', workspaceId],
@@ -292,26 +307,62 @@ export default function WorkspaceDetail() {
         </div>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="control" className="w-full">
-        <TabsList className="bg-white/5 grid w-fit grid-cols-6">
-          <TabsTrigger value="control">Controle</TabsTrigger>
-          <TabsTrigger value="projects">Projetos</TabsTrigger>
-          <TabsTrigger value="tasks">Tarefas</TabsTrigger>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="phases">Phases</TabsTrigger>
-          <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
-        </TabsList>
+      {/* Access Denied */}
+      {workspaceAccess && !workspaceAccess.has_access && (
+        <Card className="bg-red-500/10 border-red-500/30">
+          <CardContent className="p-8 text-center">
+            <Shield className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-white mb-2">Access Denied</h2>
+            <p className="text-slate-300 mb-4">
+              {workspaceAccess.error || 'You do not have permission to access this workspace'}
+            </p>
+            <Button onClick={() => navigate(createPageUrl("Workspaces"))}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Workspaces
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
-        {/* Control Panel Tab */}
-        <TabsContent value="control" className="mt-6">
-          <WorkspaceControlPanel
-            workspace={workspace}
-            projects={projects}
-            tasks={tasks}
-            members={workspace.team_members || []}
-          />
-        </TabsContent>
+      {/* Tabs */}
+      {workspaceAccess?.has_access && (
+        <Tabs defaultValue="control" className="w-full">
+          <TabsList className="bg-white/5 grid w-fit grid-cols-8">
+            <TabsTrigger value="control">Controle</TabsTrigger>
+            <TabsTrigger value="resources">Resources</TabsTrigger>
+            <TabsTrigger value="access">Team Access</TabsTrigger>
+            <TabsTrigger value="projects">Projetos</TabsTrigger>
+            <TabsTrigger value="tasks">Tarefas</TabsTrigger>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="phases">Phases</TabsTrigger>
+            <TabsTrigger value="deliverables">Deliverables</TabsTrigger>
+          </TabsList>
+
+          {/* Control Panel Tab */}
+          <TabsContent value="control" className="mt-6">
+            <WorkspaceControlPanel
+              workspace={workspace}
+              projects={projects}
+              tasks={tasks}
+              members={workspace.team_members || []}
+            />
+          </TabsContent>
+
+          {/* Resources Tab */}
+          <TabsContent value="resources" className="mt-6">
+            <WorkspaceResourcesPanel
+              workspaceId={workspaceId}
+              canEdit={workspaceAccess?.permissions?.can_edit_strategies}
+            />
+          </TabsContent>
+
+          {/* Access Control Tab */}
+          <TabsContent value="access" className="mt-6">
+            <WorkspaceAccessManager
+              workspaceId={workspaceId}
+              currentUserAccess={workspaceAccess}
+            />
+          </TabsContent>
 
         {/* Projects Tab */}
         <TabsContent value="projects" className="mt-6">
@@ -719,7 +770,8 @@ export default function WorkspaceDetail() {
             </CardContent>
           </Card>
         </TabsContent>
-      </Tabs>
+        </Tabs>
+      )}
     </div>
   );
 }

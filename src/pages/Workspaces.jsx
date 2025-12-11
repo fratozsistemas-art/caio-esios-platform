@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Plus, FolderKanban, Users, TrendingUp } from "lucide-react";
+import { Plus, FolderKanban, Users, TrendingUp, Lock, Globe, Building2, UserCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import TemplateSelector from "../components/workspace/TemplateSelector";
-import ThemeSelector from "../components/workspace/ThemeSelector"; 
+import ThemeSelector from "../components/workspace/ThemeSelector";
+import { toast } from "sonner"; 
 
 export default function Workspaces() {
   const queryClient = useQueryClient();
@@ -23,9 +24,44 @@ export default function Workspaces() {
     themes: []
   });
 
+  const { data: user } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me()
+  });
+
   const { data: workspaces = [] } = useQuery({
-    queryKey: ['workspaces'],
-    queryFn: () => base44.entities.Workspace.list('-created_date'),
+    queryKey: ['workspaces', user?.email],
+    queryFn: async () => {
+      // Get workspaces created by user
+      const ownedWorkspaces = await base44.entities.Workspace.filter({
+        created_by: user.email
+      });
+
+      // Get workspaces where user has access
+      const accessRecords = await base44.entities.WorkspaceAccess.filter({
+        user_email: user.email,
+        is_active: true,
+        invitation_status: 'accepted'
+      });
+
+      const accessedWorkspaceIds = accessRecords.map(a => a.workspace_id);
+      const accessedWorkspaces = await Promise.all(
+        accessedWorkspaceIds.map(id => 
+          base44.entities.Workspace.get(id).catch(() => null)
+        )
+      );
+
+      // Combine and deduplicate
+      const allWorkspaces = [...ownedWorkspaces, ...accessedWorkspaces.filter(w => w !== null)];
+      const uniqueWorkspaces = Array.from(
+        new Map(allWorkspaces.map(w => [w.id, w])).values()
+      );
+
+      return uniqueWorkspaces.sort((a, b) => 
+        new Date(b.updated_date) - new Date(a.updated_date)
+      );
+    },
+    enabled: !!user,
     initialData: [],
   });
 
@@ -101,19 +137,47 @@ export default function Workspaces() {
       const allThemes = [...(template?.themes || []), ...(data.themes || [])];
       const suggestedActions = getSuggestedQuickActions(allThemes);
       
-      return base44.entities.Workspace.create({
+      const workspace = await base44.entities.Workspace.create({
         ...data,
+        owner_email: user.email,
         current_phase: phases[0]?.name || "Início",
         progress_percentage: 0,
         phases: phases,
         suggested_quick_actions: suggestedActions,
+        visibility: 'team',
         status: "active"
       });
+
+      // Create owner access record
+      await base44.entities.WorkspaceAccess.create({
+        workspace_id: workspace.id,
+        user_email: user.email,
+        access_level: 'owner',
+        permissions: {
+          can_edit_workspace: true,
+          can_manage_members: true,
+          can_create_strategies: true,
+          can_edit_strategies: true,
+          can_delete_strategies: true,
+          can_create_analyses: true,
+          can_view_knowledge_graph: true,
+          can_edit_knowledge_graph: true,
+          can_export_data: true,
+          can_share_externally: true
+        },
+        granted_by: user.email,
+        granted_at: new Date().toISOString(),
+        invitation_status: 'accepted',
+        is_active: true
+      });
+
+      return workspace;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['workspaces'] });
       setDialogOpen(false);
       setNewWorkspace({ name: "", template_type: "strategic_planning", themes: [] });
+      toast.success('Workspace created successfully');
     },
   });
 
@@ -326,6 +390,14 @@ export default function Workspaces() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {workspaces.map((workspace, index) => {
             const template = templates.find(t => t.value === workspace.template_type);
+            const isOwner = workspace.created_by === user?.email || workspace.owner_email === user?.email;
+            const visibilityIcon = {
+              private: <Lock className="w-3 h-3" />,
+              team: <Users className="w-3 h-3" />,
+              organization: <Building2 className="w-3 h-3" />,
+              external: <Globe className="w-3 h-3" />
+            }[workspace.visibility];
+
             return (
               <motion.div
                 key={workspace.id}
@@ -342,11 +414,25 @@ export default function Workspaces() {
                           {workspace.name}
                         </CardTitle>
                       </div>
-                      <span className={`px-2 py-1 rounded-lg text-xs font-medium ${statusColors[workspace.status]}`}>
-                        {workspace.status}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        {isOwner && (
+                          <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-xs">
+                            <UserCheck className="w-3 h-3 mr-1" />
+                            Owner
+                          </Badge>
+                        )}
+                        <span className={`px-2 py-1 rounded-lg text-xs font-medium ${statusColors[workspace.status]}`}>
+                          {workspace.status}
+                        </span>
+                      </div>
                     </div>
                     <p className="text-sm text-slate-400">{template?.description}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Badge className="bg-white/5 text-slate-400 border-white/10 text-xs flex items-center gap-1">
+                        {visibilityIcon}
+                        {workspace.visibility || 'team'}
+                      </Badge>
+                    </div>
                   </CardHeader>
                   
                   <CardContent className="p-6 flex-1 flex flex-col space-y-4">
