@@ -39,6 +39,24 @@ import {
 } from "@/components/ui/tooltip";
 import QuickActionAssistantModal from "../components/quickactions/QuickActionAssistantModal";
 
+const FUNCTIONAL_AREA_COLORS = {
+  'Strategy': { gradient: 'from-blue-500 to-blue-700', bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' },
+  'Finance': { gradient: 'from-green-500 to-green-700', bg: 'bg-green-500/10', border: 'border-green-500/30', text: 'text-green-400' },
+  'Marketing': { gradient: 'from-pink-500 to-pink-700', bg: 'bg-pink-500/10', border: 'border-pink-500/30', text: 'text-pink-400' },
+  'Sales': { gradient: 'from-orange-500 to-orange-700', bg: 'bg-orange-500/10', border: 'border-orange-500/30', text: 'text-orange-400' },
+  'Operations': { gradient: 'from-purple-500 to-purple-700', bg: 'bg-purple-500/10', border: 'border-purple-500/30', text: 'text-purple-400' },
+  'HR': { gradient: 'from-yellow-500 to-yellow-700', bg: 'bg-yellow-500/10', border: 'border-yellow-500/30', text: 'text-yellow-400' },
+  'Technology': { gradient: 'from-cyan-500 to-cyan-700', bg: 'bg-cyan-500/10', border: 'border-cyan-500/30', text: 'text-cyan-400' },
+  'Risk & Compliance': { gradient: 'from-red-500 to-red-700', bg: 'bg-red-500/10', border: 'border-red-500/30', text: 'text-red-400' },
+  'Product': { gradient: 'from-indigo-500 to-indigo-700', bg: 'bg-indigo-500/10', border: 'border-indigo-500/30', text: 'text-indigo-400' },
+  'Customer Success': { gradient: 'from-teal-500 to-teal-700', bg: 'bg-teal-500/10', border: 'border-teal-500/30', text: 'text-teal-400' },
+  'Innovation': { gradient: 'from-fuchsia-500 to-fuchsia-700', bg: 'bg-fuchsia-500/10', border: 'border-fuchsia-500/30', text: 'text-fuchsia-400' },
+  'Data & Analytics': { gradient: 'from-violet-500 to-violet-700', bg: 'bg-violet-500/10', border: 'border-violet-500/30', text: 'text-violet-400' },
+  'Supply Chain': { gradient: 'from-amber-500 to-amber-700', bg: 'bg-amber-500/10', border: 'border-amber-500/30', text: 'text-amber-400' },
+  'M&A': { gradient: 'from-emerald-500 to-emerald-700', bg: 'bg-emerald-500/10', border: 'border-emerald-500/30', text: 'text-emerald-400' },
+  'ESG & Sustainability': { gradient: 'from-lime-500 to-lime-700', bg: 'bg-lime-500/10', border: 'border-lime-500/30', text: 'text-lime-400' }
+};
+
 export default function QuickActions() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -46,10 +64,23 @@ export default function QuickActions() {
   const [isAssistantModalOpen, setIsAssistantModalOpen] = useState(false);
   const [selectedQuickAction, setSelectedQuickAction] = useState(null);
 
-  const { data: quickActions = [], isLoading } = useQuery({
+  const { data: allQuickActions = [], isLoading } = useQuery({
     queryKey: ["quickActions"],
     queryFn: () => base44.entities.QuickAction.list("-created_date"),
   });
+
+  // Remove duplicates based on title similarity
+  const quickActions = React.useMemo(() => {
+    const seen = new Map();
+    return allQuickActions.filter(action => {
+      const normalizedTitle = action.title.toLowerCase().trim();
+      if (seen.has(normalizedTitle)) {
+        return false;
+      }
+      seen.set(normalizedTitle, true);
+      return true;
+    });
+  }, [allQuickActions]);
 
   const allCategories = [...new Set(quickActions?.map(action => action.category))];
   const categories = allCategories.map(cat => ({ id: cat, label: cat.replace(/_/g, ' ') }));
@@ -169,16 +200,55 @@ export default function QuickActions() {
             </p>
           </CardContent>
         </Card>
+      ) : selectedFunctionalArea === 'all' ? (
+        // Group by functional area
+        <div className="space-y-8">
+          {functionalAreas.map(area => {
+            const areaActions = filteredActions.filter(a => a.functional_area === area.id);
+            if (areaActions.length === 0) return null;
+            const colorConfig = FUNCTIONAL_AREA_COLORS[area.id] || FUNCTIONAL_AREA_COLORS['Strategy'];
+
+            return (
+              <div key={area.id}>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`h-1 w-12 rounded-full bg-gradient-to-r ${colorConfig.gradient}`} />
+                  <h2 className={`text-xl font-bold ${colorConfig.text}`}>
+                    {area.label}
+                  </h2>
+                  <Badge className={`${colorConfig.bg} ${colorConfig.text} ${colorConfig.border}`}>
+                    {areaActions.length} actions
+                  </Badge>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {areaActions.map((action, index) => (
+                    <QuickActionCard
+                      key={action.id}
+                      action={action}
+                      index={index}
+                      onClick={() => handleExecuteAction(action)}
+                      colorConfig={colorConfig}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       ) : (
+        // Show all in grid when area is selected
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredActions.map((action, index) => (
-            <QuickActionCard
-              key={action.id}
-              action={action}
-              index={index}
-              onClick={() => handleExecuteAction(action)}
-            />
-          ))}
+          {filteredActions.map((action, index) => {
+            const colorConfig = FUNCTIONAL_AREA_COLORS[action.functional_area] || FUNCTIONAL_AREA_COLORS['Strategy'];
+            return (
+              <QuickActionCard
+                key={action.id}
+                action={action}
+                index={index}
+                onClick={() => handleExecuteAction(action)}
+                colorConfig={colorConfig}
+              />
+            );
+          })}
         </div>
       )}
 
@@ -214,9 +284,9 @@ const iconMap = {
     Map
 };
 
-function QuickActionCard({ action, index, onClick }) {
+function QuickActionCard({ action, index, onClick, colorConfig }) {
   const IconComponent = iconMap[action.icon] || Zap;
-  const cardColorClass = action.color || "from-gray-500 to-gray-700";
+  const colors = colorConfig || FUNCTIONAL_AREA_COLORS[action.functional_area] || FUNCTIONAL_AREA_COLORS['Strategy'];
 
   return (
     <TooltipProvider>
@@ -226,14 +296,14 @@ function QuickActionCard({ action, index, onClick }) {
         transition={{ duration: 0.5, delay: index * 0.05 }}
       >
         <Card
-          className="bg-[#1A1D29] border-[#00D4FF]/20 backdrop-blur-sm hover:bg-[#0A2540] cursor-pointer transition-all duration-300 group h-full flex flex-col"
+          className={`bg-[#1A1D29] border-2 ${colors.border} backdrop-blur-sm hover:bg-[#0A2540] cursor-pointer transition-all duration-300 group h-full flex flex-col hover:shadow-lg hover:shadow-${colors.text}/20`}
           onClick={() => onClick(action)}
         >
-          <CardHeader className="border-b border-[#00D4FF]/10 p-6">
+          <CardHeader className={`border-b ${colors.border} p-6`}>
             <div className="flex items-start justify-between mb-3">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${cardColorClass} flex items-center justify-center p-2`}>
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-r ${colors.gradient} flex items-center justify-center p-2 shadow-lg`}>
                     <IconComponent className="w-6 h-6 text-white" />
                   </div>
                 </TooltipTrigger>
@@ -242,90 +312,39 @@ function QuickActionCard({ action, index, onClick }) {
                 </TooltipContent>
               </Tooltip>
               <div className="flex flex-col gap-1 items-end">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="px-2 py-1 rounded-lg text-xs font-medium bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/30 cursor-help">
-                      {action.category?.replace(/_/g, ' ')}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Categoria de análise estratégica</p>
-                  </TooltipContent>
-                </Tooltip>
                 {action.functional_area && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="px-2 py-1 rounded-lg text-xs font-medium bg-[#00D4FF]/20 text-[#00D4FF] border border-[#00D4FF]/30 cursor-help">
-                        {action.functional_area}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Área funcional</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <Badge className={`${colors.bg} ${colors.text} ${colors.border} text-xs font-semibold`}>
+                    {action.functional_area}
+                  </Badge>
                 )}
               </div>
-              </div>
-              <CardTitle className="text-white text-lg group-hover:text-[#00D4FF] transition-colors">
+            </div>
+            <CardTitle className={`text-white text-lg group-hover:${colors.text} transition-colors`}>
               {action.title}
-              </CardTitle>
-              <CardDescription className="text-[#94A3B8] text-sm mt-2">
+            </CardTitle>
+            <CardDescription className="text-[#94A3B8] text-sm mt-2">
               {action.description}
-              </CardDescription>
-              </CardHeader>
-              <CardContent className="p-6 space-y-3 flex-grow">
-              {action.primary_framework && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center text-xs text-slate-400 cursor-help">
-                    <FlaskConical className="w-4 h-4 mr-2" />
-                    Primary Framework: <span className="ml-1 text-white font-medium">{action.primary_framework}</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Framework metodológico principal utilizado na análise</p>
-                </TooltipContent>
-              </Tooltip>
-              )}
-              {action.modules_activated && action.modules_activated.length > 0 && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center text-xs text-slate-400 cursor-help">
-                    <Code className="w-4 h-4 mr-2" />
-                    Modules: <span className="ml-1 text-white font-medium">{action.modules_activated.join(", ")}</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Módulos TSI ativados para esta análise</p>
-                </TooltipContent>
-              </Tooltip>
-              )}
-              {action.estimated_time && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center text-xs text-slate-400 cursor-help">
-                    <Timer className="w-4 h-4 mr-2" />
-                    Est. Time: <span className="ml-1 text-green-400 font-medium">{action.estimated_time}</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Tempo estimado de processamento</p>
-                </TooltipContent>
-              </Tooltip>
-              )}
-              {action.confidence_range && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center text-xs text-slate-400 cursor-help">
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Confidence: <span className="ml-1 text-blue-400 font-medium">{action.confidence_range}</span>
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Nível de confiança esperado dos resultados</p>
-                </TooltipContent>
-              </Tooltip>
-              )}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-6 space-y-3 flex-grow">
+            {action.primary_framework && (
+              <div className="flex items-center text-xs text-slate-400">
+                <FlaskConical className="w-4 h-4 mr-2" />
+                <span className="ml-1 text-white font-medium">{action.primary_framework}</span>
+              </div>
+            )}
+            {action.modules_activated && action.modules_activated.length > 0 && (
+              <div className="flex items-center text-xs text-slate-400">
+                <Code className="w-4 h-4 mr-2" />
+                <span className="ml-1 text-white font-medium">{action.modules_activated.join(", ")}</span>
+              </div>
+            )}
+            {action.estimated_time && (
+              <div className="flex items-center text-xs text-slate-400">
+                <Timer className="w-4 h-4 mr-2" />
+                <span className={`ml-1 ${colors.text} font-medium`}>{action.estimated_time}</span>
+              </div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
