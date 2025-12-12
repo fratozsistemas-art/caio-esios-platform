@@ -40,6 +40,24 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Auto-tag if no tags provided
+    let finalTags = tags || [];
+    if (finalTags.length === 0) {
+      try {
+        const { data: tagResult } = await base44.functions.invoke('autoTagResource', {
+          workspace_id,
+          resource_type,
+          resource_id
+        });
+        if (tagResult.success) {
+          finalTags = tagResult.tags;
+        }
+      } catch (e) {
+        // Continue without tags if AI fails
+        console.error('Auto-tagging failed:', e);
+      }
+    }
+
     // Create resource link
     const resourceLink = await base44.entities.WorkspaceResource.create({
       workspace_id,
@@ -47,14 +65,15 @@ Deno.serve(async (req) => {
       resource_id,
       resource_title,
       added_by: user.email,
-      tags: tags || [],
+      tags: finalTags,
       notes: notes || '',
       is_pinned: false
     });
 
     return Response.json({
       success: true,
-      resource_link: resourceLink
+      resource_link: resourceLink,
+      auto_tagged: finalTags.length > 0 && (!tags || tags.length === 0)
     });
 
   } catch (error) {

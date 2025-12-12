@@ -5,12 +5,13 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { 
   FileText, Brain, Network, MessageSquare, Folder, 
-  Plus, Pin, Trash2, ExternalLink, Search, Filter
+  Plus, Pin, Trash2, ExternalLink, Search, Filter, Sparkles, 
+  Loader2, TrendingUp, Check, X
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { createPageUrl } from '@/utils';
 import { Link } from 'react-router-dom';
 
@@ -37,12 +38,24 @@ const RESOURCE_COLORS = {
 export default function WorkspaceResourcesPanel({ workspaceId, canEdit }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: resources = [], isLoading } = useQuery({
     queryKey: ['workspace_resources', workspaceId],
     queryFn: () => base44.entities.WorkspaceResource.filter({ workspace_id: workspaceId }),
     enabled: !!workspaceId
+  });
+
+  const { data: suggestions = [], isLoading: loadingSuggestions, refetch: refetchSuggestions } = useQuery({
+    queryKey: ['workspace_resource_suggestions', workspaceId],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('suggestWorkspaceResources', {
+        workspace_id: workspaceId
+      });
+      return data.suggestions || [];
+    },
+    enabled: showSuggestions && !!workspaceId
   });
 
   const togglePinMutation = useMutation({
@@ -58,6 +71,23 @@ export default function WorkspaceResourcesPanel({ workspaceId, canEdit }) {
     onSuccess: () => {
       queryClient.invalidateQueries(['workspace_resources', workspaceId]);
       toast.success('Resource removed from workspace');
+    }
+  });
+
+  const linkSuggestedResourceMutation = useMutation({
+    mutationFn: async (suggestion) => {
+      const { data } = await base44.functions.invoke('linkResourceToWorkspace', {
+        workspace_id: workspaceId,
+        resource_type: suggestion.resource_type,
+        resource_id: suggestion.resource_id,
+        resource_title: suggestion.resource_title
+      });
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['workspace_resources', workspaceId]);
+      refetchSuggestions();
+      toast.success('Resource linked and auto-tagged!');
     }
   });
 
@@ -83,33 +113,113 @@ export default function WorkspaceResourcesPanel({ workspaceId, canEdit }) {
   };
 
   return (
-    <Card className="bg-white/5 border-white/10">
-      <CardHeader>
-        <CardTitle className="text-white flex items-center gap-2">
-          <Folder className="w-5 h-5 text-purple-400" />
-          Workspace Resources
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Search and Filter */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search resources..."
-              className="pl-10 bg-white/5 border-white/10 text-white"
-            />
+    <div className="space-y-6">
+      {/* AI Suggestions */}
+      {canEdit && (
+        <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/30">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-400" />
+                AI-Suggested Resources
+              </CardTitle>
+              <Button
+                onClick={() => {
+                  setShowSuggestions(!showSuggestions);
+                  if (!showSuggestions) refetchSuggestions();
+                }}
+                variant="outline"
+                size="sm"
+                className="border-purple-500/30 text-purple-400 hover:bg-purple-500/20"
+              >
+                {loadingSuggestions ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <Sparkles className="w-4 h-4 mr-2" />
+                )}
+                {showSuggestions ? 'Hide' : 'Get AI Suggestions'}
+              </Button>
+            </div>
+          </CardHeader>
+          <AnimatePresence>
+            {showSuggestions && (
+              <CardContent className="space-y-2">
+                {loadingSuggestions ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto mb-2" />
+                    <p className="text-slate-400 text-sm">Analyzing workspace and finding relevant resources...</p>
+                  </div>
+                ) : suggestions.length === 0 ? (
+                  <p className="text-slate-400 text-center py-4">No suggestions available</p>
+                ) : (
+                  suggestions.map((suggestion, idx) => (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 20 }}
+                      transition={{ delay: idx * 0.05 }}
+                      className="flex items-start gap-3 p-3 rounded-lg bg-white/5 border border-purple-500/20"
+                    >
+                      <TrendingUp className="w-5 h-5 text-purple-400 flex-shrink-0 mt-1" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-medium">{suggestion.resource_title}</p>
+                        <p className="text-xs text-slate-400 mt-1">{suggestion.relevance_reason}</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Badge className="bg-purple-500/20 text-purple-400 text-xs">
+                            {suggestion.resource_type}
+                          </Badge>
+                          <Badge className="bg-blue-500/20 text-blue-400 text-xs">
+                            {suggestion.relevance_score}% match
+                          </Badge>
+                        </div>
+                      </div>
+                      <div className="flex gap-1">
+                        <Button
+                          size="icon"
+                          onClick={() => linkSuggestedResourceMutation.mutate(suggestion)}
+                          disabled={linkSuggestedResourceMutation.isPending}
+                          className="h-8 w-8 bg-green-500 hover:bg-green-600"
+                        >
+                          <Check className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </CardContent>
+            )}
+          </AnimatePresence>
+        </Card>
+      )}
+
+      <Card className="bg-white/5 border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Folder className="w-5 h-5 text-purple-400" />
+            Workspace Resources
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {/* Search and Filter */}
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <Input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search resources..."
+                className="pl-10 bg-white/5 border-white/10 text-white"
+              />
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              className="border-white/10 text-slate-400 hover:bg-white/5"
+            >
+              <Filter className="w-4 h-4" />
+            </Button>
           </div>
-          <Button
-            variant="outline"
-            size="icon"
-            className="border-white/10 text-slate-400 hover:bg-white/5"
-          >
-            <Filter className="w-4 h-4" />
-          </Button>
-        </div>
 
         {/* Resource Type Filter */}
         <div className="flex gap-2 flex-wrap">
@@ -190,8 +300,9 @@ export default function WorkspaceResourcesPanel({ workspaceId, canEdit }) {
               : 'No resources linked to this workspace yet'}
           </p>
         )}
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
