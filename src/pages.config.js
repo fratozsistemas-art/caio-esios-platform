@@ -106,6 +106,7 @@ import GPT51Comparison from './pages/GPT51Comparison';
 import Broto23Protocol from './pages/Broto23Protocol';
 import UserSettings from './pages/UserSettings';
 import BlogArticle from './pages/BlogArticle';
+import SharedResource from './pages/SharedResource';
 import __Layout from './Layout.jsx';
 
 
@@ -218,6 +219,7 @@ export const PAGES = {
     "Broto23Protocol": Broto23Protocol,
     "UserSettings": UserSettings,
     "BlogArticle": BlogArticle,
+    "SharedResource": SharedResource,
 }
 
 export const pagesConfig = {

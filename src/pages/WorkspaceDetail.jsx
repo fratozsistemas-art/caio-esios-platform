@@ -21,6 +21,7 @@ import ProjectTree from "../components/workspace/ProjectTree";
 import TaskManager from "../components/workspace/TaskManager";
 import WorkspaceAccessManager from "../components/workspace/WorkspaceAccessManager";
 import WorkspaceResourcesPanel from "../components/workspace/WorkspaceResourcesPanel";
+import ExternalSharingManager from "../components/workspace/ExternalSharingManager";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -327,10 +328,11 @@ export default function WorkspaceDetail() {
       {/* Tabs */}
       {workspaceAccess?.has_access && (
         <Tabs defaultValue="control" className="w-full">
-          <TabsList className="bg-white/5 grid w-fit grid-cols-8">
+          <TabsList className="bg-white/5 grid w-fit grid-cols-9">
             <TabsTrigger value="control">Controle</TabsTrigger>
             <TabsTrigger value="resources">Resources</TabsTrigger>
             <TabsTrigger value="access">Team Access</TabsTrigger>
+            <TabsTrigger value="sharing">External Sharing</TabsTrigger>
             <TabsTrigger value="projects">Projetos</TabsTrigger>
             <TabsTrigger value="tasks">Tarefas</TabsTrigger>
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -361,6 +363,14 @@ export default function WorkspaceDetail() {
             <WorkspaceAccessManager
               workspaceId={workspaceId}
               currentUserAccess={workspaceAccess}
+            />
+          </TabsContent>
+
+          {/* External Sharing Tab */}
+          <TabsContent value="sharing" className="mt-6">
+            <ExternalSharingManager
+              workspaceId={workspaceId}
+              canShare={workspaceAccess?.permissions?.can_share_externally}
             />
           </TabsContent>
 
