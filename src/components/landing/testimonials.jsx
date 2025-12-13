@@ -1,3 +1,4 @@
+
 export const testimonials = [
   {
     quote: "CAIO reduziu nosso ciclo de planejamento estratégico de 6 semanas para 5 dias. O módulo financeiro sozinho se pagou no primeiro mês.",
