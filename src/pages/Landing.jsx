@@ -4,7 +4,6 @@ import { createPageUrl } from "@/utils";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
   Brain,
@@ -20,13 +19,11 @@ import {
   Network,
   Layers,
   Star,
-  Award,
   AlertCircle,
   Sparkles,
   Menu
 } from "lucide-react";
 import { motion } from "framer-motion";
-import PricingCard from "../components/pricing/PricingCard";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
 import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
 import PreHomeAnimation from "../components/landing/PreHomeAnimation";
@@ -40,8 +37,7 @@ import {
   advancedCapabilities,
   comparisonFeatures,
   detailedUseCases,
-  testimonials,
-  plans
+  testimonials
 } from "../components/landing";
 
 export default function Landing() {
