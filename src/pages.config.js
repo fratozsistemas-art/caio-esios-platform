@@ -107,6 +107,7 @@ import Broto23Protocol from './pages/Broto23Protocol';
 import UserSettings from './pages/UserSettings';
 import BlogArticle from './pages/BlogArticle';
 import SharedResource from './pages/SharedResource';
+import SEOOptimizationPage from './pages/SEOOptimizationPage';
 import __Layout from './Layout.jsx';
 
 
@@ -220,6 +221,7 @@ export const PAGES = {
     "UserSettings": UserSettings,
     "BlogArticle": BlogArticle,
     "SharedResource": SharedResource,
+    "SEOOptimizationPage": SEOOptimizationPage,
 }
 
 export const pagesConfig = {
