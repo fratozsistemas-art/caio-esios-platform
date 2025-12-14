@@ -103,7 +103,8 @@ export default function ProactiveInsightsWidget() {
             onClick={handleRunMonitoring}
             disabled={isAnalyzing}
             size="sm"
-            variant="outline" className="bg-[#000000bg-blue-600 hover:bg-blue-700] text-white px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:bg-accent hover:text-accent-foreground h-8 border-white/10">
+            variant="outline" 
+            className="border-white/10 text-white hover:bg-white/10">
 
 
               {isAnalyzing ? 'Analyzing...' : 'Run Analysis'}
