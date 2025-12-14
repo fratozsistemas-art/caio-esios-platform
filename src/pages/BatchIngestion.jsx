@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { 
   Upload, FileText, Loader2, CheckCircle, AlertCircle, Download, 
   FileSpreadsheet, Image, FileJson, Sparkles, Brain,
-  Table, List, Building2, HardDrive
+  Table, List, Building2, HardDrive, Database
 } from 'lucide-react';
 import { toast } from 'sonner';
 
