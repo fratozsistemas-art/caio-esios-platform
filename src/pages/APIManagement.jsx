@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Settings, Key, CheckCircle, AlertCircle, Search } from "lucide-react";
+import { Settings, Key, CheckCircle, AlertCircle, Search, Database } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
