@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, X, ArrowRight, Brain } from "lucide-react";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
+import SEOHead from "../components/SEOHead";
 
 export default function ComparisonCaioVsChatGPT() {
   const navigate = useNavigate();
@@ -79,7 +80,13 @@ export default function ComparisonCaioVsChatGPT() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+    <>
+      <SEOHead
+        title="CAIO·AI vs ChatGPT - Strategic Intelligence Platform Comparison"
+        description="CAIO·AI vs ChatGPT comparison for strategic decisions. General AI vs specialized strategic intelligence platform with 11 TSI modules, knowledge graphs, and institutional-grade governance."
+        keywords="CAIO vs ChatGPT, strategic AI comparison, enterprise AI vs ChatGPT, business intelligence platform, executive AI decision support, TSI vs GPT-4"
+      />
+      <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex justify-between items-center">

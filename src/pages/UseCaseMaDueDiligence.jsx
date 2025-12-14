@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, ArrowRight, TrendingUp, DollarSign, Clock, Target, Shield } from "lucide-react";
 import { motion } from "framer-motion";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
+import SEOHead from "../components/SEOHead";
 
 export default function UseCaseMaDueDiligence() {
   const navigate = useNavigate();
@@ -69,7 +70,46 @@ export default function UseCaseMaDueDiligence() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
+    <>
+      <SEOHead
+        title="M&A Due Diligence AI Platform - 80% Faster Analysis"
+        description="AI-powered M&A due diligence platform. Evaluate acquisition targets 80% faster with financial modeling, tech stack analysis, and competitive positioning. TSI v9.3 methodology."
+        keywords="M&A due diligence AI, acquisition analysis platform, AI financial modeling, tech stack analysis, competitive intelligence M&A, strategic due diligence software"
+        schema={{
+          "@context": "https://schema.org",
+          "@type": "HowTo",
+          "name": "How to Conduct M&A Due Diligence with CAIO·AI",
+          "description": "Complete guide to AI-powered M&A due diligence using strategic intelligence platform",
+          "step": [
+            {
+              "@type": "HowToStep",
+              "name": "Input Target Company Information",
+              "text": "Enter target company details, industry, and deal parameters into CAIO·AI platform"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Run Financial Analysis",
+              "text": "Execute M4 (Financial Modeling) module for DCF analysis, valuation multiples, and risk-adjusted NPV"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Technology Assessment",
+              "text": "Deploy M3 (Technology Intelligence) to analyze tech stack, identify technical debt, and assess scalability"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Market & Competitive Analysis",
+              "text": "Use M1 (Market Intelligence) and M2 (Competitive Intelligence) for TAM/SAM/SOM and competitive positioning"
+            },
+            {
+              "@type": "HowToStep",
+              "name": "Strategic Synthesis",
+              "text": "M5 (Strategic Synthesis) delivers GO/NO-GO recommendation with confidence scoring"
+            }
+          ]
+        }}
+      />
+      <div className="min-h-screen bg-gradient-to-br from-[#0A1628] via-[#0d2847] to-[#1a1410]">
       {/* Navigation */}
       <nav className="sticky top-0 z-50 bg-[#0A1628]/95 backdrop-blur-xl border-b border-[#00D4FF]/20">
         <div className="max-w-7xl mx-auto px-6 py-4">
