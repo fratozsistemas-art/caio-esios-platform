@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import {
   Layers, Shield, Brain, Target, Zap, BarChart3, CheckCircle,
-  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Server, Workflow, Save, FileDown, Loader2, Users, Search, BookOpen
+  ArrowRight, Sparkles, GitMerge, Scale, Lightbulb, Eye, Bot, Network, Server, Workflow, Save, FileDown, Loader2, Users, Search, BookOpen, Database
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
