@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Search, X, FileText, Briefcase, Brain, FolderOpen, Workflow } from 'lucide-react';
+import { Search, X, FileText, Briefcase, Brain, FolderOpen, Workflow, BarChart3, Building2, MessageSquare, BookOpen } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
