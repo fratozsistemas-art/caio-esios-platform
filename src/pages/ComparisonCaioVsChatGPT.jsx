@@ -251,5 +251,6 @@ export default function ComparisonCaioVsChatGPT() {
         </div>
       </section>
     </div>
+    </>
   );
 }

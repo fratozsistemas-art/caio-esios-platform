@@ -328,5 +328,6 @@ export default function UseCaseMaDueDiligence() {
         </div>
       </section>
     </div>
+    </>
   );
 }
