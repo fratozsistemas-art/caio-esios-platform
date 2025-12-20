@@ -5,6 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Slider } from "@/components/ui/slider";
 import {
   Globe,
   Lightbulb,
@@ -15,7 +18,14 @@ import {
   X,
   Play,
   ChevronRight,
-  CheckCircle
+  CheckCircle,
+  Cpu,
+  DollarSign,
+  Users,
+  Zap,
+  Shield,
+  Edit3,
+  BarChart3
 } from "lucide-react";
 
 const demoModules = [
@@ -28,6 +38,30 @@ const demoModules = [
     demoType: "guided"
   },
   {
+    id: "M2",
+    name: "Competitive Intelligence",
+    icon: Target,
+    color: "#16A9FF",
+    description: "Competitive positioning analysis",
+    demoType: "guided"
+  },
+  {
+    id: "M3",
+    name: "Technology Intelligence",
+    icon: Cpu,
+    color: "#8B5CF6",
+    description: "Tech stack analysis and innovation tracking",
+    demoType: "guided"
+  },
+  {
+    id: "M4",
+    name: "Financial Modeling",
+    icon: DollarSign,
+    color: "#10B981",
+    description: "Revenue projections and valuation",
+    demoType: "sandbox"
+  },
+  {
     id: "M5",
     name: "Strategic Synthesis",
     icon: Lightbulb,
@@ -36,12 +70,12 @@ const demoModules = [
     demoType: "sandbox"
   },
   {
-    id: "M2",
-    name: "Competitive Intelligence",
-    icon: Target,
-    color: "#16A9FF",
-    description: "Competitive positioning analysis",
-    demoType: "guided"
+    id: "M6",
+    name: "Opportunity Matrix",
+    icon: BarChart3,
+    color: "#F59E0B",
+    description: "Identify and prioritize opportunities",
+    demoType: "sandbox"
   }
 ];
 
@@ -83,12 +117,77 @@ const guidedWalkthroughs = {
         prompt: "Where do we position vs. alternatives?",
         response: "**2x2 Strategic Positioning:**\n\n```\nHigh Methodology │ CAIO·AI ⭐│ Consultancies\n                │           │ (BCG, McKinsey)\n                │           │\n                │           │\n                ├───────────┼──────────────\nGeneric AI      │ LLMs      │ Specialized\n                │ (GPT-4)   │ (Gong, Clari)\n                │           │\n    Low Cost ←──┴───────────┴──→ High Cost\n```\n\n**CAIO·AI Unique Position:**\n• Consultancy-grade methodology\n• SaaS pricing model\n• AI speed & scalability\n\n**Key Differentiator:** Only player with institutional methodology at SaaS economics",
         insights: ["Unique quadrant position", "No direct competitors", "Blue ocean opportunity"]
+      },
+      {
+        title: "Competitive Advantage Analysis",
+        prompt: "What are our sustainable competitive advantages?",
+        response: "**Core Competitive Advantages:**\n\n1. **Proprietary TSI v9.3 Methodology** (Defensibility: High)\n   - 11-module integrated framework\n   - 5+ years of development refinement\n   - Patents pending on cognitive architecture\n\n2. **Network Effects** (Defensibility: High)\n   - Knowledge Graph grows with usage (10K+ connections)\n   - Each client enriches platform intelligence\n   - Switching costs increase over time\n\n3. **Data Moat** (Defensibility: Medium-High)\n   - Strategic decision patterns across industries\n   - Validated frameworks from 100+ implementations\n   - Continuous learning from outcomes\n\n**Sustainability Timeline:**\n• Years 1-2: Methodology + Early network effects\n• Years 3-5: Data moat solidifies\n• Years 5+: Dominant position with high switching costs\n\n**Risk Factors:**\n⚠ OpenAI/Anthropic could build similar methodology\n⚠ Traditional consultancies digitizing offerings\n✓ Mitigation: Speed to scale + vertical specialization",
+        insights: ["Multi-layered defensibility", "Time-based moat deepening", "Clear risk mitigation path"]
+      }
+    ]
+  },
+  M3: {
+    title: "Technology Intelligence Demo",
+    steps: [
+      {
+        title: "Tech Stack Discovery",
+        prompt: "Analyze tech stack for a Series B SaaS competitor",
+        response: "**Frontend Architecture:**\n• React 18.x with TypeScript\n• Next.js 14 for SSR/SSG\n• TailwindCSS + Shadcn/ui component library\n• Vercel deployment (edge functions)\n\n**Backend Infrastructure:**\n• Node.js microservices on AWS EKS\n• PostgreSQL (RDS) + Redis caching\n• GraphQL API layer (Apollo Server)\n• AWS Lambda for async processing\n\n**AI/ML Stack:**\n• OpenAI GPT-4 API (primary)\n• Anthropic Claude (fallback)\n• Pinecone vector database\n• Custom fine-tuning on AWS SageMaker\n\n**Data Engineering:**\n• Airflow for orchestration\n• Snowflake data warehouse\n• dbt for transformations\n• Looker for BI\n\n**Security & Compliance:**\n• SOC2 Type II certified\n• AWS GuardDuty + CloudTrail\n• Encryption at rest (KMS) and in transit (TLS 1.3)\n\n**Cost Estimate:** $45K-65K/month at 10K users",
+        insights: ["Modern stack, high scalability", "Heavy cloud costs", "Strong compliance posture"]
+      },
+      {
+        title: "Innovation Assessment",
+        prompt: "What innovations are they implementing?",
+        response: "**Recent Technology Innovations:**\n\n1. **Real-time Collaborative AI** (Released: Q3 2024)\n   - Multi-user simultaneous editing with AI suggestions\n   - Conflict resolution algorithm (patent pending)\n   - 40% increase in team productivity per internal metrics\n\n2. **Hybrid Search Architecture** (Beta)\n   - Combines semantic (vector) + keyword search\n   - 2.3x improvement in retrieval accuracy\n   - Custom re-ranking model trained on user behavior\n\n3. **Automated Data Pipeline** (In Development)\n   - Auto-ingests data from 50+ sources\n   - Smart schema mapping with LLM\n   - Reduces setup time from 2 weeks to 2 hours\n\n**Technology Roadmap (Next 12 months):**\n• Q1 2025: On-premise deployment option\n• Q2 2025: Mobile app (iOS/Android)\n• Q3 2025: Voice interface integration\n• Q4 2025: Custom model fine-tuning UI\n\n**Innovation Velocity:** 8-12 feature releases/quarter\n**R&D Investment:** 35% of revenue",
+        insights: ["Fast innovation cycle", "Product-led growth focus", "High R&D investment"]
       }
     ]
   }
 };
 
 const sandboxData = {
+  M4: {
+    title: "Financial Modeling Sandbox",
+    scenario: "Series A Startup - Funding Round Planning",
+    context: "Current ARR: $2.5M | Target: $8M ARR by Series B",
+    interactive: true,
+    inputs: {
+      currentARR: { label: "Current ARR ($M)", min: 0, max: 10, default: 2.5, step: 0.5 },
+      targetARR: { label: "Target ARR ($M)", min: 5, max: 50, default: 8, step: 1 },
+      burnRate: { label: "Monthly Burn ($K)", min: 50, max: 500, default: 150, step: 25 },
+      growthRate: { label: "Monthly Growth (%)", min: 5, max: 30, default: 12, step: 1 }
+    },
+    generateInsights: (inputs) => {
+      const monthsToTarget = Math.log(inputs.targetARR / inputs.currentARR) / Math.log(1 + inputs.growthRate / 100);
+      const totalBurn = inputs.burnRate * monthsToTarget / 1000;
+      const requiredFunding = totalBurn * 1.5; // 50% buffer
+      const runway = monthsToTarget;
+      
+      return {
+        title: "AI-Generated Financial Projections",
+        metrics: {
+          "Time to Target": `${Math.round(monthsToTarget)} months`,
+          "Required Funding": `$${requiredFunding.toFixed(1)}M`,
+          "Implied Valuation": `$${(inputs.targetARR * 8).toFixed(0)}M`,
+          "Burn Multiple": (inputs.burnRate / (inputs.currentARR * 1000 / 12)).toFixed(2),
+          "Capital Efficiency": requiredFunding < 10 ? "Excellent" : requiredFunding < 20 ? "Good" : "Moderate"
+        },
+        recommendation: monthsToTarget < 18 && requiredFunding < 15 
+          ? "✅ Strong position for Series A. Focus on growth with current burn."
+          : monthsToTarget > 24 || requiredFunding > 20
+          ? "⚠️ Consider reducing burn or increasing growth rate before fundraising."
+          : "🔄 Balanced trajectory. Optimize unit economics before scaling.",
+        risks: requiredFunding > 15 
+          ? ["High capital requirement may limit investor interest", "Extended timeline increases market risk"]
+          : ["Growing too fast may sacrifice unit economics", "Competition may accelerate while building"],
+        opportunities: [
+          `Raise $${(requiredFunding * 1.2).toFixed(1)}M to extend runway to 24+ months`,
+          "Strategic partnership could reduce CAC by 30-40%",
+          "Enterprise tier could boost ARPU by 2-3x"
+        ]
+      };
+    }
+  },
   M5: {
     title: "Strategic Synthesis Sandbox",
     scenario: "Series B SaaS Company - Growth vs. Profitability",
@@ -151,12 +250,29 @@ export default function InteractiveDemo({ open, onClose }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedOption, setSelectedOption] = useState(null);
   const [showInsights, setShowInsights] = useState(false);
+  const [userInputs, setUserInputs] = useState({});
+  const [generatedInsights, setGeneratedInsights] = useState(null);
+  const [selectedOpportunities, setSelectedOpportunities] = useState([]);
+  const [customScenario, setCustomScenario] = useState("");
 
   const handleModuleSelect = (module) => {
     setSelectedModule(module);
     setCurrentStep(0);
     setSelectedOption(null);
     setShowInsights(false);
+    setUserInputs({});
+    setGeneratedInsights(null);
+    setSelectedOpportunities([]);
+    setCustomScenario("");
+    
+    // Initialize inputs with defaults for M4
+    if (module.id === "M4" && sandboxData.M4?.inputs) {
+      const defaults = {};
+      Object.entries(sandboxData.M4.inputs).forEach(([key, config]) => {
+        defaults[key] = config.default;
+      });
+      setUserInputs(defaults);
+    }
   };
 
   const handleNextStep = () => {
@@ -172,6 +288,32 @@ export default function InteractiveDemo({ open, onClose }) {
     setCurrentStep(0);
     setSelectedOption(null);
     setShowInsights(false);
+    setUserInputs({});
+    setGeneratedInsights(null);
+    setSelectedOpportunities([]);
+    setCustomScenario("");
+  };
+
+  const handleGenerateInsights = () => {
+    if (selectedModule.id === "M4") {
+      const insights = sandboxData.M4.generateInsights(userInputs);
+      setGeneratedInsights(insights);
+    } else if (selectedModule.id === "M6") {
+      const insights = sandboxData.M6.generatePrioritization(selectedOpportunities);
+      setGeneratedInsights(insights);
+    }
+  };
+
+  const handleOpportunityToggle = (opportunity) => {
+    setSelectedOpportunities(prev => {
+      const exists = prev.find(o => o.id === opportunity.id);
+      if (exists) {
+        return prev.filter(o => o.id !== opportunity.id);
+      } else {
+        return [...prev, opportunity];
+      }
+    });
+    setGeneratedInsights(null);
   };
 
   const renderGuidedWalkthrough = () => {
@@ -282,6 +424,283 @@ export default function InteractiveDemo({ open, onClose }) {
   const renderSandbox = () => {
     const sandbox = sandboxData[selectedModule.id];
 
+    // M4 Financial Modeling with user inputs
+    if (selectedModule.id === "M4") {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between mb-4">
+            <Badge className="bg-[#FFC247]/20 text-[#FFC247]">
+              <Sparkles className="w-3 h-3 mr-1" />
+              AI-Powered Financial Modeling
+            </Badge>
+            <Button variant="ghost" size="sm" onClick={handleReset}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <Card className="bg-gradient-to-r from-[#10B981]/10 to-[#00C8FF]/10 border-[#10B981]/30">
+            <CardContent className="p-4">
+              <h3 className="text-white font-semibold mb-2">{sandbox.scenario}</h3>
+              <p className="text-sm text-slate-300">{sandbox.context}</p>
+            </CardContent>
+          </Card>
+
+          {/* Interactive Inputs */}
+          <Card className="bg-white/5 border-white/20">
+            <CardContent className="p-4 space-y-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Edit3 className="w-4 h-4 text-[#00C8FF]" />
+                <h4 className="text-white font-semibold text-sm">Adjust Your Assumptions</h4>
+              </div>
+              
+              {Object.entries(sandbox.inputs).map(([key, config]) => (
+                <div key={key} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <label className="text-slate-300">{config.label}</label>
+                    <span className="text-[#00C8FF] font-semibold">{userInputs[key] || config.default}</span>
+                  </div>
+                  <Slider
+                    value={[userInputs[key] || config.default]}
+                    onValueChange={(values) => {
+                      setUserInputs(prev => ({ ...prev, [key]: values[0] }));
+                      setGeneratedInsights(null);
+                    }}
+                    min={config.min}
+                    max={config.max}
+                    step={config.step}
+                    className="w-full"
+                  />
+                </div>
+              ))}
+
+              <Button
+                onClick={handleGenerateInsights}
+                className="w-full bg-gradient-to-r from-[#00C8FF] to-[#10B981] text-white hover:from-[#00E5FF] hover:to-[#10B981] mt-4"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Generate AI Insights
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* AI Generated Insights */}
+          {generatedInsights && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Card className="bg-gradient-to-br from-[#00C8FF]/10 to-[#10B981]/10 border-[#00C8FF]/40">
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#FFC247]" />
+                    <h4 className="text-white font-semibold">{generatedInsights.title}</h4>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {Object.entries(generatedInsights.metrics).map(([key, value]) => (
+                      <div key={key} className="bg-white/5 rounded-lg p-3">
+                        <p className="text-xs text-slate-400 mb-1">{key}</p>
+                        <p className="text-white font-semibold text-sm">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <p className="text-sm text-slate-200">{generatedInsights.recommendation}</p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-xs text-red-400 font-semibold mb-2 flex items-center gap-1">
+                        <Shield className="w-3 h-3" /> Key Risks
+                      </p>
+                      <ul className="space-y-1">
+                        {generatedInsights.risks.map((risk, idx) => (
+                          <li key={idx} className="text-xs text-slate-300 flex items-start gap-1">
+                            <span className="text-red-400">•</span> {risk}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="text-xs text-green-400 font-semibold mb-2 flex items-center gap-1">
+                        <TrendingUp className="w-3 h-3" /> Opportunities
+                      </p>
+                      <ul className="space-y-1">
+                        {generatedInsights.opportunities.map((opp, idx) => (
+                          <li key={idx} className="text-xs text-slate-300 flex items-start gap-1">
+                            <span className="text-green-400">•</span> {opp}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </div>
+      );
+    }
+
+    // M6 Opportunity Matrix
+    if (selectedModule.id === "M6") {
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between mb-4">
+            <Badge className="bg-[#F59E0B]/20 text-[#F59E0B]">
+              <BarChart3 className="w-3 h-3 mr-1" />
+              Opportunity Prioritization Matrix
+            </Badge>
+            <Button variant="ghost" size="sm" onClick={handleReset}>
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+
+          <Card className="bg-gradient-to-r from-[#F59E0B]/10 to-[#00C8FF]/10 border-[#F59E0B]/30">
+            <CardContent className="p-4">
+              <h3 className="text-white font-semibold mb-2">{sandbox.scenario}</h3>
+              <p className="text-sm text-slate-300 mb-3">{sandbox.context}</p>
+              <p className="text-xs text-slate-400">
+                💡 Select opportunities to analyze portfolio fit and execution sequencing
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Opportunities Grid */}
+          <div className="space-y-3">
+            {sandbox.opportunities.map((opp) => {
+              const isSelected = selectedOpportunities.find(o => o.id === opp.id);
+              const roi = (opp.impact / opp.effort).toFixed(2);
+              
+              return (
+                <motion.div
+                  key={opp.id}
+                  whileHover={{ scale: 1.02 }}
+                  onClick={() => handleOpportunityToggle(opp)}
+                >
+                  <Card className={`cursor-pointer transition-all ${
+                    isSelected
+                      ? 'bg-gradient-to-br from-[#F59E0B]/20 to-[#00C8FF]/20 border-[#F59E0B]/60'
+                      : 'bg-white/5 border-white/20 hover:border-[#F59E0B]/40'
+                  }`}>
+                    <CardContent className="p-4">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <h4 className="text-white font-semibold mb-1">{opp.name}</h4>
+                          <p className="text-xs text-slate-400 mb-2">{opp.description}</p>
+                          <div className="flex gap-2 flex-wrap">
+                            {opp.frameworks.map((fw) => (
+                              <Badge key={fw} className="bg-[#00C8FF]/20 text-[#00C8FF] text-[10px]">
+                                {fw}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <Badge className={`${
+                            roi >= 1.2 ? 'bg-green-500/20 text-green-400' :
+                            roi >= 1.0 ? 'bg-blue-500/20 text-blue-400' :
+                            'bg-yellow-500/20 text-yellow-400'
+                          } text-xs`}>
+                            ROI: {roi}
+                          </Badge>
+                          {isSelected && (
+                            <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-2 text-xs mt-3 pt-3 border-t border-white/10">
+                        <div>
+                          <span className="text-slate-400">Impact: </span>
+                          <span className="text-white font-semibold">{opp.impact}/10</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400">Effort: </span>
+                          <span className="text-white font-semibold">{opp.effort}/10</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-400">Timeline: </span>
+                          <span className="text-white font-semibold">{opp.timeframe}</span>
+                        </div>
+                      </div>
+                      <div className="text-xs text-slate-400 mt-2">
+                        💰 {opp.revenue}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {selectedOpportunities.length > 0 && (
+            <Button
+              onClick={handleGenerateInsights}
+              className="w-full bg-gradient-to-r from-[#F59E0B] to-[#00C8FF] text-white hover:from-[#FF9500] hover:to-[#00E5FF]"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              Analyze Portfolio ({selectedOpportunities.length} selected)
+            </Button>
+          )}
+
+          {/* Portfolio Analysis */}
+          {generatedInsights && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              <Card className="bg-gradient-to-br from-[#F59E0B]/10 to-[#00C8FF]/10 border-[#F59E0B]/40">
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-[#FFC247]" />
+                    <h4 className="text-white font-semibold">Portfolio Analysis</h4>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <p className="text-xs text-slate-400 mb-1">Portfolio Score</p>
+                      <p className="text-2xl font-bold text-[#F59E0B]">{generatedInsights.score}/10</p>
+                    </div>
+                    <div className="bg-white/5 rounded-lg p-3">
+                      <p className="text-xs text-slate-400 mb-1">Execution Risk</p>
+                      <p className="text-sm text-white font-semibold">{generatedInsights.parallelExecutionRisk}</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <p className="text-xs text-slate-400 mb-2">Resource Requirement</p>
+                    <p className="text-sm text-slate-200">{generatedInsights.resourceRequirement}</p>
+                  </div>
+
+                  <div className="bg-white/5 rounded-lg p-3">
+                    <p className="text-sm text-slate-200">{generatedInsights.recommendation}</p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-[#00C8FF] font-semibold mb-2">Recommended Sequencing:</p>
+                    <div className="space-y-2">
+                      {generatedInsights.sequencing.map((opp, idx) => (
+                        <div key={opp.id} className="flex items-center gap-3 bg-white/5 rounded-lg p-2">
+                          <Badge className="bg-[#F59E0B]/20 text-[#F59E0B]">
+                            #{idx + 1}
+                          </Badge>
+                          <span className="text-sm text-white flex-1">{opp.name}</span>
+                          <span className="text-xs text-slate-400">ROI: {(opp.impact / opp.effort).toFixed(2)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </div>
+      );
+    }
+
+    // M5 Strategic Synthesis (existing)
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between mb-4">
@@ -293,7 +712,6 @@ export default function InteractiveDemo({ open, onClose }) {
           </Button>
         </div>
 
-        {/* Scenario Context */}
         <Card className="bg-gradient-to-r from-[#00C8FF]/10 to-[#FFC247]/10 border-[#00C8FF]/30">
           <CardContent className="p-4">
             <h3 className="text-white font-semibold mb-2">{sandbox.scenario}</h3>
