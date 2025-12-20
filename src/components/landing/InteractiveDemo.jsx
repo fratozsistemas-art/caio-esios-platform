@@ -144,7 +144,10 @@ const guidedWalkthroughs = {
         insights: ["Fast innovation cycle", "Product-led growth focus", "High R&D investment"]
       }
     ]
-  },
+  }
+};
+
+const guidedWalkthroughsM2M3 = {
   M2: {
     title: "Competitive Intelligence Demo",
     steps: [
@@ -399,7 +402,7 @@ export default function InteractiveDemo({ open, onClose }) {
   };
 
   const handleNextStep = () => {
-    const module = guidedWalkthroughs[selectedModule.id];
+    const module = guidedWalkthroughs[selectedModule.id] || guidedWalkthroughsM2M3[selectedModule.id];
     if (module && currentStep < module.steps.length - 1) {
       setCurrentStep(currentStep + 1);
       setShowInsights(false);
@@ -440,7 +443,7 @@ export default function InteractiveDemo({ open, onClose }) {
   };
 
   const renderGuidedWalkthrough = () => {
-    const walkthrough = guidedWalkthroughs[selectedModule.id];
+    const walkthrough = guidedWalkthroughs[selectedModule.id] || guidedWalkthroughsM2M3[selectedModule.id];
     const step = walkthrough.steps[currentStep];
 
     return (
