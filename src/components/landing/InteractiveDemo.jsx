@@ -930,6 +930,92 @@ export default function InteractiveDemo({ open, onClose }) {
           </motion.div>
         )}
 
+        {/* Custom Scenario Input for M5 */}
+        {sandbox.customInputEnabled && !selectedOption && (
+          <Card className="bg-white/5 border-white/20">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Edit3 className="w-4 h-4 text-[#00C8FF]" />
+                <h4 className="text-white font-semibold text-sm">Or Describe Your Own Scenario</h4>
+              </div>
+              <Textarea
+                value={customScenario}
+                onChange={(e) => setCustomScenario(e.target.value)}
+                placeholder="E.g., 'We're a B2B marketplace with 50K sellers. Facing margin pressure from Amazon. Should we verticalize or go full-stack commerce?'"
+                className="bg-[#0A1628] border-[#00C8FF]/30 text-white placeholder:text-slate-500 min-h-[80px]"
+              />
+              <Button
+                onClick={() => {
+                  if (customScenario.trim()) {
+                    setGeneratedInsights({
+                      title: "AI Strategic Analysis",
+                      scenario: customScenario,
+                      recommendation: "Based on your scenario, CAIO would orchestrate M1 (Market), M2 (Competitive), M4 (Financial), and M5 (Synthesis) modules to provide a comprehensive strategic recommendation. In the full platform, this would include real-time data integration, stakeholder analysis, and actionable implementation roadmap.",
+                      frameworks: ["HYBRID", "CSI", "EVA"],
+                      nextSteps: [
+                        "Market sizing and competitive landscape (M1, M2)",
+                        "Financial modeling for scenarios (M4)",
+                        "Strategic options synthesis (M5)",
+                        "Risk assessment and mitigation (M11)"
+                      ]
+                    });
+                  }
+                }}
+                className="w-full mt-3 bg-gradient-to-r from-[#00C8FF] to-[#FFC247] text-white hover:from-[#00E5FF] hover:to-[#FFD247]"
+                disabled={!customScenario.trim()}
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                Analyze My Scenario
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Custom Scenario Insights */}
+        {customScenario && generatedInsights && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <Card className="bg-gradient-to-br from-[#00C8FF]/10 to-[#FFC247]/10 border-[#00C8FF]/40">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#FFC247]" />
+                  <h4 className="text-white font-semibold">{generatedInsights.title}</h4>
+                </div>
+
+                <div className="bg-white/5 rounded-lg p-3">
+                  <p className="text-xs text-slate-400 mb-2">Strategic Recommendation:</p>
+                  <p className="text-sm text-slate-200">{generatedInsights.recommendation}</p>
+                </div>
+
+                <div>
+                  <p className="text-xs text-[#00C8FF] font-semibold mb-2">Frameworks Applied:</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {generatedInsights.frameworks.map((fw) => (
+                      <Badge key={fw} className="bg-[#00C8FF]/20 text-[#00C8FF] text-xs">
+                        {fw}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-xs text-[#10B981] font-semibold mb-2">Next Steps in Full Platform:</p>
+                  <ul className="space-y-1">
+                    {generatedInsights.nextSteps.map((step, idx) => (
+                      <li key={idx} className="text-xs text-slate-300 flex items-start gap-2">
+                        <CheckCircle className="w-3 h-3 text-[#10B981] flex-shrink-0 mt-0.5" />
+                        {step}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         {selectedOption && (
           <div className="text-center pt-4">
             <p className="text-xs text-slate-400 mb-3">
