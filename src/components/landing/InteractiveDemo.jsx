@@ -168,22 +168,100 @@ const guidedWalkthroughs = {
       }
     ]
   },
-  M3: {
-    title: "Technology Intelligence Demo",
-    steps: [
-      {
-        title: "Tech Stack Discovery",
-        prompt: "Analyze tech stack for a Series B SaaS competitor",
-        response: "**Frontend Architecture:**\n• React 18.x with TypeScript\n• Next.js 14 for SSR/SSG\n• TailwindCSS + Shadcn/ui component library\n• Vercel deployment (edge functions)\n\n**Backend Infrastructure:**\n• Node.js microservices on AWS EKS\n• PostgreSQL (RDS) + Redis caching\n• GraphQL API layer (Apollo Server)\n• AWS Lambda for async processing\n\n**AI/ML Stack:**\n• OpenAI GPT-4 API (primary)\n• Anthropic Claude (fallback)\n• Pinecone vector database\n• Custom fine-tuning on AWS SageMaker\n\n**Data Engineering:**\n• Airflow for orchestration\n• Snowflake data warehouse\n• dbt for transformations\n• Looker for BI\n\n**Security & Compliance:**\n• SOC2 Type II certified\n• AWS GuardDuty + CloudTrail\n• Encryption at rest (KMS) and in transit (TLS 1.3)\n\n**Cost Estimate:** $45K-65K/month at 10K users",
-        insights: ["Modern stack, high scalability", "Heavy cloud costs", "Strong compliance posture"]
-      },
-      {
-        title: "Innovation Assessment",
-        prompt: "What innovations are they implementing?",
-        response: "**Recent Technology Innovations:**\n\n1. **Real-time Collaborative AI** (Released: Q3 2024)\n   - Multi-user simultaneous editing with AI suggestions\n   - Conflict resolution algorithm (patent pending)\n   - 40% increase in team productivity per internal metrics\n\n2. **Hybrid Search Architecture** (Beta)\n   - Combines semantic (vector) + keyword search\n   - 2.3x improvement in retrieval accuracy\n   - Custom re-ranking model trained on user behavior\n\n3. **Automated Data Pipeline** (In Development)\n   - Auto-ingests data from 50+ sources\n   - Smart schema mapping with LLM\n   - Reduces setup time from 2 weeks to 2 hours\n\n**Technology Roadmap (Next 12 months):**\n• Q1 2025: On-premise deployment option\n• Q2 2025: Mobile app (iOS/Android)\n• Q3 2025: Voice interface integration\n• Q4 2025: Custom model fine-tuning UI\n\n**Innovation Velocity:** 8-12 feature releases/quarter\n**R&D Investment:** 35% of revenue",
-        insights: ["Fast innovation cycle", "Product-led growth focus", "High R&D investment"]
-      }
-    ]
+  M3_DUPLICATE_REMOVE: {
+    // This is a duplicate entry - removing it
+  }
+};
+
+// M6 Opportunity Matrix Data
+const opportunityMatrixData = {
+  scenario: "SaaS Platform - Growth Opportunities",
+  context: "Current ARR: $15M | Team: 120 people | Runway: 18 months",
+  opportunities: [
+    {
+      id: "enterprise",
+      name: "Enterprise Tier Launch",
+      description: "Launch dedicated enterprise offering with SSO, SLA, dedicated support",
+      impact: 9,
+      effort: 7,
+      timeframe: "6 months",
+      revenue: "$8-12M additional ARR",
+      frameworks: ["EVA", "CSI"]
+    },
+    {
+      id: "api",
+      name: "API Platform",
+      description: "Public API with usage-based pricing for developers",
+      impact: 7,
+      effort: 5,
+      timeframe: "4 months",
+      revenue: "$2-4M additional ARR",
+      frameworks: ["NIA", "HYBRID"]
+    },
+    {
+      id: "vertical",
+      name: "Vertical Specialization",
+      description: "Build industry-specific features for FinTech vertical",
+      impact: 8,
+      effort: 8,
+      timeframe: "9 months",
+      revenue: "$6-10M additional ARR",
+      frameworks: ["CSI", "VTE"]
+    },
+    {
+      id: "international",
+      name: "EU Expansion",
+      description: "Localize product and establish EU sales team",
+      impact: 9,
+      effort: 9,
+      timeframe: "12 months",
+      revenue: "$10-15M additional ARR",
+      frameworks: ["ABRA", "EVA"]
+    },
+    {
+      id: "integration",
+      name: "Marketplace Integrations",
+      description: "Build 20+ native integrations with popular tools",
+      impact: 6,
+      effort: 4,
+      timeframe: "3 months",
+      revenue: "$1-2M additional ARR",
+      frameworks: ["NIA"]
+    }
+  ],
+  generatePrioritization: (selectedOpps) => {
+    const totalImpact = selectedOpps.reduce((sum, opp) => sum + opp.impact, 0);
+    const totalEffort = selectedOpps.reduce((sum, opp) => sum + opp.effort, 0);
+    const avgROI = selectedOpps.length > 0 ? (totalImpact / totalEffort) : 0;
+    const score = Math.min(10, avgROI * 1.2);
+    
+    const sortedOpps = [...selectedOpps].sort((a, b) => (b.impact / b.effort) - (a.impact / a.effort));
+    
+    const risk = selectedOpps.length > 3 
+      ? "High - Too many parallel initiatives"
+      : selectedOpps.length > 2
+      ? "Medium - Significant coordination needed"
+      : "Low - Manageable execution";
+    
+    const resourceReq = totalEffort > 20 
+      ? "Requires additional hiring (15-20 people)"
+      : totalEffort > 12
+      ? "Can execute with current team + 5-10 hires"
+      : "Achievable with current resources";
+    
+    const recommendation = selectedOpps.length === 1
+      ? "✅ Focus strategy - high execution probability"
+      : selectedOpps.length === 2
+      ? "🔄 Balanced approach - sequence carefully"
+      : "⚠️ Consider prioritizing top 2 opportunities for better execution";
+    
+    return {
+      score: score.toFixed(1),
+      parallelExecutionRisk: risk,
+      resourceRequirement: resourceReq,
+      recommendation,
+      sequencing: sortedOpps
+    };
   }
 };
 
@@ -283,8 +361,11 @@ const sandboxData = {
         pros: ["Quick profitability", "Strong unit economics", "Reduced risk"],
         cons: ["Market share loss", "Slower growth", "Talent challenges"]
       }
-    ]
-  }
+    ],
+    userInput: true,
+    customInputEnabled: true
+  },
+  M6: opportunityMatrixData
 };
 
 export default function InteractiveDemo({ open, onClose }) {
@@ -845,92 +926,6 @@ export default function InteractiveDemo({ open, onClose }) {
             </motion.div>
           ))}
         </div>
-
-        {/* Custom Scenario Input for M5 */}
-        {sandbox.customInputEnabled && !selectedOption && (
-          <Card className="bg-white/5 border-white/20">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Edit3 className="w-4 h-4 text-[#00C8FF]" />
-                <h4 className="text-white font-semibold text-sm">Or Describe Your Own Scenario</h4>
-              </div>
-              <Textarea
-                value={customScenario}
-                onChange={(e) => setCustomScenario(e.target.value)}
-                placeholder="E.g., 'We're a B2B marketplace with 50K sellers. Facing margin pressure from Amazon. Should we verticalize or go full-stack commerce?'"
-                className="bg-[#0A1628] border-[#00C8FF]/30 text-white placeholder:text-slate-500 min-h-[80px]"
-              />
-              <Button
-                onClick={() => {
-                  if (customScenario.trim()) {
-                    setGeneratedInsights({
-                      title: "AI Strategic Analysis",
-                      scenario: customScenario,
-                      recommendation: "Based on your scenario, CAIO would orchestrate M1 (Market), M2 (Competitive), M4 (Financial), and M5 (Synthesis) modules to provide a comprehensive strategic recommendation. In the full platform, this would include real-time data integration, stakeholder analysis, and actionable implementation roadmap.",
-                      frameworks: ["HYBRID", "CSI", "EVA"],
-                      nextSteps: [
-                        "Market sizing and competitive landscape (M1, M2)",
-                        "Financial modeling for scenarios (M4)",
-                        "Strategic options synthesis (M5)",
-                        "Risk assessment and mitigation (M11)"
-                      ]
-                    });
-                  }
-                }}
-                className="w-full mt-3 bg-gradient-to-r from-[#00C8FF] to-[#FFC247] text-white hover:from-[#00E5FF] hover:to-[#FFD247]"
-                disabled={!customScenario.trim()}
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                Analyze My Scenario
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Custom Scenario Insights */}
-        {customScenario && generatedInsights && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <Card className="bg-gradient-to-br from-[#00C8FF]/10 to-[#FFC247]/10 border-[#00C8FF]/40">
-              <CardContent className="p-4 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-[#FFC247]" />
-                  <h4 className="text-white font-semibold">{generatedInsights.title}</h4>
-                </div>
-
-                <div className="bg-white/5 rounded-lg p-3">
-                  <p className="text-xs text-slate-400 mb-2">Strategic Recommendation:</p>
-                  <p className="text-sm text-slate-200">{generatedInsights.recommendation}</p>
-                </div>
-
-                <div>
-                  <p className="text-xs text-[#00C8FF] font-semibold mb-2">Frameworks Applied:</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {generatedInsights.frameworks.map((fw) => (
-                      <Badge key={fw} className="bg-[#00C8FF]/20 text-[#00C8FF] text-xs">
-                        {fw}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <p className="text-xs text-[#10B981] font-semibold mb-2">Next Steps in Full Platform:</p>
-                  <ul className="space-y-1">
-                    {generatedInsights.nextSteps.map((step, idx) => (
-                      <li key={idx} className="text-xs text-slate-300 flex items-start gap-2">
-                        <CheckCircle className="w-3 h-3 text-[#10B981] flex-shrink-0 mt-0.5" />
-                        {step}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
 
         {/* Custom Scenario Input for M5 */}
         {sandbox.customInputEnabled && !selectedOption && (

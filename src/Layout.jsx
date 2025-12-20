@@ -45,6 +45,7 @@ import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext
 import LanguageSwitcher from './components/i18n/LanguageSwitcher';
 import WelcomeModal from './components/onboarding/WelcomeModal';
 import { RBACProvider } from './components/rbac/RBACWrapper';
+// Cache-buster v2.1 - Database error fix
 
 function LayoutInner({ children, currentPageName }) {
   const { t } = useLanguage();
