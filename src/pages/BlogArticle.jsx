@@ -425,6 +425,8 @@ export default function BlogArticle() {
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = parseInt(urlParams.get('id') || '1');
   const article = ARTICLES[articleId];
+  
+  // Force rebuild to clear cache
 
   if (!article) {
     return (
