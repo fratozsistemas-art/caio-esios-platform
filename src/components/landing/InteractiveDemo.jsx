@@ -101,7 +101,9 @@ const guidedWalkthroughs = {
         response: "**Strategic Market Assessment:**\n\n✓ **Market Opportunity**: $142.3B TAM, growing 38.1% CAGR\n✓ **Sweet Spot**: Enterprise Strategic Intelligence ($18.7B SAM)\n✓ **Timing**: Optimal - peak AI adoption + consultant cost pressure\n✓ **Entry Barrier**: Regulatory compliance manageable with SOC2/GDPR\n\n**Recommendation**: Strong GO signal with focus on Fortune 500 tech/finance verticals.",
         insights: ["Large addressable market", "Clear product-market fit", "Favorable timing"]
       }
-    ]
+    ],
+    userInput: true,
+    customInputEnabled: true
   },
   M2: {
     title: "Competitive Intelligence Demo",
