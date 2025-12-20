@@ -142,6 +142,46 @@ const guidedWalkthroughs = {
         insights: ["Fast innovation cycle", "Product-led growth focus", "High R&D investment"]
       }
     ]
+  },
+  M2: {
+    title: "Competitive Intelligence Demo",
+    steps: [
+      {
+        title: "Competitive Landscape",
+        prompt: "Map competitive landscape for enterprise AI strategic tools",
+        response: "**5 Forces Analysis:**\n\n**Rivalry (High):**\n• McKinsey Lilli, BCG Gamma, Bain AI Labs\n• Generic LLMs: ChatGPT Enterprise, Claude for Work\n• Specialized: Gong, Clari (vertical focus)\n\n**Threat of New Entrants (Medium):**\n• High capital for AI development\n• Strong network effects with knowledge graphs\n• Regulatory barriers create moat\n\n**Buyer Power (Medium-High):**\n• Enterprise clients price-sensitive\n• Multiple alternatives available\n• Switching costs moderate\n\n**Supplier Power (Low):**\n• Multiple LLM providers (OpenAI, Anthropic, open-source)\n• Cloud infrastructure commoditized",
+        insights: ["Consultancies main competition", "LLMs lack methodology", "Clear differentiation path"]
+      },
+      {
+        title: "Positioning Matrix",
+        prompt: "Where do we position vs. alternatives?",
+        response: "**2x2 Strategic Positioning:**\n\n```\nHigh Methodology │ CAIO·AI ⭐│ Consultancies\n                │           │ (BCG, McKinsey)\n                │           │\n                │           │\n                ├───────────┼──────────────\nGeneric AI      │ LLMs      │ Specialized\n                │ (GPT-4)   │ (Gong, Clari)\n                │           │\n    Low Cost ←──┴───────────┴──→ High Cost\n```\n\n**CAIO·AI Unique Position:**\n• Consultancy-grade methodology\n• SaaS pricing model\n• AI speed & scalability\n\n**Key Differentiator:** Only player with institutional methodology at SaaS economics",
+        insights: ["Unique quadrant position", "No direct competitors", "Blue ocean opportunity"]
+      },
+      {
+        title: "Competitive Advantage Analysis",
+        prompt: "What are our sustainable competitive advantages?",
+        response: "**Core Competitive Advantages:**\n\n1. **Proprietary TSI v9.3 Methodology** (Defensibility: High)\n   - 11-module integrated framework\n   - 5+ years of development refinement\n   - Patents pending on cognitive architecture\n\n2. **Network Effects** (Defensibility: High)\n   - Knowledge Graph grows with usage (10K+ connections)\n   - Each client enriches platform intelligence\n   - Switching costs increase over time\n\n3. **Data Moat** (Defensibility: Medium-High)\n   - Strategic decision patterns across industries\n   - Validated frameworks from 100+ implementations\n   - Continuous learning from outcomes\n\n**Sustainability Timeline:**\n• Years 1-2: Methodology + Early network effects\n• Years 3-5: Data moat solidifies\n• Years 5+: Dominant position with high switching costs\n\n**Risk Factors:**\n⚠ OpenAI/Anthropic could build similar methodology\n⚠ Traditional consultancies digitizing offerings\n✓ Mitigation: Speed to scale + vertical specialization",
+        insights: ["Multi-layered defensibility", "Time-based moat deepening", "Clear risk mitigation path"]
+      }
+    ]
+  },
+  M3: {
+    title: "Technology Intelligence Demo",
+    steps: [
+      {
+        title: "Tech Stack Discovery",
+        prompt: "Analyze tech stack for a Series B SaaS competitor",
+        response: "**Frontend Architecture:**\n• React 18.x with TypeScript\n• Next.js 14 for SSR/SSG\n• TailwindCSS + Shadcn/ui component library\n• Vercel deployment (edge functions)\n\n**Backend Infrastructure:**\n• Node.js microservices on AWS EKS\n• PostgreSQL (RDS) + Redis caching\n• GraphQL API layer (Apollo Server)\n• AWS Lambda for async processing\n\n**AI/ML Stack:**\n• OpenAI GPT-4 API (primary)\n• Anthropic Claude (fallback)\n• Pinecone vector database\n• Custom fine-tuning on AWS SageMaker\n\n**Data Engineering:**\n• Airflow for orchestration\n• Snowflake data warehouse\n• dbt for transformations\n• Looker for BI\n\n**Security & Compliance:**\n• SOC2 Type II certified\n• AWS GuardDuty + CloudTrail\n• Encryption at rest (KMS) and in transit (TLS 1.3)\n\n**Cost Estimate:** $45K-65K/month at 10K users",
+        insights: ["Modern stack, high scalability", "Heavy cloud costs", "Strong compliance posture"]
+      },
+      {
+        title: "Innovation Assessment",
+        prompt: "What innovations are they implementing?",
+        response: "**Recent Technology Innovations:**\n\n1. **Real-time Collaborative AI** (Released: Q3 2024)\n   - Multi-user simultaneous editing with AI suggestions\n   - Conflict resolution algorithm (patent pending)\n   - 40% increase in team productivity per internal metrics\n\n2. **Hybrid Search Architecture** (Beta)\n   - Combines semantic (vector) + keyword search\n   - 2.3x improvement in retrieval accuracy\n   - Custom re-ranking model trained on user behavior\n\n3. **Automated Data Pipeline** (In Development)\n   - Auto-ingests data from 50+ sources\n   - Smart schema mapping with LLM\n   - Reduces setup time from 2 weeks to 2 hours\n\n**Technology Roadmap (Next 12 months):**\n• Q1 2025: On-premise deployment option\n• Q2 2025: Mobile app (iOS/Android)\n• Q3 2025: Voice interface integration\n• Q4 2025: Custom model fine-tuning UI\n\n**Innovation Velocity:** 8-12 feature releases/quarter\n**R&D Investment:** 35% of revenue",
+        insights: ["Fast innovation cycle", "Product-led growth focus", "High R&D investment"]
+      }
+    ]
   }
 };
 
