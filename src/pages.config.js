@@ -112,6 +112,7 @@ import AEGISProtocol from './pages/AEGISProtocol';
 import MLflowDashboard from './pages/MLflowDashboard';
 import Pricing from './pages/Pricing';
 import ConversationHistory from './pages/ConversationHistory';
+import Reports from './pages/Reports';
 import __Layout from './Layout.jsx';
 
 
@@ -230,6 +231,7 @@ export const PAGES = {
     "MLflowDashboard": MLflowDashboard,
     "Pricing": Pricing,
     "ConversationHistory": ConversationHistory,
+    "Reports": Reports,
 }
 
 export const pagesConfig = {
