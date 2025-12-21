@@ -1,3 +1,4 @@
+import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Code, Server, Cloud, Database, Cpu, Shield } from "lucide-react";
 
@@ -18,7 +19,7 @@ export default function TechStackVisualization({ techStack }) {
     },
     {
       title: "Backend",
-      icon: Server,
+      icon: Server || fallbackIcon,
       color: "purple",
       data: techStack.backend,
       sections: [
@@ -29,7 +30,7 @@ export default function TechStackVisualization({ techStack }) {
     },
     {
       title: "Infrastructure",
-      icon: Cloud,
+      icon: Cloud || fallbackIcon,
       color: "cyan",
       data: techStack.infrastructure,
       sections: [
@@ -51,7 +52,7 @@ export default function TechStackVisualization({ techStack }) {
     },
     {
       title: "AI/ML",
-      icon: Cpu,
+      icon: Cpu || fallbackIcon,
       color: "pink",
       data: techStack.ai_ml_capabilities,
       sections: [
@@ -62,7 +63,7 @@ export default function TechStackVisualization({ techStack }) {
     },
     {
       title: "Security",
-      icon: Shield,
+      icon: Shield || fallbackIcon,
       color: "red",
       data: techStack.security_compliance,
       sections: [
