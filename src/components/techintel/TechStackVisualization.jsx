@@ -1,6 +1,8 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
-import { Code, Server, Cloud, Database as DatabaseIcon, Cpu, Shield } from "lucide-react";
+import { Code, Server, Cloud, Cpu, Shield, HardDrive } from "lucide-react";
+
+const DatabaseIcon = HardDrive;
 
 export default function TechStackVisualization({ techStack }) {
   if (!techStack) return null;
