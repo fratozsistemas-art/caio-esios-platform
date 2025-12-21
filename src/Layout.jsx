@@ -116,6 +116,7 @@ function LayoutInner({ children, currentPageName }) {
             {
               title: t('nav.dataIngestion', 'Data'),
               items: [
+                { name: t('nav.marketDataHub', 'Market Data Hub'), icon: TrendingUp, path: 'MarketDataHub', badge: 'NEW' },
                 { name: t('nav.companyDiscovery', 'Company Discovery'), icon: Building2, path: 'CompanyDiscovery' },
                 { name: t('nav.batchIngestion', 'Batch Ingestion'), icon: Upload, path: 'BatchIngestion' },
                 { name: t('nav.cvmGraph', 'CVM Graph'), icon: Server, path: 'CVMGraph' }

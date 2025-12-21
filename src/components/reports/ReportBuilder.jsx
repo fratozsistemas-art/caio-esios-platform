@@ -39,7 +39,9 @@ export default function ReportBuilder({ onClose, onGenerate, initialData }) {
     { id: 'strategies', label: 'Strategies', count: strategies.length },
     { id: 'analyses', label: 'Analyses', count: analyses.length },
     { id: 'knowledge_graph', label: 'Knowledge Graph', count: 'N/A' },
-    { id: 'conversations', label: 'Conversations', count: 'N/A' }
+    { id: 'conversations', label: 'Conversations', count: 'N/A' },
+    { id: 'market_news', label: 'Market News (External)', count: 'Live', badge: 'External' },
+    { id: 'stock_data', label: 'Stock Data (External)', count: 'Live', badge: 'External' }
   ];
 
   const handleGenerate = () => {
@@ -183,7 +185,14 @@ export default function ReportBuilder({ onClose, onGenerate, initialData }) {
                           onCheckedChange={() => toggleDataSource(source.id)}
                         />
                         <div>
-                          <p className="text-white font-medium">{source.label}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-white font-medium">{source.label}</p>
+                            {source.badge && (
+                              <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
+                                {source.badge}
+                              </Badge>
+                            )}
+                          </div>
                           <p className="text-xs text-slate-400">{source.count} items</p>
                         </div>
                       </div>

@@ -113,6 +113,7 @@ import MLflowDashboard from './pages/MLflowDashboard';
 import Pricing from './pages/Pricing';
 import ConversationHistory from './pages/ConversationHistory';
 import Reports from './pages/Reports';
+import MarketDataHub from './pages/MarketDataHub';
 import __Layout from './Layout.jsx';
 
 
@@ -232,6 +233,7 @@ export const PAGES = {
     "Pricing": Pricing,
     "ConversationHistory": ConversationHistory,
     "Reports": Reports,
+    "MarketDataHub": MarketDataHub,
 }
 
 export const pagesConfig = {

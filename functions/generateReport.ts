@@ -35,6 +35,20 @@ Deno.serve(async (req) => {
       };
     }
 
+    // Fetch external market data
+    if (data_sources.includes('market_news')) {
+      try {
+        const newsResponse = await base44.asServiceRole.functions.invoke('fetchMarketNews', {
+          query: context?.market_query || 'business strategy',
+          pageSize: 5
+        });
+        reportData.market_news = newsResponse.data?.articles || [];
+      } catch (error) {
+        console.warn('Failed to fetch market news:', error);
+        reportData.market_news = [];
+      }
+    }
+
     let file_url = null;
 
     // Generate report based on format
