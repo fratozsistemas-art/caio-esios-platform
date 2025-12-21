@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Zap, CheckCircle, XCircle, Clock, Search, Download, Filter, Database } from "lucide-react";
+import { Zap, CheckCircle, XCircle, Clock, Search, Download, Database } from "lucide-react";
 import { exportToCSV, exportToPDF } from "./ExportUtils";
 
 export default function IntegrationStatusPanel() {
@@ -111,7 +111,6 @@ export default function IntegrationStatusPanel() {
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[140px] bg-white/5 border-white/10 text-white">
-                <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent className="bg-[#0A1628] border-white/20">

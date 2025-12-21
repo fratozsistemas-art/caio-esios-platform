@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, XCircle, AlertTriangle, Search, FileCode, Download, Filter, Database } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Search, FileCode, Download, Database } from "lucide-react";
 import ComponentDetailModal from "./ComponentDetailModal";
 import { exportToCSV, exportToPDF } from "./ExportUtils";
 
@@ -187,7 +187,6 @@ export default function ComponentHealthPanel() {
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[140px] bg-white/5 border-white/10 text-white">
-                <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent className="bg-[#0A1628] border-white/20">
@@ -200,7 +199,6 @@ export default function ComponentHealthPanel() {
 
             <Select value={typeFilter} onValueChange={setTypeFilter}>
               <SelectTrigger className="w-[140px] bg-white/5 border-white/10 text-white">
-                <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
               <SelectContent className="bg-[#0A1628] border-white/20">
