@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   CheckCircle, XCircle, AlertCircle, Loader2, RefreshCw,
-  Server, Network, Brain, Zap, FileText, MessageSquare
+  Server, Network, Brain, Zap, FileText, MessageSquare, Database
 } from "lucide-react";
 import { toast } from "sonner";
 
