@@ -165,6 +165,28 @@ async function generatePDFReport(data, config) {
     });
   }
 
+  // Market News section
+  if (data.market_news && data.market_news.length > 0) {
+    doc.addPage();
+    doc.setFontSize(14);
+    doc.text('Market Intelligence', 20, 20);
+    y = 30;
+    
+    doc.setFontSize(10);
+    data.market_news.slice(0, 5).forEach((article) => {
+      if (y > 260) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.text(`• ${article.title}`, 25, y);
+      y += 6;
+      doc.setFontSize(8);
+      doc.text(`  Source: ${article.source} | ${new Date(article.publishedAt).toLocaleDateString()}`, 27, y);
+      y += 8;
+      doc.setFontSize(10);
+    });
+  }
+
   // Recommendations
   if (include_recommendations) {
     doc.addPage();

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Newspaper, TrendingUp, Search, ExternalLink, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import NewsAnalyticsChart from "./NewsAnalyticsChart";
 
 export default function MarketDataPanel() {
   const [query, setQuery] = useState("artificial intelligence");
@@ -134,6 +135,12 @@ export default function MarketDataPanel() {
             </motion.div>
           ))}
         </div>
+
+        {news.length > 0 && (
+          <div className="mt-6">
+            <NewsAnalyticsChart articles={news} />
+          </div>
+        )}
       </CardContent>
     </Card>
   );

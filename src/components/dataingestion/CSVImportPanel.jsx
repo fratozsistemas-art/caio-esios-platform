@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Upload, FileSpreadsheet, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
+import CSVDataVisualizer from "./CSVDataVisualizer";
 
 export default function CSVImportPanel() {
   const [file, setFile] = useState(null);
@@ -135,6 +136,15 @@ export default function CSVImportPanel() {
               Import Another File
             </Button>
           </motion.div>
+        )}
+
+        {result && result.preview && result.preview.length > 0 && (
+          <div className="mt-6">
+            <CSVDataVisualizer 
+              data={result.preview} 
+              headers={Object.keys(result.preview[0] || {})} 
+            />
+          </div>
         )}
       </CardContent>
     </Card>

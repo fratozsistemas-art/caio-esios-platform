@@ -5,20 +5,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, DollarSign, Search } from "lucide-react";
+import StockChart from "./StockChart";
 
 export default function StockDataWidget() {
   const [symbol, setSymbol] = useState("AAPL");
   const [stockData, setStockData] = useState(null);
+  const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   const fetchStock = async () => {
     setLoading(true);
     try {
-      const { data } = await base44.functions.invoke('fetchStockData', { 
-        symbol: symbol.toUpperCase(),
-        metric: 'quote'
-      });
-      setStockData(data.data['Global Quote']);
+      const [quoteRes, timeSeriesRes] = await Promise.all([
+        base44.functions.invoke('fetchStockData', { 
+          symbol: symbol.toUpperCase(),
+          metric: 'quote'
+        }),
+        base44.functions.invoke('fetchStockTimeSeries', { 
+          symbol: symbol.toUpperCase()
+        })
+      ]);
+      
+      setStockData(quoteRes.data.data['Global Quote']);
+      setChartData(timeSeriesRes.data.chartData);
     } catch (error) {
       console.error('Error fetching stock:', error);
     } finally {
@@ -96,6 +105,12 @@ export default function StockDataWidget() {
                 <p className="text-white font-medium">{parseInt(stockData['06. volume']).toLocaleString()}</p>
               </div>
             </div>
+          </div>
+        )}
+
+        {chartData && (
+          <div className="mt-6">
+            <StockChart data={chartData} symbol={symbol} chartType="area" />
           </div>
         )}
       </CardContent>
