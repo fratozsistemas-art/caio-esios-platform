@@ -25,6 +25,7 @@ import RealTimeMetrics from "../components/dashboard/RealTimeMetrics";
 import DashboardCustomizer from "../components/dashboard/DashboardCustomizer";
 import ComplianceWidget from "../components/compliance/ComplianceWidget";
 import OnboardingStatusWidget from "../components/dashboard/OnboardingStatusWidget";
+import DeploymentStatusWidget from "../components/dashboard/DeploymentStatusWidget";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -34,8 +35,8 @@ export default function Dashboard() {
   const [userRole, setUserRole] = useState(null);
   const [dashboardLayout, setDashboardLayout] = useState(() => {
     const saved = localStorage.getItem('dashboard_layout');
-    return saved ? JSON.parse(saved) : ['realtime', 'stats', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
-  });
+      return saved ? JSON.parse(saved) : ['realtime', 'stats', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
+    });
   const [engagementData, setEngagementData] = useState([]);
   const [roiData, setRoiData] = useState([]);
   const [adoptionData, setAdoptionData] = useState([]);
@@ -209,39 +210,41 @@ export default function Dashboard() {
   const actionItems = extractActionItems();
 
   const renderWidget = (widgetId) => {
-    switch (widgetId) {
-      case 'realtime':
-        return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
-      case 'stats':
-        return <QuickStatsWidget key={widgetId} stats={quickStats} />;
-      case 'onboarding':
-        return <OnboardingStatusWidget key={widgetId} />;
-      case 'engagement':
-        return <UserEngagementChart key={widgetId} data={engagementData} />;
-      case 'roi':
-        return <ROIProjectionChart key={widgetId} data={roiData} />;
-      case 'adoption':
-        return <FeatureAdoptionChart key={widgetId} data={adoptionData} />;
-      case 'conversations':
-        return <ConversationHistoryWidget key={widgetId} conversations={conversations} />;
-      case 'insights':
-        return <AnalysisInsightsWidget key={widgetId} insights={insights} />;
-      case 'graph':
-        return <KnowledgeGraphWidget key={widgetId} graphStats={graphStats} />;
-      case 'actions':
-        return <ActionItemsWidget key={widgetId} actionItems={actionItems} />;
-      case 'crossplatform':
-        return <CrossPlatformInsightsWidget key={widgetId} />;
-      case 'proactive':
-        return <ProactiveInsightsWidget key={widgetId} />;
-      case 'predictive':
-        return <PredictiveAnalysisWidget key={widgetId} />;
-      case 'compliance':
-        return <ComplianceWidget key={widgetId} />;
-      default:
-        return null;
-    }
-  };
+      switch (widgetId) {
+        case 'realtime':
+          return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
+        case 'stats':
+          return <QuickStatsWidget key={widgetId} stats={quickStats} />;
+        case 'deployments':
+          return <DeploymentStatusWidget key={widgetId} />;
+        case 'onboarding':
+          return <OnboardingStatusWidget key={widgetId} />;
+        case 'engagement':
+          return <UserEngagementChart key={widgetId} data={engagementData} />;
+        case 'roi':
+          return <ROIProjectionChart key={widgetId} data={roiData} />;
+        case 'adoption':
+          return <FeatureAdoptionChart key={widgetId} data={adoptionData} />;
+        case 'conversations':
+          return <ConversationHistoryWidget key={widgetId} conversations={conversations} />;
+        case 'insights':
+          return <AnalysisInsightsWidget key={widgetId} insights={insights} />;
+        case 'graph':
+          return <KnowledgeGraphWidget key={widgetId} graphStats={graphStats} />;
+        case 'actions':
+          return <ActionItemsWidget key={widgetId} actionItems={actionItems} />;
+        case 'crossplatform':
+          return <CrossPlatformInsightsWidget key={widgetId} />;
+        case 'proactive':
+          return <ProactiveInsightsWidget key={widgetId} />;
+        case 'predictive':
+          return <PredictiveAnalysisWidget key={widgetId} />;
+        case 'compliance':
+          return <ComplianceWidget key={widgetId} />;
+        default:
+          return null;
+      }
+    };
 
   const quickStats = [
     {
@@ -279,15 +282,15 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['stats', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
-      widgets: ['stats', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
+      widgets: ['stats', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
       focus: 'analysis'
     },
     editor: {
-      widgets: ['stats', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
+      widgets: ['stats', 'deployments', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
       focus: 'content'
     },
     viewer: {
@@ -295,7 +298,7 @@ export default function Dashboard() {
       focus: 'consumption'
     },
     default: {
-      widgets: ['stats', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'balanced'
     }
   };
