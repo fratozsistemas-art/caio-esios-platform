@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Compass, Plus, TrendingUp, AlertTriangle, CheckCircle, 
   Target, ArrowRight, Clock, Brain, Sparkles, Activity,
-  ChevronRight, BarChart3, Shield, Zap, Download, Filter, Search
+  ChevronRight, BarChart3, Shield, Zap, Download, Filter, Search, Database
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
