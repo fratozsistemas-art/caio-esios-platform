@@ -1,17 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Workflow, Star, Clock, Zap, Play } from "lucide-react";
+import { Workflow, Star, Clock, Zap, Play, Sparkles, RefreshCw, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "../utils";
+import { motion } from "framer-motion";
 
 export default function WorkflowTemplates() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [aiSuggestions, setAiSuggestions] = useState(null);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
 
   const { data: templates = [] } = useQuery({
     queryKey: ['workflow_templates'],
@@ -39,6 +42,19 @@ export default function WorkflowTemplates() {
     }
   });
 
+  const loadAISuggestions = async () => {
+    setIsLoadingSuggestions(true);
+    try {
+      const result = await base44.functions.invoke('suggestWorkflowTemplates');
+      setAiSuggestions(result);
+    } catch (error) {
+      console.error('Failed to load AI suggestions:', error);
+      toast.error('Failed to load AI suggestions');
+    } finally {
+      setIsLoadingSuggestions(false);
+    }
+  };
+
   const featured = templates.filter(t => t.is_featured);
   const byCategory = templates.reduce((acc, t) => {
     if (!acc[t.category]) acc[t.category] = [];
@@ -48,13 +64,78 @@ export default function WorkflowTemplates() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <Workflow className="w-8 h-8 text-purple-400" />
-          Workflow Templates
-        </h1>
-        <p className="text-slate-400 mt-1">Templates pré-configurados para começar rapidamente</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+            <Workflow className="w-8 h-8 text-purple-400" />
+            Workflow Templates
+          </h1>
+          <p className="text-slate-400 mt-1">Templates pré-configurados para começar rapidamente</p>
+        </div>
+        <Button
+          onClick={loadAISuggestions}
+          disabled={isLoadingSuggestions}
+          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+        >
+          {isLoadingSuggestions ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Loading...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4 mr-2" />
+              AI Suggestions
+            </>
+          )}
+        </Button>
       </div>
+
+      {/* AI Suggestions */}
+      {aiSuggestions && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-400" />
+                AI-Suggested Templates
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                <p className="text-sm text-slate-300">{aiSuggestions.insights}</p>
+                <p className="text-xs text-slate-500 mt-2">
+                  Based on {aiSuggestions.based_on?.feedback_analyzed || 0} feedback items
+                </p>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-3">
+                {aiSuggestions.templates?.slice(0, 6).map((template, idx) => (
+                  <div key={idx} className="p-3 bg-white/5 rounded-lg border border-white/10">
+                    <div className="flex items-start justify-between mb-2">
+                      <h3 className="text-sm font-semibold text-white">{template.name}</h3>
+                      <Badge className={
+                        template.priority === 'high' ? 'bg-red-500/20 text-red-400 text-xs' :
+                        template.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-400 text-xs' :
+                        'bg-green-500/20 text-green-400 text-xs'
+                      }>
+                        {template.priority}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-slate-400 mb-2">{template.description}</p>
+                    <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] text-xs">
+                      {template.estimated_value}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       {featured.length > 0 && (
         <div>

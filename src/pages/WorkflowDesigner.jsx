@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
-  Workflow, Plus, Play, Pause, Trash2, Edit, Clock, CheckCircle, Eye
+  Workflow, Plus, Play, Pause, Trash2, Edit, Clock, CheckCircle, Eye, Sparkles, Zap
 } from "lucide-react";
 import { toast } from "sonner";
 import VisualWorkflowBuilder from "@/components/agents/VisualWorkflowBuilder";
+import AIWorkflowGenerator from "@/components/workflows/AIWorkflowGenerator";
+import WorkflowOptimizer from "@/components/workflows/WorkflowOptimizer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function WorkflowDesigner() {
   const [showBuilder, setShowBuilder] = useState(false);
   const [editingWorkflow, setEditingWorkflow] = useState(null);
+  const [selectedWorkflowForOptimization, setSelectedWorkflowForOptimization] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: workflows = [], isLoading } = useQuery({
@@ -38,6 +42,17 @@ export default function WorkflowDesigner() {
     onSuccess: () => queryClient.invalidateQueries(['workflow-designs'])
   });
 
+  const handleWorkflowGenerated = (workflow) => {
+    queryClient.invalidateQueries(['workflow-designs']);
+    toast.success('Workflow created successfully!');
+  };
+
+  const handleWorkflowOptimized = () => {
+    queryClient.invalidateQueries(['workflow-designs']);
+    setSelectedWorkflowForOptimization(null);
+    toast.success('Workflow optimized successfully!');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -48,13 +63,48 @@ export default function WorkflowDesigner() {
             </div>
             Visual Workflow Designer
           </h1>
-          <p className="text-slate-400 mt-1">Design multi-agent collaborative workflows</p>
+          <p className="text-slate-400 mt-1">Design multi-agent collaborative workflows with AI assistance</p>
         </div>
         <Button onClick={() => { setEditingWorkflow(null); setShowBuilder(true); }} className="bg-purple-600 hover:bg-purple-700">
           <Plus className="w-4 h-4 mr-2" />
           New Workflow
         </Button>
       </div>
+
+      {/* AI Workflow Tools */}
+      <Tabs defaultValue="manual" className="w-full">
+        <TabsList className="bg-white/5 border border-white/10">
+          <TabsTrigger value="manual">Manual Design</TabsTrigger>
+          <TabsTrigger value="ai-generate">
+            <Sparkles className="w-4 h-4 mr-2" />
+            AI Generate
+          </TabsTrigger>
+          {selectedWorkflowForOptimization && (
+            <TabsTrigger value="optimize">
+              <Zap className="w-4 h-4 mr-2" />
+              Optimize
+            </TabsTrigger>
+          )}
+        </TabsList>
+
+        <TabsContent value="manual" className="mt-6">
+          {/* Original workflow list goes here */}
+        </TabsContent>
+
+        <TabsContent value="ai-generate" className="mt-6">
+          <AIWorkflowGenerator onWorkflowGenerated={handleWorkflowGenerated} />
+        </TabsContent>
+
+        {selectedWorkflowForOptimization && (
+          <TabsContent value="optimize" className="mt-6">
+            <WorkflowOptimizer
+              workflowId={selectedWorkflowForOptimization.id}
+              workflow={selectedWorkflowForOptimization}
+              onOptimized={handleWorkflowOptimized}
+            />
+          </TabsContent>
+        )}
+      </Tabs>
 
       {/* Workflow List */}
       <div className="grid grid-cols-3 gap-4">
@@ -80,7 +130,7 @@ export default function WorkflowDesigner() {
                 <span>Trigger: {workflow.triggers?.[0]?.type || 'manual'}</span>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex gap-2 mb-2">
                 <Button size="sm" variant="outline" onClick={() => { setEditingWorkflow(workflow.id); setShowBuilder(true); }} className="flex-1 border-white/10 text-white">
                   <Edit className="w-3 h-3 mr-1" />
                   Edit
@@ -97,6 +147,16 @@ export default function WorkflowDesigner() {
                   <Trash2 className="w-3 h-3" />
                 </Button>
               </div>
+              
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSelectedWorkflowForOptimization(workflow)}
+                className="w-full border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+              >
+                <Zap className="w-3 h-3 mr-1" />
+                Optimize
+              </Button>
             </CardContent>
           </Card>
         ))}
