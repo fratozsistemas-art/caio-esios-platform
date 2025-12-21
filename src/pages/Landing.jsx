@@ -50,6 +50,7 @@ export default function Landing() {
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const database = null;
 
   // SEO Meta Tags
   useEffect(() => {
