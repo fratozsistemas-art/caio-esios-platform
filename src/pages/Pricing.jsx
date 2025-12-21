@@ -16,42 +16,52 @@ export default function Pricing() {
 
   const plans = [
     {
-      name: "Professional",
-      priceMonthly: 299,
-      priceAnnual: 249,
-      stripePriceIdMonthly: "price_professional_monthly",
-      stripePriceIdAnnual: "price_professional_annual",
-      description: "For individual executives",
+      name: "Entry",
+      priceMonthly: 97,
+      priceAnnual: 970,
+      stripePriceIdMonthly: "price_1SgmeqRo0dVPpa4WwvshBsl0",
+      stripePriceIdAnnual: "price_1SgmffRo0dVPpa4WzECFaiEL",
+      description: "Para começar com Digital Twin",
       features: [
-        "1 user",
-        "Full TSI v9.3 (11 modules)",
-        "Unlimited AI conversations",
+        "1 usuário",
+        "Acesso ao Digital Twin",
+        "Conversas ilimitadas",
+        "Análises básicas",
+        "Suporte por email"
+      ],
+      popular: false
+    },
+    {
+      name: "Basic",
+      priceMonthly: 397,
+      priceAnnual: 3970,
+      stripePriceIdMonthly: "price_1SgmgTRo0dVPpa4WvKYlYGeZ",
+      stripePriceIdAnnual: "price_1SgmgnRo0dVPpa4WDwZwIari",
+      description: "Para uso profissional",
+      features: [
+        "1 usuário",
+        "Recursos completos do Twin",
+        "Análises avançadas",
         "Knowledge Graph access",
-        "80+ Quick Actions",
-        "File Analyzer (10/month)",
-        "5 GB storage",
-        "Email support (24h)"
+        "Suporte prioritário"
       ],
       popular: false
     },
     {
       name: "Teams",
-      priceMonthly: 899,
-      priceAnnual: 699,
-      stripePriceIdMonthly: "price_teams_monthly",
-      stripePriceIdAnnual: "price_teams_annual",
-      description: "For strategic teams (up to 10 seats)",
+      priceMonthly: 1497,
+      priceAnnual: 14970,
+      stripePriceIdMonthly: "price_1SgmhJRo0dVPpa4W3H4jN37E",
+      stripePriceIdAnnual: "price_1SgmhvRo0dVPpa4WWMA34UFU",
+      description: "Para equipes (trimestral no anual)",
       features: [
-        "Up to 10 users",
-        "Everything in Professional +",
-        "Multi-Agent Orchestration",
-        "Unlimited Workspaces",
-        "Unlimited File Analyzer",
-        "Knowledge Graph editing",
-        "RBAC & permissions",
-        "50 GB storage",
-        "Priority support (4h)",
-        "Onboarding included"
+        "Múltiplos usuários",
+        "Tudo do Basic +",
+        "Colaboração em equipe",
+        "Workspaces ilimitados",
+        "Análises colaborativas",
+        "Suporte dedicado",
+        "Onboarding incluído"
       ],
       popular: true
     },
@@ -138,7 +148,7 @@ export default function Pricing() {
             Choose Your Plan
           </h1>
           <p className="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
-            14-day free trial. No credit card required. Cancel anytime.
+            Escolha o plano ideal para seu Digital Twin
           </p>
 
           {/* Billing Toggle */}
@@ -156,7 +166,7 @@ export default function Pricing() {
               Annual
             </span>
             <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-              Save up to 29%
+              Economize até 20%
             </Badge>
           </div>
         </motion.div>
