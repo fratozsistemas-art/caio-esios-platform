@@ -104,6 +104,36 @@ export default function Chat() {
     }
   }, [messages, selectedConversation]);
 
+  const saveConversationToHistory = async (conversationId) => {
+    if (!conversationId) return;
+    
+    try {
+      const user = await base44.auth.me();
+      const conversation = await base44.agents.getConversation(conversationId);
+      const messages = conversation.messages || [];
+      
+      if (messages.length === 0) return;
+      
+      const lastUserMessage = messages.filter(m => m.role === 'user').slice(-1)[0];
+      const preview = lastUserMessage?.content?.substring(0, 100) || 'New conversation';
+      
+      await base44.entities.Conversation.create({
+        user_email: user.email,
+        title: conversation.metadata?.name || preview,
+        messages: messages.map(m => ({
+          role: m.role,
+          content: m.content,
+          timestamp: m.timestamp || new Date().toISOString()
+        })),
+        last_message_preview: preview,
+        is_pinned: conversation.metadata?.pinned || false,
+        tags: conversation.metadata?.tags || []
+      });
+    } catch (error) {
+      console.error('Failed to save conversation to history:', error);
+    }
+  };
+
   const handleCreateConversation = async (initialMessage = null) => {
     try {
       const newConv = await base44.agents.createConversation({
@@ -194,6 +224,8 @@ export default function Chat() {
     setIsTyping(false);
 
     try {
+      // Save conversation to history after message is sent
+      await saveConversationToHistory(conversation.id);
       if (useOrchestration) {
         setShowOrchestrationDashboard(true);
 
