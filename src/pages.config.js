@@ -109,6 +109,7 @@ import BlogArticle from './pages/BlogArticle';
 import SharedResource from './pages/SharedResource';
 import SEOOptimizationPage from './pages/SEOOptimizationPage';
 import AEGISProtocol from './pages/AEGISProtocol';
+import MLflowDashboard from './pages/MLflowDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -224,6 +225,7 @@ export const PAGES = {
     "SharedResource": SharedResource,
     "SEOOptimizationPage": SEOOptimizationPage,
     "AEGISProtocol": AEGISProtocol,
+    "MLflowDashboard": MLflowDashboard,
 }
 
 export const pagesConfig = {
