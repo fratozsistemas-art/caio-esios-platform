@@ -127,7 +127,8 @@ function LayoutInner({ children, currentPageName }) {
               items: [
                 { name: t('nav.analytics', 'Analytics'), icon: BarChart3, path: 'Analytics' },
                 { name: t('nav.alerts', 'Alerts'), icon: Bell, path: 'AlertsManagement' },
-                { name: t('nav.systemHealth', 'System Health'), icon: Activity, path: 'SystemHealth' }
+                { name: t('nav.systemHealth', 'System Health'), icon: Activity, path: 'SystemHealth' },
+                { name: t('nav.deployments', 'Deployments'), icon: GitMerge, path: 'DeploymentHistory', badge: 'CI/CD' }
               ]
             },
             {
