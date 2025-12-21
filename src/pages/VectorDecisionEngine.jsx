@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Compass, Plus, TrendingUp, AlertTriangle, CheckCircle, 
   Target, ArrowRight, Clock, Brain, Sparkles, Activity,
-  ChevronRight, BarChart3, Shield, Zap
+  ChevronRight, BarChart3, Shield, Zap, Download, Filter, Search
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -32,6 +32,8 @@ const STATUS_CONFIG = {
 };
 
 import { Rocket, ShieldCheck, Zap as ZapIcon, RefreshCw, Swords, Building as BuildingIcon, ArrowLeft } from 'lucide-react';
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const DIRECTION_ICONS = {
   expansion: Rocket, 
@@ -48,6 +50,9 @@ export default function VectorDecisionEngine() {
   const [showNewDecision, setShowNewDecision] = useState(false);
   const [selectedDecision, setSelectedDecision] = useState(null);
   const [showCheckpoint, setShowCheckpoint] = useState(false);
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [directionFilter, setDirectionFilter] = useState('all');
+  const [minScore, setMinScore] = useState(0);
   const queryClient = useQueryClient();
 
   const { data: decisions = [], isLoading } = useQuery({
@@ -77,6 +82,45 @@ export default function VectorDecisionEngine() {
   const avgHealthScore = activeDecisions.length > 0
     ? activeDecisions.reduce((sum, d) => sum + (d.ai_validation?.consistency_score || 0), 0) / activeDecisions.length
     : 0;
+
+  const applyFilters = (decisionList) => {
+    return decisionList.filter(d => {
+      const matchesStatus = statusFilter === 'all' || d.status === statusFilter;
+      const matchesDirection = directionFilter === 'all' || d.primary_vector?.direction === directionFilter;
+      const matchesScore = !d.ai_validation?.consistency_score || (d.ai_validation.consistency_score * 100) >= minScore;
+      return matchesStatus && matchesDirection && matchesScore;
+    });
+  };
+
+  const exportDecisions = (format) => {
+    const filtered = applyFilters(decisions);
+    
+    if (format === 'csv') {
+      const exportData = filtered.map(d => ({
+        title: d.title,
+        status: d.status,
+        direction: d.primary_vector?.direction,
+        intensity: d.primary_vector?.intensity,
+        horizon_days: d.horizon_days,
+        ai_score: d.ai_validation?.consistency_score ? Math.round(d.ai_validation.consistency_score * 100) : 'N/A',
+        created_date: d.created_date
+      }));
+      
+      const headers = Object.keys(exportData[0]);
+      const csvRows = [
+        headers.join(','),
+        ...exportData.map(row => headers.map(h => `"${row[h]}"`).join(','))
+      ];
+      
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `vector_decisions_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -268,8 +312,67 @@ export default function VectorDecisionEngine() {
         </TabsContent>
 
         <TabsContent value="active" className="mt-6">
+          {/* Filters */}
+          <Card className="bg-white/5 border-white/10 mb-4">
+            <CardContent className="p-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[160px] bg-white/5 border-white/10 text-white">
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0A1628] border-white/20">
+                    <SelectItem value="all">Todos Status</SelectItem>
+                    <SelectItem value="active">Ativo</SelectItem>
+                    <SelectItem value="monitoring">Monitorando</SelectItem>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="completed">Concluído</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={directionFilter} onValueChange={setDirectionFilter}>
+                  <SelectTrigger className="w-[160px] bg-white/5 border-white/10 text-white">
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Direção" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0A1628] border-white/20">
+                    <SelectItem value="all">Todas Direções</SelectItem>
+                    <SelectItem value="expansion">Expansão</SelectItem>
+                    <SelectItem value="defense">Defesa</SelectItem>
+                    <SelectItem value="attack">Ataque</SelectItem>
+                    <SelectItem value="consolidation">Consolidação</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-400">Score AI Mín:</span>
+                  <Input
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={minScore}
+                    onChange={(e) => setMinScore(Number(e.target.value))}
+                    className="w-20 bg-white/5 border-white/10 text-white"
+                  />
+                </div>
+
+                <div className="ml-auto flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => exportDecisions('csv')}
+                    className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Exportar CSV
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid gap-4">
-            {activeDecisions.map(decision => (
+            {applyFilters(activeDecisions).map(decision => (
               <DetailedDecisionCard
                 key={decision.id}
                 decision={decision}
@@ -284,8 +387,52 @@ export default function VectorDecisionEngine() {
         </TabsContent>
 
         <TabsContent value="history" className="mt-6">
+          {/* Filters */}
+          <Card className="bg-white/5 border-white/10 mb-4">
+            <CardContent className="p-4">
+              <div className="flex flex-wrap items-center gap-3">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[160px] bg-white/5 border-white/10 text-white">
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0A1628] border-white/20">
+                    <SelectItem value="all">Todos Status</SelectItem>
+                    <SelectItem value="completed">Concluído</SelectItem>
+                    <SelectItem value="aborted">Abortado</SelectItem>
+                    <SelectItem value="redirected">Redirecionado</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={directionFilter} onValueChange={setDirectionFilter}>
+                  <SelectTrigger className="w-[160px] bg-white/5 border-white/10 text-white">
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Direção" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#0A1628] border-white/20">
+                    <SelectItem value="all">Todas Direções</SelectItem>
+                    <SelectItem value="expansion">Expansão</SelectItem>
+                    <SelectItem value="defense">Defesa</SelectItem>
+                    <SelectItem value="attack">Ataque</SelectItem>
+                    <SelectItem value="consolidation">Consolidação</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportDecisions('csv')}
+                  className="ml-auto border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Exportar CSV
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid gap-4">
-            {decisions.filter(d => !['active', 'monitoring'].includes(d.status)).map(decision => (
+            {applyFilters(decisions.filter(d => !['active', 'monitoring'].includes(d.status))).map(decision => (
               <DetailedDecisionCard
                 key={decision.id}
                 decision={decision}

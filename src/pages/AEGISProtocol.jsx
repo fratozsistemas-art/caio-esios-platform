@@ -18,7 +18,8 @@ import {
   Zap,
   Layers,
   Activity,
-  TrendingUp
+  TrendingUp,
+  Download
 } from "lucide-react";
 import { motion } from "framer-motion";
 import ComponentHealthPanel from "../components/aegis/ComponentHealthPanel";
@@ -27,6 +28,7 @@ import EntityValidationPanel from "../components/aegis/EntityValidationPanel";
 import IntegrationStatusPanel from "../components/aegis/IntegrationStatusPanel";
 import ArchitectureVisualization from "../components/aegis/ArchitectureVisualization";
 import TestRunnerPanel from "../components/aegis/TestRunnerPanel";
+import { exportToPDF } from "../components/aegis/ExportUtils";
 
 export default function AEGISProtocol() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -90,6 +92,38 @@ export default function AEGISProtocol() {
     }
   };
 
+  const exportFullReport = () => {
+    if (!aegisResults) return;
+
+    const sections = [
+      {
+        title: 'Overall Health',
+        content: `Score: ${overallHealth.score}% | Status: ${overallHealth.status} | Critical Issues: ${overallHealth.criticalIssues}`
+      },
+      {
+        title: 'Validation Layers',
+        content: Object.entries(aegisResults.validation_layers || {}).map(([name, data]) => 
+          `${name}: ${data.score}%`
+        )
+      },
+      {
+        title: 'Quality Gates',
+        content: Object.entries(aegisResults.quality_gates || {}).map(([name, data]) => 
+          `${name}: ${data.status} (${data.score}%)`
+        )
+      }
+    ];
+
+    if (aegisResults.hard_stops_triggered?.length > 0) {
+      sections.push({
+        title: 'Critical Issues',
+        content: aegisResults.hard_stops_triggered.map(h => `${h.gate}: ${h.message}`)
+      });
+    }
+
+    exportToPDF('AEGIS Protocol Full Report', sections, 'aegis_full_report');
+  };
+
   return (
     <div className="p-6 md:p-8 space-y-6">
       {/* Header */}
@@ -116,6 +150,16 @@ export default function AEGISProtocol() {
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
+          </Button>
+          <Button
+            onClick={exportFullReport}
+            disabled={!aegisResults}
+            variant="outline"
+            size="sm"
+            className="border-purple-500/40 text-purple-400 hover:bg-purple-500/10"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export Report
           </Button>
           <Button
             onClick={() => runAEGISTests.mutate()}

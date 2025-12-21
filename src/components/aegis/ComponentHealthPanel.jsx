@@ -2,12 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { CheckCircle, XCircle, AlertTriangle, Search, FileCode } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { CheckCircle, XCircle, AlertTriangle, Search, FileCode, Download, Filter } from "lucide-react";
+import ComponentDetailModal from "./ComponentDetailModal";
+import { exportToCSV, exportToPDF } from "./ExportUtils";
 
 export default function ComponentHealthPanel() {
   const [components, setComponents] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [selectedComponent, setSelectedComponent] = useState(null);
 
   useEffect(() => {
     // Scan components for health issues
@@ -22,6 +29,7 @@ export default function ComponentHealthPanel() {
       {
         name: "Dashboard",
         path: "pages/Dashboard.jsx",
+        type: "page",
         status: "healthy",
         imports: 30,
         dependencies: ["@tanstack/react-query", "lucide-react", "framer-motion"],
@@ -30,6 +38,7 @@ export default function ComponentHealthPanel() {
       {
         name: "KnowledgeGraphWidget",
         path: "components/dashboard/KnowledgeGraphWidget.jsx",
+        type: "component",
         status: "healthy",
         imports: 8,
         dependencies: ["lucide-react"],
@@ -38,20 +47,16 @@ export default function ComponentHealthPanel() {
       {
         name: "ComparisonAIvsConsulting",
         path: "pages/ComparisonAIvsConsulting.jsx",
-        status: "warning",
+        type: "page",
+        status: "healthy",
         imports: 7,
         dependencies: ["lucide-react"],
-        issues: [
-          {
-            type: "missing_import",
-            severity: "warning",
-            message: "Database icon used in child components but not imported"
-          }
-        ]
+        issues: []
       },
       {
         name: "FounderProfile",
         path: "pages/FounderProfile.jsx",
+        type: "page",
         status: "healthy",
         imports: 5,
         dependencies: ["lucide-react"],
@@ -60,9 +65,19 @@ export default function ComponentHealthPanel() {
       {
         name: "Landing",
         path: "pages/Landing.jsx",
+        type: "page",
         status: "healthy",
         imports: 25,
         dependencies: ["framer-motion", "lucide-react"],
+        issues: []
+      },
+      {
+        name: "AEGISProtocol",
+        path: "pages/AEGISProtocol.jsx",
+        type: "page",
+        status: "healthy",
+        imports: 18,
+        dependencies: ["@tanstack/react-query", "lucide-react", "framer-motion"],
         issues: []
       }
     ];
@@ -71,15 +86,47 @@ export default function ComponentHealthPanel() {
     setLoading(false);
   };
 
-  const filteredComponents = components.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.path.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredComponents = components.filter(c => {
+    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase()) ||
+      c.path.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchesType = typeFilter === "all" || c.type === typeFilter;
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   const healthCounts = components.reduce((acc, c) => {
     acc[c.status] = (acc[c.status] || 0) + 1;
     return acc;
   }, {});
+
+  const handleExportCSV = () => {
+    const exportData = filteredComponents.map(c => ({
+      name: c.name,
+      path: c.path,
+      type: c.type,
+      status: c.status,
+      imports: c.imports,
+      dependencies: c.dependencies.join('; '),
+      issues: c.issues.length
+    }));
+    exportToCSV(exportData, 'component_health_report');
+  };
+
+  const handleExportPDF = () => {
+    const sections = [
+      {
+        title: 'Summary',
+        content: `Total: ${components.length} | Healthy: ${healthCounts.healthy || 0} | Warnings: ${healthCounts.warning || 0} | Errors: ${healthCounts.error || 0}`
+      },
+      {
+        title: 'Components',
+        content: filteredComponents.map(c => 
+          `${c.name} (${c.path}) - Status: ${c.status}, Imports: ${c.imports}, Dependencies: ${c.dependencies.length}`
+        )
+      }
+    ];
+    exportToPDF('Component Health Report', sections, 'component_health_report');
+  };
 
   return (
     <div className="space-y-6">
@@ -122,21 +169,79 @@ export default function ComponentHealthPanel() {
         </Card>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-        <Input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search components..."
-          className="pl-10 bg-white/5 border-white/10 text-white"
-        />
-      </div>
+      {/* Filters and Export */}
+      <Card className="bg-white/5 border-white/10">
+        <CardContent className="p-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex-1 min-w-[200px]">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search components..."
+                  className="pl-10 bg-white/5 border-white/10 text-white"
+                />
+              </div>
+            </div>
+
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[140px] bg-white/5 border-white/10 text-white">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#0A1628] border-white/20">
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="healthy">Healthy</SelectItem>
+                <SelectItem value="warning">Warning</SelectItem>
+                <SelectItem value="error">Error</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger className="w-[140px] bg-white/5 border-white/10 text-white">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Type" />
+              </SelectTrigger>
+              <SelectContent className="bg-[#0A1628] border-white/20">
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="page">Pages</SelectItem>
+                <SelectItem value="component">Components</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportCSV}
+                className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                CSV
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleExportPDF}
+                className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                PDF
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Component List */}
       <div className="space-y-3">
         {filteredComponents.map((component) => (
-          <Card key={component.path} className="bg-white/5 border-white/10">
+          <Card 
+            key={component.path} 
+            className="bg-white/5 border-white/10 cursor-pointer hover:border-cyan-500/30 transition-all"
+            onClick={() => setSelectedComponent(component)}
+          >
             <CardContent className="p-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -182,6 +287,13 @@ export default function ComponentHealthPanel() {
           </Card>
         ))}
       </div>
+
+      {/* Detail Modal */}
+      <ComponentDetailModal
+        component={selectedComponent}
+        open={!!selectedComponent}
+        onClose={() => setSelectedComponent(null)}
+      />
     </div>
   );
 }
