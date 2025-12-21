@@ -114,6 +114,7 @@ import Pricing from './pages/Pricing';
 import ConversationHistory from './pages/ConversationHistory';
 import Reports from './pages/Reports';
 import MarketDataHub from './pages/MarketDataHub';
+import DeploymentHistory from './pages/DeploymentHistory';
 import __Layout from './Layout.jsx';
 
 
@@ -234,6 +235,7 @@ export const PAGES = {
     "ConversationHistory": ConversationHistory,
     "Reports": Reports,
     "MarketDataHub": MarketDataHub,
+    "DeploymentHistory": DeploymentHistory,
 }
 
 export const pagesConfig = {
