@@ -33,7 +33,8 @@ import {
   Bot, 
   Palette, 
   Archive, 
-  Settings
+  Settings,
+  Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
