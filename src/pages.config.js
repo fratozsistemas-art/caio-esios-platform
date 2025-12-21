@@ -115,6 +115,7 @@ import ConversationHistory from './pages/ConversationHistory';
 import Reports from './pages/Reports';
 import MarketDataHub from './pages/MarketDataHub';
 import DeploymentHistory from './pages/DeploymentHistory';
+import FeedbackManagement from './pages/FeedbackManagement';
 import __Layout from './Layout.jsx';
 
 
@@ -236,6 +237,7 @@ export const PAGES = {
     "Reports": Reports,
     "MarketDataHub": MarketDataHub,
     "DeploymentHistory": DeploymentHistory,
+    "FeedbackManagement": FeedbackManagement,
 }
 
 export const pagesConfig = {
