@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -26,12 +27,18 @@ import {
   Activity
 } from "lucide-react";
 import { motion } from "framer-motion";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import RunComparisonChart from "../components/mlflow/RunComparisonChart";
+import ModelVersionManager from "../components/mlflow/ModelVersionManager";
+import ModelPerformanceTrends from "../components/mlflow/ModelPerformanceTrends";
+import ArtifactExplorer from "../components/mlflow/ArtifactExplorer";
 
 export default function MLflowDashboard() {
   const [newExpName, setNewExpName] = useState("");
   const [showNewExpDialog, setShowNewExpDialog] = useState(false);
   const [selectedExp, setSelectedExp] = useState(null);
+  const [selectedRuns, setSelectedRuns] = useState([]);
+  const [selectedModel, setSelectedModel] = useState(null);
+  const [selectedRunForArtifacts, setSelectedRunForArtifacts] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: experiments = [], isLoading: loadingExps, refetch: refetchExps } = useQuery({
@@ -71,6 +78,29 @@ export default function MLflowDashboard() {
       return data.models;
     }
   });
+
+  const { data: modelVersions = [] } = useQuery({
+    queryKey: ['mlflow_model_versions', selectedModel?.name],
+    queryFn: async () => {
+      if (!selectedModel) return [];
+      const { data } = await base44.functions.invoke('mlflowClient', {
+        action: 'getModelVersions',
+        data: { model_name: selectedModel.name }
+      });
+      return data.versions;
+    },
+    enabled: !!selectedModel
+  });
+
+  const toggleRunSelection = (run) => {
+    setSelectedRuns(prev => {
+      const isSelected = prev.some(r => r.info.run_id === run.info.run_id);
+      if (isSelected) {
+        return prev.filter(r => r.info.run_id !== run.info.run_id);
+      }
+      return [...prev, run];
+    });
+  };
 
   const createExpMutation = useMutation({
     mutationFn: async (name) => {
@@ -204,7 +234,11 @@ export default function MLflowDashboard() {
         <TabsList className="bg-white/5 border border-white/10">
           <TabsTrigger value="experiments">Experiments</TabsTrigger>
           <TabsTrigger value="runs">Runs</TabsTrigger>
+          <TabsTrigger value="comparison">Run Comparison</TabsTrigger>
           <TabsTrigger value="models">Models</TabsTrigger>
+          <TabsTrigger value="registry">Model Registry</TabsTrigger>
+          <TabsTrigger value="trends">Performance Trends</TabsTrigger>
+          <TabsTrigger value="artifacts">Artifacts</TabsTrigger>
         </TabsList>
 
         {/* Experiments Tab */}
@@ -280,6 +314,24 @@ export default function MLflowDashboard() {
 
         {/* Runs Tab */}
         <TabsContent value="runs" className="space-y-4">
+          {selectedRuns.length > 0 && (
+            <Card className="bg-cyan-500/10 border-cyan-500/30">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-white">{selectedRuns.length} runs selected for comparison</span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelectedRuns([])}
+                    className="border-white/20 text-slate-300"
+                  >
+                    Clear Selection
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
           {!selectedExp ? (
             <Card className="bg-white/5 border-white/10">
               <CardContent className="p-12 text-center">
@@ -303,14 +355,27 @@ export default function MLflowDashboard() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.05 }}
                 >
-                  <Card className="bg-white/5 border-white/10">
+                  <Card className={`bg-white/5 border-white/10 ${selectedRuns.some(r => r.info.run_id === run.info.run_id) ? 'border-cyan-500/50 bg-cyan-500/5' : ''}`}>
                     <CardHeader>
                       <CardTitle className="text-white flex items-center justify-between">
-                        <span className="flex items-center gap-2">
+                        <span className="flex items-center gap-3">
+                          <Checkbox
+                            checked={selectedRuns.some(r => r.info.run_id === run.info.run_id)}
+                            onCheckedChange={() => toggleRunSelection(run)}
+                            className="border-white/20"
+                          />
                           {getStatusIcon(run.info.status)}
                           Run {run.info.run_name || run.info.run_id.substring(0, 8)}
                         </span>
                         <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSelectedRunForArtifacts(run)}
+                            className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                          >
+                            Artifacts
+                          </Button>
                           <Badge className={`${
                             run.info.status === 'FINISHED' ? 'bg-green-500/20 text-green-400' :
                             run.info.status === 'FAILED' ? 'bg-red-500/20 text-red-400' :
@@ -364,6 +429,11 @@ export default function MLflowDashboard() {
           )}
         </TabsContent>
 
+        {/* Run Comparison Tab */}
+        <TabsContent value="comparison" className="space-y-4">
+          <RunComparisonChart selectedRuns={selectedRuns} />
+        </TabsContent>
+
         {/* Models Tab */}
         <TabsContent value="models" className="space-y-4">
           {models.length === 0 ? (
@@ -382,7 +452,12 @@ export default function MLflowDashboard() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
                 >
-                  <Card className="bg-white/5 border-white/10">
+                  <Card 
+                    className={`bg-white/5 border-white/10 hover:bg-white/10 cursor-pointer transition-all ${
+                      selectedModel?.name === model.name ? 'border-cyan-500/50' : ''
+                    }`}
+                    onClick={() => setSelectedModel(model)}
+                  >
                     <CardHeader>
                       <CardTitle className="text-white flex items-center gap-2">
                         <Package className="w-5 h-5 text-green-400" />
@@ -402,6 +477,21 @@ export default function MLflowDashboard() {
               ))}
             </div>
           )}
+        </TabsContent>
+
+        {/* Model Registry Tab */}
+        <TabsContent value="registry" className="space-y-4">
+          <ModelVersionManager model={selectedModel} />
+        </TabsContent>
+
+        {/* Performance Trends Tab */}
+        <TabsContent value="trends" className="space-y-4">
+          <ModelPerformanceTrends model={selectedModel} versions={modelVersions} />
+        </TabsContent>
+
+        {/* Artifacts Tab */}
+        <TabsContent value="artifacts" className="space-y-4">
+          <ArtifactExplorer run={selectedRunForArtifacts} />
         </TabsContent>
       </Tabs>
     </div>

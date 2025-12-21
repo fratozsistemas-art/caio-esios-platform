@@ -191,6 +191,84 @@ Deno.serve(async (req) => {
         return Response.json({ versions: result.model_versions || [] });
       }
 
+      case 'transitionModelVersionStage': {
+        const { model_name, version, stage, archive_existing_versions = false } = data;
+        await mlflowFetch('/api/2.0/mlflow/model-versions/transition-stage', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: model_name,
+            version: String(version),
+            stage,
+            archive_existing_versions
+          })
+        });
+        return Response.json({ success: true });
+      }
+
+      case 'updateModelVersion': {
+        const { model_name, version, description } = data;
+        await mlflowFetch('/api/2.0/mlflow/model-versions/update', {
+          method: 'PATCH',
+          body: JSON.stringify({
+            name: model_name,
+            version: String(version),
+            description
+          })
+        });
+        return Response.json({ success: true });
+      }
+
+      case 'setModelVersionTag': {
+        const { model_name, version, key, value } = data;
+        await mlflowFetch('/api/2.0/mlflow/model-versions/set-tag', {
+          method: 'POST',
+          body: JSON.stringify({
+            name: model_name,
+            version: String(version),
+            key,
+            value
+          })
+        });
+        return Response.json({ success: true });
+      }
+
+      case 'updateRegisteredModel': {
+        const { name, description } = data;
+        await mlflowFetch('/api/2.0/mlflow/registered-models/update', {
+          method: 'PATCH',
+          body: JSON.stringify({
+            name,
+            description
+          })
+        });
+        return Response.json({ success: true });
+      }
+
+      case 'setRegisteredModelTag': {
+        const { name, key, value } = data;
+        await mlflowFetch('/api/2.0/mlflow/registered-models/set-tag', {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            key,
+            value
+          })
+        });
+        return Response.json({ success: true });
+      }
+
+      case 'getMetricHistory': {
+        const { run_id, metric_key } = data;
+        const result = await mlflowFetch(`/api/2.0/mlflow/metrics/get-history?run_id=${run_id}&metric_key=${metric_key}`);
+        return Response.json({ metrics: result.metrics || [] });
+      }
+
+      case 'listArtifacts': {
+        const { run_id, path = '' } = data;
+        const result = await mlflowFetch(`/api/2.0/mlflow/artifacts/list?run_id=${run_id}&path=${path}`);
+        return Response.json({ artifacts: result.files || [] });
+      }
+
       default:
         return Response.json({ error: 'Invalid action' }, { status: 400 });
     }
