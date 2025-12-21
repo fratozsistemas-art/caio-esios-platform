@@ -59,6 +59,7 @@ function LayoutInner({ children, currentPageName }) {
               items: [
                 { name: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: 'Dashboard' },
                 { name: t('nav.chat', 'Chat with CAIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
+                { name: t('nav.conversationHistory', 'Conversation History'), icon: Archive, path: 'ConversationHistory' },
                 { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' }
               ]
             },
