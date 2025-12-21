@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
-  Database, Sparkles, Loader2, CheckCircle, 
+  HardDrive, Sparkles, Loader2, CheckCircle, 
   TrendingUp, Tag, Zap, RefreshCw 
 } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -71,7 +71,7 @@ export default function KnowledgeIndexManager() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-            <Database className="w-8 h-8 text-[#00D4FF]" />
+            <HardDrive className="w-8 h-8 text-[#00D4FF]" />
             Knowledge Index Manager
           </h1>
           <p className="text-slate-400">AI-powered content indexing and categorization</p>
@@ -130,7 +130,7 @@ export default function KnowledgeIndexManager() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
-              { label: 'Total Indexed', value: indexStats.total, icon: Database, color: 'blue' },
+              { label: 'Total Indexed', value: indexStats.total, icon: HardDrive, color: 'blue' },
               { label: 'Avg Relevance', value: `${indexStats.avgRelevance}%`, icon: TrendingUp, color: 'green' },
               { label: 'Categories', value: indexStats.categories, icon: Tag, color: 'purple' },
               { label: 'Active Tags', value: indexStats.topTags.length, icon: Zap, color: 'yellow' }
