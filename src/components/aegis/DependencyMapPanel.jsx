@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Network, Package, AlertTriangle, CheckCircle } from "lucide-react";
+import { Network, Package, AlertTriangle, CheckCircle, Database } from "lucide-react";
 
 export default function DependencyMapPanel() {
   const [dependencies, setDependencies] = useState([]);

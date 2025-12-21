@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Zap, CheckCircle, XCircle, Clock, Search, Download, Filter } from "lucide-react";
+import { Zap, CheckCircle, XCircle, Clock, Search, Download, Filter, Database } from "lucide-react";
 import { exportToCSV, exportToPDF } from "./ExportUtils";
 
 export default function IntegrationStatusPanel() {

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { FileCode, Package, AlertTriangle, CheckCircle, Download } from "lucide-react";
+import { FileCode, Package, AlertTriangle, CheckCircle, Download, Database } from "lucide-react";
 
 export default function ComponentDetailModal({ component, open, onClose }) {
   if (!component) return null;

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle, XCircle, AlertTriangle, Search, FileCode, Download, Filter } from "lucide-react";
+import { CheckCircle, XCircle, AlertTriangle, Search, FileCode, Download, Filter, Database } from "lucide-react";
 import ComponentDetailModal from "./ComponentDetailModal";
 import { exportToCSV, exportToPDF } from "./ExportUtils";
 
