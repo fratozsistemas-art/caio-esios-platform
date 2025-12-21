@@ -90,7 +90,8 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.aiModules', 'AI Modules'), icon: Sparkles, path: 'AIModules' },
                 { name: t('nav.vectorDecision', 'Vector Engine'), icon: Compass, path: 'VectorDecisionEngine' },
                 { name: t('nav.fileAnalyzer', 'File Analyzer'), icon: FileText, path: 'FileAnalyzer' },
-                { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject' }
+                { name: t('nav.tsiProjects', 'TSI Projects'), icon: Brain, path: 'TSIProject' },
+                { name: t('nav.reports', 'Reports'), icon: FileText, path: 'Reports', badge: 'NEW' }
               ]
             },
             {
