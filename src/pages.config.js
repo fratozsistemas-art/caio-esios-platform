@@ -108,6 +108,7 @@ import UserSettings from './pages/UserSettings';
 import BlogArticle from './pages/BlogArticle';
 import SharedResource from './pages/SharedResource';
 import SEOOptimizationPage from './pages/SEOOptimizationPage';
+import AEGISProtocol from './pages/AEGISProtocol';
 import __Layout from './Layout.jsx';
 
 
@@ -222,6 +223,7 @@ export const PAGES = {
     "BlogArticle": BlogArticle,
     "SharedResource": SharedResource,
     "SEOOptimizationPage": SEOOptimizationPage,
+    "AEGISProtocol": AEGISProtocol,
 }
 
 export const pagesConfig = {
