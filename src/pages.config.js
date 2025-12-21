@@ -116,6 +116,7 @@ import Reports from './pages/Reports';
 import MarketDataHub from './pages/MarketDataHub';
 import DeploymentHistory from './pages/DeploymentHistory';
 import FeedbackManagement from './pages/FeedbackManagement';
+import KnowledgeIndexManager from './pages/KnowledgeIndexManager';
 import __Layout from './Layout.jsx';
 
 
@@ -238,6 +239,7 @@ export const PAGES = {
     "MarketDataHub": MarketDataHub,
     "DeploymentHistory": DeploymentHistory,
     "FeedbackManagement": FeedbackManagement,
+    "KnowledgeIndexManager": KnowledgeIndexManager,
 }
 
 export const pagesConfig = {
