@@ -6,10 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Sparkles, Loader2, CheckCircle, Zap, 
-  TrendingUp, Clock, AlertCircle, ArrowRight
+  TrendingUp, Clock, AlertCircle, ArrowRight, ThumbsUp, ThumbsDown
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function AIWorkflowGenerator({ onWorkflowGenerated }) {
   const [description, setDescription] = useState('');
@@ -64,12 +65,42 @@ export default function AIWorkflowGenerator({ onWorkflowGenerated }) {
           estimated_duration_minutes: generatedWorkflow.estimated_duration_minutes
         }
       });
+      
+      // Record positive feedback
+      await base44.functions.invoke('learnFromFeedback', {
+        suggestion_id: `generated_${generatedWorkflow.name}`,
+        suggestion_type: 'workflow_generation',
+        feedback_type: 'workflow_suggestion',
+        rating: 5,
+        comment: 'User created workflow from AI suggestion',
+        metadata: { category: generatedWorkflow.category }
+      });
+      
       onWorkflowGenerated?.(workflow);
       setGeneratedWorkflow(null);
       setDescription('');
       setContext('');
+      toast.success('Workflow created! AI is learning from your preferences.');
     } catch (error) {
       console.error('Failed to save workflow:', error);
+      toast.error('Failed to save workflow');
+    }
+  };
+
+  const handleRejectWorkflow = async () => {
+    try {
+      await base44.functions.invoke('learnFromFeedback', {
+        suggestion_id: `generated_${generatedWorkflow.name}`,
+        suggestion_type: 'workflow_generation',
+        feedback_type: 'workflow_suggestion',
+        rating: 2,
+        comment: 'User rejected generated workflow',
+        metadata: { category: generatedWorkflow.category }
+      });
+      setGeneratedWorkflow(null);
+      toast.success('Thanks for the feedback! AI will improve.');
+    } catch (error) {
+      console.error('Failed to record feedback:', error);
     }
   };
 
@@ -202,20 +233,26 @@ export default function AIWorkflowGenerator({ onWorkflowGenerated }) {
                       ))}
                     </div>
 
-                    <div className="flex gap-2">
-                      <Button
-                        onClick={handleSaveWorkflow}
-                        className="flex-1 bg-gradient-to-r from-[#00D4FF] to-[#00A8CC] hover:from-[#00E5FF] hover:to-[#00B8DC]"
-                      >
-                        Save Workflow
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setGeneratedWorkflow(null)}
-                        className="border-white/20 text-white hover:bg-white/10"
-                      >
-                        Discard
-                      </Button>
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={handleSaveWorkflow}
+                          className="flex-1 bg-gradient-to-r from-[#00D4FF] to-[#00A8CC] hover:from-[#00E5FF] hover:to-[#00B8DC]"
+                        >
+                          <CheckCircle className="w-4 h-4 mr-2" />
+                          Save Workflow
+                        </Button>
+                        <Button
+                          variant="outline"
+                          onClick={handleRejectWorkflow}
+                          className="border-red-500/30 text-red-400 hover:bg-red-500/20"
+                        >
+                          <ThumbsDown className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-center text-slate-500">
+                        Your feedback helps AI improve future suggestions
+                      </p>
                     </div>
                   </CardContent>
                 </Card>

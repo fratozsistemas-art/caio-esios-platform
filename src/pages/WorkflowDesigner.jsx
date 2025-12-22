@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
-  Workflow, Plus, Play, Pause, Trash2, Edit, Clock, CheckCircle, Eye, Sparkles, Zap
+  Workflow, Plus, Play, Pause, Trash2, Edit, Clock, CheckCircle, Eye, Sparkles, Zap, Lightbulb
 } from "lucide-react";
 import { toast } from "sonner";
 import VisualWorkflowBuilder from "@/components/agents/VisualWorkflowBuilder";
 import AIWorkflowGenerator from "@/components/workflows/AIWorkflowGenerator";
 import WorkflowOptimizer from "@/components/workflows/WorkflowOptimizer";
+import AutomationOpportunitiesPanel from "@/components/workflows/AutomationOpportunitiesPanel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function WorkflowDesigner() {
@@ -53,6 +54,31 @@ export default function WorkflowDesigner() {
     toast.success('Workflow optimized successfully!');
   };
 
+  const handleCreateFromOpportunity = async (suggestedWorkflow) => {
+    try {
+      await base44.entities.AgentWorkflow.create({
+        workflow_name: suggestedWorkflow.name,
+        workflow_description: `Auto-created from AI suggestion: ${suggestedWorkflow.name}`,
+        workflow_steps: suggestedWorkflow.steps.map((step, idx) => ({
+          step_number: idx + 1,
+          name: step,
+          action_type: 'custom',
+          description: step
+        })),
+        is_active: false,
+        metadata: {
+          ai_suggested: true,
+          created_from_opportunity: true
+        }
+      });
+      queryClient.invalidateQueries(['workflow-designs']);
+      toast.success('Workflow created from AI suggestion!');
+    } catch (error) {
+      console.error('Failed to create workflow:', error);
+      toast.error('Failed to create workflow');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -75,6 +101,10 @@ export default function WorkflowDesigner() {
       <Tabs defaultValue="manual" className="w-full">
         <TabsList className="bg-white/5 border border-white/10">
           <TabsTrigger value="manual">Manual Design</TabsTrigger>
+          <TabsTrigger value="opportunities">
+            <Lightbulb className="w-4 h-4 mr-2" />
+            AI Opportunities
+          </TabsTrigger>
           <TabsTrigger value="ai-generate">
             <Sparkles className="w-4 h-4 mr-2" />
             AI Generate
@@ -89,6 +119,10 @@ export default function WorkflowDesigner() {
 
         <TabsContent value="manual" className="mt-6">
           {/* Original workflow list goes here */}
+        </TabsContent>
+
+        <TabsContent value="opportunities" className="mt-6">
+          <AutomationOpportunitiesPanel onCreateWorkflow={handleCreateFromOpportunity} />
         </TabsContent>
 
         <TabsContent value="ai-generate" className="mt-6">

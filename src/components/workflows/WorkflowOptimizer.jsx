@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 
   Zap, Loader2, TrendingUp, AlertCircle, 
-  CheckCircle, ArrowRight 
+  CheckCircle, ArrowRight, ThumbsUp, ThumbsDown 
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 
 export default function WorkflowOptimizer({ workflowId, workflow, onOptimized }) {
   const [optimization, setOptimization] = useState(null);
@@ -38,10 +39,45 @@ export default function WorkflowOptimizer({ workflowId, workflow, onOptimized })
           efficiency_gain: optimization.estimated_performance_gain
         }
       });
+
+      // Record positive feedback
+      await base44.functions.invoke('learnFromFeedback', {
+        suggestion_id: `optimize_${workflowId}`,
+        suggestion_type: 'workflow_optimization',
+        feedback_type: 'optimization',
+        rating: 5,
+        comment: 'User applied optimization',
+        metadata: { 
+          efficiency_gain: optimization.estimated_performance_gain,
+          improvements_count: optimization.improvements?.length
+        }
+      });
+
       onOptimized?.();
       setOptimization(null);
+      toast.success('Optimization applied! AI is learning from this.');
     } catch (error) {
       console.error('Failed to apply optimization:', error);
+      toast.error('Failed to apply optimization');
+    }
+  };
+
+  const handleRejectOptimization = async () => {
+    try {
+      await base44.functions.invoke('learnFromFeedback', {
+        suggestion_id: `optimize_${workflowId}`,
+        suggestion_type: 'workflow_optimization',
+        feedback_type: 'optimization',
+        rating: 2,
+        comment: 'User rejected optimization',
+        metadata: { 
+          efficiency_gain: optimization.estimated_performance_gain 
+        }
+      });
+      setOptimization(null);
+      toast.success('Thanks for the feedback!');
+    } catch (error) {
+      console.error('Failed to record feedback:', error);
     }
   };
 
@@ -152,21 +188,26 @@ export default function WorkflowOptimizer({ workflowId, workflow, onOptimized })
             </Card>
 
             {/* Action Buttons */}
-            <div className="flex gap-2">
-              <Button
-                onClick={handleApplyOptimization}
-                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-              >
-                <CheckCircle className="w-4 h-4 mr-2" />
-                Apply Optimization
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setOptimization(null)}
-                className="border-white/20 text-white hover:bg-white/10"
-              >
-                Cancel
-              </Button>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleApplyOptimization}
+                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Apply Optimization
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={handleRejectOptimization}
+                  className="border-red-500/30 text-red-400 hover:bg-red-500/20"
+                >
+                  <ThumbsDown className="w-4 h-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-center text-slate-500">
+                Your feedback helps AI learn better optimization strategies
+              </p>
             </div>
           </motion.div>
         )}
