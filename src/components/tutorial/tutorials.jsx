@@ -575,6 +575,394 @@ export const TUTORIALS = {
         icon: Sparkles,
       }
     ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // TSI MODULE DEEP DIVES
+  // ═══════════════════════════════════════════════════════════════
+
+  m1MarketContext: {
+    id: 'm1MarketContext',
+    title: 'M1 - Contexto de Mercado',
+    titleEn: 'M1 - Market Context',
+    category: 'intelligence',
+    description: 'Análise de mercado e tendências macro',
+    descriptionEn: 'Market analysis and macro trends',
+    duration: '5 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Módulo M1 🌍',
+        content: 'M1 analisa contexto de mercado: tamanho, crescimento, tendências macro, drivers de mudança e forças estruturais.',
+        icon: TrendingUp,
+      },
+      {
+        title: 'Execute M1 Analysis 🚀',
+        content: 'Vá em AI Modules > M1 Market Context. Insira o mercado alvo (ex: "Fintech no Brasil") e execute.',
+        icon: Zap,
+        highlightPage: 'AIModules'
+      },
+      {
+        title: 'Interprete os Outputs 📊',
+        content: 'M1 retorna: market sizing, CAGR, drivers principais, barreiras de entrada, e tendências emergentes.',
+        icon: BarChart3,
+      },
+      {
+        title: 'Conexão com Knowledge Graph 🕸️',
+        content: 'O M1 alimenta o Knowledge Graph com empresas, tecnologias e métricas de mercado automaticamente.',
+        icon: Network,
+      }
+    ]
+  },
+
+  m2CompetitiveAnalysis: {
+    id: 'm2CompetitiveAnalysis',
+    title: 'M2 - Inteligência Competitiva',
+    titleEn: 'M2 - Competitive Intelligence',
+    category: 'intelligence',
+    description: 'Análise de competidores e posicionamento',
+    descriptionEn: 'Competitor analysis and positioning',
+    duration: '5 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Módulo M2 🎯',
+        content: 'M2 mapeia o campo competitivo: players principais, diferenciação, forças/fraquezas, e movimentos estratégicos.',
+        icon: Target,
+      },
+      {
+        title: 'Competitive Mapping 🗺️',
+        content: 'O M2 cria mapas de posicionamento, identifica gaps de mercado e oportunidades de diferenciação.',
+        icon: Compass,
+      },
+      {
+        title: 'Análise de Concorrentes 🔍',
+        content: 'Para cada competidor: estratégia revelada, vantagens competitivas, vulnerabilidades e movimentos recentes.',
+        icon: Eye,
+      },
+      {
+        title: 'Recomendações Estratégicas 💡',
+        content: 'M2 sugere: onde competir, onde evitar, como diferenciar, e quais competidores monitorar.',
+        icon: Sparkles,
+      }
+    ]
+  },
+
+  m5StrategicSynthesis: {
+    id: 'm5StrategicSynthesis',
+    title: 'M5 - Síntese Estratégica (CORE)',
+    titleEn: 'M5 - Strategic Synthesis (CORE)',
+    category: 'intelligence',
+    description: 'Convergência de todos os módulos TSI',
+    descriptionEn: 'Convergence of all TSI modules',
+    duration: '6 min',
+    difficulty: 'advanced',
+    steps: [
+      {
+        title: 'O Coração do TSI 💎',
+        content: 'M5 é o módulo CORE que sintetiza outputs de M1-M4 e M6-M11 em recomendações estratégicas acionáveis.',
+        icon: Brain,
+      },
+      {
+        title: 'Convergência Multi-Módulo 🔗',
+        content: 'M5 integra: contexto (M1), competição (M2), tecnologia (M3), finanças (M4) em narrativas coerentes.',
+        icon: GitMerge,
+      },
+      {
+        title: 'Cenários Estratégicos 🎲',
+        content: 'Gera múltiplos cenários (pessimista, base, otimista) com caminhos de execução alternativos.',
+        icon: Layers,
+      },
+      {
+        title: 'Decision Support 🧭',
+        content: 'Recomenda: foco estratégico, posicionamento, investimentos prioritários, e riscos a mitigar.',
+        icon: Compass,
+      },
+      {
+        title: 'Exportação e Compartilhamento 📤',
+        content: 'Exporte sínteses como PDF, compartilhe com stakeholders ou salve no workspace para referência.',
+        icon: FileText,
+      }
+    ]
+  },
+
+  aiAnalysisWorkflow: {
+    id: 'aiAnalysisWorkflow',
+    title: 'Workflow de Análise AI',
+    titleEn: 'AI Analysis Workflow',
+    category: 'intelligence',
+    description: 'Fluxo completo de análise estratégica com AI',
+    descriptionEn: 'Complete strategic analysis flow with AI',
+    duration: '7 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Upload de Dados 📁',
+        content: 'Comece fazendo upload de documentos (pitch deck, financials, market research) no File Analyzer.',
+        icon: Upload,
+      },
+      {
+        title: 'Extração Automática 🤖',
+        content: 'A AI extrai: KPIs, competidores, tecnologias, oportunidades, riscos e insights estruturados.',
+        icon: Bot,
+      },
+      {
+        title: 'Enriquecimento com Módulos TSI 🧠',
+        content: 'Execute M1-M5 para aprofundar análises. Cada módulo adiciona camadas de inteligência.',
+        icon: Brain,
+      },
+      {
+        title: 'Visualize no Knowledge Graph 🕸️',
+        content: 'Dados extraídos alimentam o Knowledge Graph. Explore conexões e descubra insights ocultos.',
+        icon: Network,
+      },
+      {
+        title: 'Gere Relatórios Executivos 📄',
+        content: 'Use o Report Builder para criar PDFs ou CSVs customizados com os insights gerados.',
+        icon: FileText,
+      },
+      {
+        title: 'Colabore e Compartilhe 👥',
+        content: 'Adicione análises a Workspaces, convide membros, crie tarefas e colabore em tempo real.',
+        icon: Users,
+      }
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // COLLABORATION DEEP DIVES
+  // ═══════════════════════════════════════════════════════════════
+
+  workspaceManagement: {
+    id: 'workspaceManagement',
+    title: 'Gestão de Workspaces',
+    titleEn: 'Workspace Management',
+    category: 'collaboration',
+    description: 'Organize e gerencie projetos estratégicos',
+    descriptionEn: 'Organize and manage strategic projects',
+    duration: '5 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Crie seu Workspace 🗂️',
+        content: 'Vá em Workspaces > Create New. Escolha um template (Strategic Planning, M&A, Digital Transformation).',
+        icon: Briefcase,
+      },
+      {
+        title: 'Estrutura de Fases 📋',
+        content: 'Cada workspace tem fases pré-definidas (Discovery, Analysis, Synthesis, Execution) com Quick Actions sugeridas.',
+        icon: Layers,
+      },
+      {
+        title: 'Adicione Recursos 📎',
+        content: 'Link estratégias, análises, documentos e graph nodes ao workspace. Tudo centralizado em um lugar.',
+        icon: FileText,
+      },
+      {
+        title: 'Gestão de Acesso 👥',
+        content: 'Convide membros com níveis de acesso (Owner, Editor, Viewer). Configure permissões granulares.',
+        icon: Users,
+      },
+      {
+        title: 'Compartilhamento Externo 🔗',
+        content: 'Gere links de acesso para stakeholders externos com expiração e proteção por senha.',
+        icon: Network,
+      },
+      {
+        title: 'Track Progress 📈',
+        content: 'Acompanhe % de progresso, deliverables completados, e atividade da equipe no dashboard do workspace.',
+        icon: TrendingUp,
+      }
+    ]
+  },
+
+  collaborationFeatures: {
+    id: 'collaborationFeatures',
+    title: 'Ferramentas de Colaboração',
+    titleEn: 'Collaboration Tools',
+    category: 'collaboration',
+    description: 'Trabalhe em tempo real com sua equipe',
+    descriptionEn: 'Work in real-time with your team',
+    duration: '4 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Comentários e Anotações 💬',
+        content: 'Adicione comentários em estratégias, análises e graph nodes. Use @ para mencionar colegas.',
+        icon: MessageSquare,
+      },
+      {
+        title: 'Presença em Tempo Real 🟢',
+        content: 'Veja quem está online e o que estão visualizando. Cursores e highlights aparecem em tempo real.',
+        icon: Activity,
+      },
+      {
+        title: 'Task Management ✅',
+        content: 'Crie tarefas a partir de qualquer insight. Atribua responsáveis, defina prioridade e acompanhe conclusão.',
+        icon: CheckCircle,
+      },
+      {
+        title: 'Compartilhe Insights 🔗',
+        content: 'Compartilhe estratégias, análises ou insights individuais com link direto ou exportação.',
+        icon: Network,
+      },
+      {
+        title: 'Feed de Atividades 📡',
+        content: 'Visualize todas as ações da equipe em um feed centralizado: comentários, edições, conclusões.',
+        icon: Bell,
+      }
+    ]
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // ADDITIONAL AI FEATURES
+  // ═══════════════════════════════════════════════════════════════
+
+  fileAnalyzer: {
+    id: 'fileAnalyzer',
+    title: 'File Analyzer',
+    titleEn: 'File Analyzer',
+    category: 'intelligence',
+    description: 'Extraia insights de documentos com AI',
+    descriptionEn: 'Extract insights from documents with AI',
+    duration: '4 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Upload de Documentos 📤',
+        content: 'Faça upload de PDFs, Excel, Word, PowerPoint ou CSVs. A AI processa qualquer formato.',
+        icon: Upload,
+      },
+      {
+        title: 'Extração Inteligente 🧠',
+        content: 'A AI extrai automaticamente: KPIs, números financeiros, competidores, riscos, oportunidades.',
+        icon: Brain,
+      },
+      {
+        title: 'Tipos de Análise 🎯',
+        content: 'Escolha: Pitch Deck Analysis, Financial Analysis, Tech Stack, ou SIU (Structured Unstructured Analysis).',
+        icon: Target,
+      },
+      {
+        title: 'Visualizações Automáticas 📊',
+        content: 'Gráficos, tabelas e dashboards são gerados automaticamente dos dados extraídos.',
+        icon: BarChart3,
+      },
+      {
+        title: 'Salve e Compartilhe 💾',
+        content: 'Análises ficam salvas no banco de dados. Compartilhe com equipe ou adicione a workspaces.',
+        icon: Network,
+      }
+    ]
+  },
+
+  strategyAdvisor: {
+    id: 'strategyAdvisor',
+    title: 'Strategy Advisor',
+    titleEn: 'Strategy Advisor',
+    category: 'intelligence',
+    description: 'Consultor AI para decisões estratégicas',
+    descriptionEn: 'AI consultant for strategic decisions',
+    duration: '4 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Faça Perguntas Estratégicas 💡',
+        content: 'Pergunte sobre: market entry, competitive positioning, product strategy, investment decisions.',
+        icon: MessageSquare,
+      },
+      {
+        title: 'Contexto Automático 🧠',
+        content: 'O Strategy Advisor busca no Knowledge Graph, documentos salvos e análises anteriores para contextualizar.',
+        icon: Brain,
+      },
+      {
+        title: 'Recomendações Estruturadas 📋',
+        content: 'Receba: risk factors, opportunities, action items priorizados, e confidence scores.',
+        icon: CheckCircle,
+      },
+      {
+        title: 'Documentos Referenciados 📚',
+        content: 'Cada recomendação cita documentos da Wiki e análises anteriores que embasam a resposta.',
+        icon: BookOpen,
+      }
+    ]
+  },
+
+  agentOrchestration: {
+    id: 'agentOrchestration',
+    title: 'Orquestração de Agentes',
+    titleEn: 'Agent Orchestration',
+    category: 'agents',
+    description: 'Execute workflows multi-agente complexos',
+    descriptionEn: 'Execute complex multi-agent workflows',
+    duration: '6 min',
+    difficulty: 'advanced',
+    steps: [
+      {
+        title: 'Templates de Workflow 📋',
+        content: 'Escolha templates prontos: Market Research, Due Diligence, Competitive Intel, ou crie do zero.',
+        icon: Layers,
+      },
+      {
+        title: 'Configure Sub-Teams 👥',
+        content: 'Organize agentes em sub-teams (Research, Analysis, Synthesis) com coordenadores.',
+        icon: Users,
+      },
+      {
+        title: 'Fluxo de Dados 🔄',
+        content: 'Visualize como dados fluem entre agentes. Configure transformações e agregações.',
+        icon: GitMerge,
+      },
+      {
+        title: 'Execução Paralela ⚡',
+        content: 'Agentes executam em paralelo quando possível, acelerando workflows complexos.',
+        icon: Zap,
+      },
+      {
+        title: 'Intervenção Humana 🖐️',
+        content: 'Configure checkpoints para revisão humana. Pause, ajuste parâmetros e continue execução.',
+        icon: Target,
+      },
+      {
+        title: 'Monitoramento Real-Time 📡',
+        content: 'Acompanhe execuções ao vivo com logs, métricas de performance e comunicação entre agentes.',
+        icon: Activity,
+      }
+    ]
+  },
+
+  reportGeneration: {
+    id: 'reportGeneration',
+    title: 'Geração de Relatórios',
+    titleEn: 'Report Generation',
+    category: 'intelligence',
+    description: 'Crie relatórios executivos automatizados',
+    descriptionEn: 'Create automated executive reports',
+    duration: '3 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Templates de Relatório 📄',
+        content: 'Escolha entre: Executive Summary, Competitive Landscape, Financial Review, Strategic Roadmap.',
+        icon: FileText,
+      },
+      {
+        title: 'Selecione Fontes de Dados 📊',
+        content: 'Combine dados de: análises TSI, Knowledge Graph, conversas com CAIO, ou uploads de arquivos.',
+        icon: Server,
+      },
+      {
+        title: 'Gere e Exporte 🚀',
+        content: 'Gere PDF ou CSV em segundos. Relatórios incluem visualizações, tabelas e narrativas AI-generated.',
+        icon: Zap,
+      },
+      {
+        title: 'Agende Recorrência ⏰',
+        content: 'Configure relatórios automáticos (daily, weekly, monthly) enviados por email aos stakeholders.',
+        icon: Bell,
+      }
+    ]
   }
 };
 
