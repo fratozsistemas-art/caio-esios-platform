@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Code, Server, Cloud, Cpu, Shield, HardDrive, Sparkles, AlertTriangle, CheckCircle, Loader2, TrendingUp } from "lucide-react";
+import { Code, Server, Cloud, Database, Cpu, Shield, HardDrive, Sparkles, AlertTriangle, CheckCircle, Loader2, TrendingUp } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
-const DatabaseIcon = HardDrive;
+const DatabaseIcon = Database || HardDrive || Server;
 
 export default function TechStackVisualization({ techStack }) {
   const [aiAnalysis, setAiAnalysis] = useState(null);
