@@ -10,6 +10,8 @@ import {
 import { useTutorial, TutorialOverlay, ContextualTip } from "../components/tutorial/TutorialSystem";
 import { TUTORIALS } from "../components/tutorial/tutorials";
 import TutorialLauncher from "../components/tutorial/TutorialLauncher";
+import OnboardingChecklist from "../components/tutorial/OnboardingChecklist";
+import SmartOnboarding from "../components/tutorial/SmartOnboarding";
 import ConversationHistoryWidget from "../components/dashboard/ConversationHistoryWidget";
 import AnalysisInsightsWidget from "../components/dashboard/AnalysisInsightsWidget";
 import KnowledgeGraphWidget from "../components/dashboard/KnowledgeGraphWidget";
@@ -307,6 +309,9 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 md:p-8 space-y-6" role="main" aria-label="Dashboard">
+      {/* Smart Onboarding Banner */}
+      <SmartOnboarding />
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -426,6 +431,11 @@ export default function Dashboard() {
 
       {/* Dynamic Dashboard Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6" data-tour="dashboard-widgets" role="region" aria-label="Dashboard widgets">
+        {/* Onboarding Checklist for new users */}
+        {user && !user.onboarding_completed && (
+          <OnboardingChecklist />
+        )}
+        
         {dashboardLayout.map((widgetId) => renderWidget(widgetId))}
       </div>
 
