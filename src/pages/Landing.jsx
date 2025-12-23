@@ -49,8 +49,7 @@ export default function Landing() {
   const [activeModule, setActiveModule] = useState("M5");
   const [showUnauthorizedAlert, setShowUnauthorizedAlert] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const database = null;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // SEO Meta Tags
   useEffect(() => {
