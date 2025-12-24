@@ -56,6 +56,8 @@ Deno.serve(async (req) => {
     7. Strategic implications of the comparison
     `;
 
+    const startTime = Date.now();
+    
     const comparison = await base44.integrations.Core.InvokeLLM({
       prompt: comparisonPrompt,
       response_json_schema: {
@@ -119,12 +121,36 @@ Deno.serve(async (req) => {
       }
     });
 
+    const executionTime = Date.now() - startTime;
+    const now = new Date().toISOString();
+
+    // Record performance metrics
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'comparative_analysis',
+      metric_name: 'success_rate',
+      value: comparison.executive_summary ? 100 : 0,
+      period_start: now,
+      period_end: now,
+      facts_processed: filteredFacts.length,
+      metadata: { topics_compared: topic_ids.length }
+    });
+
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'comparative_analysis',
+      metric_name: 'avg_speed_ms',
+      value: executionTime,
+      period_start: now,
+      period_end: now,
+      facts_processed: filteredFacts.length
+    });
+
     return Response.json({
       success: true,
       topics_compared: topic_ids,
       comparison_analysis: comparison,
       facts_analyzed: filteredFacts.length,
-      generated_at: new Date().toISOString()
+      execution_time_ms: executionTime,
+      generated_at: now
     });
 
   } catch (error) {

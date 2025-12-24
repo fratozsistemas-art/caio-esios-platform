@@ -44,6 +44,8 @@ Deno.serve(async (req) => {
     - Recommended resolution action
     `;
 
+    const startTime = Date.now();
+    
     const conflicts = await base44.integrations.Core.InvokeLLM({
       prompt: conflictPrompt,
       response_json_schema: {
@@ -77,13 +79,46 @@ Deno.serve(async (req) => {
       }
     });
 
+    const executionTime = Date.now() - startTime;
+    const now = new Date().toISOString();
+
+    // Record performance metrics
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'conflict_detection',
+      metric_name: 'detection_rate',
+      value: conflicts.conflicts_detected?.length || 0,
+      period_start: now,
+      period_end: now,
+      facts_processed: allFacts.length,
+      metadata: { conflicts_severity_breakdown: conflicts.conflicts_detected?.reduce((acc, c) => { acc[c.severity] = (acc[c.severity] || 0) + 1; return acc; }, {}) }
+    });
+
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'conflict_detection',
+      metric_name: 'avg_speed_ms',
+      value: executionTime,
+      period_start: now,
+      period_end: now,
+      facts_processed: allFacts.length
+    });
+
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'conflict_detection',
+      metric_name: 'confidence_score',
+      value: conflicts.overall_consistency_score || 0,
+      period_start: now,
+      period_end: now,
+      facts_processed: allFacts.length
+    });
+
     return Response.json({
       success: true,
       conflicts: conflicts.conflicts_detected || [],
       consistency_score: conflicts.overall_consistency_score || 0,
       summary: conflicts.summary || '',
       total_facts_analyzed: allFacts.length,
-      analyzed_at: new Date().toISOString()
+      execution_time_ms: executionTime,
+      analyzed_at: now
     });
 
   } catch (error) {

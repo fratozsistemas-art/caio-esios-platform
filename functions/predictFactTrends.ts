@@ -53,6 +53,8 @@ Deno.serve(async (req) => {
     5. Black swan possibilities (low probability, high impact)
     `;
 
+    const startTime = Date.now();
+    
     const predictions = await base44.integrations.Core.InvokeLLM({
       prompt: predictionPrompt,
       response_json_schema: {
@@ -139,6 +141,43 @@ Deno.serve(async (req) => {
       }
     });
 
+    const executionTime = Date.now() - startTime;
+    const now = new Date().toISOString();
+    
+    // Calculate average prediction probability as accuracy proxy
+    const avgProbability = predictions.trend_predictions?.length > 0 
+      ? predictions.trend_predictions.reduce((sum, p) => sum + (p.probability || 0), 0) / predictions.trend_predictions.length
+      : 0;
+
+    // Record performance metrics
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'trend_prediction',
+      metric_name: 'accuracy',
+      value: avgProbability * 100,
+      period_start: now,
+      period_end: now,
+      facts_processed: allFacts.length,
+      metadata: { predictions_count: predictions.trend_predictions?.length || 0 }
+    });
+
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'trend_prediction',
+      metric_name: 'avg_speed_ms',
+      value: executionTime,
+      period_start: now,
+      period_end: now,
+      facts_processed: allFacts.length
+    });
+
+    await base44.asServiceRole.entities.AnalysisPerformanceMetric.create({
+      analysis_type: 'trend_prediction',
+      metric_name: 'confidence_score',
+      value: avgProbability * 100,
+      period_start: now,
+      period_end: now,
+      facts_processed: allFacts.length
+    });
+
     return Response.json({
       success: true,
       predictions: predictions.trend_predictions || [],
@@ -146,7 +185,8 @@ Deno.serve(async (req) => {
       geopolitical_scenarios: predictions.geopolitical_scenarios || [],
       cascade_effects: predictions.cascade_effects || [],
       black_swan_events: predictions.black_swan_events || [],
-      generated_at: new Date().toISOString()
+      execution_time_ms: executionTime,
+      generated_at: now
     });
 
   } catch (error) {
