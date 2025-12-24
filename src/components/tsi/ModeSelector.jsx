@@ -1,3 +1,4 @@
+import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Zap, Shield, Check } from "lucide-react";
@@ -10,8 +11,6 @@ export default function ModeSelector({ selectedMode, onModeChange }) {
       name: 'Express Mode',
       icon: Zap,
       color: 'from-blue-500 to-cyan-500',
-      duration: '3-5 days',
-      price: '$5K-$15K',
       deliverables: ['D1', 'D2', 'D5'],
       features: [
         'Fast strategic decisions',
@@ -31,8 +30,6 @@ export default function ModeSelector({ selectedMode, onModeChange }) {
       name: 'Enterprise Mode',
       icon: Shield,
       color: 'from-purple-500 to-pink-500',
-      duration: '2-4 weeks',
-      price: '$25K-$100K',
       deliverables: ['D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7', 'D8'],
       features: [
         'Mission-critical decisions',
@@ -79,18 +76,11 @@ export default function ModeSelector({ selectedMode, onModeChange }) {
                       </div>
                       <div>
                         <h3 className="text-white font-semibold text-lg">{mode.name}</h3>
-                        <p className="text-slate-400 text-sm">{mode.duration}</p>
                       </div>
                     </div>
                     {isSelected && (
                       <Check className="w-6 h-6 text-green-400" />
                     )}
-                  </div>
-
-                  <div className="mb-4">
-                    <Badge className={`bg-gradient-to-r ${mode.color} text-white`}>
-                      {mode.price}
-                    </Badge>
                   </div>
 
                   <div className="space-y-3">
