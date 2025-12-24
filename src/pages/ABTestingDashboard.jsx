@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Play, Pause, CheckCircle, TrendingUp, Users, Target, BarChart3, Trash2, Eye } from 'lucide-react';
+import { Plus, Play, Pause, CheckCircle, TrendingUp, Users, Target, BarChart3, Trash2, Eye, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import ABTestAnalytics from '@/components/abtesting/ABTestAnalytics';
@@ -18,7 +18,9 @@ import ABTestExport from '@/components/abtesting/ABTestExport';
 import ABTestSegmentation from '@/components/abtesting/ABTestSegmentation';
 import ABTestMetrics from '@/components/abtesting/ABTestMetrics';
 import ABTestCard from '@/components/abtesting/ABTestCard';
+import ABTestAutomationSettings from '@/components/abtesting/ABTestAutomationSettings';
 import { autoMarkTestWinner } from '@/functions/autoMarkTestWinner';
+import { automateABTests } from '@/functions/automateABTests';
 
 export default function ABTestingDashboard() {
   const queryClient = useQueryClient();
@@ -108,6 +110,25 @@ export default function ABTestingDashboard() {
     }
   });
 
+  const runAutomationMutation = useMutation({
+    mutationFn: () => automateABTests({}),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries(['ab_tests']);
+      const { summary } = response.data;
+      const messages = [];
+      if (summary.winners_declared > 0) messages.push(`${summary.winners_declared} winner(s) declared`);
+      if (summary.tests_started > 0) messages.push(`${summary.tests_started} test(s) started`);
+      if (summary.tests_completed > 0) messages.push(`${summary.tests_completed} test(s) completed`);
+      if (summary.deployments_triggered > 0) messages.push(`${summary.deployments_triggered} deployment(s) triggered`);
+      
+      if (messages.length > 0) {
+        toast.success(`Automation complete: ${messages.join(', ')}`);
+      } else {
+        toast.info('No automated actions needed at this time');
+      }
+    }
+  });
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -116,6 +137,15 @@ export default function ABTestingDashboard() {
           <p className="text-slate-400">Optimize engagement and feature adoption</p>
         </div>
         <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => runAutomationMutation.mutate()}
+            disabled={runAutomationMutation.isPending}
+            className="border-purple-500/20 text-purple-400 hover:bg-purple-500/10"
+          >
+            <Zap className="w-4 h-4 mr-2" />
+            {runAutomationMutation.isPending ? 'Running...' : 'Run Automation'}
+          </Button>
           <Button
             variant="outline"
             onClick={() => checkWinnersMutation.mutate()}
@@ -362,6 +392,26 @@ function CreateTestForm({ onSubmit }) {
 
       {showAdvanced && (
         <div className="space-y-4 pt-4 border-t border-white/10">
+          <div>
+            <Label className="text-white mb-2">Start Date (Optional)</Label>
+            <Input
+              type="datetime-local"
+              value={formData.start_date?.slice(0, 16) || ''}
+              onChange={(e) => setFormData({ ...formData, start_date: e.target.value ? new Date(e.target.value).toISOString() : null })}
+              className="bg-slate-800 border-slate-700 text-white"
+            />
+          </div>
+
+          <div>
+            <Label className="text-white mb-2">End Date (Optional)</Label>
+            <Input
+              type="datetime-local"
+              value={formData.end_date?.slice(0, 16) || ''}
+              onChange={(e) => setFormData({ ...formData, end_date: e.target.value ? new Date(e.target.value).toISOString() : null })}
+              className="bg-slate-800 border-slate-700 text-white"
+            />
+          </div>
+
           <ABTestMetrics
             value={formData.target_metrics}
             onChange={(metrics) => setFormData({ ...formData, target_metrics: metrics })}
@@ -370,6 +420,11 @@ function CreateTestForm({ onSubmit }) {
           <ABTestSegmentation
             value={formData.audience_criteria}
             onChange={(criteria) => setFormData({ ...formData, audience_criteria: criteria })}
+          />
+
+          <ABTestAutomationSettings
+            value={formData.metadata}
+            onChange={(metadata) => setFormData({ ...formData, metadata })}
           />
         </div>
       )}
