@@ -1,5 +1,5 @@
 import QuickActionCard from '../components/quickactions/QuickActionCard';
-import { CheckCircleIcon } from '../components/utils/icons';
+import { CheckCircle } from 'lucide-react';
 
 const quickActions = [
   {
@@ -48,7 +48,7 @@ function Pages() {
           <p className="text-sm text-slate-300">Welcome to CAIO·AI</p>
           <h1 className="text-3xl font-semibold text-white">Quick Actions Showcase</h1>
           <div className="mt-3 flex items-center gap-2 text-sm text-emerald-300">
-            <CheckCircleIcon className="h-4 w-4" />
+            <CheckCircle className="h-4 w-4" />
             <span>Quick actions ready to use.</span>
           </div>
         </div>
