@@ -75,6 +75,7 @@ import Notifications from './pages/Notifications';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Phase3Dashboard from './pages/Phase3Dashboard';
 import Precos from './pages/Precos';
+import PremiumDataDemo from './pages/PremiumDataDemo';
 import Pricing from './pages/Pricing';
 import QualityValidation from './pages/QualityValidation';
 import QueryEngine from './pages/QueryEngine';
@@ -119,7 +120,7 @@ import WorkflowDesigner from './pages/WorkflowDesigner';
 import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
-import PremiumDataDemo from './pages/PremiumDataDemo';
+import PortfolioIntelligence from './pages/PortfolioIntelligence';
 import __Layout from './Layout.jsx';
 
 
@@ -201,6 +202,7 @@ export const PAGES = {
     "PaymentSuccess": PaymentSuccess,
     "Phase3Dashboard": Phase3Dashboard,
     "Precos": Precos,
+    "PremiumDataDemo": PremiumDataDemo,
     "Pricing": Pricing,
     "QualityValidation": QualityValidation,
     "QueryEngine": QueryEngine,
@@ -245,7 +247,7 @@ export const PAGES = {
     "WorkflowTemplates": WorkflowTemplates,
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
-    "PremiumDataDemo": PremiumDataDemo,
+    "PortfolioIntelligence": PortfolioIntelligence,
 }
 
 export const pagesConfig = {

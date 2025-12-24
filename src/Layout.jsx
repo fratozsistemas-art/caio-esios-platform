@@ -62,9 +62,10 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: 'Dashboard' },
                 { name: t('nav.chat', 'Chat with CAIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
                 { name: t('nav.conversationHistory', 'Conversation History'), icon: Archive, path: 'ConversationHistory' },
-                { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' }
-              ]
-            },
+                { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' },
+                { name: t('nav.portfolioIntelligence', 'Portfolio Intelligence'), icon: Briefcase, path: 'PortfolioIntelligence', badge: 'NEW' }
+                ]
+                },
             {
               title: t('nav.aiAgents', 'AI Agents'),
               items: [
