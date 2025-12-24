@@ -7,11 +7,13 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { 
   Sparkles, Brain, Zap, Network, CheckCircle, ArrowRight, 
-  Target, Users, FileText, TrendingUp, Compass, Bot
+  Target, Users, FileText, TrendingUp, Compass, Bot, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTutorial } from './TutorialSystem';
 import { TUTORIALS, RECOMMENDED_ORDER } from './tutorials';
+import ABTestWrapper from '@/components/abtesting/ABTestWrapper';
+import { useABTest } from '@/components/abtesting/ABTestProvider';
 
 /**
  * SmartOnboarding - Intelligent onboarding that adapts to user behavior
@@ -20,6 +22,7 @@ import { TUTORIALS, RECOMMENDED_ORDER } from './tutorials';
 
 export default function SmartOnboarding() {
   const { startTutorial, isTutorialCompleted } = useTutorial();
+  const { trackInteraction, trackConversion } = useABTest();
   const [currentPhase, setCurrentPhase] = useState(0); // 0: setup, 1: core, 2: advanced
   const [showBanner, setShowBanner] = useState(false);
   const [nextTutorial, setNextTutorial] = useState(null);
@@ -82,12 +85,14 @@ export default function SmartOnboarding() {
       startTutorial(nextTutorial.id);
       setShowBanner(false);
       sessionStorage.setItem('caio_has_interacted', 'true');
+      trackConversion('onboarding_flow', 'tutorial_started', 1, { tutorialId: nextTutorial.id });
     }
   };
 
   const handleDismiss = () => {
     setShowBanner(false);
     sessionStorage.setItem('caio_has_interacted', 'true');
+    trackInteraction('onboarding_flow', 'dismissed');
   };
 
   const phaseConfig = {
@@ -123,8 +128,10 @@ export default function SmartOnboarding() {
   if (!showBanner || !nextTutorial) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
+    <ABTestWrapper testName="onboarding_flow" fallback={null}>
+      {() => (
+        <AnimatePresence>
+          <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -20 }}
@@ -224,7 +231,9 @@ export default function SmartOnboarding() {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
-    </AnimatePresence>
+          </motion.div>
+        </AnimatePresence>
+      )}
+    </ABTestWrapper>
   );
 }
