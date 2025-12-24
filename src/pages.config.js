@@ -121,6 +121,7 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import PortfolioIntelligence from './pages/PortfolioIntelligence';
+import DataSyncScheduler from './pages/DataSyncScheduler';
 import __Layout from './Layout.jsx';
 
 
@@ -248,6 +249,7 @@ export const PAGES = {
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "PortfolioIntelligence": PortfolioIntelligence,
+    "DataSyncScheduler": DataSyncScheduler,
 }
 
 export const pagesConfig = {
