@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
   LayoutDashboard, MessageSquare, Brain, Network, CheckSquare,
-  TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2, Shield, Layers, Search, HardDrive
+  TrendingUp, Target, Sparkles, Settings, RefreshCw, Loader2, Shield, Layers, Search, HardDrive, CheckCircle
 } from "lucide-react";
 import { useTutorial, TutorialOverlay, ContextualTip } from "../components/tutorial/TutorialSystem";
 import { TUTORIALS } from "../components/tutorial/tutorials";
