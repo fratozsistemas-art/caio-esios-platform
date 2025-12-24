@@ -197,6 +197,7 @@ export default function ABTestingDashboard() {
                 onUpdate={(data) => updateTestMutation.mutate({ id: test.id, data })}
                 onDelete={() => deleteTestMutation.mutate(test.id)}
                 onSelect={setSelectedTest}
+                onViewAnalytics={() => setShowAnalytics(test.id)}
               />
             ))
           )}
@@ -248,7 +249,20 @@ export default function ABTestingDashboard() {
 import ABTestCard from '@/components/abtesting/ABTestCard';
 
 function TestCard({ test, stats, onUpdate, onDelete, onSelect, onViewAnalytics }) {
-  return <ABTestCard test={test} stats={stats} onUpdate={onUpdate} onDelete={onDelete} />;
+  return (
+    <div className="relative">
+      <ABTestCard test={test} stats={stats} onUpdate={onUpdate} onDelete={onDelete} />
+      <Button
+        size="sm"
+        variant="outline"
+        onClick={() => onViewAnalytics()}
+        className="absolute top-4 right-20 border-blue-500/20 text-blue-400 hover:bg-blue-500/10"
+      >
+        <Eye className="w-4 h-4 mr-2" />
+        Analytics
+      </Button>
+    </div>
+  );
 }
 
 function CreateTestForm({ onSubmit }) {
