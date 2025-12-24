@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { CheckCircleIcon } from '@/components/utils/icons';
 import { motion } from "framer-motion";
 import AccessRequestForm from "../landing/AccessRequestForm";
 
@@ -92,7 +93,7 @@ export default function PricingCard({ plan, index }) {
           <ul className="space-y-3">
             {plan.features.map((feature, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm text-slate-300">
-                <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
                 <span>{feature}</span>
               </li>
             ))}
