@@ -10,14 +10,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Play, Pause, CheckCircle, TrendingUp, Users, Target, BarChart3, Trash2 } from 'lucide-react';
+import { Plus, Play, Pause, CheckCircle, TrendingUp, Users, Target, BarChart3, Trash2, Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import ABTestAnalytics from '@/components/abtesting/ABTestAnalytics';
+import ABTestExport from '@/components/abtesting/ABTestExport';
 
 export default function ABTestingDashboard() {
   const queryClient = useQueryClient();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedTest, setSelectedTest] = useState(null);
+  const [showAnalytics, setShowAnalytics] = useState(null);
 
   const { data: tests = [] } = useQuery({
     queryKey: ['ab_tests'],
@@ -208,17 +211,43 @@ export default function ABTestingDashboard() {
               onUpdate={(data) => updateTestMutation.mutate({ id: test.id, data })}
               onDelete={() => deleteTestMutation.mutate(test.id)}
               onSelect={setSelectedTest}
+              onViewAnalytics={() => setShowAnalytics(test.id)}
             />
           ))}
         </TabsContent>
       </Tabs>
+
+      {/* Analytics Detail Modal */}
+      {showAnalytics && (
+        <Dialog open={!!showAnalytics} onOpenChange={() => setShowAnalytics(null)}>
+          <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-800">
+            <DialogHeader>
+              <div className="flex items-center justify-between">
+                <DialogTitle className="text-white text-2xl">
+                  {tests.find(t => t.id === showAnalytics)?.name}
+                </DialogTitle>
+                <ABTestExport 
+                  test={tests.find(t => t.id === showAnalytics)} 
+                  stats={calculateTestResults(tests.find(t => t.id === showAnalytics))}
+                  events={events.filter(e => e.test_id === tests.find(t => t.id === showAnalytics)?.id)}
+                />
+              </div>
+            </DialogHeader>
+            <ABTestAnalytics 
+              test={tests.find(t => t.id === showAnalytics)} 
+              stats={calculateTestResults(tests.find(t => t.id === showAnalytics))}
+              events={events.filter(e => e.test_id === tests.find(t => t.id === showAnalytics)?.id)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
 
 import ABTestCard from '@/components/abtesting/ABTestCard';
 
-function TestCard({ test, stats, onUpdate, onDelete, onSelect }) {
+function TestCard({ test, stats, onUpdate, onDelete, onSelect, onViewAnalytics }) {
   return <ABTestCard test={test} stats={stats} onUpdate={onUpdate} onDelete={onDelete} />;
 }
 
