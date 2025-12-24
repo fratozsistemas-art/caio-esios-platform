@@ -87,15 +87,27 @@ export default function PortfolioIntelligenceModule() {
                 </p>
               </div>
             </div>
-            <Button
-              onClick={() => refetch()}
-              size="sm"
-              variant="outline"
-              className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
-            >
-              <Activity className="w-4 h-4 mr-2" />
-              Atualizar
-            </Button>
+            <div className="flex gap-2">
+              <FeedbackButton 
+                type="widget_rating"
+                targetComponent="Portfolio Intelligence Module"
+                label="Avaliar"
+              />
+              <Button
+                onClick={() => refetch()}
+                size="sm"
+                variant="outline"
+                className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                Atualizar
+              </Button>
+              <Link to={createPageUrl('PortfolioIntelligence')}>
+                <Button variant="ghost" size="sm" className="text-cyan-400 hover:text-cyan-300">
+                  Ver Completo →
+                </Button>
+              </Link>
+            </div>
           </div>
         </CardHeader>
         <CardContent>

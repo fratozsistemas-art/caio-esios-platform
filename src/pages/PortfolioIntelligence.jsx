@@ -45,6 +45,7 @@ import {
   PolarRadiusAxis,
   Radar
 } from "recharts";
+import FeedbackButton from '../components/feedback/FeedbackButton';
 
 const COLORS = ['#00D4FF', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#EC4899'];
 
@@ -110,6 +111,11 @@ export default function PortfolioIntelligence() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <FeedbackButton 
+            type="general_feedback"
+            targetComponent="Portfolio Intelligence Page"
+            label="Feedback"
+          />
           <Button
             onClick={() => refetch()}
             variant="outline"
