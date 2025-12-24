@@ -31,6 +31,9 @@ import DeploymentStatusWidget from "../components/dashboard/DeploymentStatusWidg
 import ABTestDashboardWidget from "../components/dashboard/ABTestDashboardWidget";
 import CrossInsightsModule from "../components/dashboard/CrossInsightsModule";
 import PortfolioIntelligenceModule from "../components/dashboard/PortfolioIntelligenceModule";
+import QuickActionsResultsWidget from "../components/dashboard/QuickActionsResultsWidget";
+import BusinessHealthWidget from "../components/dashboard/BusinessHealthWidget";
+import CriticalAlertsWidget from "../components/dashboard/CriticalAlertsWidget";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -40,7 +43,7 @@ export default function Dashboard() {
   const [userRole, setUserRole] = useState(null);
   const [dashboardLayout, setDashboardLayout] = useState(() => {
     const saved = localStorage.getItem('dashboard_layout');
-      return saved ? JSON.parse(saved) : ['realtime', 'stats', 'portfolio', 'crossinsights', 'abtests', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
+      return saved ? JSON.parse(saved) : ['quick-actions', 'business-health', 'critical-alerts', 'realtime', 'stats', 'portfolio', 'crossinsights', 'abtests', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
     });
   const [engagementData, setEngagementData] = useState([]);
   const [roiData, setRoiData] = useState([]);
@@ -216,6 +219,12 @@ export default function Dashboard() {
 
   const renderWidget = (widgetId) => {
       switch (widgetId) {
+        case 'quick-actions':
+          return <QuickActionsResultsWidget key={widgetId} />;
+        case 'business-health':
+          return <BusinessHealthWidget key={widgetId} />;
+        case 'critical-alerts':
+          return <CriticalAlertsWidget key={widgetId} />;
         case 'realtime':
           return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
         case 'stats':
@@ -293,23 +302,23 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['stats', 'abtests', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'stats', 'abtests', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
-      widgets: ['stats', 'abtests', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'stats', 'abtests', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
       focus: 'analysis'
     },
     editor: {
-      widgets: ['stats', 'deployments', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'stats', 'deployments', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
       focus: 'content'
     },
     viewer: {
-      widgets: ['stats', 'onboarding', 'conversations', 'insights', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'stats', 'onboarding', 'conversations', 'insights', 'crossplatform'],
       focus: 'consumption'
     },
     default: {
-      widgets: ['stats', 'abtests', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'stats', 'abtests', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'balanced'
     }
   };
