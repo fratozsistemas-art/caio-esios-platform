@@ -27,6 +27,7 @@ import {
   BarChart3
 } from "lucide-react";
 import { CheckCircleIcon } from "../utils/icons";
+import { MarketTrendsChart, CompetitiveLandscapeChart, FinancialProjectionsChart, OpportunityMatrixChart } from "../visualizations";
 
 const demoModules = [
   {
@@ -442,6 +443,25 @@ export default function InteractiveDemo({ open, onClose }) {
     setGeneratedInsights(null);
   };
 
+  // Mock data for visualizations
+  const mockMarketData = [
+    { period: "Q1'24", tam: 135, sam: 17, som: 40 },
+    { period: "Q2'24", tam: 138, sam: 17.5, som: 42 },
+    { period: "Q3'24", tam: 140, sam: 18, som: 44 },
+    { period: "Q4'24", tam: 142, sam: 18.7, som: 45 },
+    { period: "Q1'25", tam: 146, sam: 19.2, som: 48 },
+    { period: "Q2'25", tam: 150, sam: 19.8, som: 52 }
+  ];
+
+  const mockCompetitiveData = [
+    { name: "McKinsey", methodology: 9, price: 9, marketShare: 15, description: "Traditional consultancy with deep methodology" },
+    { name: "BCG", methodology: 9, price: 8.5, marketShare: 14, description: "Strategy consulting with digital transformation" },
+    { name: "ChatGPT Enterprise", methodology: 3, price: 2, marketShare: 25, description: "Generic AI without strategic methodology" },
+    { name: "Claude", methodology: 3, price: 2.5, marketShare: 18, description: "Advanced AI reasoning but no frameworks" },
+    { name: "Gong", methodology: 5, price: 6, marketShare: 8, description: "Vertical SaaS for revenue intelligence" },
+    { name: "CAIO·AI", methodology: 9, price: 3, marketShare: 5, isYou: true, description: "Consultancy-grade methodology at SaaS economics" }
+  ];
+
   const renderGuidedWalkthrough = () => {
     const walkthrough = guidedWalkthroughs[selectedModule.id] || guidedWalkthroughsM2M3[selectedModule.id];
     const step = walkthrough.steps[currentStep];
@@ -511,6 +531,27 @@ export default function InteractiveDemo({ open, onClose }) {
           </Card>
         </motion.div>
 
+        {/* Data Visualization for M1 and M2 */}
+        {showInsights && selectedModule.id === "M1" && currentStep === 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <MarketTrendsChart data={mockMarketData} title="Market Growth Projection" />
+          </motion.div>
+        )}
+
+        {showInsights && selectedModule.id === "M2" && currentStep === 1 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <CompetitiveLandscapeChart data={mockCompetitiveData} title="Competitive Positioning" />
+          </motion.div>
+        )}
+
         {/* Actions */}
         <div className="flex gap-3">
           {!showInsights ? (
@@ -552,6 +593,13 @@ export default function InteractiveDemo({ open, onClose }) {
 
     // M4 Financial Modeling with user inputs
     if (selectedModule.id === "M4") {
+      const mockFinancialData = [
+        { quarter: "Q1", revenue: 2.5, burn: 3.75, cashBalance: 15 },
+        { quarter: "Q2", revenue: 3.2, burn: 4.2, cashBalance: 13.5 },
+        { quarter: "Q3", revenue: 4.1, burn: 4.8, cashBalance: 12 },
+        { quarter: "Q4", revenue: 5.3, burn: 5.5, cashBalance: 10.5 }
+      ];
+
       return (
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-4">
@@ -770,6 +818,14 @@ export default function InteractiveDemo({ open, onClose }) {
               Analyze Portfolio ({selectedOpportunities.length} selected)
             </Button>
           )}
+
+          {/* Opportunity Matrix Visualization */}
+          <OpportunityMatrixChart
+            opportunities={sandbox.opportunities}
+            selectedIds={selectedOpportunities.map(o => o.id)}
+            onSelect={handleOpportunityToggle}
+            title="Interactive Opportunity Matrix"
+          />
 
           {/* Portfolio Analysis */}
           {generatedInsights && (
