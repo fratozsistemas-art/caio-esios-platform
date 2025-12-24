@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { CheckCircle, Sparkles, Zap, Package } from "lucide-react";
+import { Sparkles, Zap, Package } from "lucide-react";
+import { CheckCircleIcon } from "../utils/icons";
 import AccessRequestForm from "./AccessRequestForm";
 import { tsiModules } from "./tsiModules";
 
@@ -144,7 +145,7 @@ export default function PricingSection() {
             Choose your plan, select individual modules, or get a bundle. No credit card required for trial.
           </p>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#00D4FF]/20 border border-[#00D4FF]/40 text-[#00E5FF] text-sm font-medium shadow-lg">
-            <CheckCircle className="w-4 h-4" />
+            <CheckCircleIcon className="w-4 h-4" />
             14-Day Free Trial · 30-Day Money-Back Guarantee
           </div>
         </div>
@@ -229,7 +230,7 @@ export default function PricingSection() {
                       <ul className="space-y-3">
                         {plan.features.map((feature, idx) => (
                           <li key={idx} className="flex items-start gap-2 text-sm text-slate-300">
-                            <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+                            <CheckCircleIcon className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
                             <span>{feature}</span>
                           </li>
                         ))}
