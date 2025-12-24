@@ -10,7 +10,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Play, Pause, CheckCircle, TrendingUp, Users, Target, BarChart3, Trash2, Eye, Zap } from 'lucide-react';
+import { Plus, Play, Pause, TrendingUp, Users, Target, BarChart3, Trash2, Eye, Zap } from 'lucide-react';
+import { CheckCircleIcon } from '@/components/utils/icons';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import ABTestAnalytics from '@/components/abtesting/ABTestAnalytics';
@@ -152,7 +153,7 @@ export default function ABTestingDashboard() {
             disabled={checkWinnersMutation.isPending}
             className="border-green-500/20 text-green-400 hover:bg-green-500/10"
           >
-            <CheckCircle className="w-4 h-4 mr-2" />
+            <CheckCircleIcon className="w-4 h-4 mr-2" />
             {checkWinnersMutation.isPending ? 'Checking...' : 'Check Winners'}
           </Button>
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
@@ -220,7 +221,7 @@ export default function ABTestingDashboard() {
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-3 rounded-lg bg-cyan-500/20">
-                <CheckCircle className="w-6 h-6 text-cyan-400" />
+                <CheckCircleIcon className="w-6 h-6 text-cyan-400" />
               </div>
               <div>
                 <p className="text-sm text-slate-400">Completed</p>
