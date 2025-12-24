@@ -117,9 +117,9 @@ export default function ABTestSegmentation({ value = {}, onChange }) {
                 <SelectValue placeholder="Add segment..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="new_users">New Users (< 7 days)</SelectItem>
+                <SelectItem value="new_users">New Users (&lt; 7 days)</SelectItem>
                 <SelectItem value="active_users">Active Users (7-30 days)</SelectItem>
-                <SelectItem value="power_users">Power Users (> 30 days)</SelectItem>
+                <SelectItem value="power_users">Power Users (&gt; 30 days)</SelectItem>
                 <SelectItem value="mobile">Mobile Users</SelectItem>
                 <SelectItem value="desktop">Desktop Users</SelectItem>
               </SelectContent>
