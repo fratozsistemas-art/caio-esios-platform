@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { CheckCircleIcon } from '@/components/utils/icons';
+import { CheckCircleIcon } from '../utils/icons';
 import { motion } from "framer-motion";
 import AccessRequestForm from "../landing/AccessRequestForm";
 
