@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import {
-  ArrowLeft, CheckCircle, Clock, AlertTriangle, FileText,
+  ArrowLeft, Clock, AlertTriangle, FileText,
   Download, TrendingUp, Shield, Zap, Loader2
 } from "lucide-react";
+import { CheckCircleIcon } from "../utils/icons";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast"; // Assuming toast is imported from react-hot-toast or similar
 
