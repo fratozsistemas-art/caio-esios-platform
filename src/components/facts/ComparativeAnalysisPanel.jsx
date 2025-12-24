@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -7,7 +8,7 @@ import { GitCompare, Loader2, ArrowRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 
-export default function ComparativeAnalysisPanel({ facts }) {
+function ComparativeAnalysisPanel({ facts }) {
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState(null);
@@ -198,3 +199,17 @@ export default function ComparativeAnalysisPanel({ facts }) {
     </div>
   );
 }
+
+ComparativeAnalysisPanel.propTypes = {
+  facts: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    topic_id: PropTypes.string,
+    topic_label: PropTypes.string,
+    dimension: PropTypes.string,
+    summary: PropTypes.string,
+    status: PropTypes.string,
+    confidence: PropTypes.number
+  })).isRequired
+};
+
+export default ComparativeAnalysisPanel;

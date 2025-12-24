@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,7 +14,7 @@ const momentumColors = {
   declining: { bg: 'bg-red-500/20', border: 'border-red-500/40', text: 'text-red-400' }
 };
 
-export default function PredictiveAnalysisPanel() {
+function PredictiveAnalysisPanel() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['fact-predictions'],
     queryFn: async () => {
@@ -176,3 +177,7 @@ export default function PredictiveAnalysisPanel() {
     </div>
   );
 }
+
+PredictiveAnalysisPanel.propTypes = {};
+
+export default PredictiveAnalysisPanel;

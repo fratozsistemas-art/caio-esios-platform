@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
+import PropTypes from 'prop-types';
 import ForceGraph2D from 'react-force-graph-2d';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Network, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 
-export default function StrategicFactsGraph({ facts }) {
+function StrategicFactsGraph({ facts }) {
   const [selectedNode, setSelectedNode] = useState(null);
   const [highlightNodes, setHighlightNodes] = useState(new Set());
   const [highlightLinks, setHighlightLinks] = useState(new Set());
@@ -251,3 +252,19 @@ export default function StrategicFactsGraph({ facts }) {
     </div>
   );
 }
+
+StrategicFactsGraph.propTypes = {
+  facts: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string,
+    topic_id: PropTypes.string,
+    topic_label: PropTypes.string,
+    dimension: PropTypes.string,
+    summary: PropTypes.string,
+    detail: PropTypes.string,
+    status: PropTypes.string,
+    confidence: PropTypes.number,
+    tags: PropTypes.arrayOf(PropTypes.string)
+  })).isRequired
+};
+
+export default StrategicFactsGraph;

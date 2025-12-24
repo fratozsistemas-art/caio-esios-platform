@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,7 +15,7 @@ const severityConfig = {
   low: { bg: 'bg-blue-500/20', border: 'border-blue-500/40', text: 'text-blue-400', icon: AlertTriangle }
 };
 
-export default function ConflictAnalysisPanel() {
+function ConflictAnalysisPanel() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['fact-conflicts'],
     queryFn: async () => {
