@@ -865,7 +865,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-3 gap-8 mt-16">
             {[
               {
-                icon: CheckCircle,
+                icon: CheckCircleIcon,
                 title: "Cobertura Completa",
                 description:
                   "Os 11 módulos trabalham juntos para cobrir mercado, produto, tecnologia, capital, execução e governança cognitiva.",
