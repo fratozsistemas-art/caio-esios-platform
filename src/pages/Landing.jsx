@@ -10,7 +10,6 @@ import {
   Zap,
   TrendingUp,
   ArrowRight,
-  CheckCircle,
   X,
   Mail,
   Target,
@@ -23,6 +22,7 @@ import {
   Sparkles,
   Menu
 } from "lucide-react";
+import { CheckCircleIcon } from "../components/utils/icons";
 import { motion } from "framer-motion";
 import AccessRequestForm from "../components/landing/AccessRequestForm";
 import AuthoritySpectrum from "../components/landing/AuthoritySpectrum";
@@ -886,7 +886,7 @@ export default function Landing() {
                 gradient: "from-caio-blue-medium to-caio-gold",
               },
             ].map((benefit, i) => {
-              const Icon = benefit.icon;
+              const Icon = benefit.icon === CheckCircle ? CheckCircleIcon : benefit.icon;
               return (
                 <motion.div
                   key={i}
@@ -1038,7 +1038,7 @@ export default function Landing() {
                     <td className="p-3 text-center">
                       {typeof row.caio === "boolean" ? (
                         row.caio ? (
-                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                          <CheckCircleIcon className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
@@ -1051,7 +1051,7 @@ export default function Landing() {
                     <td className="p-3 text-center">
                       {typeof row.llms === "boolean" ? (
                         row.llms ? (
-                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                          <CheckCircleIcon className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
@@ -1064,7 +1064,7 @@ export default function Landing() {
                     <td className="p-3 text-center">
                       {typeof row.reasoning === "boolean" ? (
                         row.reasoning ? (
-                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                          <CheckCircleIcon className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
@@ -1075,7 +1075,7 @@ export default function Landing() {
                     <td className="p-3 text-center">
                       {typeof row.individual === "boolean" ? (
                         row.individual ? (
-                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                          <CheckCircleIcon className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
@@ -1088,7 +1088,7 @@ export default function Landing() {
                     <td className="p-3 text-center">
                       {typeof row.boutique === "boolean" ? (
                         row.boutique ? (
-                          <CheckCircle className="w-5 h-5 text-emerald-300 mx-auto" />
+                          <CheckCircleIcon className="w-5 h-5 text-emerald-300 mx-auto" />
                         ) : (
                           <X className="w-5 h-5 text-slate-600 mx-auto" />
                         )
@@ -1201,7 +1201,7 @@ export default function Landing() {
                               key={idx}
                               className="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
                             >
-                              <CheckCircle className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
+                              <CheckCircleIcon className="w-5 h-5 text-emerald-300 flex-shrink-0 mt-0.5" />
                               <span className="text-slate-200 text-sm">
                                 {result}
                               </span>
@@ -1383,7 +1383,7 @@ export default function Landing() {
                   }
                 ].map((item, idx) => (
                   <div key={idx} className="flex gap-4 p-4 bg-white/5 rounded-lg border border-white/10">
-                    <CheckCircle className="w-6 h-6 text-[#00D4FF] flex-shrink-0 mt-0.5" />
+                    <CheckCircleIcon className="w-6 h-6 text-[#00D4FF] flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-white font-semibold">{item.title}</p>
                       <p className="text-slate-400 text-sm">{item.description}</p>
