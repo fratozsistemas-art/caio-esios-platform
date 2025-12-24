@@ -38,6 +38,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import QuickActionAssistantModal from "../components/quickactions/QuickActionAssistantModal";
+import CreateCustomActionDialog from "../components/quickactions/CreateCustomActionDialog";
+import AISuggestionsPanel from "../components/quickactions/AISuggestionsPanel";
 
 const FUNCTIONAL_AREA_COLORS = {
   'Strategy': { gradient: 'from-blue-500 to-blue-700', bg: 'bg-blue-500/10', border: 'border-blue-500/30', text: 'text-blue-400' },
@@ -67,6 +69,23 @@ export default function QuickActions() {
   const { data: allQuickActions = [], isLoading } = useQuery({
     queryKey: ["quickActions"],
     queryFn: () => base44.entities.QuickAction.list("-created_date"),
+  });
+
+  const { data: customActions = [], refetch: refetchCustom } = useQuery({
+    queryKey: ['custom-quick-actions'],
+    queryFn: async () => {
+      const user = await base44.auth.me();
+      const myActions = await base44.entities.CustomQuickAction.filter({
+        created_by: user.email
+      });
+      const publicActions = await base44.entities.CustomQuickAction.filter({
+        is_public: true
+      });
+      
+      const combined = [...myActions, ...publicActions];
+      const unique = Array.from(new Map(combined.map(a => [a.id, a])).values());
+      return unique;
+    }
   });
 
   // Remove duplicates based on title similarity
@@ -115,13 +134,20 @@ export default function QuickActions() {
 
   return (
     <div className="p-6 md:p-8">
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-          Quick Actions
-        </h1>
-        <p className="text-slate-400">
-          {quickActions.length}+ pre-configured strategic analysis templates
-        </p>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <div>
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            Quick Actions
+          </h1>
+          <p className="text-slate-400">
+            {quickActions.length}+ pre-configured strategic analysis templates
+          </p>
+        </div>
+        <CreateCustomActionDialog onActionCreated={() => refetchCustom()} />
+      </div>
+
+      <div className="mb-6">
+        <AISuggestionsPanel />
       </div>
 
       <Card className="bg-[#1A1D29] border-[#00D4FF]/20 backdrop-blur-sm mt-8 mb-4">
@@ -183,12 +209,54 @@ export default function QuickActions() {
                   {area.label}
                 </Button>
               ))}
+              <Button
+                variant={selectedFunctionalArea === "custom" ? "default" : "outline"}
+                onClick={() => setSelectedFunctionalArea("custom")}
+                className={selectedFunctionalArea === "custom" ? "bg-[#F43F5E] text-white hover:bg-[#E11D48] font-medium" : "bg-[#1A1D29] border-[#F43F5E]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#F43F5E]/50 hover:text-white"}
+              >
+                ⭐ Custom ({customActions.length})
+              </Button>
             </div>
           </div>
         )}
       </div>
 
-      {filteredActions?.length === 0 ? (
+      {selectedFunctionalArea === 'custom' ? (
+        customActions.length === 0 ? (
+          <Card className="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border-purple-500/30">
+            <CardContent className="p-12 text-center">
+              <Sparkles className="w-16 h-16 text-purple-400 mx-auto mb-4 opacity-50" />
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Nenhuma Ação Personalizada
+              </h3>
+              <p className="text-slate-400 mb-4">
+                Crie suas próprias quick actions customizadas
+              </p>
+              <CreateCustomActionDialog onActionCreated={() => refetchCustom()} />
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {customActions.map((action, index) => {
+              const colorConfig = FUNCTIONAL_AREA_COLORS['Innovation'];
+              return (
+                <QuickActionCard
+                  key={action.id}
+                  action={{
+                    ...action,
+                    functional_area: action.category,
+                    icon: 'Sparkles',
+                    primary_framework: 'Custom'
+                  }}
+                  index={index}
+                  onClick={() => handleExecuteAction(action)}
+                  colorConfig={colorConfig}
+                />
+              );
+            })}
+          </div>
+        )
+      ) : filteredActions?.length === 0 ? (
         <Card className="bg-[#1A1D29] border-[#00D4FF]/20 backdrop-blur-sm">
           <CardContent className="p-12 text-center">
             <Zap className="w-16 h-16 text-[#475569] mx-auto mb-4" />
