@@ -1,3 +1,4 @@
+import React from 'react';
 import QuickActionCard from '../components/quickactions/QuickActionCard';
 import { CheckCircle } from 'lucide-react';
 
