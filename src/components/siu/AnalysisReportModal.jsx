@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Brain, 
-  CheckCircle, Download, FileText
+  Brain, TrendingUp, Target, DollarSign, Code,
+  CheckCircle, AlertCircle, Download, FileText,
+  BarChart3, Lightbulb, Rocket, Network
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
