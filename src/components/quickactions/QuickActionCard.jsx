@@ -4,8 +4,20 @@ import { ArrowRight, Clock, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
+const useSafeNavigate = () => {
+  try {
+    return useNavigate();
+  } catch (error) {
+    console.warn("Navigation is unavailable; falling back to direct links.", error);
+    return null;
+  }
+};
+
 export default function QuickActionCard({ action, roleColor = "blue", themeColor = "blue" }) {
-  const navigate = useNavigate();
+  const navigate = useSafeNavigate();
+  const safeAction = action ?? {};
+  const title = safeAction.title ?? "";
+  const expectedOutputs = safeAction.expected_outputs ?? [];
   const displayColor = themeColor || roleColor;
 
   const colorClasses = {
