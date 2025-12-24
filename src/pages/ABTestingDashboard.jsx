@@ -17,6 +17,7 @@ import ABTestAnalytics from '@/components/abtesting/ABTestAnalytics';
 import ABTestExport from '@/components/abtesting/ABTestExport';
 import ABTestSegmentation from '@/components/abtesting/ABTestSegmentation';
 import ABTestMetrics from '@/components/abtesting/ABTestMetrics';
+import ABTestCard from '@/components/abtesting/ABTestCard';
 import { autoMarkTestWinner } from '@/functions/autoMarkTestWinner';
 
 export default function ABTestingDashboard() {
@@ -131,13 +132,14 @@ export default function ABTestingDashboard() {
                 Create Test
               </Button>
             </DialogTrigger>
-          <DialogContent className="max-w-2xl bg-slate-900 border-slate-800">
+            <DialogContent className="max-w-2xl bg-slate-900 border-slate-800">
             <DialogHeader>
               <DialogTitle className="text-white">Create A/B Test</DialogTitle>
             </DialogHeader>
-            <CreateTestForm onSubmit={(data) => createTestMutation.mutate(data)} />
-          </DialogContent>
-        </Dialog>
+              <CreateTestForm onSubmit={(data) => createTestMutation.mutate(data)} />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Stats Overview */}
@@ -271,8 +273,6 @@ export default function ABTestingDashboard() {
     </div>
   );
 }
-
-import ABTestCard from '@/components/abtesting/ABTestCard';
 
 function TestCard({ test, stats, onUpdate, onDelete, onSelect, onViewAnalytics }) {
   return (
