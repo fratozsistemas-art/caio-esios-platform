@@ -118,6 +118,7 @@ import WorkflowDesigner from './pages/WorkflowDesigner';
 import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
+import ABTestingDashboard from './pages/ABTestingDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -242,6 +243,7 @@ export const PAGES = {
     "WorkflowTemplates": WorkflowTemplates,
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
+    "ABTestingDashboard": ABTestingDashboard,
 }
 
 export const pagesConfig = {
