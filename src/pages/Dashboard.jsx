@@ -29,6 +29,7 @@ import ComplianceWidget from "../components/compliance/ComplianceWidget";
 import OnboardingStatusWidget from "../components/dashboard/OnboardingStatusWidget";
 import DeploymentStatusWidget from "../components/dashboard/DeploymentStatusWidget";
 import ABTestDashboardWidget from "../components/dashboard/ABTestDashboardWidget";
+import CrossInsightsModule from "../components/dashboard/CrossInsightsModule";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -38,7 +39,7 @@ export default function Dashboard() {
   const [userRole, setUserRole] = useState(null);
   const [dashboardLayout, setDashboardLayout] = useState(() => {
     const saved = localStorage.getItem('dashboard_layout');
-      return saved ? JSON.parse(saved) : ['realtime', 'stats', 'abtests', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
+      return saved ? JSON.parse(saved) : ['realtime', 'stats', 'crossinsights', 'abtests', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
     });
   const [engagementData, setEngagementData] = useState([]);
   const [roiData, setRoiData] = useState([]);
@@ -218,6 +219,8 @@ export default function Dashboard() {
           return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
         case 'stats':
           return <QuickStatsWidget key={widgetId} stats={quickStats} />;
+        case 'crossinsights':
+          return <CrossInsightsModule key={widgetId} />;
         case 'abtests':
           return <ABTestDashboardWidget key={widgetId} />;
         case 'deployments':
