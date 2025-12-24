@@ -449,7 +449,7 @@ function ModuleCard({ title, icon, content }) {
                 <ul className="space-y-2 ml-4">
                   {value.map((item, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-sm text-slate-400">
-                      <CheckCircle className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+                      <CheckCircleIcon className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
                       <span>
                         {typeof item === 'object' ? JSON.stringify(item, null, 2) : item}
                       </span>

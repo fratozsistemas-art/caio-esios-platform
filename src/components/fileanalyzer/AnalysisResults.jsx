@@ -3,9 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  FileText, CheckCircle, Loader2, AlertCircle, 
+  FileText, Loader2, AlertCircle, 
   TrendingUp, ExternalLink, ChevronDown, ChevronUp 
 } from "lucide-react";
+import { CheckCircleIcon } from '@/components/utils/icons';
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AnalysisResults({ analysis }) {
@@ -23,7 +24,7 @@ export default function AnalysisResults({ analysis }) {
 
   const statusConfig = {
     processing: { icon: Loader2, color: "text-blue-400", bg: "bg-blue-500/20", spin: true },
-    completed: { icon: CheckCircle, color: "text-green-400", bg: "bg-green-500/20" },
+    completed: { icon: CheckCircleIcon, color: "text-green-400", bg: "bg-green-500/20" },
     failed: { icon: AlertCircle, color: "text-red-400", bg: "bg-red-500/20" }
   };
 
