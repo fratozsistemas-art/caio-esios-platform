@@ -28,6 +28,7 @@ import DashboardCustomizer from "../components/dashboard/DashboardCustomizer";
 import ComplianceWidget from "../components/compliance/ComplianceWidget";
 import OnboardingStatusWidget from "../components/dashboard/OnboardingStatusWidget";
 import DeploymentStatusWidget from "../components/dashboard/DeploymentStatusWidget";
+import ABTestDashboardWidget from "../components/dashboard/ABTestDashboardWidget";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -37,7 +38,7 @@ export default function Dashboard() {
   const [userRole, setUserRole] = useState(null);
   const [dashboardLayout, setDashboardLayout] = useState(() => {
     const saved = localStorage.getItem('dashboard_layout');
-      return saved ? JSON.parse(saved) : ['realtime', 'stats', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
+      return saved ? JSON.parse(saved) : ['realtime', 'stats', 'abtests', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
     });
   const [engagementData, setEngagementData] = useState([]);
   const [roiData, setRoiData] = useState([]);
@@ -217,6 +218,8 @@ export default function Dashboard() {
           return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
         case 'stats':
           return <QuickStatsWidget key={widgetId} stats={quickStats} />;
+        case 'abtests':
+          return <ABTestDashboardWidget key={widgetId} />;
         case 'deployments':
           return <DeploymentStatusWidget key={widgetId} />;
         case 'onboarding':
@@ -284,11 +287,11 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['stats', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'abtests', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
-      widgets: ['stats', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
+      widgets: ['stats', 'abtests', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
       focus: 'analysis'
     },
     editor: {
@@ -300,7 +303,7 @@ export default function Dashboard() {
       focus: 'consumption'
     },
     default: {
-      widgets: ['stats', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['stats', 'abtests', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'balanced'
     }
   };
