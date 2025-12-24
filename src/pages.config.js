@@ -42,6 +42,7 @@ import ComplianceMonitoring from './pages/ComplianceMonitoring';
 import Contato from './pages/Contato';
 import ConversationHistory from './pages/ConversationHistory';
 import Dashboard from './pages/Dashboard';
+import DataSyncScheduler from './pages/DataSyncScheduler';
 import DeploymentHistory from './pages/DeploymentHistory';
 import FeedbackManagement from './pages/FeedbackManagement';
 import FileAnalyzer from './pages/FileAnalyzer';
@@ -74,6 +75,7 @@ import NeuralIntelligenceArchive from './pages/NeuralIntelligenceArchive';
 import Notifications from './pages/Notifications';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Phase3Dashboard from './pages/Phase3Dashboard';
+import PortfolioIntelligence from './pages/PortfolioIntelligence';
 import Precos from './pages/Precos';
 import PremiumDataDemo from './pages/PremiumDataDemo';
 import Pricing from './pages/Pricing';
@@ -112,16 +114,15 @@ import UseCaseStrategicPlanning from './pages/UseCaseStrategicPlanning';
 import UserManagement from './pages/UserManagement';
 import UserProfile from './pages/UserProfile';
 import UserSettings from './pages/UserSettings';
+import VersionWiki from './pages/VersionWiki';
 import V13ImplementationHub from './pages/V13ImplementationHub';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
-import VersionWiki from './pages/VersionWiki';
 import Videos from './pages/Videos';
 import WorkflowDesigner from './pages/WorkflowDesigner';
 import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
-import PortfolioIntelligence from './pages/PortfolioIntelligence';
-import DataSyncScheduler from './pages/DataSyncScheduler';
+import index from './pages/index';
 import __Layout from './Layout.jsx';
 
 
@@ -170,6 +171,7 @@ export const PAGES = {
     "Contato": Contato,
     "ConversationHistory": ConversationHistory,
     "Dashboard": Dashboard,
+    "DataSyncScheduler": DataSyncScheduler,
     "DeploymentHistory": DeploymentHistory,
     "FeedbackManagement": FeedbackManagement,
     "FileAnalyzer": FileAnalyzer,
@@ -202,6 +204,7 @@ export const PAGES = {
     "Notifications": Notifications,
     "PaymentSuccess": PaymentSuccess,
     "Phase3Dashboard": Phase3Dashboard,
+    "PortfolioIntelligence": PortfolioIntelligence,
     "Precos": Precos,
     "PremiumDataDemo": PremiumDataDemo,
     "Pricing": Pricing,
@@ -240,16 +243,15 @@ export const PAGES = {
     "UserManagement": UserManagement,
     "UserProfile": UserProfile,
     "UserSettings": UserSettings,
+    "VersionWiki": VersionWiki,
     "V13ImplementationHub": V13ImplementationHub,
     "VectorDecisionEngine": VectorDecisionEngine,
-    "VersionWiki": VersionWiki,
     "Videos": Videos,
     "WorkflowDesigner": WorkflowDesigner,
     "WorkflowTemplates": WorkflowTemplates,
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
-    "PortfolioIntelligence": PortfolioIntelligence,
-    "DataSyncScheduler": DataSyncScheduler,
+    "index": index,
 }
 
 export const pagesConfig = {
