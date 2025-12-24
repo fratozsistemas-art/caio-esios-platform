@@ -84,7 +84,8 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.companyHub', 'Company Hub'), icon: Compass, path: 'CompanyIntelligenceHub' },
                 { name: t('nav.knowledgeGraph', 'Knowledge Graph'), icon: Network, path: 'KnowledgeGraph' },
                 { name: t('nav.knowledge', 'Knowledge Base'), icon: BookOpen, path: 'KnowledgeManagement' },
-                { name: t('nav.behavioral', 'Behavioral Intel'), icon: Brain, path: 'BehavioralIntelligence' }
+                { name: t('nav.behavioral', 'Behavioral Intel'), icon: Brain, path: 'BehavioralIntelligence' },
+                { name: t('nav.strategicPerformance', 'Strategic Performance'), icon: TrendingUp, path: 'StrategicPerformanceDashboard', badge: 'NEW' }
               ]
             },
             {

@@ -124,6 +124,7 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
+import StrategicPerformanceDashboard from './pages/StrategicPerformanceDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -254,6 +255,7 @@ export const PAGES = {
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
+    "StrategicPerformanceDashboard": StrategicPerformanceDashboard,
 }
 
 export const pagesConfig = {
