@@ -106,3 +106,7 @@ function ConflictAnalysisPanel() {
     </Card>
   );
 }
+
+ConflictAnalysisPanel.propTypes = {};
+
+export default ConflictAnalysisPanel;
