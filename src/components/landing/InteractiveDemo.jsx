@@ -713,6 +713,13 @@ export default function InteractiveDemo({ open, onClose }) {
               </Card>
             </motion.div>
           )}
+
+          {/* Financial Visualization */}
+          <FinancialProjectionsChart 
+            initialData={mockFinancialData}
+            title="AI-Powered Financial Model"
+            interactive={true}
+          />
         </div>
       );
     }
