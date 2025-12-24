@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, X, FileText, AlertCircle, Loader2 } from 'lucide-react';
-import { CheckCircleIcon } from '@/components/utils/icons';
+import { CheckCircleIcon } from '../utils/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
@@ -205,7 +205,7 @@ export function SecureFileUpload({
                       <Loader2 className="w-4 h-4 text-[#00D4FF] animate-spin" />
                     )}
                     {fileData.status === 'completed' && (
-                      <CheckCircle className="w-4 h-4 text-[#10B981]" />
+                      <CheckCircleIcon className="w-4 h-4 text-[#10B981]" />
                     )}
                     {fileData.status === 'error' && (
                       <AlertCircle className="w-4 h-4 text-[#EF4444]" />
