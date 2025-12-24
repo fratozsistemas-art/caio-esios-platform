@@ -7,8 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Database, Upload, FileText, CheckCircle, AlertTriangle, Search, Filter, Plus, Sparkles, TrendingUp, Lightbulb } from 'lucide-react';
+import { Database, Upload, FileText, CheckCircle, AlertTriangle, Search, Filter, Plus, Sparkles, TrendingUp, Lightbulb, Network } from 'lucide-react';
 import { toast } from 'sonner';
+import StrategicFactsGraph from '../components/facts/StrategicFactsGraph';
 
 const statusColors = {
   confirmed_external: 'bg-green-500/20 text-green-400 border-green-500/30',
@@ -100,6 +101,7 @@ export default function StrategicFactsManager() {
       <Tabs defaultValue="facts">
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger value="facts">Facts Database</TabsTrigger>
+          <TabsTrigger value="graph">Knowledge Graph</TabsTrigger>
           <TabsTrigger value="narratives">Narratives</TabsTrigger>
           <TabsTrigger value="suggestions">AI Suggestions</TabsTrigger>
           <TabsTrigger value="import">Import Data</TabsTrigger>
@@ -175,6 +177,10 @@ export default function StrategicFactsManager() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="graph" className="space-y-4 mt-4">
+          <StrategicFactsGraph facts={facts} />
         </TabsContent>
 
         <TabsContent value="narratives" className="space-y-4 mt-4">
