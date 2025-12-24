@@ -6,7 +6,7 @@ import {
   FileText, Loader2, AlertCircle, 
   TrendingUp, ExternalLink, ChevronDown, ChevronUp 
 } from "lucide-react";
-import { CheckCircleIcon } from '@/components/utils/icons';
+import { CheckCircleIcon } from '../utils/icons';
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AnalysisResults({ analysis }) {
