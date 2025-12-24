@@ -123,6 +123,7 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
+import StrategicFactsManager from './pages/StrategicFactsManager';
 import __Layout from './Layout.jsx';
 
 
@@ -252,6 +253,7 @@ export const PAGES = {
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
+    "StrategicFactsManager": StrategicFactsManager,
 }
 
 export const pagesConfig = {
