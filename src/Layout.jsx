@@ -47,6 +47,7 @@ import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext
 import LanguageSwitcher from './components/i18n/LanguageSwitcher';
 import WelcomeModal from './components/onboarding/WelcomeModal';
 import { RBACProvider } from './components/rbac/RBACWrapper';
+import { ABTestProvider } from './components/abtesting/ABTestProvider';
 // Cache-buster v2.2 - Final Database error fix
 
 function LayoutInner({ children, currentPageName }) {
@@ -147,6 +148,7 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.roleManagement', 'Roles & Permissions'), icon: Shield, path: 'RoleManagement', adminOnly: true },
                 { name: t('nav.userSettings', 'Settings'), icon: Settings, path: 'UserSettings' },
                 { name: t('nav.feedback', 'Feedback Management'), icon: MessageSquare, path: 'FeedbackManagement', adminOnly: true },
+                { name: t('nav.abTesting', 'A/B Testing'), icon: TrendingUp, path: 'ABTestingDashboard', adminOnly: true },
                 { name: t('nav.helpCenter', 'Help'), icon: BookOpen, path: 'HelpCenter' }
               ]
             }
@@ -371,7 +373,9 @@ export default function Layout({ children, currentPageName }) {
   return (
     <LanguageProvider>
       <RBACProvider>
-        <LayoutInner children={children} currentPageName={currentPageName} />
+        <ABTestProvider>
+          <LayoutInner children={children} currentPageName={currentPageName} />
+        </ABTestProvider>
       </RBACProvider>
     </LanguageProvider>
   );
