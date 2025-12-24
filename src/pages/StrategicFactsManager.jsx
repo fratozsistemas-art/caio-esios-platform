@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Database, Upload, FileText, CheckCircle, AlertTriangle, Search, Filter, Plus } from 'lucide-react';
+import { Database, Upload, FileText, CheckCircle, AlertTriangle, Search, Filter, Plus, Sparkles, TrendingUp, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
 
 const statusColors = {
@@ -31,6 +31,15 @@ export default function StrategicFactsManager() {
   const { data: narratives = [] } = useQuery({
     queryKey: ['narratives'],
     queryFn: () => base44.entities.Narrative.list('-created_date')
+  });
+
+  const { data: suggestions } = useQuery({
+    queryKey: ['narrative-suggestions'],
+    queryFn: async () => {
+      const response = await base44.functions.invoke('suggestNarrativeAngles', {});
+      return response.data;
+    },
+    staleTime: 30 * 60 * 1000 // 30 minutes
   });
 
   const filteredFacts = facts.filter(fact => {
@@ -92,6 +101,7 @@ export default function StrategicFactsManager() {
         <TabsList className="bg-white/5 border-white/10">
           <TabsTrigger value="facts">Facts Database</TabsTrigger>
           <TabsTrigger value="narratives">Narratives</TabsTrigger>
+          <TabsTrigger value="suggestions">AI Suggestions</TabsTrigger>
           <TabsTrigger value="import">Import Data</TabsTrigger>
         </TabsList>
 
@@ -218,6 +228,140 @@ export default function StrategicFactsManager() {
               </Card>
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="suggestions" className="space-y-4 mt-4">
+          {suggestions && (
+            <>
+              <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/30">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-purple-400" />
+                    Emerging Trends
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-slate-400 mb-2">Trending Topics</p>
+                      <div className="space-y-1">
+                        {suggestions.trending_topics?.slice(0, 5).map((t, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-sm">
+                            <span className="text-white">{t.topic}</span>
+                            <Badge className="bg-blue-500/20 text-blue-400">{t.count}</Badge>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-400 mb-2">Trending Tags</p>
+                      <div className="flex flex-wrap gap-1">
+                        {suggestions.trending_tags?.slice(0, 8).map((t, idx) => (
+                          <Badge key={idx} className="bg-purple-500/20 text-purple-400 text-xs">
+                            {t.tag} ({t.count})
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="pt-3 border-t border-purple-500/20">
+                    <p className="text-sm text-slate-400 mb-2">Recent Updates</p>
+                    <p className="text-white text-2xl font-bold">{suggestions.recent_updates_count}</p>
+                    <p className="text-xs text-slate-400">facts updated in last 3 months</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/5 border-white/10">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-yellow-400" />
+                    AI-Suggested Narrative Angles
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {suggestions.narrative_suggestions?.map((sug, idx) => (
+                    <Card key={idx} className="bg-slate-800 border-slate-700">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-white text-lg">{sug.title}</CardTitle>
+                            <p className="text-sm text-slate-400 mt-1">{sug.narrative_type}</p>
+                          </div>
+                          <Badge className={
+                            sug.urgency_level === 'critical' ? 'bg-red-500/20 text-red-400' :
+                            sug.urgency_level === 'high' ? 'bg-orange-500/20 text-orange-400' :
+                            sug.urgency_level === 'medium' ? 'bg-yellow-500/20 text-yellow-400' :
+                            'bg-blue-500/20 text-blue-400'
+                          }>
+                            {sug.urgency_level}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-sm text-slate-300">{sug.rationale}</p>
+                        
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          <div>
+                            <p className="text-slate-400 mb-1">Target Audience:</p>
+                            <p className="text-white">{sug.target_audience}</p>
+                          </div>
+                          <div>
+                            <p className="text-slate-400 mb-1">Research Time:</p>
+                            <p className="text-white">{sug.estimated_research_time}</p>
+                          </div>
+                        </div>
+
+                        {sug.key_topics && sug.key_topics.length > 0 && (
+                          <div>
+                            <p className="text-xs text-slate-400 mb-1">Key Topics:</p>
+                            <div className="flex flex-wrap gap-1">
+                              {sug.key_topics.map((topic, i) => (
+                                <Badge key={i} className="bg-cyan-500/20 text-cyan-400 text-xs">
+                                  {topic}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="bg-green-500/10 border border-green-500/30 rounded p-3">
+                          <p className="text-xs text-green-400 font-semibold mb-1">Expected Impact:</p>
+                          <p className="text-xs text-green-300">{sug.expected_impact}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </CardContent>
+              </Card>
+
+              {suggestions.emerging_themes && suggestions.emerging_themes.length > 0 && (
+                <Card className="bg-white/5 border-white/10">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-cyan-400" />
+                      Emerging Themes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {suggestions.emerging_themes.map((theme, idx) => (
+                      <div key={idx} className="bg-slate-800 border border-slate-700 rounded p-3">
+                        <h4 className="text-white font-semibold mb-1">{theme.theme}</h4>
+                        <p className="text-sm text-slate-400 mb-2">{theme.description}</p>
+                        <div className="flex flex-wrap gap-1">
+                          {theme.related_topics?.map((topic, i) => (
+                            <Badge key={i} className="bg-purple-500/20 text-purple-400 text-xs">
+                              {topic}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </>
+          )}
         </TabsContent>
 
         <TabsContent value="import" className="space-y-4 mt-4">

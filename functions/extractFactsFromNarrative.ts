@@ -79,12 +79,56 @@ Deno.serve(async (req) => {
       }
     });
 
+    // Generate implications summary
+    const referencedFacts = allFacts.filter(f => 
+      (analysis.referenced_fact_ids || []).includes(f.id)
+    );
+
+    const implicationsPrompt = `
+    Analyze the strategic implications of the facts used in this narrative.
+    
+    Narrative: ${narrative_title}
+    
+    Referenced Facts:
+    ${referencedFacts.map(f => `- ${f.topic_label}: ${f.summary} (confidence: ${f.confidence}, status: ${f.status})`).join('\n')}
+    
+    Provide:
+    1. Executive summary of how these facts interconnect in the narrative
+    2. Key strategic implications and insights
+    3. Potential risks or uncertainties based on fact confidence levels
+    4. Forward-looking considerations
+    `;
+
+    const implications = await base44.integrations.Core.InvokeLLM({
+      prompt: implicationsPrompt,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          executive_summary: { type: "string" },
+          key_implications: {
+            type: "array",
+            items: { type: "string" }
+          },
+          risks_and_uncertainties: {
+            type: "array",
+            items: { type: "string" }
+          },
+          forward_considerations: {
+            type: "array",
+            items: { type: "string" }
+          },
+          confidence_assessment: { type: "string" }
+        }
+      }
+    });
+
     return Response.json({
       success: true,
       referenced_facts: analysis.referenced_fact_ids || [],
       usage_analysis: analysis.fact_usage_analysis || [],
       new_facts_detected: analysis.new_facts_detected || [],
-      main_topics: analysis.main_topics || []
+      main_topics: analysis.main_topics || [],
+      implications_summary: implications
     });
 
   } catch (error) {
