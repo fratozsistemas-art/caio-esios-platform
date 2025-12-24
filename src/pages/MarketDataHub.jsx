@@ -1,9 +1,10 @@
 import React from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { TrendingUp, FileSpreadsheet, Newspaper } from "lucide-react";
+import { TrendingUp, FileSpreadsheet, Newspaper, Database } from "lucide-react";
 import MarketDataPanel from "../components/dataingestion/MarketDataPanel";
 import CSVImportPanel from "../components/dataingestion/CSVImportPanel";
 import StockDataWidget from "../components/dataingestion/StockDataWidget";
+import BCBDataPanel from "../components/dataingestion/BCBDataPanel";
 
 export default function MarketDataHub() {
   return (
@@ -32,6 +33,10 @@ export default function MarketDataHub() {
             <FileSpreadsheet className="w-4 h-4 mr-2" />
             CSV Import
           </TabsTrigger>
+          <TabsTrigger value="bcb">
+            <Database className="w-4 h-4 mr-2" />
+            Banco Central
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="news" className="mt-6">
@@ -44,6 +49,10 @@ export default function MarketDataHub() {
 
         <TabsContent value="import" className="mt-6">
           <CSVImportPanel />
+        </TabsContent>
+
+        <TabsContent value="bcb" className="mt-6">
+          <BCBDataPanel />
         </TabsContent>
       </Tabs>
     </div>
