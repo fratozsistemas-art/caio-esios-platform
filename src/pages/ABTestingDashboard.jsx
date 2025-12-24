@@ -22,6 +22,7 @@ import ABTestCard from '@/components/abtesting/ABTestCard';
 import ABTestAutomationSettings from '@/components/abtesting/ABTestAutomationSettings';
 import { autoMarkTestWinner } from '@/functions/autoMarkTestWinner';
 import { automateABTests } from '@/functions/automateABTests';
+import FeedbackButton from '@/components/feedback/FeedbackButton';
 
 export default function ABTestingDashboard() {
   const queryClient = useQueryClient();
@@ -138,6 +139,11 @@ export default function ABTestingDashboard() {
           <p className="text-slate-400">Optimize engagement and feature adoption</p>
         </div>
         <div className="flex gap-2">
+          <FeedbackButton 
+            type="general_feedback"
+            targetComponent="A/B Testing Dashboard"
+            label="Feedback"
+          />
           <Button
             variant="outline"
             onClick={() => runAutomationMutation.mutate()}
