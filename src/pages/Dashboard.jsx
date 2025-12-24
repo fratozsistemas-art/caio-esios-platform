@@ -41,10 +41,7 @@ import { createPageUrl } from "../utils";
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
-  const [dashboardLayout, setDashboardLayout] = useState(() => {
-    const saved = localStorage.getItem('dashboard_layout');
-      return saved ? JSON.parse(saved) : ['quick-actions', 'business-health', 'critical-alerts', 'realtime', 'stats', 'portfolio', 'crossinsights', 'abtests', 'deployments', 'engagement', 'roi', 'adoption', 'conversations', 'insights', 'graph', 'actions'];
-    });
+  const [dashboardLayout, setDashboardLayout] = useState([]);
   const [engagementData, setEngagementData] = useState([]);
   const [roiData, setRoiData] = useState([]);
   const [adoptionData, setAdoptionData] = useState([]);
@@ -54,16 +51,34 @@ export default function Dashboard() {
     base44.auth.me().then(async u => {
       setUser(u);
       
+      let role = 'viewer';
       if (u.role === 'admin') {
-        setUserRole('admin');
+        role = 'admin';
       } else {
         const roles = await base44.entities.UserRole.filter({
           user_email: u.email,
           is_active: true
         });
         if (roles && roles.length > 0) {
-          setUserRole(roles[0].role_name);
+          role = roles[0].role_name;
         }
+      }
+      setUserRole(role);
+
+      // Load user's saved dashboard config or use role defaults
+      const savedConfigs = await base44.entities.UserDashboardConfig.filter({
+        user_email: u.email,
+        is_active: true
+      });
+
+      if (savedConfigs && savedConfigs.length > 0) {
+        // Use saved config
+        const config = savedConfigs[0];
+        setDashboardLayout(config.widget_order || config.enabled_widgets);
+      } else {
+        // Use role defaults
+        const roleDefaults = layoutConfig[role] || layoutConfig.default;
+        setDashboardLayout(roleDefaults.widgets);
       }
 
       // Auto-start tutorial for new users
@@ -363,7 +378,36 @@ export default function Dashboard() {
           </Button>
           <DashboardCustomizer 
             currentLayout={dashboardLayout}
-            onLayoutChange={setDashboardLayout}
+            onLayoutChange={async (newLayout) => {
+              setDashboardLayout(newLayout);
+              
+              // Save to database
+              if (user) {
+                const existingConfigs = await base44.entities.UserDashboardConfig.filter({
+                  user_email: user.email,
+                  is_active: true
+                });
+                
+                if (existingConfigs && existingConfigs.length > 0) {
+                  // Update existing
+                  await base44.entities.UserDashboardConfig.update(existingConfigs[0].id, {
+                    widget_order: newLayout,
+                    enabled_widgets: newLayout,
+                    role: userRole
+                  });
+                } else {
+                  // Create new
+                  await base44.entities.UserDashboardConfig.create({
+                    user_email: user.email,
+                    enabled_widgets: newLayout,
+                    widget_order: newLayout,
+                    role: userRole,
+                    is_active: true
+                  });
+                }
+              }
+            }}
+            userRole={userRole}
           />
         </div>
       </motion.div>
