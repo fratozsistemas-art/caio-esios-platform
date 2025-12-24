@@ -886,7 +886,7 @@ export default function Landing() {
                 gradient: "from-caio-blue-medium to-caio-gold",
               },
             ].map((benefit, i) => {
-              const Icon = benefit.icon === CheckCircle ? CheckCircleIcon : benefit.icon;
+              const Icon = benefit.icon;
               return (
                 <motion.div
                   key={i}
