@@ -13,6 +13,7 @@ import StrategicFactsGraph from '../components/facts/StrategicFactsGraph';
 import ConflictAnalysisPanel from '../components/facts/ConflictAnalysisPanel';
 import PredictiveAnalysisPanel from '../components/facts/PredictiveAnalysisPanel';
 import ComparativeAnalysisPanel from '../components/facts/ComparativeAnalysisPanel';
+import ExternalDataImporter from '../components/facts/ExternalDataImporter';
 
 const statusColors = {
   confirmed_external: 'bg-green-500/20 text-green-400 border-green-500/30',
@@ -43,7 +44,7 @@ export default function StrategicFactsManager() {
       const response = await base44.functions.invoke('suggestNarrativeAngles', {});
       return response.data;
     },
-    staleTime: 30 * 60 * 1000 // 30 minutes
+    staleTime: 30 * 60 * 1000
   });
 
   const filteredFacts = facts.filter(fact => {
@@ -383,6 +384,8 @@ export default function StrategicFactsManager() {
         </TabsContent>
 
         <TabsContent value="import" className="space-y-4 mt-4">
+          <ExternalDataImporter onImportComplete={refetch} />
+          
           <Card className="bg-white/5 border-white/10">
             <CardHeader>
               <CardTitle className="text-white">Import Strategic Facts (JSON)</CardTitle>
