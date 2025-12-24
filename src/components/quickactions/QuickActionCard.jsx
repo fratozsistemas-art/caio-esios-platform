@@ -23,12 +23,22 @@ export default function QuickActionCard({ action, roleColor = "blue", themeColor
   const colors = colorClasses[displayColor] || colorClasses.blue;
 
   const handleActivate = () => {
-    if (action.title.includes("Strategic Intelligence Unit")) {
-      navigate(createPageUrl("StrategicIntelligence"));
+    if (title.includes("Strategic Intelligence Unit")) {
+      const target = createPageUrl("StrategicIntelligence");
+      if (navigate) {
+        navigate(target);
+        return;
+      }
+      window.location.href = target;
     } else {
-      navigate(createPageUrl("Chat"), {
-        state: { quickAction: action }
-      });
+      const target = createPageUrl("Chat");
+      if (navigate) {
+        navigate(target, {
+          state: { quickAction: safeAction }
+        });
+        return;
+      }
+      window.location.href = target;
     }
   };
 
@@ -37,39 +47,39 @@ export default function QuickActionCard({ action, roleColor = "blue", themeColor
       <CardHeader className="border-b border-white/10">
         <div className="flex justify-between items-start mb-2">
           <CardTitle className="text-white text-lg leading-tight">
-            {action.title}
+            {title}
           </CardTitle>
         </div>
         <div className="flex flex-wrap gap-2">
           <span className="text-xs px-2 py-1 rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
-            {action.category}
+            {safeAction.category}
           </span>
-          {action.theme && (
+          {safeAction.theme && (
             <span className="text-xs px-2 py-1 rounded-full bg-slate-500/20 text-slate-400 border border-slate-500/30">
-              {action.theme}
+              {safeAction.theme}
             </span>
           )}
-          {action.role && (
+          {safeAction.role && (
             <span className="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400 border border-blue-500/30">
-              {action.role}
+              {safeAction.role}
             </span>
           )}
         </div>
       </CardHeader>
       
       <CardContent className="p-6 space-y-4">
-        {action.estimated_time && (
+        {safeAction.estimated_time && (
           <div className="flex items-center gap-2 text-sm text-slate-400">
             <Clock className="w-4 h-4" />
-            <span>Tempo estimado: {action.estimated_time}</span>
+            <span>Tempo estimado: {safeAction.estimated_time}</span>
           </div>
         )}
 
-        {action.expected_outputs && action.expected_outputs.length > 0 && (
+        {expectedOutputs.length > 0 && (
           <div>
             <h4 className="text-sm font-medium text-slate-300 mb-2">Entregas:</h4>
             <ul className="space-y-1">
-              {action.expected_outputs.slice(0, 3).map((output, idx) => (
+              {expectedOutputs.slice(0, 3).map((output, idx) => (
                 <li key={idx} className="text-sm text-slate-400 flex items-start gap-2">
                   <span className={`${colors.text} mt-1`}>•</span>
                   <span>{output}</span>
@@ -85,7 +95,7 @@ export default function QuickActionCard({ action, roleColor = "blue", themeColor
           variant="outline"
         >
           <Zap className="w-4 h-4 mr-2" />
-          {action.title.includes("Strategic Intelligence") ? "Configurar SIU" : "Ativar Análise"}
+          {title.includes("Strategic Intelligence") ? "Configurar SIU" : "Ativar Análise"}
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </CardContent>
