@@ -18,7 +18,6 @@ import {
   X,
   Play,
   ChevronRight,
-  CheckCircle,
   Cpu,
   DollarSign,
   Users,
@@ -27,6 +26,7 @@ import {
   Edit3,
   BarChart3
 } from "lucide-react";
+import { CheckCircleIcon } from "../utils/icons";
 
 const demoModules = [
   {
@@ -499,7 +499,7 @@ export default function InteractiveDemo({ open, onClose }) {
                       <p className="text-xs text-[#00C8FF] font-semibold uppercase">Key Insights</p>
                       {step.insights.map((insight, idx) => (
                         <div key={idx} className="flex items-center gap-2 text-xs text-slate-300">
-                          <CheckCircle className="w-3 h-3 text-green-400" />
+                          <CheckCircleIcon className="w-3 h-3 text-green-400" />
                           <span>{insight}</span>
                         </div>
                       ))}
@@ -732,7 +732,7 @@ export default function InteractiveDemo({ open, onClose }) {
                             ROI: {roi}
                           </Badge>
                           {isSelected && (
-                            <CheckCircle className="w-5 h-5 text-[#F59E0B]" />
+                            <CheckCircleIcon className="w-5 h-5 text-[#F59E0B]" />
                           )}
                         </div>
                       </div>
@@ -1005,7 +1005,7 @@ export default function InteractiveDemo({ open, onClose }) {
                   <ul className="space-y-1">
                     {generatedInsights.nextSteps.map((step, idx) => (
                       <li key={idx} className="text-xs text-slate-300 flex items-start gap-2">
-                        <CheckCircle className="w-3 h-3 text-[#10B981] flex-shrink-0 mt-0.5" />
+                        <CheckCircleIcon className="w-3 h-3 text-[#10B981] flex-shrink-0 mt-0.5" />
                         {step}
                       </li>
                     ))}
