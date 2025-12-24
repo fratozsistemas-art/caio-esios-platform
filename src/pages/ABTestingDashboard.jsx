@@ -15,6 +15,9 @@ import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import ABTestAnalytics from '@/components/abtesting/ABTestAnalytics';
 import ABTestExport from '@/components/abtesting/ABTestExport';
+import ABTestSegmentation from '@/components/abtesting/ABTestSegmentation';
+import ABTestMetrics from '@/components/abtesting/ABTestMetrics';
+import { autoMarkTestWinner } from '@/functions/autoMarkTestWinner';
 
 export default function ABTestingDashboard() {
   const queryClient = useQueryClient();
@@ -91,6 +94,19 @@ export default function ABTestingDashboard() {
   const activeTests = tests.filter(t => t.status === 'active');
   const completedTests = tests.filter(t => t.status === 'completed');
 
+  const checkWinnersMutation = useMutation({
+    mutationFn: () => autoMarkTestWinner({}),
+    onSuccess: (response) => {
+      queryClient.invalidateQueries(['ab_tests']);
+      const winnersFound = response.data.results.filter(r => r.status === 'winner_declared').length;
+      if (winnersFound > 0) {
+        toast.success(`${winnersFound} test(s) completed with winners!`);
+      } else {
+        toast.info('No tests reached significance threshold yet');
+      }
+    }
+  });
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
@@ -98,13 +114,23 @@ export default function ABTestingDashboard() {
           <h1 className="text-3xl font-bold text-white mb-2">A/B Testing Dashboard</h1>
           <p className="text-slate-400">Optimize engagement and feature adoption</p>
         </div>
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-purple-500 to-blue-500">
-              <Plus className="w-4 h-4 mr-2" />
-              Create Test
-            </Button>
-          </DialogTrigger>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => checkWinnersMutation.mutate()}
+            disabled={checkWinnersMutation.isPending}
+            className="border-green-500/20 text-green-400 hover:bg-green-500/10"
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            {checkWinnersMutation.isPending ? 'Checking...' : 'Check Winners'}
+          </Button>
+          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
+            <DialogTrigger asChild>
+              <Button className="bg-gradient-to-r from-purple-500 to-blue-500">
+                <Plus className="w-4 h-4 mr-2" />
+                Create Test
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl bg-slate-900 border-slate-800">
             <DialogHeader>
               <DialogTitle className="text-white">Create A/B Test</DialogTitle>
@@ -281,6 +307,8 @@ function CreateTestForm({ onSubmit }) {
     audience_criteria: { percentage: 100 }
   });
 
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
   return (
     <div className="space-y-4">
       <div>
@@ -320,6 +348,31 @@ function CreateTestForm({ onSubmit }) {
           </SelectContent>
         </Select>
       </div>
+
+      {/* Advanced Configuration Toggle */}
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => setShowAdvanced(!showAdvanced)}
+        className="border-white/20 text-white hover:bg-white/10"
+      >
+        {showAdvanced ? 'Hide' : 'Show'} Advanced Options
+      </Button>
+
+      {showAdvanced && (
+        <div className="space-y-4 pt-4 border-t border-white/10">
+          <ABTestMetrics
+            value={formData.target_metrics}
+            onChange={(metrics) => setFormData({ ...formData, target_metrics: metrics })}
+          />
+          
+          <ABTestSegmentation
+            value={formData.audience_criteria}
+            onChange={(criteria) => setFormData({ ...formData, audience_criteria: criteria })}
+          />
+        </div>
+      )}
 
       <Button
         onClick={() => onSubmit(formData)}
