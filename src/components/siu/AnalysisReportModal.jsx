@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Brain, TrendingUp, Target, DollarSign, Code,
-  CheckCircle, AlertCircle, Download, FileText,
+  AlertCircle, Download, FileText,
   BarChart3, Lightbulb, Rocket, Network
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { CheckCircleIcon } from '../utils/icons';
 
 export default function AnalysisReportModal({ analysis, open, onClose }) {
   if (!analysis) return null;
