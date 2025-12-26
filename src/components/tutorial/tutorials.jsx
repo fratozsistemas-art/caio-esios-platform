@@ -2,7 +2,7 @@ import {
   MessageSquare, Brain, Zap, FileText, Briefcase, Network, Target, 
   Upload, Search, TrendingUp, Users, Settings, Compass, Building2,
   GitMerge, Layers, Shield, BarChart3, Server, BookOpen, Cpu, Bot,
-  Activity, Bell, Plug, Eye, Sparkles
+  Activity, Bell, Plug, Eye, Sparkles,CircleCheck 
 } from 'lucide-react';
 
 /**
@@ -879,7 +879,7 @@ export const TUTORIALS = {
       {
         title: 'Recomendações Estruturadas 📋',
         content: 'Receba: risk factors, opportunities, action items priorizados, e confidence scores.',
-        icon: CheckCircle,
+        icon: CircleCheck,
       },
       {
         title: 'Documentos Referenciados 📚',
