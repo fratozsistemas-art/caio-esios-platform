@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   CheckCircle, XCircle, AlertTriangle, Clock, Brain, Shield,
-  Download, FileText, TrendingUp, Eye, Layers, Zap, Target
+  Download, FileText, TrendingUp, Eye, Layers, Zap, Target, Database
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
