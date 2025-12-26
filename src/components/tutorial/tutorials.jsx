@@ -799,7 +799,7 @@ export const TUTORIALS = {
       {
         title: 'Task Management ✅',
         content: 'Crie tarefas a partir de qualquer insight. Atribua responsáveis, defina prioridade e acompanhe conclusão.',
-        icon: CheckCircle,
+        icon: CircleCheck,
       },
       {
         title: 'Compartilhe Insights 🔗',
