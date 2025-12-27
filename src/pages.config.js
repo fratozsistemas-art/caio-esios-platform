@@ -56,7 +56,7 @@ import HermesDashboard from './pages/HermesDashboard';
 import HermesModule from './pages/HermesModule';
 import HermesTriggerManagement from './pages/HermesTriggerManagement';
 import HermesTrustBroker from './pages/HermesTrustBroker';
-import Home from './pages/Home';
+// Home.jsx removed - was empty placeholder with no functionality
 import InsightsDashboard from './pages/InsightsDashboard';
 import IntegrationHealth from './pages/IntegrationHealth';
 import Integrations from './pages/Integrations';
@@ -190,7 +190,7 @@ export const PAGES = {
     "HermesModule": HermesModule,
     "HermesTriggerManagement": HermesTriggerManagement,
     "HermesTrustBroker": HermesTrustBroker,
-    "Home": Home,
+    // "Home": Home, // Removed - empty placeholder
     "InsightsDashboard": InsightsDashboard,
     "IntegrationHealth": IntegrationHealth,
     "Integrations": Integrations,
