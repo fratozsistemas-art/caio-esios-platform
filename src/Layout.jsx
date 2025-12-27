@@ -74,9 +74,10 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.workflowDesigner', 'Workflow Designer'), icon: GitMerge, path: 'WorkflowDesigner', badge: 'NEW' },
                 { name: t('nav.collaborationHub', 'Agent Collaboration'), icon: Network, path: 'AgentCollaborationHub' },
                 { name: t('nav.agentIntelligence', 'Agent Intelligence'), icon: Brain, path: 'AgentIntelligenceHub' },
-                { name: t('nav.agentTraining', 'Agent Training'), icon: Cpu, path: 'AgentTraining' }
-              ]
-            },
+                { name: t('nav.agentTraining', 'Agent Training'), icon: Cpu, path: 'AgentTraining' },
+                { name: t('nav.feedbackCuration', 'AI Feedback Curation'), icon: TrendingUp, path: 'AIFeedbackCuration', badge: 'NEW' }
+                ]
+                },
             {
               title: t('nav.intelligence', 'Intelligence'),
               items: [
