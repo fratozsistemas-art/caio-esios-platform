@@ -65,7 +65,7 @@ export default function Landing() {
     document.documentElement.lang = 'en';
 
     // Set document title
-    document.title = "CAIO·AI - Executive Strategic Intelligence Platform | TSI v9.3 Enterprise AI";
+    document.title = "ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3 Enterprise AI";
     
     // Meta description (optimized to 158 characters)
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -89,12 +89,12 @@ export default function Landing() {
 
     // Open Graph tags (optimized)
     const ogTags = {
-      'og:title': 'CAIO·AI - Executive Strategic Intelligence Platform | TSI v9.3',
+      'og:title': 'ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3',
       'og:description': 'Transform executive decision-making with 11-module AI platform. Market intelligence, financial modeling, and strategic execution in one system. Trusted by Fortune 500.',
       'og:type': 'website',
       'og:url': window.location.href,
       'og:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png',
-      'og:site_name': 'CAIO·AI Platform',
+      'og:site_name': 'ESIOS CAIO Platform',
       'og:locale': 'en_US'
     };
 
@@ -111,11 +111,11 @@ export default function Landing() {
     // Twitter Card tags (optimized)
     const twitterTags = {
       'twitter:card': 'summary_large_image',
-      'twitter:title': 'CAIO·AI - Executive Strategic Intelligence Platform | TSI v9.3',
+      'twitter:title': 'ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3',
       'twitter:description': '11-module AI platform for strategic decisions. Market intelligence, competitive analysis, financial modeling. Transform strategy from weeks to hours.',
       'twitter:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png',
-      'twitter:site': '@CAIOAI',
-      'twitter:creator': '@CAIOAI'
+      'twitter:site': '@ESIOSCAIO',
+      'twitter:creator': '@ESIOSCAIO'
     };
 
     Object.entries(twitterTags).forEach(([name, content]) => {
@@ -168,7 +168,7 @@ export default function Landing() {
         },
         {
           "@type": "SoftwareApplication",
-          "name": "CAIO·AI Platform",
+          "name": "ESIOS CAIO Platform",
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web-based",
           "offers": {
@@ -416,7 +416,7 @@ export default function Landing() {
                 loading="eager"
               />
               <div className="text-lg sm:text-xl font-bold text-white" style={{ letterSpacing: '0.05em' }}>
-                CAIO·AI
+                ESIOS CAIO
               </div>
             </div>
 
@@ -614,7 +614,7 @@ export default function Landing() {
             </div>
 
             <p className="text-base md:text-lg text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed font-light">
-              CAIO·AI is the <span className="text-[#00D4FF] font-semibold">enterprise strategic intelligence platform</span> built for C-suite executives who demand consulting-grade analysis at software speed. Our proprietary <span className="text-[#00D4FF] font-semibold">TSI v9.3 methodology</span> deploys 11 specialized cognitive modules covering <span className="text-[#00D4FF] font-semibold">market intelligence</span>, <span className="text-[#00D4FF] font-semibold">competitive analysis</span>, <span className="text-[#00D4FF] font-semibold">financial modeling</span>, and <span className="text-[#00D4FF] font-semibold">strategic execution</span>—transforming decision-making processes that traditionally took weeks into hours.
+              ESIOS CAIO is the <span className="text-[#00D4FF] font-semibold">enterprise strategic intelligence platform</span> built for C-suite executives who demand consulting-grade analysis at software speed. Our proprietary <span className="text-[#00D4FF] font-semibold">TSI v9.3 methodology</span> deploys 11 specialized cognitive modules covering <span className="text-[#00D4FF] font-semibold">market intelligence</span>, <span className="text-[#00D4FF] font-semibold">competitive analysis</span>, <span className="text-[#00D4FF] font-semibold">financial modeling</span>, and <span className="text-[#00D4FF] font-semibold">strategic execution</span>—transforming decision-making processes that traditionally took weeks into hours.
             </p>
 
             {/* Primary CTAs */}
@@ -629,7 +629,7 @@ export default function Landing() {
                       boxShadow: '0 0 30px rgba(0, 200, 255, 0.4), 0 0 60px rgba(255, 194, 71, 0.3)'
                     }}
                   >
-                    Start with CAIO·AI — 14-Day Free Access
+                    Start with ESIOS CAIO — 14-Day Free Access
                     <div className="absolute inset-0 bg-white/10 opacity-0 hover:opacity-100 transition-opacity duration-300" />
                   </Button>
                 }
@@ -713,7 +713,7 @@ export default function Landing() {
               Why This Strategic Intelligence Platform Is Different
             </h2>
             <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed font-light">
-              Unlike generic <span className="text-[#00D4FF] font-semibold">AI platforms</span>, CAIO·AI is a <span className="text-[#00D4FF] font-semibold">strategic intelligence platform</span> built specifically for executive decision-making. Not another chatbot—<span className="text-[#00D4FF] font-semibold">cognitive infrastructure</span> for{" "}
+              Unlike generic <span className="text-[#00D4FF] font-semibold">AI platforms</span>, ESIOS CAIO is a <span className="text-[#00D4FF] font-semibold">strategic intelligence platform</span> built specifically for executive decision-making. Not another chatbot—<span className="text-[#00D4FF] font-semibold">cognitive infrastructure</span> for{" "}
               <span className="text-[#FFB800] font-semibold">modern organizations</span>.
             </p>
           </div>
@@ -1516,10 +1516,10 @@ export default function Landing() {
                   height="40"
                   loading="lazy"
                 />
-                <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>CAIO·AI</div>
+                <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>ESIOS CAIO</div>
               </div>
               <p className="text-sm font-body text-[#00D4FF] mb-4 font-semibold">
-                Inteligência que vira tração.
+                ESIOS CAIO - Inteligência que vira tração.
               </p>
               <p className="text-xs font-body text-slate-400">
                 powered by FRATOZ
@@ -1616,7 +1616,7 @@ export default function Landing() {
           <div className="border-t border-caio-blue/10 pt-8">
             <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-8" />
             <p className="text-center text-sm font-body text-slate-400">
-              © 2025 CAIO·AI Platform. All rights reserved. | Powered by TSI v9.3 Strategic Intelligence
+              © 2025 ESIOS CAIO Platform. All rights reserved. | Powered by TSI v9.3 Strategic Intelligence
             </p>
           </div>
         </div>

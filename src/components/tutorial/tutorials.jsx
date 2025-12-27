@@ -77,7 +77,7 @@ export const TUTORIALS = {
     difficulty: 'beginner',
     steps: [
       {
-        title: 'Bem-vindo ao CAIO·AI! 🚀',
+        title: 'Bem-vindo ao ESIOS CAIO! 🚀',
         content: 'Esta é sua plataforma de Inteligência Estratégica Executiva. Vamos fazer um tour rápido pelas principais funcionalidades.',
         icon: Brain,
       },
@@ -117,7 +117,7 @@ export const TUTORIALS = {
     steps: [
       {
         title: 'Seu Centro de Comando 🎯',
-        content: 'O Dashboard é sua visão consolidada de todas as atividades, insights e métricas do CAIO·AI.',
+        content: 'O Dashboard é sua visão consolidada de todas as atividades, insights e métricas do ESIOS CAIO.',
         icon: BarChart3,
       },
       {

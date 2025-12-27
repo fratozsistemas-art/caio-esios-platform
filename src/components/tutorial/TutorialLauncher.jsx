@@ -75,7 +75,7 @@ export default function TutorialLauncher({ trigger }) {
             Centro de Tutoriais
           </DialogTitle>
           <DialogDescription className="text-slate-300">
-            Aprenda a usar o CAIO·AI através de tutoriais organizados por jornada do usuário.
+            Aprenda a usar o ESIOS CAIO através de tutoriais organizados por jornada do usuário.
           </DialogDescription>
         </DialogHeader>
 

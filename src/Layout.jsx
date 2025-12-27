@@ -260,7 +260,7 @@ function LayoutInner({ children, currentPageName }) {
               className="w-10 h-10 object-contain"
             />
             <div>
-              <h1 className="text-white font-bold text-lg">CAIO·AI</h1>
+              <h1 className="text-white font-bold text-lg">ESIOS CAIO</h1>
               <p className="text-slate-400 text-xs">Strategic Intelligence</p>
             </div>
           </div>

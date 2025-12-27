@@ -145,7 +145,7 @@ export default function EnhancedOnboardingFlow() {
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <div className="flex-1">
               <CardTitle className="text-white text-xl mb-2 flex items-center gap-2">
-                🚀 {isPT ? 'Bem-vindo ao CAIO·AI' : 'Welcome to CAIO·AI'}
+                🚀 {isPT ? 'Bem-vindo ao ESIOS CAIO' : 'Welcome to ESIOS CAIO'}
               </CardTitle>
               <p className="text-sm text-slate-300">
                 {isPT 
@@ -259,8 +259,8 @@ export default function EnhancedOnboardingFlow() {
                 </p>
                 <p className="text-sm text-slate-300 mb-3">
                   {isPT 
-                    ? 'Você dominou os fundamentos do CAIO·AI. Pronto para análises estratégicas!'
-                    : "You've mastered CAIO·AI fundamentals. Ready for strategic analysis!"
+                    ? 'Você dominou os fundamentos do ESIOS CAIO. Pronto para análises estratégicas!'
+                    : "You've mastered ESIOS CAIO fundamentals. Ready for strategic analysis!"
                   }
                 </p>
                 <Button
