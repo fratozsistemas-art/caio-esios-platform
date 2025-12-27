@@ -25,6 +25,7 @@ import { NetworkCollaborationProvider, useNetworkCollaboration } from "../compon
 import PresenceIndicators from "../components/network/PresenceIndicators";
 import SharedCursors from "../components/network/SharedCursors";
 import CollaborationPanel from "../components/network/CollaborationPanel";
+import GraphCustomizationPanel from "../components/network/GraphCustomizationPanel";
 
 function NetworkMapContent() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -39,6 +40,7 @@ function NetworkMapContent() {
   const [showPredictions, setShowPredictions] = useState(false);
   const [selectedAnomaly, setSelectedAnomaly] = useState(null);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [customization, setCustomization] = useState(null);
   const graphContainerRef = React.useRef(null);
   const queryClient = useQueryClient();
   
@@ -137,11 +139,25 @@ function NetworkMapContent() {
     ? nodes.filter(n => new Date(n.created_date) <= temporalDate)
     : nodes;
 
-  const filteredNodes = filteredByTime.filter(node =>
+  let filteredNodes = filteredByTime.filter(node =>
     !searchTerm || 
     node.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     node.node_type?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Apply customization filters
+  if (customization?.filters) {
+    if (customization.filters.node_types?.length > 0) {
+      filteredNodes = filteredNodes.filter(n => 
+        customization.filters.node_types.includes(n.node_type)
+      );
+    }
+    if (customization.filters.search_term) {
+      filteredNodes = filteredNodes.filter(n =>
+        n.label?.toLowerCase().includes(customization.filters.search_term.toLowerCase())
+      );
+    }
+  }
 
   const filteredNodeIds = new window.Set(filteredNodes.map(n => n.id));
   const filteredRelationships = relationships.filter(r =>
@@ -219,6 +235,12 @@ function NetworkMapContent() {
         {/* Presence Indicators */}
         <PresenceIndicators activeUsers={activeUsers} />
         <div className="flex gap-3">
+          <GraphCustomizationPanel
+            onApplyCustomization={setCustomization}
+            currentConfig={customization}
+            availableNodeTypes={[...new Set(nodes.map(n => n.node_type))]}
+            availableMetrics={['traffic_load', 'error_rate', 'connection_count', 'influence_score']}
+          />
           <GraphViewSelector currentView={graphView} onViewChange={setGraphView} />
           <Button
             onClick={() => setShowTemporal(!showTemporal)}
@@ -363,6 +385,7 @@ function NetworkMapContent() {
                     predictions={showPredictions ? predictions : null}
                     influencers={influencers}
                     selectedAnomaly={selectedAnomaly}
+                    customization={customization}
                   />
                 )}
               </div>
