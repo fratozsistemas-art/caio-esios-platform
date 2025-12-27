@@ -35,7 +35,8 @@ import {
   Archive, 
   Settings,
   HardDrive,
-  TrendingUp
+  TrendingUp,
+  Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -85,7 +86,8 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.knowledgeGraph', 'Knowledge Graph'), icon: Network, path: 'KnowledgeGraph' },
                 { name: t('nav.knowledge', 'Knowledge Base'), icon: BookOpen, path: 'KnowledgeManagement' },
                 { name: t('nav.behavioral', 'Behavioral Intel'), icon: Brain, path: 'BehavioralIntelligence' },
-                { name: t('nav.strategicPerformance', 'Strategic Performance'), icon: TrendingUp, path: 'StrategicPerformanceDashboard', badge: 'NEW' }
+                { name: t('nav.strategicPerformance', 'Strategic Performance'), icon: TrendingUp, path: 'StrategicPerformanceDashboard', badge: 'NEW' },
+                { name: t('nav.strategicFacts', 'Strategic Facts Manager'), icon: Database, path: 'StrategicFactsManager', badge: 'NEW' }
               ]
             },
             {

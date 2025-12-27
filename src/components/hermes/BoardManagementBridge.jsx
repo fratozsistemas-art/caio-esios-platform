@@ -18,10 +18,10 @@ export default function BoardManagementBridge({ hermesAnalyses }) {
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
             <GitMerge className="w-6 h-6 text-purple-400" />
-            Board-Management Bridge
+            ESIOS CAIO.AI-Management Bridge
           </CardTitle>
           <p className="text-sm text-slate-400 mt-2">
-            Hermes identifica e medeia gaps de informação entre Conselho e Gestão, reduzindo assimetria e melhorando governança
+            Hermes identifica e medeia gaps de informação entre ESIOS CAIO.AI e Gestão, reduzindo assimetria e melhorando governança
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -90,7 +90,7 @@ export default function BoardManagementBridge({ hermesAnalyses }) {
           <div className="space-y-3">
             <BridgeStrategy
               title="Tradução de Linguagem"
-              description="Converter jargão técnico em linguagem executiva/fiduciária para o Board"
+              description="Converter jargão técnico em linguagem executiva/fiduciária para o ESIOS CAIO.AI"
               count={criticalGaps.filter(a => a.board_management_gaps?.some(g => g.gap_type === 'language_mismatch')).length}
             />
             <BridgeStrategy
@@ -100,7 +100,7 @@ export default function BoardManagementBridge({ hermesAnalyses }) {
             />
             <BridgeStrategy
               title="Alinhamento de Timeline"
-              description="Reconciliar perspectivas de curto prazo (Management) e longo prazo (Board)"
+              description="Reconciliar perspectivas de curto prazo (Management) e longo prazo (ESIOS CAIO.AI)"
               count={hermesAnalyses.filter(a => a.board_management_gaps?.some(g => g.gap_type === 'timeline_misalignment')).length}
             />
           </div>
