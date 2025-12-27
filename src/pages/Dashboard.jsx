@@ -328,24 +328,89 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'market-stocks', 'market-news', 'market-economic', 'stats', 'abtests', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
-      focus: 'overview'
+      widgets: [
+        'stats',
+        'critical-alerts', 
+        'business-health',
+        'deployments',
+        'abtests',
+        'compliance',
+        'onboarding',
+        'market-stocks',
+        'market-news',
+        'graph',
+        'insights',
+        'conversations',
+        'actions',
+        'crossplatform',
+        'portfolio',
+        'crossinsights'
+      ],
+      focus: 'overview',
+      description: 'System oversight, performance monitoring, and strategic governance'
     },
     analyst: {
-      widgets: ['quick-actions', 'business-health', 'market-stocks', 'market-news', 'market-economic', 'stats', 'abtests', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
-      focus: 'analysis'
+      widgets: [
+        'market-stocks',
+        'market-economic',
+        'market-news',
+        'insights',
+        'graph',
+        'crossinsights',
+        'portfolio',
+        'stats',
+        'business-health',
+        'conversations',
+        'actions',
+        'abtests'
+      ],
+      focus: 'analysis',
+      description: 'Deep data analysis, market intelligence, and strategic insights'
     },
     editor: {
-      widgets: ['quick-actions', 'business-health', 'market-news', 'stats', 'deployments', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
-      focus: 'content'
+      widgets: [
+        'conversations',
+        'actions',
+        'insights',
+        'market-news',
+        'business-health',
+        'stats',
+        'graph',
+        'onboarding',
+        'crossplatform'
+      ],
+      focus: 'content',
+      description: 'Content management, task tracking, and collaboration'
     },
     viewer: {
-      widgets: ['quick-actions', 'business-health', 'market-news', 'stats', 'onboarding', 'conversations', 'insights', 'crossplatform'],
-      focus: 'consumption'
+      widgets: [
+        'business-health',
+        'stats',
+        'market-news',
+        'insights',
+        'conversations',
+        'graph',
+        'onboarding'
+      ],
+      focus: 'consumption',
+      description: 'Read-only access to insights and strategic intelligence'
     },
     default: {
-      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'market-stocks', 'market-news', 'market-economic', 'stats', 'abtests', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
-      focus: 'balanced'
+      widgets: [
+        'quick-actions',
+        'business-health',
+        'stats',
+        'market-stocks',
+        'market-news',
+        'market-economic',
+        'insights',
+        'graph',
+        'conversations',
+        'actions',
+        'crossplatform'
+      ],
+      focus: 'balanced',
+      description: 'Balanced view with key metrics and market intelligence'
     }
   };
 
@@ -375,6 +440,11 @@ export default function Dashboard() {
               </Badge>
             )}
           </p>
+          {userRole && currentLayout.description && (
+            <p className="text-xs text-slate-500 mt-1">
+              {currentLayout.description}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <TutorialLauncher />
