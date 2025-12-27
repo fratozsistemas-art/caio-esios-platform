@@ -93,6 +93,7 @@ import SimulationLab from './pages/SimulationLab';
 import Sobre from './pages/Sobre';
 import StrategicFactsManager from './pages/StrategicFactsManager';
 import StrategicIntelligence from './pages/StrategicIntelligence';
+import StrategicPerformanceDashboard from './pages/StrategicPerformanceDashboard';
 import Strategies from './pages/Strategies';
 import StrategyAdvisor from './pages/StrategyAdvisor';
 import StrategyPlaybooks from './pages/StrategyPlaybooks';
@@ -114,17 +115,16 @@ import UseCaseMarketEntry from './pages/UseCaseMarketEntry';
 import UseCaseStrategicPlanning from './pages/UseCaseStrategicPlanning';
 import UserManagement from './pages/UserManagement';
 import UserProfile from './pages/UserProfile';
-import Videos from './pages/Videos';
 import UserSettings from './pages/UserSettings';
 import V13ImplementationHub from './pages/V13ImplementationHub';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
 import VersionWiki from './pages/VersionWiki';
+import Videos from './pages/Videos';
 import WorkflowDesigner from './pages/WorkflowDesigner';
 import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
-import StrategicPerformanceDashboard from './pages/StrategicPerformanceDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -224,6 +224,7 @@ export const PAGES = {
     "Sobre": Sobre,
     "StrategicFactsManager": StrategicFactsManager,
     "StrategicIntelligence": StrategicIntelligence,
+    "StrategicPerformanceDashboard": StrategicPerformanceDashboard,
     "Strategies": Strategies,
     "StrategyAdvisor": StrategyAdvisor,
     "StrategyPlaybooks": StrategyPlaybooks,
@@ -245,17 +246,16 @@ export const PAGES = {
     "UseCaseStrategicPlanning": UseCaseStrategicPlanning,
     "UserManagement": UserManagement,
     "UserProfile": UserProfile,
-    "Videos": Videos,
     "UserSettings": UserSettings,
     "V13ImplementationHub": V13ImplementationHub,
     "VectorDecisionEngine": VectorDecisionEngine,
     "VersionWiki": VersionWiki,
+    "Videos": Videos,
     "WorkflowDesigner": WorkflowDesigner,
     "WorkflowTemplates": WorkflowTemplates,
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
-    "StrategicPerformanceDashboard": StrategicPerformanceDashboard,
 }
 
 export const pagesConfig = {

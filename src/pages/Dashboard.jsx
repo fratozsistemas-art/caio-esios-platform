@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useTutorial, TutorialOverlay, ContextualTip } from "../components/tutorial/TutorialSystem";
 import { TUTORIALS } from "../components/tutorial/tutorials";
+import { useLanguage } from "../components/i18n/LanguageContext";
 import TutorialLauncher from "../components/tutorial/TutorialLauncher";
 import OnboardingChecklist from "../components/tutorial/OnboardingChecklist";
 import SmartOnboarding from "../components/tutorial/SmartOnboarding";
@@ -39,6 +40,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState(null);
   const [dashboardLayout, setDashboardLayout] = useState([]);
@@ -420,7 +422,7 @@ export default function Dashboard() {
       >
         <div className="flex items-center gap-3 flex-wrap">
           <Sparkles className="w-5 h-5 text-purple-400" />
-          <p className="text-white font-medium">Novas funcionalidades disponíveis:</p>
+          <p className="text-white font-medium">{t('dashboard.newFeatures', 'New features available:')}</p>
           <div className="flex gap-2 flex-wrap">
             <Link to={createPageUrl('HermesDashboard')}>
               <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30 cursor-pointer hover:bg-cyan-500/30">
@@ -458,7 +460,7 @@ export default function Dashboard() {
           <div className="bg-white/5 border border-white/10 rounded-lg p-4 h-full">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400">Hermes Integrity</p>
+                <p className="text-xs text-slate-400">{t('dashboard.hermesIntegrity', 'Hermes Integrity')}</p>
                 <p className="text-2xl font-bold text-white">{Math.round(hermesStats.avgIntegrity)}%</p>
               </div>
               <Shield className={`w-8 h-8 ${hermesStats.avgIntegrity >= 80 ? 'text-green-400' : 'text-yellow-400'} opacity-50`} />
@@ -467,23 +469,23 @@ export default function Dashboard() {
           <div className="bg-white/5 border border-white/10 rounded-lg p-4 h-full">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400">Critical Issues</p>
+                <p className="text-xs text-slate-400">{t('dashboard.criticalIssues', 'Critical Issues')}</p>
                 <p className="text-2xl font-bold text-white">{hermesStats.criticalIssues}</p>
               </div>
               <Badge className={hermesStats.criticalIssues > 0 ? 'bg-red-500/20 text-red-400' : 'bg-green-500/20 text-green-400'}>
-                {hermesStats.criticalIssues > 0 ? 'Action Required' : 'Healthy'}
+                {hermesStats.criticalIssues > 0 ? t('dashboard.actionRequired', 'Action Required') : t('dashboard.healthy', 'Healthy')}
               </Badge>
             </div>
           </div>
           <div className="bg-white/5 border border-white/10 rounded-lg p-4 h-full">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400">Analyses</p>
+                <p className="text-xs text-slate-400">{t('dashboard.analyses', 'Analyses')}</p>
                 <p className="text-2xl font-bold text-white">{hermesStats.analysesCount}</p>
               </div>
               <Link to={createPageUrl('HermesDashboard')}>
                 <Button size="sm" variant="ghost" className="text-cyan-400 hover:text-cyan-300">
-                  View Details
+                  {t('dashboard.viewDetails', 'View Details')}
                 </Button>
               </Link>
             </div>
@@ -511,16 +513,16 @@ export default function Dashboard() {
           <div className="flex items-start gap-3">
             <Sparkles className="w-6 h-6 text-purple-400 flex-shrink-0" />
             <div>
-              <h3 className="text-white font-semibold mb-2">Admin Insights</h3>
+              <h3 className="text-white font-semibold mb-2">{t('dashboard.adminInsights', 'Admin Insights')}</h3>
               <p className="text-sm text-slate-300 mb-3">
-                System is operating normally. {conversations.length} active conversations across all users.
+                {t('dashboard.systemOperating', 'System is operating normally.')} {conversations.length} {t('dashboard.activeConversations', 'active conversations across all users.')}
               </p>
               <div className="flex flex-wrap gap-2">
                 <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-                  All Systems Operational
+                  {t('dashboard.allSystemsOperational', 'All Systems Operational')}
                 </Badge>
                 <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">
-                  {insights.length} Insights Generated
+                  {insights.length} {t('dashboard.insightsGenerated', 'Insights Generated')}
                 </Badge>
               </div>
             </div>
