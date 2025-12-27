@@ -65,7 +65,6 @@ import KnowledgeGraph from './pages/KnowledgeGraph';
 import KnowledgeIndexManager from './pages/KnowledgeIndexManager';
 import KnowledgeManagement from './pages/KnowledgeManagement';
 import Landing from './pages/Landing';
-import LandingLight from './pages/LandingLight';
 import LandingPT from './pages/LandingPT';
 import MLflowDashboard from './pages/MLflowDashboard';
 import MarketDataHub from './pages/MarketDataHub';
@@ -199,7 +198,6 @@ export const PAGES = {
     "KnowledgeIndexManager": KnowledgeIndexManager,
     "KnowledgeManagement": KnowledgeManagement,
     "Landing": Landing,
-    "LandingLight": LandingLight,
     "LandingPT": LandingPT,
     "MLflowDashboard": MLflowDashboard,
     "MarketDataHub": MarketDataHub,
