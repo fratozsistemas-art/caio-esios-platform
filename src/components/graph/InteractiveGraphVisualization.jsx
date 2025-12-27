@@ -32,7 +32,7 @@ export default function InteractiveGraphVisualization({ nodes, relationships }) 
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [nodePositions, setNodePositions] = useState({});
-  const [expandedNodes, setExpandedNodes] = useState(new Set());
+  const [expandedNodes, setExpandedNodes] = useState(() => new window.Set());
   const [showPath, setShowPath] = useState(null);
 
   const width = 1400;
@@ -152,7 +152,7 @@ export default function InteractiveGraphVisualization({ nodes, relationships }) 
   };
 
   const toggleNodeExpansion = (nodeId) => {
-    const newExpanded = new Set(expandedNodes);
+    const newExpanded = new window.Set(expandedNodes);
     if (newExpanded.has(nodeId)) {
       newExpanded.delete(nodeId);
     } else {
@@ -172,7 +172,7 @@ export default function InteractiveGraphVisualization({ nodes, relationships }) 
     filteredNodeIds.has(r.source_id) && filteredNodeIds.has(r.target_id)
   );
 
-  const nodeTypes = [...new Set(nodes?.map(n => n.node_type))].filter(Boolean);
+  const nodeTypes = [...new window.Set(nodes?.map(n => n.node_type))].filter(Boolean);
 
   const getConnectedNodes = (nodeId) => {
     return relationships?.filter(r => 

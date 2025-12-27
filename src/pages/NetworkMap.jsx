@@ -71,7 +71,7 @@ export default function NetworkMap() {
     node.node_type?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+  const filteredNodeIds = new window.Set(filteredNodes.map(n => n.id));
   const filteredRelationships = relationships.filter(r =>
     filteredNodeIds.has(r.from_node_id) && 
     filteredNodeIds.has(r.to_node_id) &&
