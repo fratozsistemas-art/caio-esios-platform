@@ -1,323 +1,406 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { FileText, Search, Clock, TrendingUp, Sparkles, ExternalLink, BookOpen, Download } from "lucide-react";
-import { motion } from "framer-motion";
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { 
+  Search, 
+  Youtube, 
+  Calendar, 
+  Eye, 
+  ArrowLeft,
+  FileText,
+  Video,
+  TrendingUp
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import ReactMarkdown from 'react-markdown';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { createPageUrl } from '../utils';
+import { Link } from 'react-router-dom';
 
 export default function BlogResources() {
-  const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
-  const articles = [
-    {
-      id: 1,
-      title: "Strategic Intelligence Platform Architecture",
-      description: "Deep dive into modular cognitive systems and knowledge graph foundations",
-      category: "methodology",
-      readTime: "12 min",
-      date: "2025-12-01",
-      views: "5.2K",
-      type: "article",
-      featured: true
-    },
-    {
-      id: 2,
-      title: "Financial Modeling with AI-Powered Modules",
-      description: "How AI-powered financial modeling transforms M&A due diligence",
-      category: "case-study",
-      readTime: "8 min",
-      date: "2025-11-28",
-      views: "3.8K",
-      type: "article"
-    },
-    {
-      id: 3,
-      title: "Knowledge Graph Best Practices",
-      description: "Building and maintaining strategic connections at scale",
-      category: "technical",
-      readTime: "15 min",
-      date: "2025-11-25",
-      views: "4.5K",
-      type: "article"
-    },
-    {
-      id: 4,
-      title: "Strategic Decision-Making Frameworks",
-      description: "Comparative analysis of decision frameworks for executives",
-      category: "research",
-      readTime: "25 min",
-      date: "2025-11-20",
-      views: "2.1K",
-      type: "pdf",
-      downloadable: true
-    },
-    {
-      id: 5,
-      title: "Multi-Agent Orchestration Guide",
-      description: "Complete guide to autonomous agent workflows and collaboration",
-      category: "technical",
-      readTime: "18 min",
-      date: "2025-11-15",
-      views: "6.3K",
-      type: "article"
-    },
-    {
-      id: 6,
-      title: "Market Entry Strategy Framework",
-      description: "Step-by-step framework for market intelligence and competitive analysis",
-      category: "templates",
-      readTime: "10 min",
-      date: "2025-11-10",
-      views: "7.8K",
-      type: "pdf",
-      downloadable: true,
-      featured: true
-    },
-    {
-      id: 7,
-      title: "AI Governance in Enterprise Strategy",
-      description: "Trust-broker mechanisms and decision traceability for board-level decisions",
-      category: "methodology",
-      readTime: "14 min",
-      date: "2025-11-05",
-      views: "4.1K",
-      type: "article"
-    },
-    {
-      id: 8,
-      title: "Competitive Intelligence Automation",
-      description: "Real-time competitive tracking and strategic positioning analysis",
-      category: "case-study",
-      readTime: "11 min",
-      date: "2025-10-30",
-      views: "5.6K",
-      type: "article"
-    }
-  ];
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['public_blog_posts'],
+    queryFn: () => base44.entities.BlogPost.filter({ status: 'published' }, '-published_at')
+  });
 
-  const books = [
-    {
-      id: 1,
-      title: "Thinking, Fast and Slow",
-      author: "Daniel Kahneman",
-      description: "Essential reading for understanding cognitive biases in strategic decision-making",
-      amazonUrl: "https://amazon.com",
-      relevance: "Cognitive Architecture"
-    },
-    {
-      id: 2,
-      title: "The Lean Startup",
-      author: "Eric Ries",
-      description: "Strategic iteration and validated learning for innovation",
-      amazonUrl: "https://amazon.com",
-      relevance: "Strategic Execution"
-    },
-    {
-      id: 3,
-      title: "Good Strategy Bad Strategy",
-      author: "Richard Rumelt",
-      description: "The difference between coherent action and wishful thinking",
-      amazonUrl: "https://amazon.com",
-      relevance: "Strategic Synthesis"
-    },
-    {
-      id: 4,
-      title: "Zero to One",
-      author: "Peter Thiel",
-      description: "Creating value through innovation and strategic monopoly",
-      amazonUrl: "https://amazon.com",
-      relevance: "Market Intelligence"
-    }
-  ];
+  const categories = ['all', ...new Set(posts.map(p => p.category))];
 
-  const categories = [
-    { id: "all", label: "All Content" },
-    { id: "methodology", label: "Methodology" },
-    { id: "case-study", label: "Case Studies" },
-    { id: "technical", label: "Technical" },
-    { id: "research", label: "Research" },
-    { id: "templates", label: "Templates" }
-  ];
-
-  const filteredArticles = articles.filter(article => {
-    const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         article.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || article.category === selectedCategory;
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = !searchTerm || 
+      post.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      post.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+    
     return matchesSearch && matchesCategory;
   });
 
+  const featuredPosts = posts.filter(p => p.is_featured).slice(0, 2);
+  const videoArticles = posts.filter(p => p.youtube_video_id);
+  const textArticles = posts.filter(p => !p.youtube_video_id);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419] p-6">
-      <div className="max-w-7xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00D4FF] to-[#8B5CF6] flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">Blog & Resources</h1>
-              <p className="text-[#94A3B8]">Articles, whitepapers and strategic intelligence insights</p>
-            </div>
-          </div>
-        </motion.div>
-
-        <Card className="bg-[#1A1D29] border-[#00D4FF]/20 mb-8">
-          <CardContent className="p-6">
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#94A3B8]" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search articles..."
-                className="pl-10 bg-[#0A2540] border-[#00D4FF]/30 text-white placeholder:text-[#94A3B8]"
-              />
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {categories.map((cat) => (
-                <Button
-                  key={cat.id}
-                  variant={selectedCategory === cat.id ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={selectedCategory === cat.id 
-                    ? "bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6] font-medium whitespace-nowrap" 
-                    : "bg-[#1A1D29] border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50 hover:text-white whitespace-nowrap"}
-                >
-                  {cat.label}
+    <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419]">
+      {/* Header */}
+      <div className="bg-[#0A2540]/95 backdrop-blur-lg border-b border-[#00D4FF]/20 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link to={createPageUrl('Landing')}>
+                <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                  <ArrowLeft className="w-5 h-5" />
                 </Button>
-              ))}
+              </Link>
+              <div>
+                <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <TrendingUp className="w-6 h-6 text-cyan-400" />
+                  Blog & Resources
+                </h1>
+                <p className="text-slate-400 text-sm">
+                  Insights, tutorials, and updates on AI and strategic intelligence
+                </p>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid md:grid-cols-2 gap-6 mb-12">
-          {filteredArticles.map((article, idx) => (
-            <motion.div
-              key={article.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-            >
-              <Card 
-                className={`bg-[#1A1D29] border-[#00D4FF]/20 hover:bg-[#0A2540] transition-all duration-300 group h-full ${article.featured ? 'border-[#00D4FF]/50' : ''}`}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between mb-2">
-                    <Badge className={article.featured ? "bg-[#00D4FF]/20 text-[#00D4FF]" : "bg-[#8B5CF6]/20 text-[#8B5CF6]"}>
-                      {article.category}
-                    </Badge>
-                    {article.downloadable && (
-                      <Download className="w-4 h-4 text-[#00D4FF]" />
-                    )}
-                  </div>
-                  <CardTitle className="text-white text-xl group-hover:text-[#00D4FF] transition-colors">
-                    {article.title}
-                  </CardTitle>
-                  <CardDescription className="text-[#94A3B8]">
-                    {article.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between text-sm text-[#94A3B8] mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" />
-                        {article.readTime}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <TrendingUp className="w-4 h-4" />
-                        {article.views}
-                      </div>
-                    </div>
-                    <span className="text-xs">{article.date}</span>
-                  </div>
-                  <Button
-                    className="w-full bg-[#00D4FF] hover:bg-[#00B8E6] text-[#0A2540] font-medium"
-                    onClick={() => {
-                      if (article.downloadable) {
-                        window.open(article.url || '#', '_blank');
-                      } else {
-                        navigate(createPageUrl('BlogArticle') + '?id=' + article.id);
-                      }
-                    }}
-                  >
-                    {article.downloadable ? (
-                      <>
-                        <Download className="w-4 h-4 mr-2" />
-                        Download {article.type.toUpperCase()}
-                      </>
-                    ) : (
-                      <>
-                        Read Article
-                        <ExternalLink className="w-4 h-4 ml-2" />
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-        >
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8B5CF6] to-[#00D4FF] flex items-center justify-center">
-              <BookOpen className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h2 className="text-3xl font-bold text-white">Recommended Reading</h2>
-              <p className="text-[#94A3B8]">Essential books for strategic intelligence professionals</p>
-            </div>
+            <Link to={createPageUrl('Landing')}>
+              <img 
+                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
+                alt="CAIO·AI" 
+                className="w-10 h-10 object-contain"
+              />
+            </Link>
           </div>
+        </div>
+      </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {books.map((book, idx) => (
-              <motion.div
-                key={book.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 + idx * 0.1 }}
+      <div className="max-w-7xl mx-auto px-6 py-12 space-y-8">
+        {/* Search & Filters */}
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search articles, videos, and resources..."
+              className="pl-12 bg-white/5 border-white/10 text-white"
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {categories.map(cat => (
+              <Button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                variant={selectedCategory === cat ? "default" : "outline"}
+                size="sm"
+                className={selectedCategory === cat ? 
+                  "bg-cyan-500 hover:bg-cyan-600" : 
+                  "border-white/20 text-white hover:bg-white/10"
+                }
               >
-                <Card className="bg-[#1A1D29] border-[#00D4FF]/20 hover:bg-[#0A2540] transition-all duration-300 group h-full">
-                  <CardHeader>
-                    <CardTitle className="text-white text-lg group-hover:text-[#00D4FF] transition-colors">
-                      {book.title}
-                    </CardTitle>
-                    <CardDescription className="text-[#94A3B8] text-sm">
-                      by {book.author}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-[#94A3B8] text-sm mb-3 line-clamp-3">{book.description}</p>
-                    <Badge className="bg-[#8B5CF6]/20 text-[#8B5CF6] mb-4 text-xs">
-                      {book.relevance}
-                    </Badge>
-                    <Button
-                      variant="outline"
-                      className="w-full border-[#00D4FF]/30 text-[#00D4FF] hover:bg-[#00D4FF]/10"
-                      onClick={() => window.open(book.amazonUrl, '_blank')}
-                    >
-                      View on Amazon
-                      <ExternalLink className="w-3 h-3 ml-2" />
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                {cat === 'all' ? 'All' : cat}
+              </Button>
             ))}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-3 gap-4">
+          <Card className="bg-white/5 border-white/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">Total Articles</p>
+                  <p className="text-2xl font-bold text-white">{textArticles.length}</p>
+                </div>
+                <FileText className="w-8 h-8 text-cyan-400 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/5 border-white/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">Video Content</p>
+                  <p className="text-2xl font-bold text-white">{videoArticles.length}</p>
+                </div>
+                <Video className="w-8 h-8 text-red-400 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/5 border-white/10">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-slate-400">Total Views</p>
+                  <p className="text-2xl font-bold text-white">
+                    {posts.reduce((sum, p) => sum + (p.view_count || 0), 0).toLocaleString()}
+                  </p>
+                </div>
+                <Eye className="w-8 h-8 text-purple-400 opacity-50" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Featured Posts */}
+        {featuredPosts.length > 0 && !searchTerm && selectedCategory === 'all' && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-cyan-400" />
+              Featured Content
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              {featuredPosts.map((post) => (
+                <motion.div
+                  key={post.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <Card 
+                    className="bg-white/5 border-white/10 cursor-pointer hover:bg-white/10 transition-all overflow-hidden h-full group"
+                    onClick={() => setSelectedPost(post)}
+                  >
+                    {post.featured_image && (
+                      <div className="h-56 overflow-hidden relative">
+                        <img
+                          src={post.featured_image}
+                          alt={post.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {post.youtube_video_id && (
+                          <div className="absolute top-4 right-4">
+                            <Badge className="bg-red-500/90 text-white backdrop-blur-sm">
+                              <Youtube className="w-3 h-3 mr-1" />
+                              Video
+                            </Badge>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    <CardHeader>
+                      <CardTitle className="text-white text-lg line-clamp-2 group-hover:text-cyan-400 transition-colors">
+                        {post.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-slate-400 text-sm line-clamp-3 mb-4">
+                        {post.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3 text-xs text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {new Date(post.published_at).toLocaleDateString()}
+                          </span>
+                          {post.view_count > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Eye className="w-3 h-3" />
+                              {post.view_count.toLocaleString()}
+                            </span>
+                          )}
+                        </div>
+                        <Badge className="bg-cyan-500/20 text-cyan-400 text-xs">
+                          {post.category}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* All Posts Grid */}
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold text-white">
+            {searchTerm || selectedCategory !== 'all' ? 'Search Results' : 'All Content'}
+            <span className="text-slate-500 text-sm ml-2">({filteredPosts.length})</span>
+          </h2>
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="text-slate-400">Loading content...</div>
+            </div>
+          ) : filteredPosts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-slate-400">No content found</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-3 gap-6">
+              <AnimatePresence>
+                {filteredPosts.map((post, idx) => (
+                  <motion.div
+                    key={post.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ delay: idx * 0.05 }}
+                  >
+                    <Card 
+                      className="bg-white/5 border-white/10 cursor-pointer hover:bg-white/10 transition-all h-full group"
+                      onClick={() => setSelectedPost(post)}
+                    >
+                      {post.featured_image && (
+                        <div className="h-40 overflow-hidden relative">
+                          <img
+                            src={post.featured_image}
+                            alt={post.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                          {post.youtube_video_id && (
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-colors">
+                              <div className="w-12 h-12 rounded-full bg-red-600 flex items-center justify-center">
+                                <Youtube className="w-6 h-6 text-white" />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-white text-sm line-clamp-2 group-hover:text-cyan-400 transition-colors">
+                          {post.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-slate-400 text-xs line-clamp-2 mb-3">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mb-3">
+                          <Badge className="bg-cyan-500/20 text-cyan-400 text-xs">
+                            {post.category}
+                          </Badge>
+                          {post.youtube_video_id && (
+                            <Badge className="bg-red-500/20 text-red-400 text-xs">
+                              Video
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2 text-xs text-slate-500">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {new Date(post.published_at).toLocaleDateString()}
+                          </span>
+                          {post.view_count > 0 && (
+                            <>
+                              <span>•</span>
+                              <span className="flex items-center gap-1">
+                                <Eye className="w-3 h-3" />
+                                {post.view_count.toLocaleString()}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Post Detail Modal */}
+      {selectedPost && (
+        <Dialog open={!!selectedPost} onOpenChange={() => setSelectedPost(null)}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border-white/20">
+            <DialogHeader>
+              <div className="flex items-start justify-between gap-4">
+                <DialogTitle className="text-white text-2xl flex-1">
+                  {selectedPost.title}
+                </DialogTitle>
+                <div className="flex gap-2">
+                  <Badge className="bg-cyan-500/20 text-cyan-400">
+                    {selectedPost.category}
+                  </Badge>
+                  {selectedPost.youtube_video_id && (
+                    <Badge className="bg-red-500/20 text-red-400">
+                      <Youtube className="w-3 h-3 mr-1" />
+                      Video
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm text-slate-400 mt-2">
+                <span>{selectedPost.author}</span>
+                <span>•</span>
+                <span>{new Date(selectedPost.published_at).toLocaleDateString()}</span>
+                {selectedPost.view_count > 0 && (
+                  <>
+                    <span>•</span>
+                    <span className="flex items-center gap-1">
+                      <Eye className="w-3 h-3" />
+                      {selectedPost.view_count.toLocaleString()} views
+                    </span>
+                  </>
+                )}
+              </div>
+            </DialogHeader>
+
+            {/* YouTube Video Embed */}
+            {selectedPost.youtube_video_id && (
+              <div className="aspect-video rounded-lg overflow-hidden mb-6">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${selectedPost.youtube_video_id}`}
+                  title={selectedPost.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full"
+                />
+              </div>
+            )}
+            
+            {/* Content */}
+            <div className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300 prose-a:text-cyan-400 prose-strong:text-white prose-code:text-cyan-400 prose-code:bg-white/10 prose-pre:bg-slate-800">
+              <ReactMarkdown>{selectedPost.content}</ReactMarkdown>
+            </div>
+
+            {/* Tags */}
+            {selectedPost.tags && selectedPost.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2 pt-6 border-t border-white/10 mt-6">
+                {selectedPost.tags.map((tag, idx) => (
+                  <Badge key={idx} className="bg-white/10 text-slate-300 border-white/20">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Footer */}
+      <div className="border-t border-white/10 mt-16">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-slate-400 text-sm">
+              © 2025 ESIOS CAIO Platform. All rights reserved.
+            </p>
+            <Link to={createPageUrl('Landing')}>
+              <Button variant="outline" className="border-cyan-500 text-cyan-400 hover:bg-cyan-500/20">
+                Back to Home
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

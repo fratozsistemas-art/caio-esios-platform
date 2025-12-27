@@ -216,7 +216,7 @@ function LayoutInner({ children, currentPageName }) {
 
   const handleLogout = () => base44.auth.logout();
 
-  if (currentPageName === 'Landing') {
+  if (currentPageName === 'Landing' || currentPageName === 'Blog' || currentPageName === 'BlogResources' || currentPageName === 'Videos') {
     return <>{children}</>;
   }
 
