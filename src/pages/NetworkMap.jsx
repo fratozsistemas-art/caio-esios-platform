@@ -17,6 +17,9 @@ import AutoPopulateDialog from "../components/network/AutoPopulateDialog";
 import GraphViewSelector from "../components/network/GraphViewSelector";
 import GraphTemporalSlider from "../components/network/GraphTemporalSlider";
 import AIGraphSuggestionsPanel from "../components/network/AIGraphSuggestionsPanel";
+import NetworkAnomaliesPanel from "../components/network/NetworkAnomaliesPanel";
+import NetworkPredictionsPanel from "../components/network/NetworkPredictionsPanel";
+import KeyInfluencersPanel from "../components/network/KeyInfluencersPanel";
 
 export default function NetworkMap() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -27,6 +30,8 @@ export default function NetworkMap() {
   const [showTemporal, setShowTemporal] = useState(false);
   const [temporalDate, setTemporalDate] = useState(new Date());
   const [isTemporalPlaying, setIsTemporalPlaying] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [showPredictions, setShowPredictions] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: nodes = [], isLoading: nodesLoading } = useQuery({
@@ -50,15 +55,72 @@ export default function NetworkMap() {
     enabled: nodes.length > 0
   });
 
+  const { data: anomalies, refetch: refetchAnomalies } = useQuery({
+    queryKey: ['network_anomalies'],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('detectNetworkAnomalies', {
+        graph_data: { nodes, relationships }
+      });
+      return data.anomalies;
+    },
+    enabled: false
+  });
+
+  const { data: predictions, refetch: refetchPredictions } = useQuery({
+    queryKey: ['network_predictions'],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('predictNetworkTrends', {
+        graph_data: { nodes, relationships },
+        timeframe_days: 30
+      });
+      return data;
+    },
+    enabled: false
+  });
+
+  const { data: influencers, refetch: refetchInfluencers } = useQuery({
+    queryKey: ['key_influencers'],
+    queryFn: async () => {
+      const { data } = await base44.functions.invoke('identifyKeyInfluencers', {
+        graph_data: { nodes, relationships }
+      });
+      return data.influencers;
+    },
+    enabled: false
+  });
+
   const analyzeNetworkMutation = useMutation({
-    mutationFn: () => base44.functions.invoke('analyzeNetworkInsights', {
-      analysis_type: 'full'
-    }),
+    mutationFn: async () => {
+      await Promise.all([
+        base44.functions.invoke('analyzeNetworkInsights', { analysis_type: 'full' }),
+        refetchAnomalies(),
+        refetchPredictions(),
+        refetchInfluencers()
+      ]);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries(['network_analysis']);
-      toast.success("Network analysis updated");
+      toast.success("Full network analysis completed");
     }
   });
+
+  // Temporal playback effect
+  React.useEffect(() => {
+    if (!isTemporalPlaying || !showTemporal) return;
+
+    const interval = setInterval(() => {
+      setTemporalDate(prev => {
+        const next = new Date(prev.getTime() + (24 * 60 * 60 * 1000 * playbackSpeed));
+        if (next > maxDate) {
+          setIsTemporalPlaying(false);
+          return maxDate;
+        }
+        return next;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isTemporalPlaying, showTemporal, playbackSpeed, maxDate]);
 
   // Filtrar por temporal
   const filteredByTime = showTemporal
@@ -210,6 +272,8 @@ export default function NetworkMap() {
           onDateChange={setTemporalDate}
           onPlayPause={() => setIsTemporalPlaying(!isTemporalPlaying)}
           isPlaying={isTemporalPlaying}
+          playbackSpeed={playbackSpeed}
+          onPlaybackSpeedChange={setPlaybackSpeed}
         />
       )}
 
@@ -242,6 +306,9 @@ export default function NetworkMap() {
                   onNodeClick={handleNodeClick}
                   selectedNode={selectedNode}
                   viewMode={graphView}
+                  anomalies={anomalies}
+                  predictions={showPredictions ? predictions : null}
+                  influencers={influencers}
                 />
               )}
             </CardContent>
@@ -250,6 +317,31 @@ export default function NetworkMap() {
 
         {/* Side Panels */}
         <div className="space-y-6">
+          {/* Anomalies */}
+          <NetworkAnomaliesPanel
+            anomalies={anomalies}
+            onAnomalyClick={(anomaly) => {
+              const node = nodes.find(n => n.id === anomaly.node_id);
+              if (node) handleNodeClick(node);
+            }}
+          />
+
+          {/* Predictions */}
+          <NetworkPredictionsPanel
+            predictions={predictions?.predictions}
+            metadata={predictions?.metadata}
+            onTogglePredictionView={() => setShowPredictions(!showPredictions)}
+          />
+
+          {/* Key Influencers */}
+          <KeyInfluencersPanel
+            influencers={influencers}
+            onInfluencerClick={(influencer) => {
+              const node = nodes.find(n => n.id === influencer.node_id);
+              if (node) handleNodeClick(node);
+            }}
+          />
+
           {/* AI Suggestions */}
           <AIGraphSuggestionsPanel
             selectedNodeId={selectedNode?.id}

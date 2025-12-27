@@ -6,7 +6,10 @@ export default function EnhancedForceDirectedGraph({
   graphData, 
   onNodeClick, 
   selectedNode,
-  viewMode = 'force'
+  viewMode = 'force',
+  anomalies = [],
+  predictions = null,
+  influencers = []
 }) {
   const svgRef = useRef(null);
   const [zoom, setZoom] = useState(1);
@@ -101,6 +104,22 @@ export default function EnhancedForceDirectedGraph({
       metric: '#84cc16'
     };
     return colors[type] || '#64748b';
+  };
+
+  const isNodeAnomalous = (nodeId) => {
+    return anomalies?.some(a => a.node_id === nodeId);
+  };
+
+  const getNodeInfluenceScore = (nodeId) => {
+    const influencer = influencers?.find(i => i.node_id === nodeId);
+    return influencer?.influence_score || 0;
+  };
+
+  const isPredictedRelationship = (fromId, toId) => {
+    return predictions?.predicted_relationships?.some(
+      r => (r.from_node_id === fromId && r.to_node_id === toId) ||
+           (r.from_node_id === toId && r.to_node_id === fromId)
+    );
   };
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 3));
@@ -205,12 +224,41 @@ export default function EnhancedForceDirectedGraph({
           })}
         </g>
 
+        {/* Predicted Relationships */}
+        {predictions && (
+          <g className="predicted-edges">
+            {predictions.predicted_relationships?.slice(0, 10).map((pred, idx) => {
+              const source = nodePositions[pred.from_node_id];
+              const target = nodePositions[pred.to_node_id];
+              
+              if (!source || !target) return null;
+
+              return (
+                <line
+                  key={`pred-${idx}`}
+                  x1={source.x}
+                  y1={source.y}
+                  x2={target.x}
+                  y2={target.y}
+                  stroke="#a855f7"
+                  strokeWidth="2"
+                  strokeOpacity="0.3"
+                  strokeDasharray="5,5"
+                />
+              );
+            })}
+          </g>
+        )}
+
         {/* Nodes */}
         <g className="nodes">
           {Object.values(nodePositions).map((node) => {
             const color = getNodeColor(node.node_type);
             const isSelected = selectedNode?.id === node.id;
-            const radius = isSelected ? 14 : 10;
+            const isAnomalous = isNodeAnomalous(node.id);
+            const influenceScore = getNodeInfluenceScore(node.id);
+            const isInfluencer = influenceScore > 50;
+            const radius = isSelected ? 14 : isInfluencer ? 12 : 10;
 
             return (
               <g
@@ -218,6 +266,39 @@ export default function EnhancedForceDirectedGraph({
                 className="cursor-pointer"
                 onClick={() => onNodeClick(node)}
               >
+                {/* Anomaly indicator */}
+                {isAnomalous && (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={radius + 8}
+                    fill="none"
+                    stroke="#ef4444"
+                    strokeWidth="2"
+                    strokeDasharray="3,3"
+                    opacity="0.8"
+                  >
+                    <animate
+                      attributeName="r"
+                      from={radius + 6}
+                      to={radius + 10}
+                      dur="1.5s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                )}
+
+                {/* Influencer glow */}
+                {isInfluencer && (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={radius + 6}
+                    fill="#fbbf24"
+                    opacity="0.2"
+                  />
+                )}
+
                 {isSelected && (
                   <circle
                     cx={node.x}
@@ -232,9 +313,9 @@ export default function EnhancedForceDirectedGraph({
                   cx={node.x}
                   cy={node.y}
                   r={radius}
-                  fill={color}
-                  stroke={isSelected ? '#fff' : color}
-                  strokeWidth={isSelected ? 3 : 1.5}
+                  fill={isAnomalous ? '#ef4444' : isInfluencer ? '#fbbf24' : color}
+                  stroke={isSelected ? '#fff' : isAnomalous ? '#dc2626' : isInfluencer ? '#f59e0b' : color}
+                  strokeWidth={isSelected ? 3 : isAnomalous || isInfluencer ? 2 : 1.5}
                   opacity="0.9"
                 />
 
