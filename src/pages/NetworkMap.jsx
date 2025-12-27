@@ -301,10 +301,9 @@ function NetworkMapContent() {
               </div>
               <Users className="w-8 h-8 text-orange-400 opacity-50" />
             </div>
-            </div>
-            </CardContent>
-            </Card>
-            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Temporal Slider */}
       {showTemporal && (
