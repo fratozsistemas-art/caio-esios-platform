@@ -26,6 +26,7 @@ import PresenceIndicators from "../components/network/PresenceIndicators";
 import SharedCursors from "../components/network/SharedCursors";
 import CollaborationPanel from "../components/network/CollaborationPanel";
 import GraphCustomizationPanel from "../components/network/GraphCustomizationPanel";
+import NetworkAutomationPanel from "../components/network/NetworkAutomationPanel";
 
 function NetworkMapContent() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -395,6 +396,9 @@ function NetworkMapContent() {
 
         {/* Side Panels */}
         <div className="space-y-6">
+          {/* Network Automation */}
+          <NetworkAutomationPanel />
+
           {/* Anomalies */}
           <NetworkAnomaliesPanel
             anomalies={anomalies}
