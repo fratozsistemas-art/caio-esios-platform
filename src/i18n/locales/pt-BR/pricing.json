@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "title": "Planos de Preços - Plataforma CAIO | Escolha Sua Solução de Inteligência Estratégica",
+    "description": "Planos de preços flexíveis para a Plataforma CAIO. De Entry a Enterprise, encontre a solução de inteligência estratégica certa para sua organização."
+  },
+  "header": {
+    "badge": "Preços Simples e Transparentes",
+    "title": "Escolha Seu Plano",
+    "subtitle": "Comece com qualquer plano e escale conforme você cresce. Todos os planos incluem recursos principais."
+  },
+  "billing": {
+    "monthly": "Mensal",
+    "annual": "Anual",
+    "save": "Economize {{percent}}%"
+  },
+  "plans": {
+    "entry": {
+      "name": "Entry",
+      "description": "Para começar com Digital Twin",
+      "features": [
+        "1 usuário",
+        "Acesso ao Digital Twin",
+        "Conversas ilimitadas",
+        "Análises básicas",
+        "Suporte por email"
+      ]
+    },
+    "basic": {
+      "name": "Basic",
+      "description": "Para uso profissional",
+      "features": [
+        "1 usuário",
+        "Recursos completos do Twin",
+        "Análises avançadas",
+        "Acesso ao Knowledge Graph",
+        "Suporte prioritário"
+      ]
+    },
+    "teams": {
+      "name": "Teams",
+      "description": "Para equipes (trimestral no anual)",
+      "features": [
+        "Múltiplos usuários",
+        "Tudo do Basic +",
+        "Colaboração em equipe",
+        "Workspaces ilimitados",
+        "Análises colaborativas",
+        "Suporte dedicado",
+        "Onboarding incluído"
+      ],
+      "popular": "Mais Popular"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "Para organizações",
+      "price": "Personalizado",
+      "features": [
+        "Usuários ilimitados",
+        "Tudo do Teams +",
+        "Hermes Trust-Broker completo",
+        "Treinamento e Fine-Tuning de Agentes",
+        "Neo4j Enterprise dedicado",
+        "99,9% SLA uptime",
+        "SSO (SAML, OAuth)",
+        "Opção white-label",
+        "Conformidade SOC 2, ISO",
+        "Armazenamento ilimitado",
+        "Suporte 24/7 + CSM",
+        "Implementação personalizada"
+      ]
+    }
+  },
+  "cta": {
+    "getStarted": "Começar",
+    "contactSales": "Contatar Vendas",
+    "loading": "Processando..."
+  },
+  "perMonth": "/mês",
+  "perYear": "/ano",
+  "currency": "R$",
+  "error": {
+    "title": "Erro",
+    "checkout": "Falha ao criar sessão de checkout. Por favor, tente novamente."
+  }
+}

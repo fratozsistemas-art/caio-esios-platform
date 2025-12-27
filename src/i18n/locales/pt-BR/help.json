@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Central de Ajuda - Plataforma CAIO | Suporte e Documentação",
+    "description": "Obtenha ajuda com a Plataforma CAIO. Acesse guias, tutoriais, FAQs e contate o suporte."
+  },
+  "header": {
+    "title": "Central de Ajuda",
+    "subtitle": "Encontre respostas e obtenha suporte",
+    "searchPlaceholder": "Buscar ajuda..."
+  },
+  "categories": {
+    "gettingStarted": {
+      "title": "Começando",
+      "description": "Aprenda os básicos da Plataforma CAIO"
+    },
+    "features": {
+      "title": "Recursos e Capacidades",
+      "description": "Explore os recursos da plataforma"
+    },
+    "account": {
+      "title": "Conta e Faturamento",
+      "description": "Gerencie as configurações da sua conta"
+    },
+    "troubleshooting": {
+      "title": "Solução de Problemas",
+      "description": "Resolva problemas comuns"
+    },
+    "api": {
+      "title": "API e Integrações",
+      "description": "Conecte-se com outras ferramentas"
+    },
+    "security": {
+      "title": "Segurança e Privacidade",
+      "description": "Saiba sobre proteção de dados"
+    }
+  },
+  "popular": {
+    "title": "Artigos Populares",
+    "subtitle": "Tópicos de ajuda mais visualizados"
+  },
+  "contact": {
+    "title": "Ainda Precisa de Ajuda?",
+    "subtitle": "Nossa equipe de suporte está aqui para você",
+    "email": "Suporte por Email",
+    "chat": "Chat ao Vivo",
+    "ticket": "Enviar Ticket"
+  }
+}
