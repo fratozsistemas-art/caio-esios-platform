@@ -1,0 +1,48 @@
+{
+  "meta": {
+    "title": "Help Center - CAIO Platform | Support & Documentation",
+    "description": "Get help with CAIO Platform. Access guides, tutorials, FAQs, and contact support."
+  },
+  "header": {
+    "title": "Help Center",
+    "subtitle": "Find answers and get support",
+    "searchPlaceholder": "Search for help..."
+  },
+  "categories": {
+    "gettingStarted": {
+      "title": "Getting Started",
+      "description": "Learn the basics of CAIO Platform"
+    },
+    "features": {
+      "title": "Features & Capabilities",
+      "description": "Explore platform features"
+    },
+    "account": {
+      "title": "Account & Billing",
+      "description": "Manage your account settings"
+    },
+    "troubleshooting": {
+      "title": "Troubleshooting",
+      "description": "Solve common issues"
+    },
+    "api": {
+      "title": "API & Integrations",
+      "description": "Connect with other tools"
+    },
+    "security": {
+      "title": "Security & Privacy",
+      "description": "Learn about data protection"
+    }
+  },
+  "popular": {
+    "title": "Popular Articles",
+    "subtitle": "Most viewed help topics"
+  },
+  "contact": {
+    "title": "Still Need Help?",
+    "subtitle": "Our support team is here for you",
+    "email": "Email Support",
+    "chat": "Live Chat",
+    "ticket": "Submit Ticket"
+  }
+}

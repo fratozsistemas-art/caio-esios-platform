@@ -1,0 +1,85 @@
+{
+  "meta": {
+    "title": "Pricing Plans - CAIO Platform | Choose Your Strategic Intelligence Solution",
+    "description": "Flexible pricing plans for CAIO Platform. From Entry to Enterprise, find the right strategic intelligence solution for your organization."
+  },
+  "header": {
+    "badge": "Simple, Transparent Pricing",
+    "title": "Choose Your Plan",
+    "subtitle": "Start with any plan and scale as you grow. All plans include core features."
+  },
+  "billing": {
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "save": "Save {{percent}}%"
+  },
+  "plans": {
+    "entry": {
+      "name": "Entry",
+      "description": "Get started with Digital Twin",
+      "features": [
+        "1 user",
+        "Digital Twin access",
+        "Unlimited conversations",
+        "Basic analytics",
+        "Email support"
+      ]
+    },
+    "basic": {
+      "name": "Basic",
+      "description": "For professional use",
+      "features": [
+        "1 user",
+        "Full Twin features",
+        "Advanced analytics",
+        "Knowledge Graph access",
+        "Priority support"
+      ]
+    },
+    "teams": {
+      "name": "Teams",
+      "description": "For teams (quarterly on annual)",
+      "features": [
+        "Multiple users",
+        "Everything in Basic +",
+        "Team collaboration",
+        "Unlimited workspaces",
+        "Collaborative analytics",
+        "Dedicated support",
+        "Onboarding included"
+      ],
+      "popular": "Most Popular"
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "description": "For organizations",
+      "price": "Custom",
+      "features": [
+        "Unlimited users",
+        "Everything in Teams +",
+        "Hermes Trust-Broker complete",
+        "Agent Training & Fine-Tuning",
+        "Neo4j Enterprise dedicated",
+        "99.9% SLA uptime",
+        "SSO (SAML, OAuth)",
+        "White-label option",
+        "SOC 2, ISO compliance",
+        "Unlimited storage",
+        "24/7 support + CSM",
+        "Custom implementation"
+      ]
+    }
+  },
+  "cta": {
+    "getStarted": "Get Started",
+    "contactSales": "Contact Sales",
+    "loading": "Processing..."
+  },
+  "perMonth": "/month",
+  "perYear": "/year",
+  "currency": "$",
+  "error": {
+    "title": "Error",
+    "checkout": "Failed to create checkout session. Please try again."
+  }
+}

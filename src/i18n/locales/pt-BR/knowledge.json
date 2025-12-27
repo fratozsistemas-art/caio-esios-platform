@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "title": "Base de Conhecimento - Plataforma CAIO | Documentação e Recursos",
+    "description": "Base de conhecimento abrangente para a Plataforma CAIO. Aprenda sobre inteligência estratégica, metodologia TSI e recursos da plataforma."
+  },
+  "header": {
+    "title": "Base de Conhecimento",
+    "subtitle": "Aprenda tudo sobre inteligência estratégica",
+    "searchPlaceholder": "Buscar na base de conhecimento..."
+  },
+  "sections": {
+    "tsi": {
+      "title": "Metodologia TSI",
+      "description": "Entendendo o framework Total Strategic Intelligence"
+    },
+    "modules": {
+      "title": "Módulos Cognitivos",
+      "description": "Mergulhe profundamente nos 11 módulos cognitivos"
+    },
+    "guides": {
+      "title": "Guias do Usuário",
+      "description": "Tutoriais e guias passo a passo"
+    },
+    "bestPractices": {
+      "title": "Melhores Práticas",
+      "description": "Aprenda com especialistas e implementações bem-sucedidas"
+    },
+    "caseStudies": {
+      "title": "Estudos de Caso",
+      "description": "Aplicações do mundo real e histórias de sucesso"
+    },
+    "glossary": {
+      "title": "Glossário",
+      "description": "Termos-chave e conceitos explicados"
+    }
+  },
+  "featured": {
+    "title": "Conteúdo em Destaque",
+    "subtitle": "Principais recursos para você começar"
+  },
+  "browse": {
+    "title": "Navegar por Tópico",
+    "all": "Todos os Tópicos",
+    "recent": "Atualizados Recentemente",
+    "popular": "Mais Populares"
+  }
+}

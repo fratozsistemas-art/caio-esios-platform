@@ -1,0 +1,32 @@
+{
+  "app": {
+    "name": "Plataforma Base44",
+    "title": "Plataforma de Inteligência Estratégica"
+  },
+  "navigation": {
+    "home": "Início",
+    "dashboard": "Painel",
+    "analytics": "Análises",
+    "settings": "Configurações",
+    "help": "Ajuda",
+    "logout": "Sair"
+  },
+  "actions": {
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "edit": "Editar",
+    "create": "Criar",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "export": "Exportar",
+    "import": "Importar"
+  },
+  "messages": {
+    "loading": "Carregando...",
+    "saving": "Salvando...",
+    "success": "Sucesso!",
+    "error": "Ocorreu um erro",
+    "confirmDelete": "Tem certeza que deseja excluir este item?"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "title": "Knowledge Base - CAIO Platform | Documentation & Resources",
+    "description": "Comprehensive knowledge base for CAIO Platform. Learn about strategic intelligence, TSI methodology, and platform features."
+  },
+  "header": {
+    "title": "Knowledge Base",
+    "subtitle": "Learn everything about strategic intelligence",
+    "searchPlaceholder": "Search knowledge base..."
+  },
+  "sections": {
+    "tsi": {
+      "title": "TSI Methodology",
+      "description": "Understanding the Total Strategic Intelligence framework"
+    },
+    "modules": {
+      "title": "Cognitive Modules",
+      "description": "Deep dive into the 11 cognitive modules"
+    },
+    "guides": {
+      "title": "User Guides",
+      "description": "Step-by-step tutorials and guides"
+    },
+    "bestPractices": {
+      "title": "Best Practices",
+      "description": "Learn from experts and successful implementations"
+    },
+    "casStudies": {
+      "title": "Case Studies",
+      "description": "Real-world applications and success stories"
+    },
+    "glossary": {
+      "title": "Glossary",
+      "description": "Key terms and concepts explained"
+    }
+  },
+  "featured": {
+    "title": "Featured Content",
+    "subtitle": "Top resources to get you started"
+  },
+  "browse": {
+    "title": "Browse by Topic",
+    "all": "All Topics",
+    "recent": "Recently Updated",
+    "popular": "Most Popular"
+  }
+}

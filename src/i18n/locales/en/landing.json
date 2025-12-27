@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3 Enterprise AI",
+    "description": "Executive AI platform with 11 cognitive modules for strategic decisions. TSI v9.3 methodology transforms planning from weeks to hours. Trusted by Fortune 500.",
+    "keywords": "strategic intelligence platform, executive AI platform, AI decision making, TSI methodology, cognitive modules, enterprise strategic intelligence, Chief AI Officer platform, strategic planning software, competitive intelligence automation, financial modeling platform, M&A due diligence AI, market intelligence tools, executive decision support system, strategic analysis AI, business intelligence AI platform, AI strategic planning tool, C-suite AI tools, strategic portfolio management, AI powered strategic analysis, executive advisory AI",
+    "ogTitle": "ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3",
+    "ogDescription": "Transform executive decision-making with 11-module AI platform. Market intelligence, financial modeling, and strategic execution in one system. Trusted by Fortune 500.",
+    "ogSiteName": "ESIOS CAIO Platform",
+    "twitterTitle": "ESIOS CAIO - Executive Strategic Intelligence Platform",
+    "twitterDescription": "Transform executive decision-making with 11-module AI platform. Market intelligence, financial modeling, and strategic execution."
+  },
+  "hero": {
+    "badge": "TSI v9.3 Enterprise AI",
+    "title": "Executive Strategic Intelligence Platform",
+    "subtitle": "Transform executive decision-making with institutional-grade AI",
+    "description": "CAIO combines 11 cognitive modules, knowledge graphs, and advanced AI to deliver strategic intelligence for C-suite executives.",
+    "ctaPrimary": "Request Access",
+    "ctaSecondary": "Watch Demo",
+    "ctaTertiary": "Explore Platform"
+  },
+  "stats": {
+    "decisions": {
+      "value": "2000+",
+      "label": "Strategic Decisions"
+    },
+    "accuracy": {
+      "value": "95%",
+      "label": "Accuracy Rate"
+    },
+    "time": {
+      "value": "70%",
+      "label": "Time Saved"
+    }
+  },
+  "modules": {
+    "title": "11 Cognitive Modules",
+    "subtitle": "Comprehensive strategic intelligence architecture",
+    "viewAll": "View All Modules"
+  },
+  "capabilities": {
+    "title": "Advanced Capabilities",
+    "subtitle": "Enterprise-grade strategic intelligence"
+  },
+  "comparison": {
+    "title": "Why Choose CAIO",
+    "subtitle": "Next-generation strategic intelligence"
+  },
+  "useCases": {
+    "title": "Use Cases",
+    "subtitle": "Real-world applications"
+  },
+  "testimonials": {
+    "title": "Trusted by Industry Leaders",
+    "subtitle": "What our clients say"
+  },
+  "pricing": {
+    "title": "Pricing Plans",
+    "subtitle": "Choose the right plan for your organization"
+  },
+  "cta": {
+    "title": "Ready to Transform Your Strategic Intelligence?",
+    "subtitle": "Join leading organizations leveraging CAIO for executive decision-making",
+    "button": "Get Started Today"
+  },
+  "navigation": {
+    "features": "Features",
+    "modules": "Modules",
+    "pricing": "Pricing",
+    "demo": "Demo",
+    "login": "Login",
+    "getAccess": "Get Access"
+  },
+  "unauthorized": {
+    "title": "Authentication Required",
+    "message": "Please log in to access the platform",
+    "close": "Close"
+  }
+}

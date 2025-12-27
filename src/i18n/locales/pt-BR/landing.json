@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "title": "CAIO·AI - Plataforma de Inteligência Estratégica Executiva | TSI v9.3",
+    "description": "CAIO·AI é uma plataforma de inteligência estratégica de nível institucional construída sobre metodologia TSI v9.3 com 11 módulos cognitivos. Transforme decisões executivas com análise estratégica potencializada por IA, knowledge graphs e governança cognitiva.",
+    "keywords": "inteligência estratégica, plataforma IA, tomada de decisão executiva, metodologia TSI, módulos cognitivos, business intelligence, análise estratégica, knowledge graph, consultoria IA, IA empresarial, ferramentas C-suite, planejamento estratégico, inteligência competitiva",
+    "ogTitle": "CAIO·AI - Plataforma de Inteligência Estratégica Executiva",
+    "ogDescription": "Transforme decisões executivas com IA de nível institucional. Construída sobre TSI v9.3 com 11 módulos cognitivos para inteligência estratégica.",
+    "ogSiteName": "CAIO·AI Platform",
+    "twitterTitle": "CAIO·AI - Plataforma de Inteligência Estratégica Executiva",
+    "twitterDescription": "Transforme decisões executivas com IA de nível institucional. Construída sobre TSI v9.3 com 11 módulos cognitivos."
+  },
+  "hero": {
+    "badge": "IA Empresarial TSI v9.3",
+    "title": "Plataforma de Inteligência Estratégica Executiva",
+    "subtitle": "Transforme a tomada de decisão executiva com IA de nível institucional",
+    "description": "CAIO combina 11 módulos cognitivos, knowledge graphs e IA avançada para entregar inteligência estratégica para executivos C-level.",
+    "ctaPrimary": "Solicitar Acesso",
+    "ctaSecondary": "Ver Demonstração",
+    "ctaTertiary": "Explorar Plataforma"
+  },
+  "stats": {
+    "decisions": {
+      "value": "2000+",
+      "label": "Decisões Estratégicas"
+    },
+    "accuracy": {
+      "value": "95%",
+      "label": "Taxa de Precisão"
+    },
+    "time": {
+      "value": "70%",
+      "label": "Tempo Economizado"
+    }
+  },
+  "modules": {
+    "title": "11 Módulos Cognitivos",
+    "subtitle": "Arquitetura abrangente de inteligência estratégica",
+    "viewAll": "Ver Todos os Módulos"
+  },
+  "capabilities": {
+    "title": "Capacidades Avançadas",
+    "subtitle": "Inteligência estratégica de nível empresarial"
+  },
+  "comparison": {
+    "title": "Por Que Escolher CAIO",
+    "subtitle": "Inteligência estratégica de próxima geração"
+  },
+  "useCases": {
+    "title": "Casos de Uso",
+    "subtitle": "Aplicações do mundo real"
+  },
+  "testimonials": {
+    "title": "Confiado por Líderes do Setor",
+    "subtitle": "O que nossos clientes dizem"
+  },
+  "pricing": {
+    "title": "Planos de Preços",
+    "subtitle": "Escolha o plano certo para sua organização"
+  },
+  "cta": {
+    "title": "Pronto para Transformar Sua Inteligência Estratégica?",
+    "subtitle": "Junte-se às organizações líderes que aproveitam CAIO para tomada de decisões executivas",
+    "button": "Comece Hoje"
+  },
+  "navigation": {
+    "features": "Recursos",
+    "modules": "Módulos",
+    "pricing": "Preços",
+    "demo": "Demo",
+    "login": "Entrar",
+    "getAccess": "Obter Acesso"
+  },
+  "unauthorized": {
+    "title": "Autenticação Necessária",
+    "message": "Por favor, faça login para acessar a plataforma",
+    "close": "Fechar"
+  }
+}
