@@ -167,7 +167,7 @@ function NetworkMapContent() {
     }
   }
 
-  const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+  const filteredNodeIds = Set ? new Set(filteredNodes.map(n => n.id)) : new window.Set(filteredNodes.map(n => n.id));
   const filteredRelationships = relationships.filter(r =>
     filteredNodeIds.has(r.from_node_id) && 
     filteredNodeIds.has(r.to_node_id) &&
