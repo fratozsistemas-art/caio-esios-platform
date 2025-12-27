@@ -963,6 +963,97 @@ export const TUTORIALS = {
         icon: Bell,
       }
     ]
+  },
+
+  realTimeWidgets: {
+    id: 'realTimeWidgets',
+    title: 'Widgets de Dados em Tempo Real',
+    titleEn: 'Real-Time Data Widgets',
+    category: 'core',
+    description: 'Dados de mercado ao vivo no dashboard',
+    descriptionEn: 'Live market data on dashboard',
+    duration: '5 min',
+    difficulty: 'beginner',
+    steps: [
+      {
+        title: 'Ticker de Ações ao Vivo 📈',
+        content: 'Monitore preços de ações em tempo real das principais empresas de tecnologia. Verde = ganhos, Vermelho = perdas.',
+        icon: TrendingUp,
+      },
+      {
+        title: 'Auto-Refresh e Controles ⏱️',
+        content: 'O widget atualiza automaticamente a cada 30 segundos. Clique em "Paused" para pausar ou no botão de refresh para atualização manual.',
+        icon: Activity,
+      },
+      {
+        title: 'Feed de Notícias 📰',
+        content: 'Acesse notícias de mercado em tempo real com análise de sentimento. Clique em artigos para ler a história completa.',
+        icon: MessageSquare,
+      },
+      {
+        title: 'Indicadores Econômicos 📊',
+        content: 'Acompanhe IPCA (inflação), CDI e taxa USD/BRL do Banco Central. Dados atualizados a cada hora.',
+        icon: BarChart3,
+      },
+      {
+        title: 'Customize seu Dashboard 🎨',
+        content: 'Use o DashboardCustomizer para mostrar/ocultar widgets de mercado conforme sua necessidade.',
+        icon: Layers,
+      }
+    ]
+  },
+
+  marketIntelligence: {
+    id: 'marketIntelligence',
+    title: 'Market Intelligence (M1)',
+    titleEn: 'Market Intelligence (M1)',
+    category: 'intelligence',
+    description: 'Análise de mercado com dados em tempo real',
+    descriptionEn: 'Market analysis with real-time data',
+    duration: '8 min',
+    difficulty: 'intermediate',
+    steps: [
+      {
+        title: 'Módulo M1 Aprimorado 🚀',
+        content: 'O M1 agora integra dados em tempo real: preços de ações, notícias e indicadores econômicos para análises mais dinâmicas.',
+        icon: Brain,
+      },
+      {
+        title: 'Coleta de Dados Automática 📡',
+        content: 'O M1 busca automaticamente: quotes de ações via Alpha Vantage, notícias via News API, e dados do Banco Central.',
+        icon: Server,
+      },
+      {
+        title: 'Análise de Tendências 📈',
+        content: 'A IA identifica tendências emergentes, momentum de mercado e sentimento baseado em movimentos de ações e headlines.',
+        icon: TrendingUp,
+      },
+      {
+        title: 'Identificação de Oportunidades 💡',
+        content: 'O M1 detecta oportunidades específicas com ROI estimado, timeframe e nível de confiança.',
+        icon: Sparkles,
+      },
+      {
+        title: 'Avaliação de Riscos ⚠️',
+        content: 'Identifica riscos potenciais, volatilidade de mercado e fatores de atenção com estratégias de mitigação.',
+        icon: Shield,
+      },
+      {
+        title: 'Recomendações Estratégicas 🎯',
+        content: 'Receba ações priorizadas com justificativas baseadas nos dados de mercado em tempo real.',
+        icon: Target,
+      },
+      {
+        title: 'Salva como Strategic Facts 💾',
+        content: 'Oportunidades e riscos são salvos automaticamente como StrategicFacts para rastreamento e análise futura.',
+        icon: BookOpen,
+      },
+      {
+        title: 'Acesse Análises Salvas 📂',
+        content: 'Vá em Strategic Facts Manager para visualizar todas as análises M1, filtrar por tags e explorar no grafo.',
+        icon: Network,
+      }
+    ]
   }
 };
 
@@ -986,7 +1077,9 @@ export const getTutorial = (id) => TUTORIALS[id];
 // Ordem recomendada para novos usuários
 export const RECOMMENDED_ORDER = [
   'platformTour',
-  'dashboard', 
+  'dashboard',
+  'realTimeWidgets',
+  'marketIntelligence',
   'chatWithCaio',
   'quickActions',
   'tsiMethodology',
