@@ -9,7 +9,8 @@ export default function EnhancedForceDirectedGraph({
   viewMode = 'force',
   anomalies = [],
   predictions = null,
-  influencers = []
+  influencers = [],
+  selectedAnomaly = null
 }) {
   const svgRef = useRef(null);
   const [zoom, setZoom] = useState(1);
@@ -122,6 +123,16 @@ export default function EnhancedForceDirectedGraph({
     );
   };
 
+  const isRelatedToAnomaly = (nodeId) => {
+    if (!selectedAnomaly) return false;
+    if (nodeId === selectedAnomaly.node_id) return true;
+    // Check if node is connected to anomalous node
+    return graphData.edges?.some(e => 
+      (e.from_node_id === selectedAnomaly.node_id && e.to_node_id === nodeId) ||
+      (e.to_node_id === selectedAnomaly.node_id && e.from_node_id === nodeId)
+    );
+  };
+
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 3));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.4));
   const handleResetView = () => {
@@ -202,10 +213,14 @@ export default function EnhancedForceDirectedGraph({
           {graphData.edges?.map((edge, idx) => {
             const source = nodePositions[edge.from_node_id];
             const target = nodePositions[edge.to_node_id];
-            
+
             if (!source || !target) return null;
 
             const isHighlighted = selectedNode?.id === edge.from_node_id || selectedNode?.id === edge.to_node_id;
+            const isAnomalyRelated = selectedAnomaly && (
+              edge.from_node_id === selectedAnomaly.node_id || 
+              edge.to_node_id === selectedAnomaly.node_id
+            );
 
             return (
               <line
@@ -215,11 +230,12 @@ export default function EnhancedForceDirectedGraph({
                 y1={source.y}
                 x2={target.x}
                 y2={target.y}
-                stroke={isHighlighted ? "#60a5fa" : "#475569"}
-                strokeWidth={isHighlighted ? "2" : "1"}
-                strokeOpacity={isHighlighted ? "0.8" : "0.3"}
+                stroke={isAnomalyRelated ? "#ef4444" : isHighlighted ? "#60a5fa" : "#475569"}
+                strokeWidth={isAnomalyRelated ? "3" : isHighlighted ? "2" : "1"}
+                strokeOpacity={isAnomalyRelated ? "0.9" : isHighlighted ? "0.8" : "0.3"}
                 markerEnd="url(#arrowhead)"
-              />
+                strokeDasharray={isAnomalyRelated ? "5,3" : "0"}
+                />
             );
           })}
         </g>
@@ -258,7 +274,8 @@ export default function EnhancedForceDirectedGraph({
             const isAnomalous = isNodeAnomalous(node.id);
             const influenceScore = getNodeInfluenceScore(node.id);
             const isInfluencer = influenceScore > 50;
-            const radius = isSelected ? 14 : isInfluencer ? 12 : 10;
+            const isAnomalyRelated = isRelatedToAnomaly(node.id);
+            const radius = isSelected ? 14 : isInfluencer ? 12 : isAnomalyRelated ? 11 : 10;
 
             return (
               <g
@@ -286,6 +303,20 @@ export default function EnhancedForceDirectedGraph({
                       repeatCount="indefinite"
                     />
                   </circle>
+                )}
+
+                {/* Anomaly-related highlight */}
+                {isAnomalyRelated && !isAnomalous && (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={radius + 6}
+                    fill="none"
+                    stroke="#f97316"
+                    strokeWidth="2"
+                    strokeDasharray="2,2"
+                    opacity="0.6"
+                  />
                 )}
 
                 {/* Influencer glow */}

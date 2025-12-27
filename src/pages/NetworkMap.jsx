@@ -32,6 +32,7 @@ export default function NetworkMap() {
   const [isTemporalPlaying, setIsTemporalPlaying] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showPredictions, setShowPredictions] = useState(false);
+  const [selectedAnomaly, setSelectedAnomaly] = useState(null);
   const queryClient = useQueryClient();
 
   const { data: nodes = [], isLoading: nodesLoading } = useQuery({
@@ -309,6 +310,7 @@ export default function NetworkMap() {
                   anomalies={anomalies}
                   predictions={showPredictions ? predictions : null}
                   influencers={influencers}
+                  selectedAnomaly={selectedAnomaly}
                 />
               )}
             </CardContent>
@@ -320,10 +322,9 @@ export default function NetworkMap() {
           {/* Anomalies */}
           <NetworkAnomaliesPanel
             anomalies={anomalies}
-            onAnomalyClick={(anomaly) => {
-              const node = nodes.find(n => n.id === anomaly.node_id);
-              if (node) handleNodeClick(node);
-            }}
+            onAnomalyClick={handleAnomalyClick}
+            relatedNodes={selectedAnomaly ? getRelatedNodesForAnomaly(selectedAnomaly) : []}
+            predictions={predictions?.predictions}
           />
 
           {/* Predictions */}
