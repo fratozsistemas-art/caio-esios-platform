@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Play, Search, Clock, Eye, TrendingUp, Sparkles, Calendar } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Play, Search, Clock, Eye, TrendingUp, Sparkles, Calendar, ArrowUpDown } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
@@ -11,6 +12,7 @@ import { base44 } from "@/api/base44Client";
 export default function Videos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [sortBy, setSortBy] = useState("date");
 
   // Fetch YouTube videos from database
   const { data: youtubeVideos = [], isLoading } = useQuery({
@@ -130,30 +132,101 @@ export default function Videos() {
   ];
 
   const categories = [
-    { id: "all", label: "All Videos" },
-    { id: "ai", label: "AI & Technology" },
-    { id: "strategy", label: "Strategy" },
-    { id: "tutorial", label: "Tutorials" },
-    { id: "workshop", label: "Workshops" },
-    { id: "overview", label: "Platform Overview" },
-    { id: "modules", label: "TSI Modules" },
-    { id: "features", label: "Features" },
-    { id: "case-studies", label: "Case Studies" }
+    { id: "all", label: "All Videos", count: 0 },
+    { id: "ai", label: "AI & Technology", count: 0 },
+    { id: "strategy", label: "Strategy", count: 0 },
+    { id: "tutorial", label: "Tutorials", count: 0 },
+    { id: "workshop", label: "Workshops", count: 0 },
+    { id: "overview", label: "Platform Overview", count: 0 },
+    { id: "modules", label: "TSI Modules", count: 0 },
+    { id: "features", label: "Features", count: 0 },
+    { id: "case-studies", label: "Case Studies", count: 0 }
   ];
 
-  const filteredVideos = allVideos.filter(video => {
-    const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         video.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "all" || video.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  }).concat(
-    staticVideos.filter(video => {
+  const sortOptions = [
+    { value: "date", label: "Date (Newest)" },
+    { value: "date-asc", label: "Date (Oldest)" },
+    { value: "views", label: "Views (High to Low)" },
+    { value: "views-asc", label: "Views (Low to High)" },
+    { value: "duration", label: "Duration (Longest)" },
+    { value: "duration-asc", label: "Duration (Shortest)" },
+    { value: "title", label: "Title (A-Z)" }
+  ];
+
+  // Helper function to parse duration string to seconds
+  const parseDuration = (duration) => {
+    if (!duration || duration === 'TBD' || duration === 'N/A') return 0;
+    const parts = duration.split(':').map(p => parseInt(p) || 0);
+    if (parts.length === 2) return parts[0] * 60 + parts[1]; // mm:ss
+    if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]; // hh:mm:ss
+    return 0;
+  };
+
+  // Helper function to parse views string to number
+  const parseViews = (views) => {
+    if (!views || views === 'Coming Soon') return 0;
+    const str = views.toString().toLowerCase();
+    if (str.includes('k')) return parseFloat(str) * 1000;
+    if (str.includes('m')) return parseFloat(str) * 1000000;
+    return parseInt(str) || 0;
+  };
+
+  const filteredAndSortedVideos = useMemo(() => {
+    // Combine all videos
+    const combined = [...allVideos, ...staticVideos];
+    
+    // Filter by search and category
+    let filtered = combined.filter(video => {
       const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            video.description.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = selectedCategory === "all" || video.category === selectedCategory;
       return matchesSearch && matchesCategory;
-    })
-  );
+    });
+
+    // Sort videos
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case "date":
+          const dateA = a.isPlaceholder ? a.scheduledDate : new Date(a.publishedAt || 0);
+          const dateB = b.isPlaceholder ? b.scheduledDate : new Date(b.publishedAt || 0);
+          return dateB - dateA;
+        
+        case "date-asc":
+          const dateAsc1 = a.isPlaceholder ? a.scheduledDate : new Date(a.publishedAt || 0);
+          const dateAsc2 = b.isPlaceholder ? b.scheduledDate : new Date(b.publishedAt || 0);
+          return dateAsc1 - dateAsc2;
+        
+        case "views":
+          return parseViews(b.views) - parseViews(a.views);
+        
+        case "views-asc":
+          return parseViews(a.views) - parseViews(b.views);
+        
+        case "duration":
+          return parseDuration(b.duration) - parseDuration(a.duration);
+        
+        case "duration-asc":
+          return parseDuration(a.duration) - parseDuration(b.duration);
+        
+        case "title":
+          return a.title.localeCompare(b.title);
+        
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [allVideos, staticVideos, searchQuery, selectedCategory, sortBy]);
+
+  // Update category counts
+  const categoriesWithCounts = categories.map(cat => {
+    if (cat.id === "all") {
+      return { ...cat, count: allVideos.length + staticVideos.length };
+    }
+    const count = [...allVideos, ...staticVideos].filter(v => v.category === cat.id).length;
+    return { ...cat, count };
+  });
 
   const [selectedVideo, setSelectedVideo] = useState(null);
 
@@ -177,29 +250,72 @@ export default function Videos() {
         </motion.div>
 
         <Card className="bg-[#1A1D29] border-[#00D4FF]/20 mb-6">
-          <CardContent className="p-6">
-            <div className="relative mb-4">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#94A3B8]" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search videos..."
-                className="pl-10 bg-[#0A2540] border-[#00D4FF]/30 text-white placeholder:text-[#94A3B8]"
-              />
+          <CardContent className="p-6 space-y-4">
+            <div className="flex gap-4 flex-wrap items-end">
+              <div className="flex-1 min-w-[200px]">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#94A3B8]" />
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search videos..."
+                    className="pl-10 bg-[#0A2540] border-[#00D4FF]/30 text-white placeholder:text-[#94A3B8]"
+                  />
+                </div>
+              </div>
+              <div className="w-[200px]">
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger className="bg-[#0A2540] border-[#00D4FF]/30 text-white">
+                    <ArrowUpDown className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1A1D29] border-[#00D4FF]/30">
+                    {sortOptions.map((option) => (
+                      <SelectItem 
+                        key={option.value} 
+                        value={option.value}
+                        className="text-white hover:bg-[#0A2540]"
+                      >
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {categories.map((cat) => (
-                <Button
-                  key={cat.id}
-                  variant={selectedCategory === cat.id ? "default" : "outline"}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={selectedCategory === cat.id 
-                    ? "bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6] font-medium whitespace-nowrap" 
-                    : "bg-[#1A1D29] border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50 hover:text-white whitespace-nowrap"}
-                >
-                  {cat.label}
-                </Button>
-              ))}
+
+            <div>
+              <p className="text-xs text-[#94A3B8] mb-2 uppercase tracking-wide">Categories</p>
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {categoriesWithCounts.map((cat) => (
+                  <Button
+                    key={cat.id}
+                    variant={selectedCategory === cat.id ? "default" : "outline"}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={selectedCategory === cat.id 
+                      ? "bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6] font-medium whitespace-nowrap" 
+                      : "bg-[#1A1D29] border-[#00D4FF]/30 text-[#94A3B8] hover:bg-[#0A2540] hover:border-[#00D4FF]/50 hover:text-white whitespace-nowrap"}
+                  >
+                    {cat.label}
+                    {cat.count > 0 && (
+                      <Badge className="ml-2 bg-white/10 text-white border-0 text-xs">
+                        {cat.count}
+                      </Badge>
+                    )}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-white/10">
+              <p className="text-sm text-[#94A3B8]">
+                Showing <span className="text-white font-medium">{filteredAndSortedVideos.length}</span> video{filteredAndSortedVideos.length !== 1 ? 's' : ''}
+              </p>
+              {filteredAndSortedVideos.filter(v => v.isPlaceholder).length > 0 && (
+                <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30">
+                  {filteredAndSortedVideos.filter(v => v.isPlaceholder).length} upcoming
+                </Badge>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -242,7 +358,7 @@ export default function Videos() {
         )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredVideos.map((video, idx) => (
+          {filteredAndSortedVideos.map((video, idx) => (
             <motion.div
               key={video.id}
               initial={{ opacity: 0, y: 20 }}
