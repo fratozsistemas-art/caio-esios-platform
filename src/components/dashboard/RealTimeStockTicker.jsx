@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import FeatureTooltip from '../ui/FeatureTooltip';
 
 export default function RealTimeStockTicker() {
   const [symbols] = useState(['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA']);
@@ -43,28 +44,46 @@ export default function RealTimeStockTicker() {
   });
 
   return (
-    <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full">
+    <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full" data-tour="market-stocks">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-white text-lg flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-green-400" />
-          Live Stock Ticker
-        </CardTitle>
+        <FeatureTooltip 
+          content="Real-time stock prices for major tech companies. Auto-refreshes every 30 seconds. Green indicates gains, red indicates losses."
+          side="bottom"
+        >
+          <CardTitle className="text-white text-lg flex items-center gap-2">
+            <TrendingUp className="w-5 h-5 text-green-400" />
+            Live Stock Ticker
+          </CardTitle>
+        </FeatureTooltip>
         <div className="flex items-center gap-2">
-          <Badge 
-            className={`${autoRefresh ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}
-            onClick={() => setAutoRefresh(!autoRefresh)}
+          <FeatureTooltip
+            content="Toggle auto-refresh. When live, data updates every 30 seconds."
+            side="left"
+            showIcon={false}
           >
-            {autoRefresh ? 'Live' : 'Paused'}
-          </Badge>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => refetch()}
-            disabled={isLoading}
-            className="text-white hover:bg-white/10"
+            <Badge 
+              className={`${autoRefresh ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'} cursor-pointer`}
+              onClick={() => setAutoRefresh(!autoRefresh)}
+            >
+              {autoRefresh ? 'Live' : 'Paused'}
+            </Badge>
+          </FeatureTooltip>
+          <FeatureTooltip
+            content="Manually refresh stock data to get the latest prices immediately."
+            side="left"
+            showIcon={false}
           >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-          </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => refetch()}
+              disabled={isLoading}
+              className="text-white hover:bg-white/10"
+              data-tour="widget-refresh"
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </Button>
+          </FeatureTooltip>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, Activity, RefreshCw, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import FeatureTooltip from '../ui/FeatureTooltip';
 
 export default function EconomicIndicators() {
   // BCB Indicator codes
@@ -53,12 +54,17 @@ export default function EconomicIndicators() {
   });
 
   return (
-    <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full">
+    <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full" data-tour="market-economic">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-white text-lg flex items-center gap-2">
-          <Activity className="w-5 h-5 text-purple-400" />
-          Economic Indicators
-        </CardTitle>
+        <FeatureTooltip
+          content="Key Brazilian economic indicators from Banco Central. IPCA (inflation), CDI rate, and USD/BRL exchange rate. Updates hourly."
+          side="bottom"
+        >
+          <CardTitle className="text-white text-lg flex items-center gap-2">
+            <Activity className="w-5 h-5 text-purple-400" />
+            Economic Indicators
+          </CardTitle>
+        </FeatureTooltip>
         <Button
           variant="ghost"
           size="icon"

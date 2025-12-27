@@ -13,6 +13,7 @@ import { useLanguage } from "../components/i18n/LanguageContext";
 import TutorialLauncher from "../components/tutorial/TutorialLauncher";
 import OnboardingChecklist from "../components/tutorial/OnboardingChecklist";
 import SmartOnboarding from "../components/tutorial/SmartOnboarding";
+import EnhancedOnboardingFlow from "../components/onboarding/EnhancedOnboardingFlow";
 import ConversationHistoryWidget from "../components/dashboard/ConversationHistoryWidget";
 import AnalysisInsightsWidget from "../components/dashboard/AnalysisInsightsWidget";
 import KnowledgeGraphWidget from "../components/dashboard/KnowledgeGraphWidget";
@@ -418,6 +419,9 @@ export default function Dashboard() {
 
   return (
     <div className="p-6 md:p-8 space-y-6" role="main" aria-label="Dashboard">
+      {/* Enhanced Onboarding Flow */}
+      <EnhancedOnboardingFlow />
+      
       {/* Smart Onboarding Banner */}
       <SmartOnboarding />
 

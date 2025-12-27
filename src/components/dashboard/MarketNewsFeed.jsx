@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Newspaper, ExternalLink, RefreshCw, Loader2, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
+import FeatureTooltip from '../ui/FeatureTooltip';
 
 export default function MarketNewsFeed() {
   const [query, setQuery] = useState('market trends finance');
@@ -37,12 +38,17 @@ export default function MarketNewsFeed() {
   };
 
   return (
-    <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full">
+    <Card className="bg-white/5 border-white/10 backdrop-blur-sm h-full" data-tour="market-news">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-white text-lg flex items-center gap-2">
-          <Newspaper className="w-5 h-5 text-blue-400" />
-          Market News Feed
-        </CardTitle>
+        <FeatureTooltip
+          content="Latest market news and sentiment analysis. Updates every 5 minutes. Click articles to read full stories."
+          side="bottom"
+        >
+          <CardTitle className="text-white text-lg flex items-center gap-2">
+            <Newspaper className="w-5 h-5 text-blue-400" />
+            Market News Feed
+          </CardTitle>
+        </FeatureTooltip>
         <Button
           variant="ghost"
           size="icon"
