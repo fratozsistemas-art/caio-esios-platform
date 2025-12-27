@@ -3,14 +3,70 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Play, Search, Clock, Eye, TrendingUp, Sparkles } from "lucide-react";
+import { Play, Search, Clock, Eye, TrendingUp, Sparkles, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { base44 } from "@/api/base44Client";
 
 export default function Videos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const videos = [
+  // Fetch YouTube videos from database
+  const { data: youtubeVideos = [], isLoading } = useQuery({
+    queryKey: ['youtube_videos'],
+    queryFn: async () => {
+      const posts = await base44.entities.BlogPost.filter({
+        youtube_video_id: { $exists: true },
+        status: 'published'
+      });
+      return posts.map(post => ({
+        id: post.id,
+        title: post.title,
+        description: post.excerpt || post.content?.substring(0, 150) + '...',
+        thumbnail: post.featured_image,
+        duration: 'N/A',
+        views: post.view_count ? `${(post.view_count / 1000).toFixed(1)}K` : '0',
+        category: post.category?.toLowerCase() || 'ai',
+        embedUrl: post.video_embed_url,
+        publishedAt: post.published_at,
+        isYouTube: true
+      }));
+    }
+  });
+
+  // Placeholder videos (agenda de publicação - 2 por semana)
+  const placeholderVideos = [
+    {
+      id: 'placeholder-1',
+      title: "Coming Soon: AI Strategy Implementation Workshop",
+      description: "Hands-on workshop on implementing AI strategies in your organization",
+      thumbnail: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
+      duration: "TBD",
+      views: "Coming Soon",
+      category: "workshop",
+      embedUrl: null,
+      isPlaceholder: true,
+      scheduledDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // Next week
+    },
+    {
+      id: 'placeholder-2',
+      title: "Coming Soon: Advanced Knowledge Graph Techniques",
+      description: "Deep dive into advanced techniques for building strategic knowledge graphs",
+      thumbnail: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
+      duration: "TBD",
+      views: "Coming Soon",
+      category: "tutorial",
+      embedUrl: null,
+      isPlaceholder: true,
+      scheduledDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000) // Two weeks
+    }
+  ];
+
+  // Combine real and placeholder videos
+  const allVideos = [...youtubeVideos, ...placeholderVideos];
+
+  const staticVideos = [
     {
       id: 1,
       title: "CAIO·AI Platform Overview",
@@ -75,18 +131,29 @@ export default function Videos() {
 
   const categories = [
     { id: "all", label: "All Videos" },
+    { id: "ai", label: "AI & Technology" },
+    { id: "strategy", label: "Strategy" },
+    { id: "tutorial", label: "Tutorials" },
+    { id: "workshop", label: "Workshops" },
     { id: "overview", label: "Platform Overview" },
     { id: "modules", label: "TSI Modules" },
     { id: "features", label: "Features" },
     { id: "case-studies", label: "Case Studies" }
   ];
 
-  const filteredVideos = videos.filter(video => {
+  const filteredVideos = allVideos.filter(video => {
     const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          video.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === "all" || video.category === selectedCategory;
     return matchesSearch && matchesCategory;
-  });
+  }).concat(
+    staticVideos.filter(video => {
+      const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                           video.description.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = selectedCategory === "all" || video.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    })
+  );
 
   const [selectedVideo, setSelectedVideo] = useState(null);
 
@@ -183,8 +250,8 @@ export default function Videos() {
               transition={{ delay: idx * 0.1 }}
             >
               <Card 
-                className="bg-[#1A1D29] border-[#00D4FF]/20 hover:bg-[#0A2540] cursor-pointer transition-all duration-300 group overflow-hidden"
-                onClick={() => setSelectedVideo(video)}
+                className={`bg-[#1A1D29] border-[#00D4FF]/20 ${video.isPlaceholder ? 'opacity-75' : 'hover:bg-[#0A2540] cursor-pointer'} transition-all duration-300 group overflow-hidden`}
+                onClick={() => !video.isPlaceholder && setSelectedVideo(video)}
               >
                 <div className="relative aspect-video bg-gradient-to-br from-[#0A2540] to-[#1A1D29] flex items-center justify-center overflow-hidden">
                   <img 
@@ -192,14 +259,28 @@ export default function Videos() {
                     alt={video.title}
                     className="w-24 h-24 object-contain opacity-50 group-hover:opacity-70 transition-opacity"
                   />
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full bg-[#00D4FF]/80 group-hover:bg-[#00D4FF] flex items-center justify-center transition-all group-hover:scale-110">
-                      <Play className="w-8 h-8 text-white ml-1" />
+                  {video.isPlaceholder ? (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                      <div className="text-center">
+                        <Calendar className="w-12 h-12 text-[#00D4FF] mx-auto mb-2" />
+                        <p className="text-xs text-white font-medium">Scheduled</p>
+                        <p className="text-xs text-slate-400">
+                          {new Date(video.scheduledDate).toLocaleDateString('pt-BR')}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs text-white">
-                    {video.duration}
-                  </div>
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all flex items-center justify-center">
+                        <div className="w-16 h-16 rounded-full bg-[#00D4FF]/80 group-hover:bg-[#00D4FF] flex items-center justify-center transition-all group-hover:scale-110">
+                          <Play className="w-8 h-8 text-white ml-1" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-xs text-white">
+                        {video.duration}
+                      </div>
+                    </>
+                  )}
                 </div>
                 <CardHeader className="p-4">
                   <CardTitle className="text-white text-base group-hover:text-[#00D4FF] transition-colors line-clamp-2">
@@ -212,11 +293,20 @@ export default function Videos() {
                 <CardContent className="px-4 pb-4 pt-0">
                   <div className="flex items-center justify-between text-xs text-[#94A3B8]">
                     <div className="flex items-center gap-1">
-                      <Eye className="w-3 h-3" />
-                      {video.views}
+                      {video.isPlaceholder ? (
+                        <>
+                          <Calendar className="w-3 h-3" />
+                          {new Date(video.scheduledDate).toLocaleDateString('pt-BR', { month: 'short', day: 'numeric' })}
+                        </>
+                      ) : (
+                        <>
+                          <Eye className="w-3 h-3" />
+                          {video.views}
+                        </>
+                      )}
                     </div>
-                    <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] text-xs">
-                      {video.category}
+                    <Badge className={video.isPlaceholder ? "bg-purple-500/20 text-purple-400 text-xs" : "bg-[#00D4FF]/20 text-[#00D4FF] text-xs"}>
+                      {video.isPlaceholder ? 'Coming Soon' : video.category}
                     </Badge>
                   </div>
                 </CardContent>

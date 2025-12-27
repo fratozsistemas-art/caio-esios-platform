@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
     }
 
     // Extract channel ID from URL
-    const channelId = extractChannelId(channel_url);
+    const channelId = await extractChannelId(channel_url, YOUTUBE_API_KEY);
     
     // Get channel details
     const channelResponse = await fetch(
@@ -114,16 +114,27 @@ Deno.serve(async (req) => {
   }
 });
 
-function extractChannelId(url) {
-  // Handle @username format
+async function extractChannelId(url, apiKey) {
+  // Handle @username format - need to convert to channel ID
   if (url.includes('@')) {
-    const username = url.split('@')[1];
-    return username;
+    const username = url.split('@')[1].split('/')[0].split('?')[0];
+    
+    // Use forUsername API to get channel ID
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/channels?part=id&forHandle=${username}&key=${apiKey}`
+    );
+    const data = await response.json();
+    
+    if (data.items && data.items.length > 0) {
+      return data.items[0].id;
+    }
+    
+    throw new Error(`Channel not found for @${username}`);
   }
   
   // Handle /channel/ format
   if (url.includes('/channel/')) {
-    return url.split('/channel/')[1];
+    return url.split('/channel/')[1].split('/')[0].split('?')[0];
   }
   
   // Assume it's already a channel ID
