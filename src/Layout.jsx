@@ -42,6 +42,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import GlobalSearch from './components/GlobalSearch';
 import AgentNotificationCenter from './components/agents/AgentNotificationCenter';
+import RealTimeNotificationCenter from './components/notifications/RealTimeNotificationCenter';
 import { TutorialProvider } from './components/tutorial/TutorialSystem';
 import TutorialLauncher from './components/tutorial/TutorialLauncher';
 import { LanguageProvider, useLanguage } from './components/i18n/LanguageContext';
@@ -231,6 +232,7 @@ function LayoutInner({ children, currentPageName }) {
             <span className="text-white font-bold text-lg">CAIO·AI</span>
           </div>
           <div className="flex items-center gap-2">
+            <RealTimeNotificationCenter />
             <AgentNotificationCenter />
             <Button
               variant="ghost"
