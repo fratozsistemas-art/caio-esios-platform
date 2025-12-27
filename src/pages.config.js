@@ -126,6 +126,7 @@ import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
 import AIFeedbackCuration from './pages/AIFeedbackCuration';
+import Blog from './pages/Blog';
 import __Layout from './Layout.jsx';
 
 
@@ -258,6 +259,7 @@ export const PAGES = {
     "Workspaces": Workspaces,
     "index": index,
     "AIFeedbackCuration": AIFeedbackCuration,
+    "Blog": Blog,
 }
 
 export const pagesConfig = {
