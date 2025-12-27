@@ -20,10 +20,18 @@ export default function NetworkPredictionsPanel({ predictions, metadata, onToggl
             <p className="text-sm text-slate-400">No predictions available</p>
             <p className="text-xs text-slate-500 mt-1">Run analysis to generate predictions</p>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+          </CardContent>
+
+          {/* Feedback Dialog */}
+          <InsightFeedbackDialog
+          open={showFeedback}
+          onClose={() => setShowFeedback(false)}
+          insight={feedbackPrediction}
+          insightType="prediction"
+          />
+          </Card>
+          );
+          }
 
   return (
     <Card className="bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-purple-500/30">

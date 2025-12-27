@@ -19,10 +19,18 @@ export default function KeyInfluencersPanel({ influencers, onInfluencerClick }) 
             <p className="text-sm text-slate-400">No influencers identified</p>
             <p className="text-xs text-slate-500 mt-1">Run analysis to identify key nodes</p>
           </div>
-        </CardContent>
-      </Card>
-    );
-  }
+          </CardContent>
+
+          {/* Feedback Dialog */}
+          <InsightFeedbackDialog
+          open={showFeedback}
+          onClose={() => setShowFeedback(false)}
+          insight={feedbackInfluencer}
+          insightType="influencer"
+          />
+          </Card>
+          );
+          }
 
   const topInfluencers = influencers.slice(0, 10);
 

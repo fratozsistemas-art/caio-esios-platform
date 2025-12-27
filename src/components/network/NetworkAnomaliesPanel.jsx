@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, AlertCircle, Info, ChevronRight, Filter } from 'lucide-react';
+import { AlertTriangle, AlertCircle, Info, ChevronRight, Filter, MessageSquare } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
 import AnomalyInvestigationDialog from './AnomalyInvestigationDialog';
+import InsightFeedbackDialog from './InsightFeedbackDialog';
 
 const severityConfig = {
   critical: { icon: AlertTriangle, color: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/30' },
@@ -25,6 +26,8 @@ export default function NetworkAnomaliesPanel({ anomalies, onAnomalyClick, relat
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedAnomaly, setSelectedAnomaly] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [feedbackAnomaly, setFeedbackAnomaly] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
   if (!anomalies || anomalies.length === 0) {
     return (
       <Card className="bg-white/5 border-white/10">
@@ -155,6 +158,14 @@ export default function NetworkAnomaliesPanel({ anomalies, onAnomalyClick, relat
         onClose={() => setShowDialog(false)}
         relatedNodes={relatedNodes}
         predictions={predictions}
+      />
+
+      {/* Feedback Dialog */}
+      <InsightFeedbackDialog
+        open={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        insight={feedbackAnomaly}
+        insightType="anomaly"
       />
     </Card>
   );
