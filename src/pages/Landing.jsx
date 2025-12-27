@@ -39,9 +39,11 @@ import {
   detailedUseCases,
   testimonials
 } from "../components/landing";
+import { useLandingContent } from "../components/landing/LandingContent";
 
 export default function Landing() {
   const navigate = useNavigate();
+  const { getModuleContent, getTestimonialContent, getUseCaseContent } = useLandingContent();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showPreHome, setShowPreHome] = useState(false);
@@ -848,10 +850,10 @@ export default function Landing() {
                           {module.name}
                         </h3>
                         <p className={`${isFeatured ? 'text-sm' : 'text-xs'} text-[#A7B2C4] leading-relaxed mb-2 font-light`}>
-                          {module.description}
+                          {getModuleContent(module).description}
                         </p>
                         <p className="text-[10px]" style={{ color: moduleColor, opacity: 0.7 }}>
-                          {module.tag}
+                          {getModuleContent(module).tag}
                         </p>
                       </div>
                     </CardContent>
@@ -1176,7 +1178,7 @@ export default function Landing() {
                               Challenge
                             </p>
                             <p className="text-slate-300 text-sm">
-                              {useCase.challenge}
+                              {getUseCaseContent(useCase).challenge}
                             </p>
                           </div>
 
@@ -1185,7 +1187,7 @@ export default function Landing() {
                               CAIO Solution
                             </p>
                             <p className="text-slate-300 text-sm">
-                              {useCase.solution}
+                              {getUseCaseContent(useCase).solution}
                             </p>
                           </div>
                         </div>
@@ -1196,7 +1198,7 @@ export default function Landing() {
                           Results
                         </p>
                         <div className="grid gap-3 mb-6">
-                          {useCase.results.map((result, idx) => (
+                          {getUseCaseContent(useCase).results.map((result, idx) => (
                             <div
                               key={idx}
                               className="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-white/10"
@@ -1215,7 +1217,7 @@ export default function Landing() {
                               Cost Savings
                             </p>
                             <p className="text-xl font-bold text-white">
-                              {useCase.savings}
+                              {getUseCaseContent(useCase).savings}
                             </p>
                           </div>
                           <div className="p-4 rounded-xl bg-gradient-to-br from-[#FFB800]/20 to-[#FF9500]/20 border border-[#FFB800]/40">
@@ -1223,7 +1225,7 @@ export default function Landing() {
                               Time Saved
                             </p>
                             <p className="text-xl font-bold text-white">
-                              {useCase.timeframe}
+                              {getUseCaseContent(useCase).timeframe}
                             </p>
                           </div>
                         </div>
@@ -1270,7 +1272,7 @@ export default function Landing() {
                     </div>
 
                     <p className="text-slate-200 mb-6 italic leading-relaxed">
-                      "{testimonial.quote}"
+                      "{getTestimonialContent(testimonial).quote}"
                     </p>
 
                     <div className="flex items-center gap-4 pt-6 border-t border-white/10">
@@ -1293,7 +1295,7 @@ export default function Landing() {
                     <div className="mt-4">
                       <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] border-[#00D4FF]/40">
                         <TrendingUp className="w-3 h-3 mr-1" />
-                        {testimonial.metric}
+                        {getTestimonialContent(testimonial).metric}
                       </Badge>
                     </div>
                   </CardContent>
