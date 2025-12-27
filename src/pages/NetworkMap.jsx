@@ -20,6 +20,7 @@ import AIGraphSuggestionsPanel from "../components/network/AIGraphSuggestionsPan
 import NetworkAnomaliesPanel from "../components/network/NetworkAnomaliesPanel";
 import NetworkPredictionsPanel from "../components/network/NetworkPredictionsPanel";
 import KeyInfluencersPanel from "../components/network/KeyInfluencersPanel";
+import NetworkReportGenerator from "../components/network/NetworkReportGenerator";
 
 export default function NetworkMap() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -381,6 +382,14 @@ export default function NetworkMap() {
               </CardContent>
             </Card>
           )}
+
+          {/* Report Generator */}
+          <NetworkReportGenerator
+            graphData={graphData}
+            anomalies={anomalies}
+            predictions={predictions}
+            influencers={influencers}
+          />
 
           {/* Network Insights */}
           {networkAnalysis && (
