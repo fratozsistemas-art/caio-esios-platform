@@ -117,6 +117,13 @@ function NetworkMapContent() {
     }
   });
 
+  // Calculate date ranges for temporal playback
+  const minDate = nodes.length > 0 
+    ? nodes.reduce((min, n) => new Date(n.created_date) < min ? new Date(n.created_date) : min, new Date(nodes[0].created_date))
+    : new Date();
+
+  const maxDate = new Date();
+
   // Temporal playback effect
   React.useEffect(() => {
     if (!isTemporalPlaying || !showTemporal) return;
@@ -210,12 +217,6 @@ function NetworkMapContent() {
     queryClient.invalidateQueries(['knowledge_graph_relationships']);
     toast.success("Relationship created");
   };
-
-  const minDate = nodes.length > 0 
-    ? nodes.reduce((min, n) => new Date(n.created_date) < min ? new Date(n.created_date) : min, new Date(nodes[0].created_date))
-    : new Date();
-
-  const maxDate = new Date();
 
   const isLoading = nodesLoading || relsLoading;
 
