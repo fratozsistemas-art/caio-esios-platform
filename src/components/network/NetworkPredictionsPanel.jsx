@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { TrendingUp, Users, Network, Sparkles, Target } from 'lucide-react';
+import { TrendingUp, Users, Network, Sparkles, Target, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
+import InsightFeedbackDialog from './InsightFeedbackDialog';
 
 export default function NetworkPredictionsPanel({ predictions, metadata, onTogglePredictionView }) {
+  const [feedbackPrediction, setFeedbackPrediction] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+
   if (!predictions) {
     return (
       <Card className="bg-white/5 border-white/10">
@@ -89,6 +93,19 @@ export default function NetworkPredictionsPanel({ predictions, metadata, onToggl
                   {rel.reasoning && (
                     <p className="text-xs text-slate-500 mt-1 line-clamp-1">{rel.reasoning}</p>
                   )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFeedbackPrediction({ ...rel, id: `pred_rel_${idx}`, label: rel.relationship_type });
+                      setShowFeedback(true);
+                    }}
+                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 p-1 h-auto mt-1 text-xs w-full"
+                  >
+                    <MessageSquare className="w-3 h-3 mr-1" />
+                    Rate Prediction
+                  </Button>
                 </motion.div>
               ))}
             </div>
@@ -148,6 +165,14 @@ export default function NetworkPredictionsPanel({ predictions, metadata, onToggl
           </div>
         )}
       </CardContent>
+
+      {/* Feedback Dialog */}
+      <InsightFeedbackDialog
+        open={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        insight={feedbackPrediction}
+        insightType="prediction"
+      />
     </Card>
   );
 }

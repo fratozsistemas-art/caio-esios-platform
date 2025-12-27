@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Crown, TrendingUp, GitMerge, Target, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Crown, TrendingUp, GitMerge, Target, Zap, MessageSquare } from 'lucide-react';
 import { motion } from 'framer-motion';
+import InsightFeedbackDialog from './InsightFeedbackDialog';
 
 export default function KeyInfluencersPanel({ influencers, onInfluencerClick }) {
+  const [feedbackInfluencer, setFeedbackInfluencer] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+
   if (!influencers || influencers.length === 0) {
     return (
       <Card className="bg-white/5 border-white/10">
@@ -118,12 +123,35 @@ export default function KeyInfluencersPanel({ influencers, onInfluencerClick }) 
                       </span>
                     </div>
                   </div>
+
+                  {/* Feedback Button */}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFeedbackInfluencer(influencer);
+                      setShowFeedback(true);
+                    }}
+                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 p-1 h-auto mt-2 text-xs w-full"
+                  >
+                    <MessageSquare className="w-3 h-3 mr-1" />
+                    Rate Analysis
+                  </Button>
                 </div>
               </div>
             </motion.div>
           );
         })}
       </CardContent>
+
+      {/* Feedback Dialog */}
+      <InsightFeedbackDialog
+        open={showFeedback}
+        onClose={() => setShowFeedback(false)}
+        insight={feedbackInfluencer}
+        insightType="influencer"
+      />
     </Card>
   );
 }
