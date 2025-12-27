@@ -26,7 +26,7 @@ import PresenceIndicators from "../components/network/PresenceIndicators";
 import SharedCursors from "../components/network/SharedCursors";
 import CollaborationPanel from "../components/network/CollaborationPanel";
 
-export default function NetworkMap() {
+function NetworkMapContent() {
   const [selectedNode, setSelectedNode] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -38,7 +38,11 @@ export default function NetworkMap() {
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
   const [showPredictions, setShowPredictions] = useState(false);
   const [selectedAnomaly, setSelectedAnomaly] = useState(null);
+  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const graphContainerRef = React.useRef(null);
   const queryClient = useQueryClient();
+  
+  const { activeUsers, userCursors, updateCursorPosition, updateSharedState } = useNetworkCollaboration();
 
   const { data: nodes = [], isLoading: nodesLoading } = useQuery({
     queryKey: ['knowledge_graph_nodes'],
@@ -154,6 +158,35 @@ export default function NetworkMap() {
   const handleNodeClick = (node) => {
     setSelectedNode(node);
     setShowSuggestions(true);
+    setSelectedAnomaly(null);
+    updateSharedState({ selectedNode: node });
+  };
+
+  const handleAnomalyClick = (anomaly) => {
+    setSelectedAnomaly(anomaly);
+    const node = nodes.find(n => n.id === anomaly.node_id);
+    if (node) {
+      setSelectedNode(node);
+    }
+  };
+
+  const getRelatedNodesForAnomaly = (anomaly) => {
+    if (!anomaly) return [];
+    const connectedNodeIds = relationships
+      .filter(r => r.from_node_id === anomaly.node_id || r.to_node_id === anomaly.node_id)
+      .map(r => r.from_node_id === anomaly.node_id ? r.to_node_id : r.from_node_id);
+    return nodes.filter(n => connectedNodeIds.includes(n.id));
+  };
+
+  const handleMouseMove = (e) => {
+    if (!graphContainerRef.current) return;
+    
+    const rect = graphContainerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    setCursorPosition({ x, y });
+    updateCursorPosition(x, y);
   };
 
   const handleRelationshipCreated = () => {
@@ -182,6 +215,9 @@ export default function NetworkMap() {
             AI-powered relationship discovery and network analysis
           </p>
         </div>
+
+        {/* Presence Indicators */}
+        <PresenceIndicators activeUsers={activeUsers} />
         <div className="flex gap-3">
           <GraphViewSelector currentView={graphView} onViewChange={setGraphView} />
           <Button
@@ -303,22 +339,34 @@ export default function NetworkMap() {
               <CardTitle className="text-white">Interactive Network Graph - {graphView} view</CardTitle>
             </CardHeader>
             <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center h-96">
-                  <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
-                </div>
-              ) : (
-                <EnhancedForceDirectedGraph
-                  graphData={graphData}
-                  onNodeClick={handleNodeClick}
-                  selectedNode={selectedNode}
-                  viewMode={graphView}
-                  anomalies={anomalies}
-                  predictions={showPredictions ? predictions : null}
-                  influencers={influencers}
-                  selectedAnomaly={selectedAnomaly}
+              <div 
+                ref={graphContainerRef}
+                onMouseMove={handleMouseMove}
+                className="relative"
+              >
+                {/* Shared Cursors */}
+                <SharedCursors 
+                  cursors={userCursors} 
+                  activeUsers={activeUsers}
+                  containerRef={graphContainerRef}
                 />
-              )}
+                {isLoading ? (
+                  <div className="flex items-center justify-center h-96">
+                    <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
+                  </div>
+                ) : (
+                  <EnhancedForceDirectedGraph
+                    graphData={graphData}
+                    onNodeClick={handleNodeClick}
+                    selectedNode={selectedNode}
+                    viewMode={graphView}
+                    anomalies={anomalies}
+                    predictions={showPredictions ? predictions : null}
+                    influencers={influencers}
+                    selectedAnomaly={selectedAnomaly}
+                  />
+                )}
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -427,5 +475,13 @@ export default function NetworkMap() {
         />
       )}
     </div>
+  );
+}
+
+export default function NetworkMap() {
+  return (
+    <NetworkCollaborationProvider sessionId="network-map">
+      <NetworkMapContent />
+    </NetworkCollaborationProvider>
   );
 }
