@@ -35,6 +35,9 @@ import PortfolioIntelligenceModule from "../components/dashboard/PortfolioIntell
 import QuickActionsResultsWidget from "../components/dashboard/QuickActionsResultsWidget";
 import BusinessHealthWidget from "../components/dashboard/BusinessHealthWidget";
 import CriticalAlertsWidget from "../components/dashboard/CriticalAlertsWidget";
+import RealTimeStockTicker from "../components/dashboard/RealTimeStockTicker";
+import MarketNewsFeed from "../components/dashboard/MarketNewsFeed";
+import EconomicIndicators from "../components/dashboard/EconomicIndicators";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "../utils";
@@ -244,6 +247,12 @@ export default function Dashboard() {
           return <CriticalAlertsWidget key={widgetId} />;
         case 'realtime':
           return <RealTimeMetrics key={widgetId} conversations={conversations} strategies={strategies} analyses={insights} />;
+        case 'market-stocks':
+          return <RealTimeStockTicker key={widgetId} />;
+        case 'market-news':
+          return <MarketNewsFeed key={widgetId} />;
+        case 'market-economic':
+          return <EconomicIndicators key={widgetId} />;
         case 'stats':
           return <QuickStatsWidget key={widgetId} stats={quickStats} />;
         case 'portfolio':
@@ -319,23 +328,23 @@ export default function Dashboard() {
 
   const layoutConfig = {
     admin: {
-      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'stats', 'abtests', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'market-stocks', 'market-news', 'market-economic', 'stats', 'abtests', 'deployments', 'onboarding', 'compliance', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'overview'
     },
     analyst: {
-      widgets: ['quick-actions', 'business-health', 'stats', 'abtests', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'market-stocks', 'market-news', 'market-economic', 'stats', 'abtests', 'deployments', 'onboarding', 'insights', 'graph', 'conversations', 'crossplatform'],
       focus: 'analysis'
     },
     editor: {
-      widgets: ['quick-actions', 'business-health', 'stats', 'deployments', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'market-news', 'stats', 'deployments', 'onboarding', 'conversations', 'actions', 'insights', 'crossplatform'],
       focus: 'content'
     },
     viewer: {
-      widgets: ['quick-actions', 'business-health', 'stats', 'onboarding', 'conversations', 'insights', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'market-news', 'stats', 'onboarding', 'conversations', 'insights', 'crossplatform'],
       focus: 'consumption'
     },
     default: {
-      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'stats', 'abtests', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
+      widgets: ['quick-actions', 'business-health', 'critical-alerts', 'market-stocks', 'market-news', 'market-economic', 'stats', 'abtests', 'deployments', 'onboarding', 'conversations', 'insights', 'graph', 'actions', 'crossplatform'],
       focus: 'balanced'
     }
   };
