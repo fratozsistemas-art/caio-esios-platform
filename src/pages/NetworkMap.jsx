@@ -21,6 +21,10 @@ import NetworkAnomaliesPanel from "../components/network/NetworkAnomaliesPanel";
 import NetworkPredictionsPanel from "../components/network/NetworkPredictionsPanel";
 import KeyInfluencersPanel from "../components/network/KeyInfluencersPanel";
 import NetworkReportGenerator from "../components/network/NetworkReportGenerator";
+import { NetworkCollaborationProvider, useNetworkCollaboration } from "../components/network/NetworkCollaborationProvider";
+import PresenceIndicators from "../components/network/PresenceIndicators";
+import SharedCursors from "../components/network/SharedCursors";
+import CollaborationPanel from "../components/network/CollaborationPanel";
 
 export default function NetworkMap() {
   const [selectedNode, setSelectedNode] = useState(null);
@@ -261,9 +265,10 @@ export default function NetworkMap() {
               </div>
               <Users className="w-8 h-8 text-orange-400 opacity-50" />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+            </CardContent>
+            </Card>
+            </div>
 
       {/* Temporal Slider */}
       {showTemporal && (
@@ -382,6 +387,9 @@ export default function NetworkMap() {
               </CardContent>
             </Card>
           )}
+
+          {/* Collaboration Panel */}
+          <CollaborationPanel activeUsers={activeUsers} />
 
           {/* Report Generator */}
           <NetworkReportGenerator
