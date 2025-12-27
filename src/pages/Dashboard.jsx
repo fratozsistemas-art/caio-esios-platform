@@ -10,6 +10,7 @@ import {
 import { useTutorial, TutorialOverlay, ContextualTip } from "../components/tutorial/TutorialSystem";
 import { TUTORIALS } from "../components/tutorial/tutorials";
 import { useLanguage } from "../components/i18n/LanguageContext";
+import NetworkMetricsWidget from '../components/dashboard/NetworkMetricsWidget';
 import TutorialLauncher from "../components/tutorial/TutorialLauncher";
 import OnboardingChecklist from "../components/tutorial/OnboardingChecklist";
 import SmartOnboarding from "../components/tutorial/SmartOnboarding";
@@ -240,6 +241,8 @@ export default function Dashboard() {
 
   const renderWidget = (widgetId) => {
       switch (widgetId) {
+        case 'network-metrics':
+          return <NetworkMetricsWidget key={widgetId} />;
         case 'quick-actions':
           return <QuickActionsResultsWidget key={widgetId} />;
         case 'business-health':
@@ -330,6 +333,7 @@ export default function Dashboard() {
   const layoutConfig = {
     admin: {
       widgets: [
+        'network-metrics',
         'stats',
         'critical-alerts', 
         'business-health',

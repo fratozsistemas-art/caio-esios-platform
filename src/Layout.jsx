@@ -155,7 +155,9 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.userSettings', 'Settings'), icon: Settings, path: 'UserSettings' },
                 { name: t('nav.feedback', 'Feedback Management'), icon: MessageSquare, path: 'FeedbackManagement', adminOnly: true },
                 { name: t('nav.abTesting', 'A/B Testing'), icon: TrendingUp, path: 'ABTestingDashboard', adminOnly: true },
-                { name: t('nav.helpCenter', 'Help'), icon: BookOpen, path: 'HelpCenter' }
+                { name: t('nav.helpCenter', 'Help'), icon: BookOpen, path: 'HelpCenter' },
+                { name: t('nav.networkGuide', 'Network Guide'), icon: Network, path: 'NetworkAutomationGuide' },
+                { name: t('nav.blog', 'Blog'), icon: FileText, path: 'Blog' }
               ]
             }
           ];
