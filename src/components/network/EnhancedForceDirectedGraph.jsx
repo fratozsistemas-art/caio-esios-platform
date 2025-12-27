@@ -370,6 +370,36 @@ export default function EnhancedForceDirectedGraph({
       <div className="absolute bottom-4 right-4 bg-slate-800/90 rounded-lg px-3 py-2 text-white text-xs border border-white/10">
         Zoom: {Math.round(zoom * 100)}%
       </div>
+
+      {/* Legend for visual indicators */}
+      {(anomalies?.length > 0 || influencers?.length > 0 || predictions) && (
+        <div className="absolute bottom-4 left-4 bg-slate-800/95 rounded-lg p-3 border border-white/10 space-y-2 text-xs">
+          {anomalies?.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-red-600" />
+              <span className="text-slate-300">Anomaly</span>
+            </div>
+          )}
+          {influencers?.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-yellow-400 border-2 border-yellow-500" />
+              <span className="text-slate-300">Key Influencer</span>
+            </div>
+          )}
+          {predictions && (
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-0.5 bg-purple-500 opacity-50" style={{ borderTop: '2px dashed' }} />
+              <span className="text-slate-300">Predicted Link</span>
+            </div>
+          )}
+          {selectedAnomaly && (
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full border-2 border-orange-500 border-dashed" />
+              <span className="text-slate-300">Related to Anomaly</span>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
