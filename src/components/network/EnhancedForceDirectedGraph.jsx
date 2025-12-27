@@ -10,7 +10,8 @@ export default function EnhancedForceDirectedGraph({
   anomalies = [],
   predictions = null,
   influencers = [],
-  selectedAnomaly = null
+  selectedAnomaly = null,
+  customization = null
 }) {
   const svgRef = useRef(null);
   const [zoom, setZoom] = useState(1);
@@ -93,7 +94,48 @@ export default function EnhancedForceDirectedGraph({
     setNodePositions(positions);
   }, [graphData]);
 
-  const getNodeColor = (type) => {
+  const interpolateColor = (color1, color2, ratio) => {
+    const hex = (color) => {
+      const c = color.replace('#', '');
+      return [
+        parseInt(c.substring(0, 2), 16),
+        parseInt(c.substring(2, 4), 16),
+        parseInt(c.substring(4, 6), 16)
+      ];
+    };
+    
+    const [r1, g1, b1] = hex(color1);
+    const [r2, g2, b2] = hex(color2);
+    
+    const r = Math.round(r1 + (r2 - r1) * ratio);
+    const g = Math.round(g1 + (g2 - g1) * ratio);
+    const b = Math.round(b1 + (b2 - b1) * ratio);
+    
+    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+  };
+
+  const getNodeColor = (node) => {
+    // Apply custom color scheme if provided
+    if (customization?.color_scheme) {
+      const { mode, node_colors, metric_key, gradient_range } = customization.color_scheme;
+      
+      if (mode === 'type' && node_colors) {
+        return node_colors[node.node_type] || '#64748b';
+      }
+      
+      if (mode === 'metric' && metric_key && gradient_range) {
+        const metricValue = node.properties?.[metric_key] || node.metadata?.[metric_key] || 0;
+        const maxValue = 100;
+        const ratio = Math.min(metricValue / maxValue, 1);
+        return interpolateColor(gradient_range.min_color, gradient_range.max_color, ratio);
+      }
+      
+      if (mode === 'status' && node.status && node_colors) {
+        return node_colors[node.status] || '#64748b';
+      }
+    }
+    
+    // Default colors
     const colors = {
       company: '#3b82f6',
       executive: '#8b5cf6',
@@ -104,7 +146,7 @@ export default function EnhancedForceDirectedGraph({
       framework: '#ec4899',
       metric: '#84cc16'
     };
-    return colors[type] || '#64748b';
+    return colors[node.node_type] || '#64748b';
   };
 
   const isNodeAnomalous = (nodeId) => {
@@ -275,7 +317,23 @@ export default function EnhancedForceDirectedGraph({
             const influenceScore = getNodeInfluenceScore(node.id);
             const isInfluencer = influenceScore > 50;
             const isAnomalyRelated = isRelatedToAnomaly(node.id);
-            const radius = isSelected ? 14 : isInfluencer ? 12 : isAnomalyRelated ? 11 : 10;
+            
+            let radius = 10;
+            if (customization?.view_config?.node_size_mode === 'degree') {
+              const degree = graphData.edges.filter(e => 
+                e.from_node_id === node.id || e.to_node_id === node.id
+              ).length;
+              radius = 8 + Math.min(degree, 10);
+            } else if (customization?.view_config?.node_size_mode === 'metric' && customization.color_scheme?.metric_key) {
+              const metricValue = node.properties?.[customization.color_scheme.metric_key] || 0;
+              radius = 8 + (metricValue / 10);
+            } else if (isSelected) {
+              radius = 14;
+            } else if (isInfluencer) {
+              radius = 12;
+            } else if (isAnomalyRelated) {
+              radius = 11;
+            }
 
             return (
               <g
@@ -344,23 +402,25 @@ export default function EnhancedForceDirectedGraph({
                   cx={node.x}
                   cy={node.y}
                   r={radius}
-                  fill={isAnomalous ? '#ef4444' : isInfluencer ? '#fbbf24' : color}
-                  stroke={isSelected ? '#fff' : isAnomalous ? '#dc2626' : isInfluencer ? '#f59e0b' : color}
+                  fill={isAnomalous ? '#ef4444' : isInfluencer ? '#fbbf24' : getNodeColor(node)}
+                  stroke={isSelected ? '#fff' : isAnomalous ? '#dc2626' : isInfluencer ? '#f59e0b' : getNodeColor(node)}
                   strokeWidth={isSelected ? 3 : isAnomalous || isInfluencer ? 2 : 1.5}
                   opacity="0.9"
                 />
 
-                <text
-                  x={node.x}
-                  y={node.y - radius - 5}
-                  textAnchor="middle"
-                  fill="#fff"
-                  fontSize="10"
-                  fontWeight={isSelected ? "bold" : "normal"}
-                  className="pointer-events-none select-none"
-                >
-                  {node.label?.length > 20 ? node.label.substring(0, 20) + '...' : node.label}
-                </text>
+                {(customization?.view_config?.show_labels !== false) && (
+                  <text
+                    x={node.x}
+                    y={node.y - radius - 5}
+                    textAnchor="middle"
+                    fill="#fff"
+                    fontSize="10"
+                    fontWeight={isSelected ? "bold" : "normal"}
+                    className="pointer-events-none select-none"
+                  >
+                    {node.label?.length > 20 ? node.label.substring(0, 20) + '...' : node.label}
+                  </text>
+                )}
               </g>
             );
           })}
