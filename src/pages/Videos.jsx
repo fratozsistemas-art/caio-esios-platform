@@ -4,15 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, Search, Clock, Eye, TrendingUp, Sparkles, Calendar, ArrowUpDown } from "lucide-react";
+import { Play, Search, Clock, Eye, TrendingUp, Sparkles, Calendar, ArrowUpDown, ListVideo } from "lucide-react";
 import { motion } from "framer-motion";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import RecommendedVideos from "../components/videos/RecommendedVideos";
+import PlaylistManager from "../components/videos/PlaylistManager";
 
 export default function Videos() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("date");
+  const [showPlaylists, setShowPlaylists] = useState(false);
+  const queryClient = useQueryClient();
 
   // Fetch YouTube videos from database
   const { data: youtubeVideos = [], isLoading } = useQuery({
@@ -230,6 +234,44 @@ export default function Videos() {
 
   const [selectedVideo, setSelectedVideo] = useState(null);
 
+  // Track video watch
+  const trackWatchMutation = useMutation({
+    mutationFn: async (video) => {
+      const user = await base44.auth.me();
+      if (!user) return;
+
+      // Check if already tracked
+      const existing = await base44.entities.VideoWatchHistory.filter({
+        user_email: user.email,
+        video_id: video.id || video.youtube_video_id
+      });
+
+      if (existing.length > 0) {
+        // Update last watched
+        await base44.entities.VideoWatchHistory.update(existing[0].id, {
+          last_watched_at: new Date().toISOString()
+        });
+      } else {
+        // Create new watch record
+        await base44.entities.VideoWatchHistory.create({
+          user_email: user.email,
+          video_id: video.id || video.youtube_video_id,
+          video_title: video.title,
+          video_category: video.category,
+          last_watched_at: new Date().toISOString()
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['video_recommendations']);
+    }
+  });
+
+  const handleVideoSelect = (video) => {
+    setSelectedVideo(video);
+    trackWatchMutation.mutate(video);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419] p-6">
       <div className="max-w-7xl mx-auto">
@@ -238,14 +280,24 @@ export default function Videos() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00D4FF] to-[#8B5CF6] flex items-center justify-center">
-              <Play className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#00D4FF] to-[#8B5CF6] flex items-center justify-center">
+                <Play className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h1 className="text-4xl font-bold text-white">Video Library</h1>
+                <p className="text-[#94A3B8]">Tutorials, demos and strategic intelligence insights</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-4xl font-bold text-white">Video Library</h1>
-              <p className="text-[#94A3B8]">Tutorials, demos and strategic intelligence insights</p>
-            </div>
+            <Button
+              onClick={() => setShowPlaylists(!showPlaylists)}
+              variant="outline"
+              className="bg-[#1A1D29] border-[#00D4FF]/30 text-white hover:bg-[#0A2540]"
+            >
+              <ListVideo className="w-4 h-4 mr-2" />
+              {showPlaylists ? 'Hide' : 'Show'} Playlists
+            </Button>
           </div>
         </motion.div>
 
@@ -320,6 +372,27 @@ export default function Videos() {
           </CardContent>
         </Card>
 
+        {/* Recommended Videos Section */}
+        <RecommendedVideos onVideoSelect={handleVideoSelect} />
+
+        {/* Playlists Sidebar */}
+        {showPlaylists && (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="mb-6"
+          >
+            <PlaylistManager 
+              currentVideoId={selectedVideo?.id} 
+              onPlaylistSelect={(playlist) => {
+                // Could expand to show playlist videos
+                console.log('Selected playlist:', playlist);
+              }}
+            />
+          </motion.div>
+        )}
+
         {selectedVideo && (
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -367,7 +440,7 @@ export default function Videos() {
             >
               <Card 
                 className={`bg-[#1A1D29] border-[#00D4FF]/20 ${video.isPlaceholder ? 'opacity-75' : 'hover:bg-[#0A2540] cursor-pointer'} transition-all duration-300 group overflow-hidden`}
-                onClick={() => !video.isPlaceholder && setSelectedVideo(video)}
+                onClick={() => !video.isPlaceholder && handleVideoSelect(video)}
               >
                 <div className="relative aspect-video bg-gradient-to-br from-[#0A2540] to-[#1A1D29] flex items-center justify-center overflow-hidden">
                   <img 

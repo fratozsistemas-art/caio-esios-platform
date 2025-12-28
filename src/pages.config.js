@@ -1,5 +1,6 @@
 import ABTestingDashboard from './pages/ABTestingDashboard';
 import AEGISProtocol from './pages/AEGISProtocol';
+import AIFeedbackCuration from './pages/AIFeedbackCuration';
 import AIModules from './pages/AIModules';
 import APIManagement from './pages/APIManagement';
 import AccessibilityTree from './pages/AccessibilityTree';
@@ -20,6 +21,7 @@ import AutonomousAgents from './pages/AutonomousAgents';
 import BaseConhecimento from './pages/BaseConhecimento';
 import BatchIngestion from './pages/BatchIngestion';
 import BehavioralIntelligence from './pages/BehavioralIntelligence';
+import Blog from './pages/Blog';
 import BlogArticle from './pages/BlogArticle';
 import BlogResources from './pages/BlogResources';
 import BrandManual from './pages/BrandManual';
@@ -70,6 +72,7 @@ import LandingPT from './pages/LandingPT';
 import MLflowDashboard from './pages/MLflowDashboard';
 import MarketDataHub from './pages/MarketDataHub';
 import MissionVision from './pages/MissionVision';
+import NetworkAutomationGuide from './pages/NetworkAutomationGuide';
 import NetworkMap from './pages/NetworkMap';
 import NeuralIntelligenceArchive from './pages/NeuralIntelligenceArchive';
 import Notifications from './pages/Notifications';
@@ -125,15 +128,13 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
-import AIFeedbackCuration from './pages/AIFeedbackCuration';
-import Blog from './pages/Blog';
-import NetworkAutomationGuide from './pages/NetworkAutomationGuide';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "ABTestingDashboard": ABTestingDashboard,
     "AEGISProtocol": AEGISProtocol,
+    "AIFeedbackCuration": AIFeedbackCuration,
     "AIModules": AIModules,
     "APIManagement": APIManagement,
     "AccessibilityTree": AccessibilityTree,
@@ -154,6 +155,7 @@ export const PAGES = {
     "BaseConhecimento": BaseConhecimento,
     "BatchIngestion": BatchIngestion,
     "BehavioralIntelligence": BehavioralIntelligence,
+    "Blog": Blog,
     "BlogArticle": BlogArticle,
     "BlogResources": BlogResources,
     "BrandManual": BrandManual,
@@ -204,6 +206,7 @@ export const PAGES = {
     "MLflowDashboard": MLflowDashboard,
     "MarketDataHub": MarketDataHub,
     "MissionVision": MissionVision,
+    "NetworkAutomationGuide": NetworkAutomationGuide,
     "NetworkMap": NetworkMap,
     "NeuralIntelligenceArchive": NeuralIntelligenceArchive,
     "Notifications": Notifications,
@@ -259,9 +262,6 @@ export const PAGES = {
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
-    "AIFeedbackCuration": AIFeedbackCuration,
-    "Blog": Blog,
-    "NetworkAutomationGuide": NetworkAutomationGuide,
 }
 
 export const pagesConfig = {
