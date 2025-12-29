@@ -39,6 +39,21 @@ export default function AdminDashboard() {
   const [aiProcessAction, setAiProcessAction] = useState('missing');
   const [aiProcessLimit, setAiProcessLimit] = useState(50);
   
+  // Search and filter states for videos
+  const [videoSearch, setVideoSearch] = useState('');
+  const [videoDateFrom, setVideoDateFrom] = useState('');
+  const [videoDateTo, setVideoDateTo] = useState('');
+  const [videoStatusFilter, setVideoStatusFilter] = useState('all');
+  const [videoCategoryFilter, setVideoCategoryFilter] = useState('all');
+  const [videoTagFilter, setVideoTagFilter] = useState('');
+  const [videoSortBy, setVideoSortBy] = useState('updated_date_desc');
+  
+  // Search and filter states for users
+  const [userSearch, setUserSearch] = useState('');
+  const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [userSortBy, setUserSortBy] = useState('created_date_desc');
+  const [showUserManagement, setShowUserManagement] = useState(false);
+  
   const queryClient = useQueryClient();
 
   // Check admin access
@@ -69,16 +84,131 @@ export default function AdminDashboard() {
     enabled: isAdmin
   });
 
+  // Fetch all users
+  const { data: allUsers = [], isLoading: usersLoading } = useQuery({
+    queryKey: ['admin_users'],
+    queryFn: async () => {
+      return await base44.entities.User.list();
+    },
+    enabled: isAdmin
+  });
+
   // Fetch videos
   const { data: videos = [], isLoading: videosLoading } = useQuery({
     queryKey: ['admin_videos'],
     queryFn: async () => {
       return await base44.entities.BlogPost.filter({ 
         youtube_video_id: { $exists: true } 
-      }, '-updated_date', 100);
+      }, '-updated_date', 500);
     },
     enabled: isAdmin
   });
+
+  // Filter and sort videos
+  const filteredVideos = React.useMemo(() => {
+    let filtered = [...videos];
+
+    // Search filter
+    if (videoSearch) {
+      const searchLower = videoSearch.toLowerCase();
+      filtered = filtered.filter(v => 
+        v.title?.toLowerCase().includes(searchLower) ||
+        v.content?.toLowerCase().includes(searchLower) ||
+        v.excerpt?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Date range filter
+    if (videoDateFrom) {
+      filtered = filtered.filter(v => 
+        new Date(v.created_date) >= new Date(videoDateFrom)
+      );
+    }
+    if (videoDateTo) {
+      filtered = filtered.filter(v => 
+        new Date(v.created_date) <= new Date(videoDateTo)
+      );
+    }
+
+    // Status filter
+    if (videoStatusFilter !== 'all') {
+      filtered = filtered.filter(v => v.status === videoStatusFilter);
+    }
+
+    // Category filter
+    if (videoCategoryFilter !== 'all') {
+      filtered = filtered.filter(v => v.category === videoCategoryFilter);
+    }
+
+    // Tag filter
+    if (videoTagFilter) {
+      const tagLower = videoTagFilter.toLowerCase();
+      filtered = filtered.filter(v => 
+        v.ai_tags?.some(tag => tag.toLowerCase().includes(tagLower))
+      );
+    }
+
+    // Sorting
+    filtered.sort((a, b) => {
+      switch (videoSortBy) {
+        case 'title_asc':
+          return (a.title || '').localeCompare(b.title || '');
+        case 'title_desc':
+          return (b.title || '').localeCompare(a.title || '');
+        case 'created_date_asc':
+          return new Date(a.created_date) - new Date(b.created_date);
+        case 'created_date_desc':
+          return new Date(b.created_date) - new Date(a.created_date);
+        case 'updated_date_asc':
+          return new Date(a.updated_date) - new Date(b.updated_date);
+        case 'updated_date_desc':
+        default:
+          return new Date(b.updated_date) - new Date(a.updated_date);
+      }
+    });
+
+    return filtered;
+  }, [videos, videoSearch, videoDateFrom, videoDateTo, videoStatusFilter, videoCategoryFilter, videoTagFilter, videoSortBy]);
+
+  // Filter and sort users
+  const filteredUsers = React.useMemo(() => {
+    let filtered = [...allUsers];
+
+    // Search filter
+    if (userSearch) {
+      const searchLower = userSearch.toLowerCase();
+      filtered = filtered.filter(u => 
+        u.full_name?.toLowerCase().includes(searchLower) ||
+        u.email?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Role filter
+    if (userRoleFilter !== 'all') {
+      filtered = filtered.filter(u => u.role === userRoleFilter);
+    }
+
+    // Sorting
+    filtered.sort((a, b) => {
+      switch (userSortBy) {
+        case 'name_asc':
+          return (a.full_name || '').localeCompare(b.full_name || '');
+        case 'name_desc':
+          return (b.full_name || '').localeCompare(a.full_name || '');
+        case 'email_asc':
+          return (a.email || '').localeCompare(b.email || '');
+        case 'email_desc':
+          return (b.email || '').localeCompare(a.email || '');
+        case 'created_date_asc':
+          return new Date(a.created_date) - new Date(b.created_date);
+        case 'created_date_desc':
+        default:
+          return new Date(b.created_date) - new Date(a.created_date);
+      }
+    });
+
+    return filtered;
+  }, [allUsers, userSearch, userRoleFilter, userSortBy]);
 
   // Batch AI processing mutation
   const aiProcessMutation = useMutation({
@@ -208,6 +338,20 @@ export default function AdminDashboard() {
     }
   };
 
+  const clearVideoFilters = () => {
+    setVideoSearch('');
+    setVideoDateFrom('');
+    setVideoDateTo('');
+    setVideoStatusFilter('all');
+    setVideoCategoryFilter('all');
+    setVideoTagFilter('');
+  };
+
+  const clearUserFilters = () => {
+    setUserSearch('');
+    setUserRoleFilter('all');
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419] flex items-center justify-center">
@@ -322,6 +466,103 @@ export default function AdminDashboard() {
           </CardHeader>
         </Card>
 
+        {/* User Management Section */}
+        <Card className="bg-[#1A1D29] border-[#00D4FF]/20 mb-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Users className="w-5 h-5" />
+                  User Management
+                </CardTitle>
+                <CardDescription className="text-[#94A3B8]">
+                  {filteredUsers.length} user(s) found
+                </CardDescription>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => setShowUserManagement(!showUserManagement)}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              >
+                {showUserManagement ? 'Hide' : 'Show'} Users
+              </Button>
+            </div>
+          </CardHeader>
+          {showUserManagement && (
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-3 gap-4">
+                <Input
+                  placeholder="Search by name or email..."
+                  value={userSearch}
+                  onChange={(e) => setUserSearch(e.target.value)}
+                  className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                />
+                <Select value={userRoleFilter} onValueChange={setUserRoleFilter}>
+                  <SelectTrigger className="bg-[#0A2540] border-[#00D4FF]/30 text-white">
+                    <SelectValue placeholder="Filter by role..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1A1D29] border-[#00D4FF]/30">
+                    <SelectItem value="all" className="text-white">All Roles</SelectItem>
+                    <SelectItem value="admin" className="text-white">Admin</SelectItem>
+                    <SelectItem value="user" className="text-white">User</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={userSortBy} onValueChange={setUserSortBy}>
+                  <SelectTrigger className="bg-[#0A2540] border-[#00D4FF]/30 text-white">
+                    <SelectValue placeholder="Sort by..." />
+                  </SelectTrigger>
+                  <SelectContent className="bg-[#1A1D29] border-[#00D4FF]/30">
+                    <SelectItem value="created_date_desc" className="text-white">Newest First</SelectItem>
+                    <SelectItem value="created_date_asc" className="text-white">Oldest First</SelectItem>
+                    <SelectItem value="name_asc" className="text-white">Name (A-Z)</SelectItem>
+                    <SelectItem value="name_desc" className="text-white">Name (Z-A)</SelectItem>
+                    <SelectItem value="email_asc" className="text-white">Email (A-Z)</SelectItem>
+                    <SelectItem value="email_desc" className="text-white">Email (Z-A)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {(userSearch || userRoleFilter !== 'all') && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearUserFilters}
+                  className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                >
+                  Clear Filters
+                </Button>
+              )}
+              {usersLoading ? (
+                <div className="text-center py-8">
+                  <Loader2 className="w-8 h-8 text-[#00D4FF] animate-spin mx-auto" />
+                </div>
+              ) : (
+                <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                  {filteredUsers.map((u) => (
+                    <div
+                      key={u.id}
+                      className="flex items-center justify-between p-3 rounded-lg bg-[#0A2540] border border-[#00D4FF]/10 hover:border-[#00D4FF]/30 transition-colors"
+                    >
+                      <div className="flex-1">
+                        <h4 className="text-white font-medium text-sm">{u.full_name}</h4>
+                        <p className="text-xs text-[#94A3B8]">{u.email}</p>
+                        <p className="text-xs text-[#94A3B8] mt-1">
+                          Joined: {new Date(u.created_date).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Badge className={u.role === 'admin' ? "bg-purple-500/20 text-purple-400" : "bg-[#00D4FF]/20 text-[#00D4FF]"}>
+                        {u.role}
+                      </Badge>
+                    </div>
+                  ))}
+                  {filteredUsers.length === 0 && (
+                    <p className="text-center text-[#94A3B8] py-8">No users found</p>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          )}
+        </Card>
+
         {/* Video Management Section */}
         <Card className="bg-[#1A1D29] border-[#00D4FF]/20">
           <CardHeader>
@@ -330,8 +571,8 @@ export default function AdminDashboard() {
                 <CardTitle className="text-white">Video Management</CardTitle>
                 <CardDescription className="text-[#94A3B8]">
                   {selectedVideos.length > 0 
-                    ? `${selectedVideos.length} video(s) selected` 
-                    : 'Select videos to perform bulk actions'}
+                    ? `${selectedVideos.length} video(s) selected from ${filteredVideos.length} total` 
+                    : `${filteredVideos.length} video(s) found`}
                 </CardDescription>
               </div>
               {selectedVideos.length > 0 && (
@@ -376,21 +617,106 @@ export default function AdminDashboard() {
               )}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            {/* Advanced Filters */}
+            <div className="grid md:grid-cols-3 gap-4">
+              <Input
+                placeholder="Search videos..."
+                value={videoSearch}
+                onChange={(e) => setVideoSearch(e.target.value)}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              />
+              <Select value={videoCategoryFilter} onValueChange={setVideoCategoryFilter}>
+                <SelectTrigger className="bg-[#0A2540] border-[#00D4FF]/30 text-white">
+                  <SelectValue placeholder="Filter by category..." />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1A1D29] border-[#00D4FF]/30">
+                  <SelectItem value="all" className="text-white">All Categories</SelectItem>
+                  <SelectItem value="ai" className="text-white">AI & Technology</SelectItem>
+                  <SelectItem value="strategy" className="text-white">Strategy</SelectItem>
+                  <SelectItem value="tutorial" className="text-white">Tutorial</SelectItem>
+                  <SelectItem value="workshop" className="text-white">Workshop</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={videoStatusFilter} onValueChange={setVideoStatusFilter}>
+                <SelectTrigger className="bg-[#0A2540] border-[#00D4FF]/30 text-white">
+                  <SelectValue placeholder="Filter by status..." />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1A1D29] border-[#00D4FF]/30">
+                  <SelectItem value="all" className="text-white">All Status</SelectItem>
+                  <SelectItem value="published" className="text-white">Published</SelectItem>
+                  <SelectItem value="draft" className="text-white">Draft</SelectItem>
+                  <SelectItem value="archived" className="text-white">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid md:grid-cols-4 gap-4">
+              <Input
+                type="date"
+                placeholder="From date"
+                value={videoDateFrom}
+                onChange={(e) => setVideoDateFrom(e.target.value)}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              />
+              <Input
+                type="date"
+                placeholder="To date"
+                value={videoDateTo}
+                onChange={(e) => setVideoDateTo(e.target.value)}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              />
+              <Input
+                placeholder="Filter by tag..."
+                value={videoTagFilter}
+                onChange={(e) => setVideoTagFilter(e.target.value)}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              />
+              <Select value={videoSortBy} onValueChange={setVideoSortBy}>
+                <SelectTrigger className="bg-[#0A2540] border-[#00D4FF]/30 text-white">
+                  <SelectValue placeholder="Sort by..." />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1A1D29] border-[#00D4FF]/30">
+                  <SelectItem value="updated_date_desc" className="text-white">Recently Updated</SelectItem>
+                  <SelectItem value="updated_date_asc" className="text-white">Oldest Updated</SelectItem>
+                  <SelectItem value="created_date_desc" className="text-white">Recently Created</SelectItem>
+                  <SelectItem value="created_date_asc" className="text-white">Oldest Created</SelectItem>
+                  <SelectItem value="title_asc" className="text-white">Title (A-Z)</SelectItem>
+                  <SelectItem value="title_desc" className="text-white">Title (Z-A)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {(videoSearch || videoDateFrom || videoDateTo || videoStatusFilter !== 'all' || videoCategoryFilter !== 'all' || videoTagFilter) && (
+              <div className="flex items-center justify-between">
+                <Badge className="bg-[#00D4FF]/20 text-[#00D4FF]">
+                  {filteredVideos.length} of {videos.length} videos
+                </Badge>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={clearVideoFilters}
+                  className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                >
+                  Clear All Filters
+                </Button>
+              </div>
+            )}
+
             {videosLoading ? (
               <div className="text-center py-8">
                 <Loader2 className="w-8 h-8 text-[#00D4FF] animate-spin mx-auto" />
               </div>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2 max-h-[600px] overflow-y-auto">
                 <div className="flex items-center gap-2 pb-2 border-b border-white/10">
                   <Checkbox
-                    checked={selectedVideos.length === videos.length && videos.length > 0}
+                    checked={selectedVideos.length === filteredVideos.length && filteredVideos.length > 0}
                     onCheckedChange={handleSelectAll}
                   />
                   <span className="text-sm text-[#94A3B8] font-medium">Select All</span>
                 </div>
-                {videos.map((video) => (
+                {filteredVideos.map((video) => (
                   <div
                     key={video.id}
                     className="flex items-start gap-3 p-3 rounded-lg bg-[#0A2540] border border-[#00D4FF]/10 hover:border-[#00D4FF]/30 transition-colors"
@@ -401,6 +727,10 @@ export default function AdminDashboard() {
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-white font-medium text-sm mb-1 truncate">{video.title}</h4>
+                      <p className="text-xs text-[#94A3B8] mb-2">
+                        Created: {new Date(video.created_date).toLocaleDateString()} • 
+                        Updated: {new Date(video.updated_date).toLocaleDateString()}
+                      </p>
                       <div className="flex gap-2 flex-wrap">
                         <Badge className="bg-[#00D4FF]/20 text-[#00D4FF] text-xs">
                           {video.category || 'Uncategorized'}
@@ -432,6 +762,9 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+                {filteredVideos.length === 0 && (
+                  <p className="text-center text-[#94A3B8] py-8">No videos found</p>
+                )}
               </div>
             )}
           </CardContent>
