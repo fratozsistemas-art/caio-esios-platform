@@ -143,6 +143,7 @@ function LayoutInner({ children, currentPageName }) {
             {
               title: t('nav.settings', 'Settings'),
               items: [
+                { name: t('nav.videoAnalytics', 'Video Analytics'), icon: BarChart3, path: 'VideoAnalytics' },
                 { name: t('nav.fileUpload', 'File Upload'), icon: Upload, path: 'FileUpload' },
                 { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations' },
                 { name: t('nav.compliance', 'Compliance'), icon: Shield, path: 'ComplianceMonitoring', adminOnly: true, badge: 'AI' },
