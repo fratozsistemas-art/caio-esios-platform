@@ -74,6 +74,46 @@ Deno.serve(async (req) => {
         // Generate blog post content
         const content = generateBlogContent(video);
         
+        // Generate AI summary and tags
+        let aiSummary = null;
+        let aiTags = null;
+
+        const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
+        if (OPENAI_API_KEY) {
+          try {
+            const prompt = `Based on the following video information, generate:
+1. A concise 1-2 sentence summary (max 150 characters)
+2. 5 relevant tags/keywords
+
+Video Title: ${video.snippet.title}
+Description: ${video.snippet.description.substring(0, 500)}
+
+Return ONLY a JSON object with this exact format:
+{"summary": "...", "tags": ["tag1", "tag2", "tag3", "tag4", "tag5"]}`;
+
+            const aiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${OPENAI_API_KEY}`,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                model: 'gpt-4o-mini',
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.7,
+                max_tokens: 200
+              })
+            });
+
+            const aiData = await aiResponse.json();
+            const aiResult = JSON.parse(aiData.choices[0].message.content);
+            aiSummary = aiResult.summary;
+            aiTags = aiResult.tags;
+          } catch (aiError) {
+            console.error('AI generation error:', aiError);
+          }
+        }
+        
         // Create blog post
         await base44.asServiceRole.entities.BlogPost.create({
           title: video.snippet.title,
@@ -88,7 +128,9 @@ Deno.serve(async (req) => {
           youtube_video_id: videoId,
           youtube_channel: channel.snippet.title,
           video_embed_url: `https://www.youtube.com/embed/${videoId}`,
-          view_count: parseInt(video.statistics.viewCount) || 0
+          view_count: parseInt(video.statistics.viewCount) || 0,
+          ai_summary: aiSummary,
+          ai_tags: aiTags
         });
 
         results.created++;
