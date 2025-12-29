@@ -144,6 +144,7 @@ function LayoutInner({ children, currentPageName }) {
             {
               title: t('nav.settings', 'Settings'),
               items: [
+                { name: t('nav.adminDashboard', 'Admin Dashboard'), icon: Shield, path: 'AdminDashboard', adminOnly: true, badge: 'NEW' },
                 { name: t('nav.videoAnalytics', 'Video Analytics'), icon: BarChart3, path: 'VideoAnalytics' },
                 { name: t('nav.fileUpload', 'File Upload'), icon: Upload, path: 'FileUpload' },
                 { name: t('nav.integrations', 'Integrations'), icon: Plug, path: 'Integrations' },

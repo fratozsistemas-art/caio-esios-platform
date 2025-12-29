@@ -129,6 +129,7 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
+import AdminDashboard from './pages/AdminDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -264,6 +265,7 @@ export const PAGES = {
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
+    "AdminDashboard": AdminDashboard,
 }
 
 export const pagesConfig = {
