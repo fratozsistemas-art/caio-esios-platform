@@ -591,7 +591,7 @@ export default function Landing() {
             </h1>
 
             {/* Subheadline - H2 */}
-            <h2 className="text-2xl md:text-3xl font-semibold text-slate-300 mb-1" style={{ fontFamily: '"Inter", sans-serif' }}>
+            <h2 className="text-2xl md:text-3xl font-semibold text-[#00D4FF] mb-1" style={{ fontFamily: '"Inter", sans-serif' }}>
               A Virtual Chief Artificial & Strategic Intelligence Officer
             </h2>
 
