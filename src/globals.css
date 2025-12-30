@@ -223,6 +223,16 @@
   }
 }
 
+/* Float animation for logo */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
 /* CAIO Gold Pulse Animation — Luxo que pulsa */
 @keyframes caioPulse {
   0%, 100% {

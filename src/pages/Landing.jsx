@@ -601,11 +601,13 @@ export default function Landing() {
 
             <div className="flex justify-center mb-5">
               <div className="relative">
-                <div className="absolute inset-0 bg-[#00D4FF]/20 blur-3xl rounded-full" />
+                <div className="absolute inset-0 bg-[#00D4FF]/20 blur-3xl rounded-full animate-pulse" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#00D4FF]/30 to-[#FFB800]/30 blur-2xl rounded-full" style={{ animation: 'logoGlow 4s ease-in-out infinite' }} />
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png" 
                   alt="ESIOS CASIO - Executive Strategic Intelligence Platform with AI-powered insights from Board to factory floor" 
-                  className="w-40 h-40 object-contain relative z-10"
+                  className="w-40 h-40 object-contain relative z-10 drop-shadow-2xl"
+                  style={{ animation: 'float 6s ease-in-out infinite' }}
                   width="160"
                   height="160"
                   loading="eager"
