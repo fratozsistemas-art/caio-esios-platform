@@ -4,6 +4,7 @@ import AIFeedbackCuration from './pages/AIFeedbackCuration';
 import AIModules from './pages/AIModules';
 import APIManagement from './pages/APIManagement';
 import AccessibilityTree from './pages/AccessibilityTree';
+import AdminDashboard from './pages/AdminDashboard';
 import AdvancedDataAnalysis from './pages/AdvancedDataAnalysis';
 import AgentCollaborationHub from './pages/AgentCollaborationHub';
 import AgentIntelligenceHub from './pages/AgentIntelligenceHub';
@@ -113,6 +114,7 @@ import TechnicalAudit from './pages/TechnicalAudit';
 import UploadAsset from './pages/UploadAsset';
 import UseCaseCompetitiveIntelligence from './pages/UseCaseCompetitiveIntelligence';
 import UseCaseDigitalTransformation from './pages/UseCaseDigitalTransformation';
+import Videos from './pages/Videos';
 import UseCaseMaDueDiligence from './pages/UseCaseMaDueDiligence';
 import UseCaseMarketEntry from './pages/UseCaseMarketEntry';
 import UseCaseStrategicPlanning from './pages/UseCaseStrategicPlanning';
@@ -123,13 +125,12 @@ import V13ImplementationHub from './pages/V13ImplementationHub';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
 import VersionWiki from './pages/VersionWiki';
 import VideoAnalytics from './pages/VideoAnalytics';
-import Videos from './pages/Videos';
 import WorkflowDesigner from './pages/WorkflowDesigner';
 import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
-import AdminDashboard from './pages/AdminDashboard';
+import VentureTasks from './pages/VentureTasks';
 import __Layout from './Layout.jsx';
 
 
@@ -140,6 +141,7 @@ export const PAGES = {
     "AIModules": AIModules,
     "APIManagement": APIManagement,
     "AccessibilityTree": AccessibilityTree,
+    "AdminDashboard": AdminDashboard,
     "AdvancedDataAnalysis": AdvancedDataAnalysis,
     "AgentCollaborationHub": AgentCollaborationHub,
     "AgentIntelligenceHub": AgentIntelligenceHub,
@@ -249,6 +251,7 @@ export const PAGES = {
     "UploadAsset": UploadAsset,
     "UseCaseCompetitiveIntelligence": UseCaseCompetitiveIntelligence,
     "UseCaseDigitalTransformation": UseCaseDigitalTransformation,
+    "Videos": Videos,
     "UseCaseMaDueDiligence": UseCaseMaDueDiligence,
     "UseCaseMarketEntry": UseCaseMarketEntry,
     "UseCaseStrategicPlanning": UseCaseStrategicPlanning,
@@ -259,13 +262,12 @@ export const PAGES = {
     "VectorDecisionEngine": VectorDecisionEngine,
     "VersionWiki": VersionWiki,
     "VideoAnalytics": VideoAnalytics,
-    "Videos": Videos,
     "WorkflowDesigner": WorkflowDesigner,
     "WorkflowTemplates": WorkflowTemplates,
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
-    "AdminDashboard": AdminDashboard,
+    "VentureTasks": VentureTasks,
 }
 
 export const pagesConfig = {

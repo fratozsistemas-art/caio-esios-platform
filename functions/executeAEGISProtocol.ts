@@ -46,8 +46,16 @@ Deno.serve(async (req) => {
       }
     }
     
-    if (!targetEntity) {
+    if (!targetEntity && !query_text) {
       return Response.json({ error: 'Entity not found' }, { status: 404 });
+    }
+    
+    // If only query validation (IP protection already passed), return success
+    if (query_text && !targetEntity) {
+      return Response.json({
+        success: true,
+        message: 'Query passed IP protection validation'
+      });
     }
     
     console.log('🔍 Running AEGIS 5-layer validation...');

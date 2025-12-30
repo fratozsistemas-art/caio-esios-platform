@@ -37,7 +37,8 @@ import {
   HardDrive,
   TrendingUp,
   Database,
-  User
+  User,
+  CheckCircle2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -118,6 +119,7 @@ function LayoutInner({ children, currentPageName }) {
               title: t('nav.projects', 'Projects'),
               items: [
                 { name: t('nav.workspaces', 'Workspaces'), icon: Briefcase, path: 'Workspaces' },
+                { name: t('nav.ventureTasks', 'Venture Tasks'), icon: CheckCircle2, path: 'VentureTasks', badge: 'NEW' },
                 { name: t('nav.strategies', 'Strategies'), icon: Target, path: 'Strategies' },
                 { name: t('nav.playbooks', 'Playbooks'), icon: BookOpen, path: 'StrategyPlaybooks' },
                 { name: t('nav.collaboration', 'Collaboration'), icon: Users, path: 'Collaboration' }
