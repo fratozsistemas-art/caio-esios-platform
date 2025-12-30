@@ -596,7 +596,7 @@ export default function Landing() {
             </h2>
 
             <p className="text-lg md:text-xl text-slate-300 mb-5 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
-              AI-powered outputs from Board to factory floor • Dashboard for strategic decisions • Integrated chat
+              Dashboard for strategic decisions • Integrated chat
             </p>
 
             <div className="flex justify-center mb-5">

@@ -123,6 +123,7 @@ import UserProfile from './pages/UserProfile';
 import UserSettings from './pages/UserSettings';
 import V13ImplementationHub from './pages/V13ImplementationHub';
 import VectorDecisionEngine from './pages/VectorDecisionEngine';
+import VentureTasks from './pages/VentureTasks';
 import VersionWiki from './pages/VersionWiki';
 import VideoAnalytics from './pages/VideoAnalytics';
 import WorkflowDesigner from './pages/WorkflowDesigner';
@@ -130,7 +131,6 @@ import WorkflowTemplates from './pages/WorkflowTemplates';
 import WorkspaceDetail from './pages/WorkspaceDetail';
 import Workspaces from './pages/Workspaces';
 import index from './pages/index';
-import VentureTasks from './pages/VentureTasks';
 import __Layout from './Layout.jsx';
 
 
@@ -260,6 +260,7 @@ export const PAGES = {
     "UserSettings": UserSettings,
     "V13ImplementationHub": V13ImplementationHub,
     "VectorDecisionEngine": VectorDecisionEngine,
+    "VentureTasks": VentureTasks,
     "VersionWiki": VersionWiki,
     "VideoAnalytics": VideoAnalytics,
     "WorkflowDesigner": WorkflowDesigner,
@@ -267,7 +268,6 @@ export const PAGES = {
     "WorkspaceDetail": WorkspaceDetail,
     "Workspaces": Workspaces,
     "index": index,
-    "VentureTasks": VentureTasks,
 }
 
 export const pagesConfig = {
