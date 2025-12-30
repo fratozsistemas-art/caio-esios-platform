@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,20 +8,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   GitMerge, Eye, FileText, Brain, Zap, RefreshCw, Play, CheckCircle,
   AlertTriangle, Clock, ArrowRight, Sparkles, Bot, Settings, History,
-  BarChart3, Activity, Network, Workflow, Filter, Search, Trash2
+  BarChart3, Activity, Network, Workflow, Filter, Search, Trash2,
+  MessageSquare, Send, Users, CheckSquare, Square, UserCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 
 const AGENTS = {
-  market_monitor: { name: 'Market Monitor', icon: Eye, color: '#3b82f6', shortName: 'MM' },
-  strategy_doc_generator: { name: 'Strategy Doc Generator', icon: FileText, color: '#a855f7', shortName: 'SDG' },
-  knowledge_curator: { name: 'Knowledge Curator', icon: Brain, color: '#10b981', shortName: 'KC' }
+  market_monitor: { name: 'Market Monitor', icon: Eye, color: '#3b82f6', shortName: 'MM', status: 'active' },
+  strategy_doc_generator: { name: 'Strategy Doc Generator', icon: FileText, color: '#a855f7', shortName: 'SDG', status: 'active' },
+  knowledge_curator: { name: 'Knowledge Curator', icon: Brain, color: '#10b981', shortName: 'KC', status: 'idle' }
 };
 
 const COLLABORATION_RULES = [
@@ -39,6 +42,13 @@ export default function AgentCollaborationHub() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [isProcessing, setIsProcessing] = useState({});
+  const [agentPresence, setAgentPresence] = useState(AGENTS);
+  const [selectedAgent, setSelectedAgent] = useState(null);
+  const [messageText, setMessageText] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [sharedTasks, setSharedTasks] = useState([]);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [showMessageDialog, setShowMessageDialog] = useState(false);
   const queryClient = useQueryClient();
 
   // Fetch collaborations
@@ -47,6 +57,45 @@ export default function AgentCollaborationHub() {
     queryFn: () => base44.entities.AgentCollaboration.list('-created_date', 50),
     refetchInterval: 10000
   });
+
+  // Simulate real-time presence updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAgentPresence(prev => {
+        const agents = { ...prev };
+        const agentKeys = Object.keys(agents);
+        const randomAgent = agentKeys[Math.floor(Math.random() * agentKeys.length)];
+        const statuses = ['active', 'idle', 'busy'];
+        agents[randomAgent] = { 
+          ...agents[randomAgent], 
+          status: statuses[Math.floor(Math.random() * statuses.length)],
+          lastActive: new Date().toISOString()
+        };
+        return agents;
+      });
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Load messages and tasks from localStorage
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('agent_messages');
+    const savedTasks = localStorage.getItem('shared_tasks');
+    if (savedMessages) setMessages(JSON.parse(savedMessages));
+    if (savedTasks) setSharedTasks(JSON.parse(savedTasks));
+  }, []);
+
+  // Save messages to localStorage
+  const saveMessages = (msgs) => {
+    setMessages(msgs);
+    localStorage.setItem('agent_messages', JSON.stringify(msgs));
+  };
+
+  // Save tasks to localStorage
+  const saveTasks = (tasks) => {
+    setSharedTasks(tasks);
+    localStorage.setItem('shared_tasks', JSON.stringify(tasks));
+  };
 
   // Filter collaborations
   const filteredCollaborations = collaborations.filter(c => {
@@ -153,6 +202,85 @@ export default function AgentCollaborationHub() {
     toast.success('Collaboration deleted');
   };
 
+  // Send message to agent
+  const sendMessage = () => {
+    if (!messageText.trim() || !selectedAgent) return;
+    
+    const newMessage = {
+      id: Date.now(),
+      from: 'user',
+      to: selectedAgent,
+      text: messageText,
+      timestamp: new Date().toISOString()
+    };
+    
+    saveMessages([...messages, newMessage]);
+    setMessageText("");
+    toast.success(`Message sent to ${AGENTS[selectedAgent].name}`);
+    
+    // Simulate agent response
+    setTimeout(() => {
+      const response = {
+        id: Date.now() + 1,
+        from: selectedAgent,
+        to: 'user',
+        text: `Acknowledged your message. Processing request...`,
+        timestamp: new Date().toISOString()
+      };
+      saveMessages([...messages, newMessage, response]);
+    }, 2000);
+  };
+
+  // Add shared task
+  const addSharedTask = () => {
+    if (!newTaskTitle.trim()) return;
+    
+    const newTask = {
+      id: Date.now(),
+      title: newTaskTitle,
+      completed: false,
+      assignedTo: null,
+      createdAt: new Date().toISOString()
+    };
+    
+    saveTasks([...sharedTasks, newTask]);
+    setNewTaskTitle("");
+    toast.success('Task added to shared workspace');
+  };
+
+  // Toggle task completion
+  const toggleTask = (taskId) => {
+    const updated = sharedTasks.map(t => 
+      t.id === taskId ? { ...t, completed: !t.completed } : t
+    );
+    saveTasks(updated);
+  };
+
+  // Assign task to agent
+  const assignTask = (taskId, agentId) => {
+    const updated = sharedTasks.map(t => 
+      t.id === taskId ? { ...t, assignedTo: agentId } : t
+    );
+    saveTasks(updated);
+    toast.success(`Task assigned to ${AGENTS[agentId].name}`);
+  };
+
+  // Delete task
+  const deleteTask = (taskId) => {
+    saveTasks(sharedTasks.filter(t => t.id !== taskId));
+    toast.success('Task deleted');
+  };
+
+  // Get status color
+  const getPresenceColor = (status) => {
+    switch (status) {
+      case 'active': return '#22c55e';
+      case 'busy': return '#f59e0b';
+      case 'idle': return '#6b7280';
+      default: return '#6b7280';
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -207,6 +335,19 @@ export default function AgentCollaborationHub() {
             <BarChart3 className="w-4 h-4 mr-2" />
             Dashboard
           </TabsTrigger>
+          <TabsTrigger value="workspace" className="data-[state=active]:bg-orange-500/20">
+            <Users className="w-4 h-4 mr-2" />
+            Workspace
+          </TabsTrigger>
+          <TabsTrigger value="messages" className="data-[state=active]:bg-pink-500/20">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Messages
+            {messages.filter(m => m.to === 'user' && m.from !== 'user').length > 0 && (
+              <Badge className="ml-2 bg-pink-500 text-white text-xs px-1.5 py-0">
+                {messages.filter(m => m.to === 'user' && m.from !== 'user').length}
+              </Badge>
+            )}
+          </TabsTrigger>
           <TabsTrigger value="trigger" className="data-[state=active]:bg-purple-500/20">
             <Zap className="w-4 h-4 mr-2" />
             Trigger
@@ -220,6 +361,203 @@ export default function AgentCollaborationHub() {
             History
           </TabsTrigger>
         </TabsList>
+
+        {/* Workspace Tab */}
+        <TabsContent value="workspace" className="mt-6 space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            {/* Agent Presence Panel */}
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white text-lg flex items-center gap-2">
+                  <UserCircle className="w-5 h-5 text-cyan-400" />
+                  Agent Presence
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {Object.entries(agentPresence).map(([agentId, agent]) => {
+                    const Icon = agent.icon;
+                    return (
+                      <div key={agentId} className="flex items-center gap-3 p-3 bg-white/5 rounded-lg border border-white/10 hover:border-cyan-500/50 transition-all">
+                        <div className="relative">
+                          <Icon className="w-8 h-8" style={{ color: agent.color }} />
+                          <div 
+                            className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-slate-900"
+                            style={{ backgroundColor: getPresenceColor(agent.status) }}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium text-white">{agent.name}</p>
+                          <p className="text-xs text-slate-400 capitalize">{agent.status}</p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedAgent(agentId);
+                            setShowMessageDialog(true);
+                          }}
+                          className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+                        >
+                          <MessageSquare className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Shared Task Workspace */}
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white text-lg flex items-center gap-2">
+                  <CheckSquare className="w-5 h-5 text-orange-400" />
+                  Shared Tasks
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 mb-4">
+                  <div className="flex gap-2">
+                    <Input
+                      value={newTaskTitle}
+                      onChange={(e) => setNewTaskTitle(e.target.value)}
+                      placeholder="Add a new task..."
+                      className="bg-white/5 border-white/10 text-white"
+                      onKeyDown={(e) => e.key === 'Enter' && addSharedTask()}
+                    />
+                    <Button onClick={addSharedTask} className="bg-orange-600 hover:bg-orange-700">
+                      <Send className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-2 max-h-80 overflow-y-auto">
+                  {sharedTasks.length === 0 ? (
+                    <p className="text-slate-500 text-center py-8 text-sm">No tasks yet</p>
+                  ) : (
+                    sharedTasks.map((task) => (
+                      <motion.div
+                        key={task.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        className={`flex items-center gap-3 p-3 rounded-lg border ${task.completed ? 'bg-green-500/10 border-green-500/30' : 'bg-white/5 border-white/10'}`}
+                      >
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => toggleTask(task.id)}
+                          className="w-6 h-6 p-0"
+                        >
+                          {task.completed ? (
+                            <CheckSquare className="w-5 h-5 text-green-400" />
+                          ) : (
+                            <Square className="w-5 h-5 text-slate-400" />
+                          )}
+                        </Button>
+                        <div className="flex-1">
+                          <p className={`text-sm ${task.completed ? 'line-through text-slate-500' : 'text-white'}`}>
+                            {task.title}
+                          </p>
+                          {task.assignedTo && (
+                            <p className="text-xs text-slate-400">
+                              Assigned to {AGENTS[task.assignedTo]?.shortName}
+                            </p>
+                          )}
+                        </div>
+                        <Select value={task.assignedTo || ''} onValueChange={(value) => assignTask(task.id, value)}>
+                          <SelectTrigger className="w-20 h-7 bg-white/5 border-white/10 text-xs">
+                            <SelectValue placeholder="Assign" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.entries(AGENTS).map(([id, agent]) => (
+                              <SelectItem key={id} value={id}>{agent.shortName}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => deleteTask(task.id)}
+                          className="w-6 h-6 p-0 text-slate-400 hover:text-red-400"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </motion.div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Messages Tab */}
+        <TabsContent value="messages" className="mt-6">
+          <Card className="bg-white/5 border-white/10">
+            <CardHeader>
+              <CardTitle className="text-white text-lg flex items-center gap-2">
+                <MessageSquare className="w-5 h-5 text-pink-400" />
+                Direct Agent Messages
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {messages.length === 0 ? (
+                  <p className="text-slate-500 text-center py-8">No messages yet. Start a conversation with an agent!</p>
+                ) : (
+                  <div className="space-y-2 max-h-96 overflow-y-auto p-4 bg-black/20 rounded-lg">
+                    {messages.map((msg) => {
+                      const isUser = msg.from === 'user';
+                      const agent = isUser ? AGENTS[msg.to] : AGENTS[msg.from];
+                      const Icon = agent?.icon || Bot;
+                      return (
+                        <motion.div
+                          key={msg.id}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}
+                        >
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${isUser ? 'bg-cyan-500/20' : 'bg-purple-500/20'}`}>
+                            {isUser ? <UserCircle className="w-5 h-5 text-cyan-400" /> : <Icon className="w-5 h-5" style={{ color: agent?.color }} />}
+                          </div>
+                          <div className={`flex-1 max-w-md ${isUser ? 'text-right' : 'text-left'}`}>
+                            <div className={`inline-block p-3 rounded-lg ${isUser ? 'bg-cyan-500/20 border border-cyan-500/30' : 'bg-purple-500/20 border border-purple-500/30'}`}>
+                              <p className="text-sm text-white">{msg.text}</p>
+                              <p className="text-xs text-slate-400 mt-1">{new Date(msg.timestamp).toLocaleTimeString()}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                )}
+                <div className="flex gap-2 pt-4 border-t border-white/10">
+                  <Select value={selectedAgent || ''} onValueChange={setSelectedAgent}>
+                    <SelectTrigger className="w-48 bg-white/5 border-white/10 text-white">
+                      <SelectValue placeholder="Select agent..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(AGENTS).map(([id, agent]) => (
+                        <SelectItem key={id} value={id}>{agent.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Input
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    placeholder="Type your message..."
+                    className="flex-1 bg-white/5 border-white/10 text-white"
+                    onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+                    disabled={!selectedAgent}
+                  />
+                  <Button onClick={sendMessage} disabled={!selectedAgent || !messageText.trim()} className="bg-pink-600 hover:bg-pink-700">
+                    <Send className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
 
         {/* Dashboard Tab */}
         <TabsContent value="dashboard" className="mt-6 space-y-6">
@@ -476,6 +814,38 @@ export default function AgentCollaborationHub() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Message Dialog */}
+      <Dialog open={showMessageDialog} onOpenChange={setShowMessageDialog}>
+        <DialogContent className="bg-slate-900 border-slate-800">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-pink-400" />
+              Message {selectedAgent ? AGENTS[selectedAgent]?.name : 'Agent'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              placeholder="Type your message..."
+              className="bg-white/5 border-white/10 text-white min-h-32"
+            />
+            <div className="flex gap-2 justify-end">
+              <Button variant="outline" onClick={() => setShowMessageDialog(false)} className="border-white/20 text-white">
+                Cancel
+              </Button>
+              <Button onClick={() => {
+                sendMessage();
+                setShowMessageDialog(false);
+              }} className="bg-pink-600 hover:bg-pink-700">
+                <Send className="w-4 h-4 mr-2" />
+                Send
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
