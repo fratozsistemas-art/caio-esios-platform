@@ -32,6 +32,7 @@ export default function VentureTasks() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const [clickupStatusFilter, setClickupStatusFilter] = useState('');
+  const [clickupTaskIdSearch, setClickupTaskIdSearch] = useState('');
   const [sortBy, setSortBy] = useState('due_date_desc');
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newTask, setNewTask] = useState({
@@ -51,6 +52,26 @@ export default function VentureTasks() {
     queryKey: ['current_user'],
     queryFn: () => base44.auth.me()
   });
+
+  // Fetch user role for RBAC
+  const { data: userRole } = useQuery({
+    queryKey: ['user_role', user?.email],
+    queryFn: async () => {
+      if (!user) return null;
+      const roles = await base44.entities.UserRole.filter({
+        user_email: user.email,
+        is_active: true
+      });
+      return roles[0] || { role_name: user.role === 'admin' ? 'admin' : 'viewer' };
+    },
+    enabled: !!user
+  });
+
+  // RBAC permissions
+  const canCreate = userRole?.role_name === 'admin' || userRole?.role_name === 'manager';
+  const canEdit = userRole?.role_name === 'admin' || userRole?.role_name === 'manager' || userRole?.role_name === 'team_member';
+  const canUpdateStatus = canEdit;
+  const canDelete = userRole?.role_name === 'admin' || userRole?.role_name === 'manager';
 
   // Fetch all tasks
   const { data: tasks = [], isLoading } = useQuery({
@@ -113,7 +134,15 @@ export default function VentureTasks() {
       filtered = filtered.filter(t => 
         t.title?.toLowerCase().includes(keyword) ||
         t.description?.toLowerCase().includes(keyword) ||
-        t.venture_id?.toLowerCase().includes(keyword)
+        t.venture_id?.toLowerCase().includes(keyword) ||
+        t.clickup_task_id?.toLowerCase().includes(keyword)
+      );
+    }
+
+    // ClickUp Task ID direct search
+    if (clickupTaskIdSearch) {
+      filtered = filtered.filter(t => 
+        t.clickup_task_id?.toLowerCase().includes(clickupTaskIdSearch.toLowerCase())
       );
     }
 
@@ -183,6 +212,7 @@ export default function VentureTasks() {
     setDateFrom('');
     setDateTo('');
     setClickupStatusFilter('');
+    setClickupTaskIdSearch('');
   };
 
   const getStatusIcon = (status) => {
@@ -217,13 +247,15 @@ export default function VentureTasks() {
               <h1 className="text-4xl font-bold text-white mb-2">Venture Tasks</h1>
               <p className="text-[#94A3B8]">{filteredTasks.length} task(s) found</p>
             </div>
-            <Button
-              onClick={() => setShowCreateDialog(true)}
-              className="bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6]"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Create Task
-            </Button>
+            {canCreate && (
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6]"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Create Task
+              </Button>
+            )}
           </div>
         </motion.div>
 
@@ -303,6 +335,12 @@ export default function VentureTasks() {
                 className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
               />
               <Input
+                placeholder="ClickUp Task ID..."
+                value={clickupTaskIdSearch}
+                onChange={(e) => setClickupTaskIdSearch(e.target.value)}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              />
+              <Input
                 placeholder="ClickUp status..."
                 value={clickupStatusFilter}
                 onChange={(e) => setClickupStatusFilter(e.target.value)}
@@ -322,7 +360,7 @@ export default function VentureTasks() {
                   <SelectItem value="title_desc" className="text-white">Title (Z-A)</SelectItem>
                 </SelectContent>
               </Select>
-              {(searchKeyword || statusFilter !== 'all' || priorityFilter !== 'all' || assigneeFilter !== 'all' || dateFrom || dateTo || clickupStatusFilter) && (
+              {(searchKeyword || statusFilter !== 'all' || priorityFilter !== 'all' || assigneeFilter !== 'all' || dateFrom || dateTo || clickupStatusFilter || clickupTaskIdSearch) && (
                 <Button
                   variant="outline"
                   onClick={clearFilters}
@@ -388,19 +426,27 @@ export default function VentureTasks() {
                         </div>
                       )}
                     </div>
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => updateTaskMutation.mutate({
-                          id: task.id,
-                          updates: { status: task.status === 'done' ? 'todo' : 'done' }
-                        })}
-                        className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
-                      >
-                        {task.status === 'done' ? 'Reopen' : 'Complete'}
-                      </Button>
-                    </div>
+                    {task.clickup_task_id && (
+                      <div className="text-xs text-[#94A3B8] mt-2">
+                        ClickUp ID: <span className="text-purple-400">{task.clickup_task_id}</span>
+                      </div>
+                    )}
+                    {canUpdateStatus && (
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => updateTaskMutation.mutate({
+                            id: task.id,
+                            updates: { status: task.status === 'done' ? 'todo' : 'done' }
+                          })}
+                          className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                          disabled={!canUpdateStatus}
+                        >
+                          {task.status === 'done' ? 'Reopen' : 'Complete'}
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>
@@ -465,6 +511,12 @@ export default function VentureTasks() {
                 placeholder="Venture ID"
                 value={newTask.venture_id}
                 onChange={(e) => setNewTask({ ...newTask, venture_id: e.target.value })}
+                className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+              />
+              <Input
+                placeholder="ClickUp Task ID (optional)"
+                value={newTask.clickup_task_id || ''}
+                onChange={(e) => setNewTask({ ...newTask, clickup_task_id: e.target.value })}
                 className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
               />
             </div>

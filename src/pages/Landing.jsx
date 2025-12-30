@@ -408,15 +408,15 @@ export default function Landing() {
             {/* Logo */}
             <div className="flex items-center gap-2 sm:gap-3">
               <img 
-                src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                alt="CAIO·AI Logo - Executive Strategic Intelligence Platform with TSI v9.3 Methodology" 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png" 
+                alt="ESIOS CASIO - Executive Strategic Intelligence Platform with AI-powered insights" 
                 className="w-10 h-10 sm:w-12 sm:h-12 object-contain"
                 width="48"
                 height="48"
                 loading="eager"
               />
               <div className="text-lg sm:text-xl font-bold text-white" style={{ letterSpacing: '0.05em' }}>
-                ESIOS CAIO
+                ESIOS CASIO
               </div>
             </div>
 
@@ -586,25 +586,25 @@ export default function Landing() {
           >
             {/* Main Headline - H1 with primary keyword */}
             <h1 className="text-4xl md:text-6xl font-bold text-[#EAF6FF] mb-4 leading-tight tracking-tight" style={{ fontFamily: '"Inter", sans-serif' }}>
-              Executive Strategic Intelligence Platform<br />
-              for Data-Driven Decisions
+              ESIOS CASIO: Your Executive Strategic<br />
+              Intelligence Platform for Data-Driven Decisions
             </h1>
-            
+
             {/* Subheadline - H2 */}
             <h2 className="text-2xl md:text-3xl font-semibold text-slate-300 mb-1" style={{ fontFamily: '"Inter", sans-serif' }}>
-              The Executive System for Intelligent Strategic Operations
+              A Virtual Chief Artificial & Strategic Intelligence Officer
             </h2>
-            
+
             <p className="text-lg md:text-xl text-slate-300 mb-5 font-light" style={{ fontFamily: '"Inter", sans-serif' }}>
-              Built on TSI v9.3 — 11 Cognitive Modules
+              AI-powered outputs from Board to factory floor • Dashboard for strategic decisions • Integrated chat
             </p>
 
             <div className="flex justify-center mb-5">
               <div className="relative">
                 <div className="absolute inset-0 bg-[#00D4FF]/20 blur-3xl rounded-full" />
                 <img 
-                  src="https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png" 
-                  alt="CAIO·AI Executive Strategic Intelligence Platform - TSI v9.3 with 11 Cognitive Modules for Market Intelligence, Competitive Analysis, and Financial Modeling" 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png" 
+                  alt="ESIOS CASIO - Executive Strategic Intelligence Platform with AI-powered insights from Board to factory floor" 
                   className="w-40 h-40 object-contain relative z-10"
                   width="160"
                   height="160"
@@ -614,7 +614,7 @@ export default function Landing() {
             </div>
 
             <p className="text-base md:text-lg text-slate-200 mb-8 max-w-4xl mx-auto leading-relaxed font-light">
-              ESIOS CAIO is the <span className="text-[#00D4FF] font-semibold">enterprise strategic intelligence platform</span> built for C-suite executives who demand consulting-grade analysis at software speed. Our proprietary <span className="text-[#00D4FF] font-semibold">TSI v9.3 methodology</span> deploys 11 specialized cognitive modules covering <span className="text-[#00D4FF] font-semibold">market intelligence</span>, <span className="text-[#00D4FF] font-semibold">competitive analysis</span>, <span className="text-[#00D4FF] font-semibold">financial modeling</span>, and <span className="text-[#00D4FF] font-semibold">strategic execution</span>—transforming decision-making processes that traditionally took weeks into hours.
+              ESIOS CASIO is your <span className="text-[#00D4FF] font-semibold">virtual Chief Artificial & Strategic Intelligence Officer</span>, transforming data into validated strategies 24/7. Built for executives who demand AI-powered insights that resonate from the <span className="text-[#00D4FF] font-semibold">Board to the factory floor</span>, with an integrated dashboard and chat interface that delivers <span className="text-[#00D4FF] font-semibold">strategic intelligence</span> and <span className="text-[#00D4FF] font-semibold">data-driven decisions</span> at unprecedented speed.
             </p>
 
             {/* Primary CTAs */}

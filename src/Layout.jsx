@@ -158,6 +158,7 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.userManagement', 'Users'), icon: Users, path: 'UserManagement', adminOnly: true },
                 { name: t('nav.roleManagement', 'Roles & Permissions'), icon: Shield, path: 'RoleManagement', adminOnly: true },
                 { name: t('nav.userProfile', 'My Profile'), icon: User, path: 'UserProfile' },
+                { name: t('nav.userSettings', 'User Settings'), icon: Settings, path: 'UserSettings' },
                 { name: t('nav.userSettings', 'Settings'), icon: Settings, path: 'UserSettings' },
                 { name: t('nav.feedback', 'Feedback Management'), icon: MessageSquare, path: 'FeedbackManagement', adminOnly: true },
                 { name: t('nav.abTesting', 'A/B Testing'), icon: TrendingUp, path: 'ABTestingDashboard', adminOnly: true },
@@ -233,11 +234,11 @@ function LayoutInner({ children, currentPageName }) {
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
-              alt="CAIO·AI" 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png" 
+              alt="ESIOS CASIO" 
               className="w-6 h-6 object-contain"
             />
-            <span className="text-white font-bold text-lg">CAIO·AI</span>
+            <span className="text-white font-bold text-lg">ESIOS CASIO</span>
           </div>
           <div className="flex items-center gap-2">
             <RealTimeNotificationCenter />
@@ -266,13 +267,13 @@ function LayoutInner({ children, currentPageName }) {
         <div className="p-6 border-b border-white/10">
           <div className="flex items-center gap-3">
             <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/f032804a4_CAIOAIlogooficial.png" 
-              alt="CAIO·AI" 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png" 
+              alt="ESIOS CASIO" 
               className="w-10 h-10 object-contain"
             />
             <div>
-              <h1 className="text-white font-bold text-lg">ESIOS CAIO</h1>
-              <p className="text-slate-400 text-xs">Strategic Intelligence</p>
+              <h1 className="text-white font-bold text-lg">ESIOS CASIO</h1>
+              <p className="text-slate-400 text-xs">Executive Strategic Intelligence</p>
             </div>
           </div>
           <Button

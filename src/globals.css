@@ -2,24 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* CAIO·AI Design System v12.0 — "Dune + Versailles Neural" */
+/* ESIOS CASIO Design System v12.0 — "Dune + Versailles Neural" */
 /* Inspiração: Neurotech de luxo — religião cognitiva proprietária */
-/* Paleta Core: CAIO Deep Blue #0A2540, Electric Cyan #00D4FF */
+/* Paleta Core: CASIO Deep Blue #0A2540, Electric Cyan #00D4FF */
 /* Neutrals: Graphite #1A1D29, Slate #475569, Steel #94A3B8, Mist #F1F5F9 */
 /* Accent Místico: Roxo Imperial #2A1B3D */
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;900&family=Inter:wght@300;400;500;600;700;800;900&family=IBM+Plex+Sans:wght@400;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
-  /* CAIO Brand Colors — Enterprise Intelligence (Updated from Brand Guide v2.0) */
-  --caio-blue-deep: #0A2540;
-  --caio-blue-graphite: #1A1D29;
-  --caio-cyan-electric: #00D4FF;
-  --caio-gold-metallic: #C7A763;
-  --caio-slate: #475569;
-  --caio-steel: #94A3B8;
-  --caio-mist: #F1F5F9;
-  --caio-white: #FFFFFF;
+  /* ESIOS CASIO Brand Colors — Enterprise Intelligence (Updated from Brand Guide v2.0) */
+  --casio-blue-deep: #0A2540;
+  --casio-blue-graphite: #1A1D29;
+  --casio-cyan-electric: #00D4FF;
+  --casio-gold-metallic: #C7A763;
+  --casio-slate: #475569;
+  --casio-steel: #94A3B8;
+  --casio-mist: #F1F5F9;
+  --casio-white: #FFFFFF;
   
   /* Semantic Colors */
   --caio-success: #10B981;

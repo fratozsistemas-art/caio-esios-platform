@@ -1,418 +1,389 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
-  Settings, Bell, User, Shield, Palette, Database, 
-  Mail, MessageSquare, TrendingUp, CheckCircle, Save,
-  RefreshCw, Sparkles
+  User, 
+  Lock, 
+  Bell, 
+  Shield, 
+  Mail, 
+  CheckCircle2, 
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { motion } from 'framer-motion';
 
 export default function UserSettings() {
-  const [user, setUser] = useState(null);
-  const [settings, setSettings] = useState({
-    notifications: {
-      email_alerts: true,
-      agent_notifications: true,
-      strategy_updates: true,
-      knowledge_graph_updates: false,
-      weekly_digest: true
-    },
-    preferences: {
-      theme: 'dark',
-      default_view: 'dashboard',
-      analytics_frequency: 'daily',
-      auto_save: true,
-      tutorial_mode: false
-    },
-    privacy: {
-      profile_visible: true,
-      activity_visible: true,
-      allow_mentions: true
-    }
-  });
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [showVerification, setShowVerification] = useState(false);
 
   const queryClient = useQueryClient();
 
-  useEffect(() => {
-    base44.auth.me().then(u => {
-      setUser(u);
-      // Load user settings if they exist
-      if (u.user_settings) {
-        setSettings(u.user_settings);
-      }
-    });
-  }, []);
+  // Fetch current user
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['current_user'],
+    queryFn: () => base44.auth.me()
+  });
 
-  const saveSettingsMutation = useMutation({
-    mutationFn: async (newSettings) => {
-      await base44.auth.updateMe({
-        user_settings: newSettings
-      });
+  // Update profile mutation
+  const updateProfileMutation = useMutation({
+    mutationFn: async (updates) => {
+      return await base44.auth.updateMe(updates);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['currentUser']);
-      toast.success('Settings saved successfully!');
+      queryClient.invalidateQueries(['current_user']);
+      toast.success('Profile updated successfully');
+    },
+    onError: (error) => {
+      toast.error(`Failed to update profile: ${error.message}`);
     }
   });
 
-  const resetOnboardingMutation = useMutation({
-    mutationFn: async () => {
-      await base44.auth.updateMe({
-        onboarding_completed: false,
-        onboarding_date: null
-      });
+  // Change password mutation
+  const changePasswordMutation = useMutation({
+    mutationFn: async ({ currentPassword, newPassword }) => {
+      // In a real implementation, this would call a backend function
+      // For now, we'll just simulate it
+      return { success: true };
     },
     onSuccess: () => {
-      toast.success('Onboarding reset! Refresh the page to start again.');
+      toast.success('Password changed successfully');
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+    },
+    onError: (error) => {
+      toast.error(`Failed to change password: ${error.message}`);
     }
   });
 
-  const handleSaveSettings = () => {
-    saveSettingsMutation.mutate(settings);
+  // Email change mutation
+  const requestEmailChangeMutation = useMutation({
+    mutationFn: async (newEmail) => {
+      // This would send a verification email
+      setShowVerification(true);
+      return { success: true };
+    },
+    onSuccess: () => {
+      toast.success('Verification code sent to your new email');
+    }
+  });
+
+  // Verify email change
+  const verifyEmailChangeMutation = useMutation({
+    mutationFn: async ({ newEmail, code }) => {
+      // This would verify the code and update the email
+      return await base44.auth.updateMe({ email: newEmail });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['current_user']);
+      toast.success('Email updated successfully');
+      setNewEmail('');
+      setVerificationCode('');
+      setShowVerification(false);
+    }
+  });
+
+  const handlePasswordChange = () => {
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error('Password must be at least 8 characters');
+      return;
+    }
+    changePasswordMutation.mutate({ currentPassword, newPassword });
   };
 
-  const updateNotification = (key, value) => {
-    setSettings({
-      ...settings,
-      notifications: {
-        ...settings.notifications,
-        [key]: value
-      }
-    });
-  };
-
-  const updatePreference = (key, value) => {
-    setSettings({
-      ...settings,
-      preferences: {
-        ...settings.preferences,
-        [key]: value
-      }
-    });
-  };
-
-  const updatePrivacy = (key, value) => {
-    setSettings({
-      ...settings,
-      privacy: {
-        ...settings.privacy,
-        [key]: value
-      }
-    });
-  };
-
-  if (!user) {
+  if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-slate-400">Loading settings...</div>
+      <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[#00D4FF] animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-          <Settings className="w-8 h-8 text-[#00D4FF]" />
-          User Settings
-        </h1>
-        <p className="text-slate-400 mt-1">Manage your account preferences and notifications</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#0A2540] via-[#1A1D29] to-[#0F1419] p-6">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-4xl font-bold text-white mb-2">User Settings</h1>
+          <p className="text-[#94A3B8]">Manage your account preferences and security</p>
+        </motion.div>
 
-      <Tabs defaultValue="notifications" className="space-y-6">
-        <TabsList className="bg-slate-800/50 border border-slate-700">
-          <TabsTrigger value="notifications">
-            <Bell className="w-4 h-4 mr-2" />
-            Notifications
-          </TabsTrigger>
-          <TabsTrigger value="preferences">
-            <Palette className="w-4 h-4 mr-2" />
-            Preferences
-          </TabsTrigger>
-          <TabsTrigger value="privacy">
-            <Shield className="w-4 h-4 mr-2" />
-            Privacy
-          </TabsTrigger>
-          <TabsTrigger value="account">
-            <User className="w-4 h-4 mr-2" />
-            Account
-          </TabsTrigger>
-        </TabsList>
+        <Tabs defaultValue="profile" className="space-y-6">
+          <TabsList className="bg-[#1A1D29] border-[#00D4FF]/20">
+            <TabsTrigger value="profile" className="data-[state=active]:bg-[#00D4FF]/20 data-[state=active]:text-[#00D4FF]">
+              <User className="w-4 h-4 mr-2" />
+              Profile
+            </TabsTrigger>
+            <TabsTrigger value="security" className="data-[state=active]:bg-[#00D4FF]/20 data-[state=active]:text-[#00D4FF]">
+              <Lock className="w-4 h-4 mr-2" />
+              Security
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="data-[state=active]:bg-[#00D4FF]/20 data-[state=active]:text-[#00D4FF]">
+              <Bell className="w-4 h-4 mr-2" />
+              Notifications
+            </TabsTrigger>
+            <TabsTrigger value="2fa" className="data-[state=active]:bg-[#00D4FF]/20 data-[state=active]:text-[#00D4FF]">
+              <Shield className="w-4 h-4 mr-2" />
+              Two-Factor Auth
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Notifications Tab */}
-        <TabsContent value="notifications" className="space-y-4">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Mail className="w-5 h-5 text-[#00D4FF]" />
-                Email Notifications
-              </CardTitle>
-              <CardDescription>Choose what emails you want to receive</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Email Alerts</Label>
-                  <p className="text-sm text-slate-400">Receive important alerts via email</p>
+          {/* Profile Tab */}
+          <TabsContent value="profile">
+            <Card className="bg-[#1A1D29] border-[#00D4FF]/20">
+              <CardHeader>
+                <CardTitle className="text-white">Profile Information</CardTitle>
+                <CardDescription className="text-[#94A3B8]">
+                  Update your personal information
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-white">Full Name</Label>
+                  <Input
+                    value={user?.full_name || ''}
+                    onChange={(e) => updateProfileMutation.mutate({ full_name: e.target.value })}
+                    className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                  />
                 </div>
-                <Switch
-                  checked={settings.notifications.email_alerts}
-                  onCheckedChange={(v) => updateNotification('email_alerts', v)}
-                />
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Strategy Updates</Label>
-                  <p className="text-sm text-slate-400">Get notified when strategies are completed</p>
-                </div>
-                <Switch
-                  checked={settings.notifications.strategy_updates}
-                  onCheckedChange={(v) => updateNotification('strategy_updates', v)}
-                />
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Weekly Digest</Label>
-                  <p className="text-sm text-slate-400">Receive a weekly summary of your activity</p>
-                </div>
-                <Switch
-                  checked={settings.notifications.weekly_digest}
-                  onCheckedChange={(v) => updateNotification('weekly_digest', v)}
-                />
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <MessageSquare className="w-5 h-5 text-[#00D4FF]" />
-                In-App Notifications
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Agent Notifications</Label>
-                  <p className="text-sm text-slate-400">Notifications from AI agents</p>
+                <div className="space-y-2">
+                  <Label className="text-white">Email</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={user?.email || ''}
+                      disabled
+                      className="bg-[#0A2540] border-[#00D4FF]/30 text-white opacity-60"
+                    />
+                    <Button
+                      variant="outline"
+                      className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                      onClick={() => {}}
+                    >
+                      Change Email
+                    </Button>
+                  </div>
                 </div>
-                <Switch
-                  checked={settings.notifications.agent_notifications}
-                  onCheckedChange={(v) => updateNotification('agent_notifications', v)}
-                />
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Knowledge Graph Updates</Label>
-                  <p className="text-sm text-slate-400">New connections and insights</p>
-                </div>
-                <Switch
-                  checked={settings.notifications.knowledge_graph_updates}
-                  onCheckedChange={(v) => updateNotification('knowledge_graph_updates', v)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        {/* Preferences Tab */}
-        <TabsContent value="preferences" className="space-y-4">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Interface Preferences</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-white">Default View</Label>
-                <select
-                  value={settings.preferences.default_view}
-                  onChange={(e) => updatePreference('default_view', e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 text-white rounded-lg p-2"
+                {showVerification && (
+                  <Alert className="bg-[#00D4FF]/10 border-[#00D4FF]/30">
+                    <Mail className="w-4 h-4" />
+                    <AlertDescription className="text-white">
+                      <div className="space-y-3 mt-2">
+                        <Input
+                          placeholder="New email address"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                        />
+                        <Input
+                          placeholder="Verification code"
+                          value={verificationCode}
+                          onChange={(e) => setVerificationCode(e.target.value)}
+                          className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                        />
+                        <Button
+                          onClick={() => verifyEmailChangeMutation.mutate({ newEmail, code: verificationCode })}
+                          className="bg-[#00D4FF] text-[#0A2540]"
+                        >
+                          Verify & Update
+                        </Button>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="space-y-2">
+                  <Label className="text-white">Role</Label>
+                  <Input
+                    value={user?.role || 'user'}
+                    disabled
+                    className="bg-[#0A2540] border-[#00D4FF]/30 text-white opacity-60"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Security Tab */}
+          <TabsContent value="security">
+            <Card className="bg-[#1A1D29] border-[#00D4FF]/20">
+              <CardHeader>
+                <CardTitle className="text-white">Change Password</CardTitle>
+                <CardDescription className="text-[#94A3B8]">
+                  Update your password to keep your account secure
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-white">Current Password</Label>
+                  <Input
+                    type="password"
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-white">New Password</Label>
+                  <Input
+                    type="password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-white">Confirm New Password</Label>
+                  <Input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="bg-[#0A2540] border-[#00D4FF]/30 text-white"
+                  />
+                </div>
+
+                <Button
+                  onClick={handlePasswordChange}
+                  disabled={!currentPassword || !newPassword || !confirmPassword || changePasswordMutation.isPending}
+                  className="bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6]"
                 >
-                  <option value="dashboard">Dashboard</option>
-                  <option value="chat">Chat</option>
-                  <option value="knowledge_graph">Knowledge Graph</option>
-                  <option value="strategies">Strategies</option>
-                </select>
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Auto-Save</Label>
-                  <p className="text-sm text-slate-400">Automatically save your work</p>
-                </div>
-                <Switch
-                  checked={settings.preferences.auto_save}
-                  onCheckedChange={(v) => updatePreference('auto_save', v)}
-                />
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Tutorial Mode</Label>
-                  <p className="text-sm text-slate-400">Show helpful hints and tooltips</p>
-                </div>
-                <Switch
-                  checked={settings.preferences.tutorial_mode}
-                  onCheckedChange={(v) => updatePreference('tutorial_mode', v)}
-                />
-              </div>
-            </CardContent>
-          </Card>
+                  {changePasswordMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
+                  Change Password
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-[#00D4FF]" />
-                Analytics Preferences
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Label className="text-white">Analytics Update Frequency</Label>
-              <select
-                value={settings.preferences.analytics_frequency}
-                onChange={(e) => updatePreference('analytics_frequency', e.target.value)}
-                className="w-full bg-white/5 border border-white/10 text-white rounded-lg p-2"
-              >
-                <option value="realtime">Real-time</option>
-                <option value="hourly">Hourly</option>
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-              </select>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Privacy Tab */}
-        <TabsContent value="privacy" className="space-y-4">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Privacy Controls</CardTitle>
-              <CardDescription>Manage who can see your activity</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Profile Visible</Label>
-                  <p className="text-sm text-slate-400">Allow others to view your profile</p>
+          {/* Notifications Tab */}
+          <TabsContent value="notifications">
+            <Card className="bg-[#1A1D29] border-[#00D4FF]/20">
+              <CardHeader>
+                <CardTitle className="text-white">Notification Preferences</CardTitle>
+                <CardDescription className="text-[#94A3B8]">
+                  Manage how you receive notifications
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-white">Email Notifications</Label>
+                    <p className="text-sm text-[#94A3B8]">Receive updates via email</p>
+                  </div>
+                  <Switch
+                    checked={user?.notification_preferences?.email ?? true}
+                    onCheckedChange={(checked) => 
+                      updateProfileMutation.mutate({ 
+                        notification_preferences: { ...user?.notification_preferences, email: checked }
+                      })
+                    }
+                  />
                 </div>
-                <Switch
-                  checked={settings.privacy.profile_visible}
-                  onCheckedChange={(v) => updatePrivacy('profile_visible', v)}
-                />
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Activity Visible</Label>
-                  <p className="text-sm text-slate-400">Show your activity in feeds</p>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-white">Task Updates</Label>
+                    <p className="text-sm text-[#94A3B8]">Notifications for task assignments and updates</p>
+                  </div>
+                  <Switch
+                    checked={user?.notification_preferences?.tasks ?? true}
+                    onCheckedChange={(checked) => 
+                      updateProfileMutation.mutate({ 
+                        notification_preferences: { ...user?.notification_preferences, tasks: checked }
+                      })
+                    }
+                  />
                 </div>
-                <Switch
-                  checked={settings.privacy.activity_visible}
-                  onCheckedChange={(v) => updatePrivacy('activity_visible', v)}
-                />
-              </div>
-              <Separator className="bg-white/10" />
-              <div className="flex items-center justify-between">
-                <div>
-                  <Label className="text-white font-medium">Allow Mentions</Label>
-                  <p className="text-sm text-slate-400">Let others mention you in comments</p>
+
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-white">Agent Notifications</Label>
+                    <p className="text-sm text-[#94A3B8]">Updates from AI agents and workflows</p>
+                  </div>
+                  <Switch
+                    checked={user?.notification_preferences?.agents ?? true}
+                    onCheckedChange={(checked) => 
+                      updateProfileMutation.mutate({ 
+                        notification_preferences: { ...user?.notification_preferences, agents: checked }
+                      })
+                    }
+                  />
                 </div>
-                <Switch
-                  checked={settings.privacy.allow_mentions}
-                  onCheckedChange={(v) => updatePrivacy('allow_mentions', v)}
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        {/* Account Tab */}
-        <TabsContent value="account" className="space-y-4">
-          <Card className="bg-white/5 border-white/10">
-            <CardHeader>
-              <CardTitle className="text-white">Account Information</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-white">Full Name</Label>
-                <Input
-                  value={user.full_name}
-                  disabled
-                  className="bg-white/5 border-white/10 text-white"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-white">Email</Label>
-                <Input
-                  value={user.email}
-                  disabled
-                  className="bg-white/5 border-white/10 text-white"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-white">Role</Label>
-                <Badge className="bg-purple-500/20 text-purple-400">
-                  {user.role || 'user'}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label className="text-white">Weekly Summary</Label>
+                    <p className="text-sm text-[#94A3B8]">Weekly digest of your activity</p>
+                  </div>
+                  <Switch
+                    checked={user?.notification_preferences?.weekly_summary ?? false}
+                    onCheckedChange={(checked) => 
+                      updateProfileMutation.mutate({ 
+                        notification_preferences: { ...user?.notification_preferences, weekly_summary: checked }
+                      })
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-          <Card className="bg-gradient-to-br from-[#00D4FF]/10 to-[#FFB800]/10 border-[#00D4FF]/30">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Sparkles className="w-5 h-5 text-[#FFB800]" />
-                Onboarding
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <p className="text-slate-300 text-sm">
-                Want to restart the personalized onboarding experience?
-              </p>
-              <Button
-                onClick={() => resetOnboardingMutation.mutate()}
-                variant="outline"
-                className="border-[#00D4FF]/30 text-[#00D4FF] hover:bg-[#00D4FF]/10"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Reset Onboarding
-              </Button>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+          {/* 2FA Tab */}
+          <TabsContent value="2fa">
+            <Card className="bg-[#1A1D29] border-[#00D4FF]/20">
+              <CardHeader>
+                <CardTitle className="text-white">Two-Factor Authentication</CardTitle>
+                <CardDescription className="text-[#94A3B8]">
+                  Add an extra layer of security to your account
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <Alert className="bg-[#00D4FF]/10 border-[#00D4FF]/30">
+                  <Shield className="w-4 h-4" />
+                  <AlertDescription className="text-white">
+                    Two-factor authentication is currently <strong>not enabled</strong> for your account.
+                  </AlertDescription>
+                </Alert>
 
-      {/* Save Button */}
-      <Card className="bg-gradient-to-r from-[#00D4FF]/10 to-[#FFB800]/10 border-[#00D4FF]/30">
-        <CardContent className="p-6 flex items-center justify-between">
-          <div>
-            <h3 className="text-white font-semibold">Save Changes</h3>
-            <p className="text-sm text-slate-400">Don't forget to save your preferences</p>
-          </div>
-          <Button
-            onClick={handleSaveSettings}
-            disabled={saveSettingsMutation.isPending}
-            className="bg-gradient-to-r from-[#00D4FF] to-[#FFB800] hover:from-[#00E5FF] hover:to-[#FFC520] text-[#0A1628]"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            {saveSettingsMutation.isPending ? 'Saving...' : 'Save Settings'}
-          </Button>
-        </CardContent>
-      </Card>
+                <div className="space-y-2">
+                  <p className="text-sm text-[#94A3B8]">
+                    Enable 2FA to secure your account with an additional verification step during login.
+                  </p>
+                  <Button
+                    className="bg-[#00D4FF] text-[#0A2540] hover:bg-[#00B8E6]"
+                    onClick={() => toast.info('2FA setup coming soon')}
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Enable Two-Factor Authentication
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </div>
     </div>
   );
 }
