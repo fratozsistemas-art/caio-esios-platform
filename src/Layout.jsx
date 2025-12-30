@@ -64,7 +64,7 @@ function LayoutInner({ children, currentPageName }) {
               title: "Core",
               items: [
                 { name: t('nav.dashboard', 'Dashboard'), icon: LayoutDashboard, path: 'Dashboard' },
-                { name: t('nav.chat', 'Chat with CAIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
+                { name: t('nav.chat', 'Chat with CASIO'), icon: MessageSquare, path: 'Chat', badge: 'AI' },
                 { name: t('nav.conversationHistory', 'Conversation History'), icon: Archive, path: 'ConversationHistory' },
                 { name: t('nav.quickActions', 'Quick Actions'), icon: Zap, path: 'QuickActions' },
                 { name: t('nav.portfolioIntelligence', 'Portfolio Intelligence'), icon: Briefcase, path: 'PortfolioIntelligence', badge: 'NEW' }
@@ -158,7 +158,6 @@ function LayoutInner({ children, currentPageName }) {
                 { name: t('nav.userManagement', 'Users'), icon: Users, path: 'UserManagement', adminOnly: true },
                 { name: t('nav.roleManagement', 'Roles & Permissions'), icon: Shield, path: 'RoleManagement', adminOnly: true },
                 { name: t('nav.userProfile', 'My Profile'), icon: User, path: 'UserProfile' },
-                { name: t('nav.userSettings', 'User Settings'), icon: Settings, path: 'UserSettings' },
                 { name: t('nav.userSettings', 'Settings'), icon: Settings, path: 'UserSettings' },
                 { name: t('nav.feedback', 'Feedback Management'), icon: MessageSquare, path: 'FeedbackManagement', adminOnly: true },
                 { name: t('nav.abTesting', 'A/B Testing'), icon: TrendingUp, path: 'ABTestingDashboard', adminOnly: true },

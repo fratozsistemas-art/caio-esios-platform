@@ -65,16 +65,16 @@ export default function Landing() {
     document.documentElement.lang = 'en';
 
     // Set document title
-    document.title = "ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3 Enterprise AI";
+    document.title = "ESIOS CASIO - Your Executive Strategic Intelligence Platform | AI-Powered Decisions from Board to Factory Floor";
     
     // Meta description (optimized to 158 characters)
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute('content', 'Executive AI platform with 11 cognitive modules for strategic decisions. TSI v9.3 methodology transforms planning from weeks to hours. Trusted by Fortune 500.');
+      metaDescription.setAttribute('content', 'ESIOS CASIO: Your virtual Chief Artificial & Strategic Intelligence Officer transforming data into validated strategies 24/7. AI-powered insights from Board to factory floor with integrated dashboard and chat.');
     } else {
       const meta = document.createElement('meta');
       meta.name = 'description';
-      meta.content = 'Executive AI platform with 11 cognitive modules for strategic decisions. TSI v9.3 methodology transforms planning from weeks to hours. Trusted by Fortune 500.';
+      meta.content = 'ESIOS CASIO: Your virtual Chief Artificial & Strategic Intelligence Officer transforming data into validated strategies 24/7. AI-powered insights from Board to factory floor with integrated dashboard and chat.';
       document.head.appendChild(meta);
     }
 
@@ -89,12 +89,12 @@ export default function Landing() {
 
     // Open Graph tags (optimized)
     const ogTags = {
-      'og:title': 'ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3',
-      'og:description': 'Transform executive decision-making with 11-module AI platform. Market intelligence, financial modeling, and strategic execution in one system. Trusted by Fortune 500.',
+      'og:title': 'ESIOS CASIO - Your Executive Strategic Intelligence Platform | Virtual Chief AI & Strategic Officer',
+      'og:description': 'ESIOS CASIO transforms data into validated strategies 24/7. AI-powered outputs from Board to factory floor with integrated dashboard and chat. Your virtual CASIO officer.',
       'og:type': 'website',
       'og:url': window.location.href,
-      'og:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png',
-      'og:site_name': 'ESIOS CAIO Platform',
+      'og:image': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/3feff1982_LogoOficial-ESIOSCASIO.png',
+      'og:site_name': 'ESIOS CASIO Platform',
       'og:locale': 'en_US'
     };
 
@@ -111,11 +111,11 @@ export default function Landing() {
     // Twitter Card tags (optimized)
     const twitterTags = {
       'twitter:card': 'summary_large_image',
-      'twitter:title': 'ESIOS CAIO - Executive Strategic Intelligence Platform | TSI v9.3',
-      'twitter:description': '11-module AI platform for strategic decisions. Market intelligence, competitive analysis, financial modeling. Transform strategy from weeks to hours.',
-      'twitter:image': 'https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png',
-      'twitter:site': '@ESIOSCAIO',
-      'twitter:creator': '@ESIOSCAIO'
+      'twitter:title': 'ESIOS CASIO - Your Virtual Chief AI & Strategic Officer',
+      'twitter:description': 'Transform data into validated strategies 24/7. AI-powered insights from Board to factory floor. Integrated dashboard & chat for strategic decisions.',
+      'twitter:image': 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/3feff1982_LogoOficial-ESIOSCASIO.png',
+      'twitter:site': '@ESIOSCASIO',
+      'twitter:creator': '@ESIOSCASIO'
     };
 
     Object.entries(twitterTags).forEach(([name, content]) => {
@@ -144,7 +144,7 @@ export default function Landing() {
       favicon.rel = 'icon';
       document.head.appendChild(favicon);
     }
-    favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png';
+    favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png';
 
     // Enhanced Schema.org JSON-LD (Organization + SoftwareApplication + FAQPage)
     const schemaScript = document.createElement('script');
@@ -156,9 +156,9 @@ export default function Landing() {
           "@type": "Organization",
           "name": "FRATOZ",
           "url": window.location.origin,
-          "logo": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
+          "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/3feff1982_LogoOficial-ESIOSCASIO.png",
           "sameAs": [
-            "https://www.linkedin.com/company/caioai"
+            "https://www.linkedin.com/company/esioscasio"
           ],
           "contactPoint": {
             "@type": "ContactPoint",
@@ -168,7 +168,7 @@ export default function Landing() {
         },
         {
           "@type": "SoftwareApplication",
-          "name": "ESIOS CAIO Platform",
+          "name": "ESIOS CASIO Platform",
           "applicationCategory": "BusinessApplication",
           "operatingSystem": "Web-based",
           "offers": {
@@ -208,7 +208,7 @@ export default function Landing() {
             "bestRating": "5",
             "worstRating": "1"
           },
-          "description": "Executive Strategic Intelligence Platform with 11 cognitive modules for strategic decision-making, financial modeling, market intelligence, and competitive analysis. Built on TSI v9.3 methodology.",
+          "description": "ESIOS CASIO: Your virtual Chief Artificial & Strategic Intelligence Officer. AI-powered platform transforming data into validated strategies 24/7, with insights from Board to factory floor, integrated dashboard and chat.",
           "featureList": [
             "TSI v9.3 Methodology with 11 Cognitive Modules",
             "Market Intelligence (M1)",
@@ -229,7 +229,7 @@ export default function Landing() {
             "Vector Decision Engine for Strategic Vectors",
             "Behavioral Intelligence with Archetype Library"
           ],
-          "image": "https://base44.app/api/apps/68f4a0b77dcf6281433ddc4b/files/public/68f4a0b77dcf6281433ddc4b/37d64ece6_CAIOAI-semfundo.png",
+          "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/3feff1982_LogoOficial-ESIOSCASIO.png",
           "provider": {
             "@type": "Organization",
             "name": "FRATOZ",
@@ -241,10 +241,10 @@ export default function Landing() {
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "How fast can CAIO·AI complete strategic analysis?",
+              "name": "How fast can ESIOS CASIO complete strategic analysis?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "CAIO·AI completes comprehensive strategic analysis 95% faster than traditional methods, reducing analysis time from weeks to hours. Each of the 11 cognitive modules can be executed in 5-7 minutes, delivering consulting-grade insights at AI speed."
+                "text": "ESIOS CASIO completes comprehensive strategic analysis 95% faster than traditional methods, reducing analysis time from weeks to hours. Your virtual CASIO officer delivers AI-powered insights from Board to factory floor 24/7."
               }
             },
             {
@@ -257,10 +257,10 @@ export default function Landing() {
             },
             {
               "@type": "Question",
-              "name": "How is CAIO·AI different from ChatGPT or other AI tools?",
+              "name": "How is ESIOS CASIO different from ChatGPT or other AI tools?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "CAIO·AI is built specifically for executive strategic intelligence with 11 specialized modules, institutional-grade governance via Hermes Trust-Broker, knowledge graph with 10K+ connections, and decision traceability. It operates as an 'Unwavering Peer' rather than a subordinate tool."
+                "text": "ESIOS CASIO is your virtual Chief Artificial & Strategic Intelligence Officer, providing AI-powered outputs that resonate from Board to factory floor. Unlike generic AI tools, CASIO delivers validated strategies 24/7 through an integrated dashboard and chat interface designed specifically for executive strategic intelligence."
               }
             }
           ]
@@ -933,8 +933,7 @@ export default function Landing() {
               Beyond Basic AI Chat
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              6 unique capabilities that differentiate CAIO from generic models and
-              traditional consultancies.
+              6 unique capabilities that make ESIOS CASIO your virtual Chief AI & Strategic Officer, delivering insights from Board to factory floor.
             </p>
           </div>
 
@@ -999,7 +998,7 @@ export default function Landing() {
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-[#00D4FF] to-[#FFB800] flex items-center justify-center mb-1">
                         <Brain className="w-5 h-5 text-[#0A1628]" />
                       </div>
-                      <span className="text-white font-semibold text-xs">CAIO</span>
+                      <span className="text-white font-semibold text-xs">CASIO</span>
                     </div>
                   </th>
                   <th className="p-3 text-center">
@@ -1320,7 +1319,7 @@ export default function Landing() {
               For Investors & Strategic Partners
             </h2>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              CAIO·AI operates at the intersection of <span className="text-[#00D4FF] font-semibold">Enterprise AI</span>, <span className="text-[#00D4FF] font-semibold">Strategic Intelligence</span>, and <span className="text-[#FFB800] font-semibold">Decision Automation</span> — a $47B market growing 35% annually.
+              ESIOS CASIO operates at the intersection of <span className="text-[#00D4FF] font-semibold">Enterprise AI</span>, <span className="text-[#00D4FF] font-semibold">Strategic Intelligence</span>, and <span className="text-[#FFB800] font-semibold">Decision Automation</span> — a $47B market growing 35% annually.
             </p>
           </div>
 
@@ -1509,17 +1508,17 @@ export default function Landing() {
             <div>
               <div className="flex items-center gap-3 mb-4">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/4e0fc9a8e_caio_ai_logo_refined.png" 
-                  alt="CAIO·AI - Executive Strategic Intelligence Platform" 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68f4a0b77dcf6281433ddc4b/7729afe9c_LogoOficial-ESIOSCASIO-nobackground.png" 
+                  alt="ESIOS CASIO - Executive Strategic Intelligence Platform" 
                   className="w-10 h-10 object-contain opacity-80"
                   width="40"
                   height="40"
                   loading="lazy"
                 />
-                <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>ESIOS CAIO</div>
+                <div className="text-xl font-heading font-bold text-white" style={{ letterSpacing: '0.05em' }}>ESIOS CASIO</div>
               </div>
               <p className="text-sm font-body text-[#00D4FF] mb-4 font-semibold">
-                ESIOS CAIO - Inteligência que vira tração.
+                ESIOS CASIO - Your Virtual Chief AI & Strategic Officer
               </p>
               <p className="text-xs font-body text-slate-400">
                 powered by FRATOZ
@@ -1533,7 +1532,7 @@ export default function Landing() {
                     href="#methodology"
                     className="text-slate-200 hover:text-[#FFB800] transition-colors"
                   >
-                    TSI Methodology
+                    CASIO Intelligence
                   </a>
                 </li>
                 <li>
@@ -1616,7 +1615,7 @@ export default function Landing() {
           <div className="border-t border-caio-blue/10 pt-8">
             <div className="h-px w-full bg-gradient-to-r from-transparent via-caio-blue to-caio-gold mb-8" />
             <p className="text-center text-sm font-body text-slate-400">
-              © 2025 ESIOS CAIO Platform. All rights reserved. | Powered by TSI v9.3 Strategic Intelligence
+              © 2025 ESIOS CASIO Platform. All rights reserved. | Your Virtual Chief Artificial & Strategic Intelligence Officer
             </p>
           </div>
         </div>
