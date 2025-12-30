@@ -20,6 +20,8 @@ import {
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import NotificationPreferences from "../components/agents/NotificationPreferences";
+import { useNotifications } from "../components/agents/useNotifications";
 
 const AGENTS = {
   market_monitor: { name: 'Market Monitor', icon: Eye, color: '#3b82f6', shortName: 'MM', status: 'active' },
@@ -49,6 +51,7 @@ export default function AgentCollaborationHub() {
   const [sharedTasks, setSharedTasks] = useState([]);
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const [showMessageDialog, setShowMessageDialog] = useState(false);
+  const { notify, requestPermission } = useNotifications();
   const queryClient = useQueryClient();
 
   // Fetch collaborations
@@ -154,6 +157,13 @@ export default function AgentCollaborationHub() {
       queryClient.invalidateQueries(['agent-collaborations']);
       toast.success(`Collaboration triggered: ${AGENTS[sourceAgent].name} → ${AGENTS[targetAgent].name}`);
 
+      // Critical trigger notification
+      if (context.priority === 'critical') {
+        notify('critical', `Critical collaboration triggered: ${triggerType}`, {
+          duration: 10000
+        });
+      }
+
       // Auto-execute
       await executeCollaboration(collab);
     } catch (error) {
@@ -228,6 +238,11 @@ export default function AgentCollaborationHub() {
         timestamp: new Date().toISOString()
       };
       saveMessages([...messages, newMessage, response]);
+      
+      // Trigger notification for agent response
+      notify('message', `${AGENTS[selectedAgent].name}: Acknowledged your message`, {
+        duration: 5000
+      });
     }, 2000);
   };
 
@@ -246,6 +261,7 @@ export default function AgentCollaborationHub() {
     saveTasks([...sharedTasks, newTask]);
     setNewTaskTitle("");
     toast.success('Task added to shared workspace');
+    notify('task', `New task created: ${newTaskTitle}`);
   };
 
   // Toggle task completion
@@ -258,11 +274,13 @@ export default function AgentCollaborationHub() {
 
   // Assign task to agent
   const assignTask = (taskId, agentId) => {
+    const task = sharedTasks.find(t => t.id === taskId);
     const updated = sharedTasks.map(t => 
       t.id === taskId ? { ...t, assignedTo: agentId } : t
     );
     saveTasks(updated);
     toast.success(`Task assigned to ${AGENTS[agentId].name}`);
+    notify('task', `Task "${task.title}" assigned to ${AGENTS[agentId].name}`);
   };
 
   // Delete task
@@ -347,6 +365,10 @@ export default function AgentCollaborationHub() {
                 {messages.filter(m => m.to === 'user' && m.from !== 'user').length}
               </Badge>
             )}
+          </TabsTrigger>
+          <TabsTrigger value="notifications" className="data-[state=active]:bg-yellow-500/20">
+            <Bell className="w-4 h-4 mr-2" />
+            Notifications
           </TabsTrigger>
           <TabsTrigger value="trigger" className="data-[state=active]:bg-purple-500/20">
             <Zap className="w-4 h-4 mr-2" />
@@ -485,6 +507,45 @@ export default function AgentCollaborationHub() {
                       </motion.div>
                     ))
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Notifications Tab */}
+        <TabsContent value="notifications" className="mt-6">
+          <div className="grid grid-cols-2 gap-6">
+            <NotificationPreferences onSave={(prefs) => {
+              if (prefs.desktopNotifications) {
+                requestPermission();
+              }
+            }} />
+            
+            <Card className="bg-white/5 border-white/10">
+              <CardHeader>
+                <CardTitle className="text-white text-lg flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-green-400" />
+                  Notification History
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-96 overflow-y-auto">
+                  <p className="text-xs text-slate-400 mb-4">Recent notifications from the past 24 hours</p>
+                  {[
+                    { type: 'message', text: 'New message from Market Monitor', time: '2 min ago', icon: MessageSquare, color: 'pink' },
+                    { type: 'task', text: 'Task assigned: Review Q4 Strategy', time: '15 min ago', icon: CheckSquare, color: 'orange' },
+                    { type: 'critical', text: 'Critical alert: Market volatility detected', time: '1 hour ago', icon: AlertTriangle, color: 'red' },
+                    { type: 'message', text: 'Strategy Doc Generator completed analysis', time: '3 hours ago', icon: CheckCircle, color: 'green' }
+                  ].map((notif, idx) => (
+                    <div key={idx} className={`flex items-start gap-3 p-3 rounded-lg bg-${notif.color}-500/10 border border-${notif.color}-500/30`}>
+                      <notif.icon className={`w-4 h-4 text-${notif.color}-400 mt-0.5`} />
+                      <div className="flex-1">
+                        <p className="text-sm text-white">{notif.text}</p>
+                        <p className="text-xs text-slate-400 mt-1">{notif.time}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
